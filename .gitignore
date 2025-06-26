@@ -1,0 +1,5 @@
+job_finder_backend/node_modules
+job_finder_frontend/node_modules
+
+job_finder_backend/.env
+job_finder_frontend/.env
