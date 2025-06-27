@@ -1,9 +1,11 @@
 <?php
 namespace App\Providers;
 
-use App\Interfaces\AuthRepositoryInterface;
 use App\Repositories\AuthRepository;
 use Illuminate\Support\ServiceProvider;
+use App\Repositories\ApplyJobRepository;
+use App\Interfaces\AuthRepositoryInterface;
+use App\Interfaces\ApplyJobRepositoryInterface;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -13,6 +15,7 @@ class RepositoryServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(AuthRepositoryInterface::class, AuthRepository::class);
+        $this->app->bind(ApplyJobRepositoryInterface::class, ApplyJobRepository::class);
     }
 
     /**

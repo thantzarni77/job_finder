@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -19,7 +20,13 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'phone',
+        'address',
         'password',
+        'user_type',
+        'provider',
+        'provider_id',
+        'provider_token',
     ];
 
     /**
@@ -42,6 +49,16 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password'          => 'hashed',
+        ];
+    }
+
+    public static function getUserType()
+    {
+        return [
+            'admin' => 'admin',
+            'seeker' => 'seeker',
+            'employer'  => 'employer',
+            'super admin' => 'super admin'
         ];
     }
 }
