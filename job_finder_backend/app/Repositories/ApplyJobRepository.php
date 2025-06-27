@@ -36,7 +36,7 @@ class ApplyJobRepository implements ApplyJobRepositoryInterface
 
         $data = $this->applyData($request);
 
-        //
+        // Handle multiple file upload (CV,resume)
         if($request->hasFile('document')){
             $document = [];
             foreach($request->file('document') as $file){
@@ -44,6 +44,7 @@ class ApplyJobRepository implements ApplyJobRepositoryInterface
                 $file->move(public_path('document'), $name);
                 array_push($document, $name);
             }
+
             $data['document'] = json_encode($document);
         }
 
