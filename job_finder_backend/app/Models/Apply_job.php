@@ -12,7 +12,12 @@ class Apply_job extends Model
         'employer_id',
         'document',
         'message',
-        'shortlisted',
+        'shortlist',
         'expected_salary'
+    ];
+
+    //for multiple document store in array type
+    protected $casts = [
+        'document' => 'array'
     ];
 }

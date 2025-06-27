@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('post_jobs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('employer_id')->constrained()->onDelete('cascade');
-            $table->foreignId('category_id');
+            $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->string('job_title');
             $table->string('salary')->default('nego');
             $table->enum('job_role',['junior', 'mid-level', 'senior'])->default('junior')->nullable();

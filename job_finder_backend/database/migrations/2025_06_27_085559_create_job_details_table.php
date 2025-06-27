@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('post_job_id')->constrained()->onDelete('cascade');
             $table->longText('job_requirements');
             $table->longText('job_description');
-            $table->timestamp('dead_line');
+            $table->timestamp('deadline');
             $table->integer('vacancy');
             $table->string('note');
             $table->string('benefits');
