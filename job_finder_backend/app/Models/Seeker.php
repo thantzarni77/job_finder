@@ -14,7 +14,7 @@ class Seeker extends Model
         'role',
         'talent',
         'social_media_link',
-        'seeker_image',
+        'image',
         'bio',
     ];
 

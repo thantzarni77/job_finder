@@ -11,11 +11,11 @@ class Post_job extends Model
         'company_id',
         'employer_id',
         'category_id',
-        'job_title',
+        'title',
         'salary',
-        'job_role',
-        'job_posting_status',
-        'job_type',
+        'role',
+        'posting_status',
+        'type',
         'view_count',
         'job_code',];
 
