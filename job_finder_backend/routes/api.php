@@ -10,14 +10,4 @@ use App\Http\Controllers\JobCategoryController;
 //     return $request->user();
 // })->middleware('auth:sanctum');
 
-//apply job module
-Route::prefix('apply-job')->group(function () {
-    Route::post('/', [ApplyJobController::class, 'applyJob']);
-    Route::get('/', [ApplyJobController::class, 'applyJobData']);
-    Route::patch('/shortlist/{id}', [ApplyJobController::class, 'addShortlist']);
-});
 
-
-
-Route::apiResource('job-categories', JobCategoryController::class);
-Route::apiResource('job-details', JobDetailController::class);
