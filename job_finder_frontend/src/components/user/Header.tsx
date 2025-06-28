@@ -13,14 +13,59 @@ import {
   NotificationsActiveOutlined as NotiIcon,
   Menu as MenuIcon,
 } from "@mui/icons-material";
-import { NavLink } from "react-router";
-import { useAppContext } from "../../layouts/user/UserMainLayout";
+import { NavLink, useLocation } from "react-router";
+import { useAppStore } from "../../store/Appstore";
+import { useState, useRef, useEffect, useMemo, type RefObject } from "react";
 
 export default function Header() {
-  const { showDrawer, setShowDrawer } = useAppContext();
+  //sample role test
+  const [userRole] = useState("");
+
+  const showDrawer = useAppStore((state) => state.showDrawer);
+  const setShowDrawer = useAppStore((state) => state.setShowDrawer);
+
+  const [underlineStyle, setUnderlineStyle] = useState({});
+  const location = useLocation();
+
+  //  ref for each nav button
+  const homeRef = useRef<HTMLButtonElement>(null);
+  const jobsRef = useRef<HTMLButtonElement>(null);
+  const talentRef = useRef<HTMLButtonElement>(null);
+  const companiesRef = useRef<HTMLButtonElement>(null);
+  const postJobRef = useRef<HTMLButtonElement>(null);
+
+  // memo map to link paths to their refs
+  const pathRefMap: { [key: string]: RefObject<HTMLButtonElement | null> } =
+    useMemo(
+      () => ({
+        "/": homeRef,
+        "/jobs": jobsRef,
+        "/talent": talentRef,
+        "/companies": companiesRef,
+        "/post/job": postJobRef,
+      }),
+      [],
+    );
+
+  useEffect(() => {
+    // get active ref  from  map using the current path
+    const activeTabRef = pathRefMap[location.pathname];
+
+    if (activeTabRef && activeTabRef.current) {
+      setUnderlineStyle({
+        left: activeTabRef.current.offsetLeft,
+        width: activeTabRef.current.offsetWidth,
+      });
+    } else {
+      setUnderlineStyle({
+        width: 0,
+      });
+    }
+  }, [location.pathname, pathRefMap]);
+
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" sx={{ px: 5 }}>
+      <AppBar position="static" sx={{ px: 5, boxShadow: "none" }}>
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
             <IconButton
@@ -39,67 +84,95 @@ export default function Header() {
             </Typography>
 
             <Box
-              sx={{ pl: 5, display: { md: "flex", sm: "none", xs: "none" } }}
+              sx={{
+                pl: 5,
+                display: { md: "flex", sm: "none", xs: "none" },
+                position: "relative",
+              }}
             >
-              <NavLink
-                to="/"
-                style={({ isActive }) => {
-                  return {
-                    borderBottom: isActive ? "3px solid white" : "",
-                  };
-                }}
-              >
-                <Button color="inherit">Home</Button>
+              <NavLink to="/">
+                <Button
+                  sx={{
+                    fontWeight: "700",
+                    textTransform: "none",
+                  }}
+                  ref={homeRef}
+                  color="inherit"
+                >
+                  Home
+                </Button>
               </NavLink>
 
-              <NavLink
-                to="/jobs"
-                style={({ isActive }) => {
-                  return {
-                    borderBottom: isActive ? "3px solid white" : "",
-                  };
-                }}
-              >
-                <Button color="inherit">Jobs</Button>
+              <NavLink to="/jobs">
+                <Button
+                  sx={{
+                    fontWeight: "700",
+                    textTransform: "none",
+                  }}
+                  ref={jobsRef}
+                  color="inherit"
+                >
+                  Jobs
+                </Button>
               </NavLink>
 
-              <NavLink
-                to="/talent"
-                style={({ isActive }) => {
-                  return {
-                    borderBottom: isActive ? "3px solid white" : "",
-                  };
-                }}
-              >
-                <Button color="inherit">Talent</Button>
+              <NavLink to="/talent">
+                <Button
+                  sx={{
+                    fontWeight: "700",
+                    textTransform: "none",
+                  }}
+                  ref={talentRef}
+                  color="inherit"
+                >
+                  Talent
+                </Button>
               </NavLink>
 
-              <NavLink
-                to="/companies"
-                style={({ isActive }) => {
-                  return {
-                    borderBottom: isActive ? "3px solid white" : "",
-                  };
-                }}
-              >
-                <Button color="inherit">Companies</Button>
+              <NavLink to="/companies">
+                <Button
+                  sx={{
+                    fontWeight: "700",
+                    textTransform: "none",
+                  }}
+                  ref={companiesRef}
+                  color="inherit"
+                >
+                  Companies
+                </Button>
               </NavLink>
 
-              <NavLink
-                to="/post/job"
-                style={({ isActive }) => {
-                  return {
-                    borderBottom: isActive ? "3px solid white" : "",
-                  };
+              {userRole == "employer" && (
+                <NavLink to="/post/job">
+                  <Button
+                    sx={{
+                      fontWeight: "700",
+                      textTransform: "none",
+                    }}
+                    ref={postJobRef}
+                    color="inherit"
+                  >
+                    Post A Job
+                  </Button>
+                </NavLink>
+              )}
+
+              {/* The Sliding Underline*/}
+              <Box
+                sx={{
+                  position: "absolute",
+                  bottom: 0,
+                  height: "3px",
+                  backgroundColor: "white",
+                  borderRadius: "2px",
+                  transition: "left 0.2s ease-out, width 0.2s ease-out",
+                  ...underlineStyle,
                 }}
-              >
-                <Button color="inherit">Post A Job</Button>
-              </NavLink>
+              />
             </Box>
           </Box>
 
           {/* left side of header  */}
-
           <Box sx={{ display: "flex", gap: 1 }}>
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <IconButton color="inherit">
@@ -113,21 +186,17 @@ export default function Header() {
                 In Box
               </Typography>
             </Box>
-
             <IconButton color="inherit">
               <NotiIcon sx={{ fontSize: 27 }} />
             </IconButton>
-
             <IconButton color="inherit">
               <SettingIcon />
             </IconButton>
-
             <IconButton>
               <Avatar sx={{ width: 32, height: 32 }} />
             </IconButton>
           </Box>
         </Toolbar>
-        <div style={{ border: "5px" }}></div>
       </AppBar>
     </Box>
   );
