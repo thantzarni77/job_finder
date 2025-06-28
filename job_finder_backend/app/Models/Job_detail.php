@@ -17,7 +17,6 @@ class Job_detail extends Model
         'gender',
         'save_count',
         'apply_count',
-        'job_benefits',
     ];
 
     public static function getGender() {
