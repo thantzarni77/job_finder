@@ -10,4 +10,5 @@ use App\Http\Controllers\JobCategoryController;
 //     return $request->user();
 // })->middleware('auth:sanctum');
 
-
+Route::apiResource('job-categories', JobCategoryController::class);
+Route::apiResource('job-details', JobDetailController::class);
