@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\JobDetailController;
 use App\Http\Controllers\JobCategoryController;
 
 // Route::get('/user', function (Request $request) {
@@ -11,3 +12,4 @@ use App\Http\Controllers\JobCategoryController;
 
 
 Route::apiResource('job-categories', JobCategoryController::class);
+Route::apiResource('job-details', JobDetailController::class);

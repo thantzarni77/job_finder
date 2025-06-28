@@ -61,7 +61,7 @@ class JobCategoryController extends Controller
 
         $category = $this->repository->update($id, $validated);
 
-        return response()->json([
+        return response()->json([  
             'success' => true,
             'message' => 'Category updated successfully',
             'data' => $category
