@@ -12,5 +12,18 @@ class ApplyJobController extends Controller
     public function __construct(ApplyJobRepositoryInterface $applyJobRepositoryInterface)
     {
         $this->applyJobRepositoryInterface = $applyJobRepositoryInterface;
+
+
+    }
+    public function applyJob(Request $request){
+            return $this->applyJobRepositoryInterface->applyJob($request);
+        }
+
+    public function applyJobData(){
+        return $this->applyJobRepositoryInterface->applyJobData();
+    }
+
+    public function addShortList($id){
+        return $this->applyJobRepositoryInterface->addShportlist($id);
     }
 }
