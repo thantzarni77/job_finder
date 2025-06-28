@@ -6,10 +6,12 @@ import {
   Typography,
   ListItemButton,
 } from "@mui/material";
-import { useAppContext } from "../../layouts/user/UserMainLayout";
+import { useAppStore } from "../../store/Appstore";
 
 export default function AppDrawer() {
-  const { showDrawer, setShowDrawer } = useAppContext();
+  const showDrawer = useAppStore((state) => state.showDrawer);
+  const setShowDrawer = useAppStore((state) => state.setShowDrawer);
+
   return (
     <Drawer
       open={showDrawer}

@@ -11,6 +11,13 @@ export default function Theme() {
         main: mode === "light" ? "#5f6caf" : "#1976d2",
       },
     },
+    components: {
+      MuiButtonBase: {
+        defaultProps: {
+          disableRipple: true,
+        },
+      },
+    },
   });
   return (
     <ThemeProvider theme={theme}>
