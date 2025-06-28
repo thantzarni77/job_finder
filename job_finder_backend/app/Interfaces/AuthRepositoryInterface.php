@@ -6,4 +6,7 @@ use Illuminate\Http\Request;
 interface AuthRepositoryInterface
 {
     public function login(Request $request);
+
+    
+
 }
