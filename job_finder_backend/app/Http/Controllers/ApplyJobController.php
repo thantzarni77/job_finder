@@ -22,4 +22,8 @@ class ApplyJobController extends Controller
     public function applyJobData(){
         return $this->applyJobRepositoryInterface->applyJobData();
     }
+
+    public function addShortList($id){
+        return $this->applyJobRepositoryInterface->addShportlist($id);
+    }
 }

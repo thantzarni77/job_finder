@@ -2,9 +2,9 @@
 
 namespace App\Repositories;
 
-use App\Interfaces\ApplyJobRepositoryInterface;
 use App\Models\Apply_job;
 use Illuminate\Support\Facades\Validator;
+use App\Interfaces\ApplyJobRepositoryInterface;
 
 class ApplyJobRepository implements ApplyJobRepositoryInterface
 {
@@ -14,19 +14,12 @@ class ApplyJobRepository implements ApplyJobRepositoryInterface
 
     public function applyJobData(){
         //get data from database
-        $data = Apply_job::get();
-        //if data not found
-        if (!$data) {
-            return response()->json(['status' => 'error', 'message' => 'Apply job not found'], 404);
-        }
-
-        return response()->json(['status' => 'success', 'message' => 'Apply job fatch successfully'], 200);
-
+        return Apply_job::get();
     }
     public function applyJob($request)
     {
         $validator = Validator::make($request->all(), [
-                'document' => 'required|mime:jpeg,png,jpg,svg,webp|max:5000',
+                'document' => 'required|max:5000',
                 'message' => 'max:200',
         ]);
 
@@ -53,10 +46,15 @@ class ApplyJobRepository implements ApplyJobRepositoryInterface
         return response()->json(['status' => 'success', 'message' => 'Apply job successfully'], 201);
     }
 
+    public function addShportlist($id){
+        Apply_job::where('id', $id)->update(['shortlist' => true]);
+        return response()->json(['status' => 'success', 'message' => 'Short List Addes successfully'], 201);
+    }
+
     //get apply data
     private function applyData($request){
         return [
-            'job_id' => $request->job_id,
+            'post_job_id' => $request->post_job_id,
             'seeker_id' => $request->seeker_id,
             'employer_id' => $request->employer_id,
             'message' => $request->message,

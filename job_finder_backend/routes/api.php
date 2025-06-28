@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Route;
 //apply job module
 Route::prefix('apply-job')->group(function () {
     Route::post('/', [ApplyJobController::class, 'applyJob']);
-    Route::get('employer/applied', [ApplyJobController::class, 'applyJobData']);
+    Route::get('/', [ApplyJobController::class, 'applyJobData']);
+    Route::patch('/shortlist/{id}', [ApplyJobController::class, 'addShortlist']);
 });
 
 

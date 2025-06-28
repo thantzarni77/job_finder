@@ -8,4 +8,5 @@ interface ApplyJobRepositoryInterface
 {
     public function applyJob(Request $request);
     public function applyJobData();
+    public function addShportlist(Request $request);
 }

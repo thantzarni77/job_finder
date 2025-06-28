@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('seekers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->integer('user_id');
             $table->json('skills');
             $table->json('education');
             $table->json('work_experience');
