@@ -10,11 +10,30 @@ export default function Theme() {
       primary: {
         main: mode === "light" ? "#5f6caf" : "#1976d2",
       },
+      secondary: {
+        main: mode === "light" ? "#33373B" : "#ffffff",
+      },
     },
     components: {
       MuiButtonBase: {
         defaultProps: {
           disableRipple: true,
+        },
+      },
+      MuiInput: {
+        defaultProps: {
+          disableUnderline: true,
+        },
+      },
+      MuiInputBase: {
+        styleOverrides: {
+          input: {
+            "&::placeholder": {
+              color: "#5f6caf",
+              opacity: 1,
+              fontWeight: "400",
+            },
+          },
         },
       },
     },

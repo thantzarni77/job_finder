@@ -47,3 +47,4 @@ class ApplyJobController extends Controller
         return $this->applyJobRepositoryInterface->sendMail($request);
     }
 }
+    

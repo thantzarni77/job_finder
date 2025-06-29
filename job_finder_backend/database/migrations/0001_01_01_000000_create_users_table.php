@@ -18,9 +18,11 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('address')->nullable();
             $table->enum('user_type', ['admin', 'seeker','employer','super admin'])->default('seeker');
+            $table->string('profile_picture')->nullable();
+            $table->string('refresh_token');
             $table->string('provider')->nullable();
             $table->string('provider_id')->nullable();
-            $table->string('provider_token')->nullable();
+            $table->string('provider_token')->nullable();            
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
