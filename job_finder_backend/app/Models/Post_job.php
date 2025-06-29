@@ -8,13 +8,13 @@ class Post_job extends Model
 {
 
     protected $fillable = [
-        'company_id',
         'employer_id',
         'category_id',
-        'title',
+        'job_title',
         'salary',
         'role',
         'posting_status',
+        'location',
         'type',
         'view_count',
         'job_code',];
