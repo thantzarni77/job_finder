@@ -14,3 +14,4 @@ class ApplyJobController extends Controller
         $this->applyJobRepositoryInterface = $applyJobRepositoryInterface;
     }
 }
+    
