@@ -10,7 +10,7 @@ class Job_detail extends Model
         'post_job_id',
         'requirements',
         'description',
-        'dead_line',
+        'deadline',
         'vacancy',
         'note',
         'benefits',
