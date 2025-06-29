@@ -6,16 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Seeker extends Model
 {
-    protected $fillable = [
+    protected $fillable = [  
         'user_id',
         'skills',
-        'work_experience',
         'education',
+        'work_experience',
         'role',
         'talent',
         'social_media_link',
         'seeker_image',
-        'bio',
+        'bio'
     ];
 
     public static function getRole() {
@@ -38,5 +38,15 @@ class Seeker extends Model
             'Analyst' => 'Analyst',
             'Other' => 'Other'
         ];
+    }
+
+    public function user(){
+        return $this->hasOne(User::class);
+    }
+
+    public function clean($value)
+    {
+        $decoded = json_decode($value, true);
+        return $decoded !== null ? $decoded : trim($value, '"');
     }
 }

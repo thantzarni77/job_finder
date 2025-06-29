@@ -74,4 +74,6 @@ class User extends Authenticatable implements JWTSubject
             'super admin' => 'super admin'
         ];
     }
+
+   
 }

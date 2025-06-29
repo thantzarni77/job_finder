@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\EmployerController;
+use App\Http\Controllers\Api\SeekerController;
 use App\Http\Controllers\Api\SocialLoginController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -23,10 +25,18 @@ Route::group(["middleware" => "AuthMiddleware"],function(){
     });
 
     Route::middleware("UserTypeMiddleware:seeker")->group(function(){
-       
+       Route::get('/seeker',[SeekerController::class,'index']);
+       Route::post('/seeker',[SeekerController::class,'store']);
+       Route::post('/seeker/{id}',[SeekerController::class,'update']);
+       Route::delete('/seeker/{id}',[SeekerController::class,'destroy']);
     });
 
     Route::middleware("UserTypeMiddleware:employer")->group(function(){
+
+        Route::get('/employer',[EmployerController::class,'index']);
+        Route::post('/employer',[EmployerController::class,'store']);
+        Route::post('/employer/{id}',[EmployerController::class,'update']);
+        Route::delete('/employer/{id}',[EmployerController::class,'destroy']);
        
     });
 

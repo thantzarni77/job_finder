@@ -2,6 +2,9 @@
 
 namespace App\Traits;
 
+use App\Http\Resources\EmployerResource;
+use App\Http\Resources\SeekerResource;
+
 trait HttpResponseTrait
 {
 
@@ -29,6 +32,20 @@ trait HttpResponseTrait
                 'user_email' => $data->email,                
                 'user_type' => $data->user_type,
             ]
+        ],$statuscode);
+    }
+
+    public function successResponseSeeker($message,$data,$statuscode = 200){
+        return response()->json([
+            "message"=> $message,
+            "data"=> new SeekerResource($data)
+        ],$statuscode);
+    }
+
+    public function successResponseEmployer($message,$data,$statuscode = 200){
+        return response()->json([
+            "message"=> $message,
+            "data"=> new EmployerResource($data)
         ],$statuscode);
     }
 
