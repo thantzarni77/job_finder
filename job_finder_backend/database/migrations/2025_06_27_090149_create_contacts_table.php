@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('contacts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('employer_id')->constrained()->onDelete('cascade');
+            $table->integer('employer_id');
             $table->string('title');
             $table->longText('message');
             $table->timestamps();

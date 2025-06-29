@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('apply_jobs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('seeker_id')->constrained()->onDelete('cascade');
-            $table->foreignId('employer_id')->constrained()->onDelete('cascade');
-            $table->foreignId('post_job_id')->constrained()->onDelete('cascade');
+            $table->integer('seeker_id');
+            $table->integer('employer_id');
+            $table->integer('post_job_id');
             $table->text('document');
             $table->string('message')->nullable();
             $table->boolean('shortlist')->default(false);

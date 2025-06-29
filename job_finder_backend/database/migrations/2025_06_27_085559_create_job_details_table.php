@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
-{
+{ 
     /**
      * Run the migrations.
      */
@@ -13,17 +13,16 @@ return new class extends Migration
     {
         Schema::create('job_details', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('post_job_id')->constrained()->onDelete('cascade');
-            $table->longText('job_requirements');
-            $table->longText('job_description');
-            $table->timestamp('dead_line');
+            $table->integer('post_job_id');
+            $table->longText('requirements');
+            $table->longText('description');
+            $table->timestamp('deadline');
             $table->integer('vacancy');
             $table->string('note');
-            $table->string('benefits');
             $table->enum('gender',['male', 'female', 'both'])->default('both')->nullable();
             $table->integer('save_count')->default(0);
             $table->integer('apply_count')->default(0);
-            $table->longText('job_benefits');
+            $table->longText('benefits');
             $table->timestamps();
         });
     }
