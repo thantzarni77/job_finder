@@ -5,7 +5,8 @@ import Jobs from "./pages/user/Jobs";
 import Companies from "./pages/user/Companies";
 import PostAJob from "./pages/user/PostAJob";
 import Talent from "./pages/user/Talent";
-
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -33,4 +34,9 @@ export const router = createBrowserRouter([
       },
     ],
   },
+  {
+    path: "/login",
+    Component: Login,
+  },
+  { path: "/register", Component: Register },
 ]);
