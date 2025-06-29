@@ -7,12 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 class Apply_job extends Model
 {
     protected $fillable = [
-        'job_id',
+        'post_job_id',
         'seeker_id',
         'employer_id',
         'document',
         'message',
-        'shortlisted',
+        'shortlist',
         'expected_salary'
+    ];
+
+    //for multiple document store in array type
+    protected $casts = [
+        'document' => 'array'
     ];
 }
