@@ -14,6 +14,7 @@ Route::group(["middleware" => "AuthMiddleware"],function(){
     Route::get('/profile',[AuthController::class,'profile']);
     Route::post('/logout',[AuthController::class,'logout']);
     Route::post('/refresh',[AuthController::class,'refresh']);
+    Route::delete('/removeuser',[AuthController::class,'removeUser']);
     Route::post('/auth/{provider}/call-back', [SocialLoginController::class, 'socialLogin']);
 
     Route::middleware("UserTypeMiddleware:superadmin")->group(function(){

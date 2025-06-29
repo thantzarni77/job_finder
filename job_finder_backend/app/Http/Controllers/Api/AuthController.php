@@ -88,6 +88,16 @@ class AuthController extends Controller
         }
     }
 
+    public function removeUser(Request $request)
+    {
+        JWTAuth::invalidate(JWTAuth::getToken());
+        $request->user()->delete();
+
+        return response()->json([
+            'message' => 'Successfully deleted your account.'
+        ])->cookie('refresh_token', null, -1, '/', null, true, true); 
+    }
+
 
     public function refresh(Request $request){
 
