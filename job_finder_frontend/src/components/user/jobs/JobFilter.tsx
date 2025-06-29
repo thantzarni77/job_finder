@@ -11,8 +11,8 @@ import {
 } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import CloseIcon from "@mui/icons-material/Close";
-import CustomCheckboxOutline from "../custom_svg/CustomCheckboxOutline";
-import CustomCheckbox from "../custom_svg/CustomCheckbox";
+import CustomCheckboxOutline from "../../custom_svg/CustomCheckboxOutline";
+import CustomCheckbox from "../../custom_svg/CustomCheckbox";
 import { useState } from "react";
 
 // Helper function to format the numbers with commas

@@ -13,9 +13,22 @@ import {
   NotificationsActiveOutlined as NotiIcon,
   Menu as MenuIcon,
 } from "@mui/icons-material";
-import { NavLink, useLocation } from "react-router";
+import { NavLink, useLocation, matchPath } from "react-router";
 import { useAppStore } from "../../store/Appstore";
 import { useState, useRef, useEffect, useMemo, type RefObject } from "react";
+
+function findRefForPath(
+  pathname: string,
+  pathMap: { [key: string]: RefObject<HTMLButtonElement | null> },
+): RefObject<HTMLButtonElement | null> | null {
+  for (const pattern in pathMap) {
+    // Check if the current URL pathname matches the pattern from the map
+    if (matchPath({ path: pattern, end: true }, pathname)) {
+      return pathMap[pattern];
+    }
+  }
+  return null;
+}
 
 export default function Header() {
   //sample role test
@@ -40,6 +53,9 @@ export default function Header() {
       () => ({
         "/": homeRef,
         "/jobs": jobsRef,
+        "/job/:id": jobsRef,
+        "/job/:id/apply": jobsRef,
+        "/job/:id/apply/confirm": jobsRef,
         "/talent": talentRef,
         "/companies": companiesRef,
         "/post/job": postJobRef,
@@ -49,7 +65,7 @@ export default function Header() {
 
   useEffect(() => {
     // get active ref  from  map using the current path
-    const activeTabRef = pathRefMap[location.pathname];
+    const activeTabRef = findRefForPath(location.pathname, pathRefMap);
 
     if (activeTabRef && activeTabRef.current) {
       setUnderlineStyle({
