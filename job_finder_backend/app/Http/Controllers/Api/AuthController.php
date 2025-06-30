@@ -24,23 +24,23 @@ class AuthController extends Controller
                 "password" => "required|min:6",
                 "user_type" => "nullable|in:admin,seeker,employer,super admin"
             ]);
-    
+
             if($validator->fails()){
                 return $this->erorsResponse("Validator fails",$validator->messages());
             }
 
             $refresh_token = Str::random(60);
-    
+
             $user = User::create([
                 "name" => $request->name,
                 "email" => $request->email,
                 "password" => Hash::make($request->password),
                 'refresh_token' => hash('sha256', $refresh_token),
-                "user_type" => $request->user_type ?? "seeker"    
+                "user_type" => $request->user_type ?? "seeker"
             ]);
-    
+
             $token = JWTAuth::fromUser($user);
-    
+
             return $this->successAuthResponse("Register Success",$user,$token,201)->cookie('refresh_token', $refresh_token, 60 * 24 * 7, null, null, true, true);
 
         }catch(JWTException $e){
@@ -81,7 +81,7 @@ class AuthController extends Controller
             return response()->json([
                 'status' => 200,
                 "message" => "Logout success",
-            ],200)->cookie('refresh_token', null, -1, null, null, true, true);; 
+            ],200)->cookie('refresh_token', null, -1, null, null, true, true);;
 
         }catch(JWTException $e){
             return $this->erorsResponse("Unauthenticated",null,401);
@@ -95,7 +95,7 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Successfully deleted your account.'
-        ])->cookie('refresh_token', null, -1, '/', null, true, true); 
+        ])->cookie('refresh_token', null, -1, '/', null, true, true);
     }
 
 
@@ -108,7 +108,7 @@ class AuthController extends Controller
         if(!$user){
             return $this->erorsResponse("Unauthenticated",null,401);
         }
-        
+
         try{
             $new_access_token = JWTAuth::fromUser($user);
         }catch(JWTException $e){

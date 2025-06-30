@@ -11,11 +11,12 @@ use App\Http\Controllers\Api\SeekerController;
 use App\Http\Controllers\JobCategoryController;
 use App\Http\Controllers\Api\EmployerController;
 use App\Http\Controllers\Api\SocialLoginController;
+use App\Http\Controllers\EmployerVerficationController;
 
 Route::post('/register',[AuthController::class,'register']);
 Route::post('/login',[AuthController::class,'login']);
 
-
+Route::post('/admin/employerVerification/{id}',[EmployerVerficationController::class,'updateStatus']);
 Route::group(["middleware" => "AuthMiddleware"],function(){
     Route::get('/profile',[AuthController::class,'profile']);
     Route::post('/logout',[AuthController::class,'logout']);
@@ -28,7 +29,7 @@ Route::group(["middleware" => "AuthMiddleware"],function(){
     });
 
     Route::middleware("UserTypeMiddleware:admin")->group(function(){
-
+        // Route::post('/admin/employerVerification/{id}',[EmployerVerficationController::class,'updateStatus']);
     });
 
     Route::middleware("UserTypeMiddleware:seeker")->group(function(){
