@@ -23,13 +23,13 @@ class SaveJobRepository implements SaveJobRepositoryInterface
     }
 
     //view save job
-    public function view($id){
-        return Save_job::find($id);
+    public function view(){
+        return Save_job::where('seeker_id',auth()->user()->id)->get();
     }
 
     //remove save job
     public function destroy($id){
-        return Save_job::find($id)->delete();
+        return Save_job::findOrFail($id)->delete();
         return response()->json(['status' => 'success', 'message' => 'Save job deleted successfully'], 200);
     }
 }

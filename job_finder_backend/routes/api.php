@@ -70,7 +70,7 @@ Route::group(["middleware" => "AuthMiddleware"],function(){
         // create save job
         Route::post('/',[SaveJobController::class,'store']);
         //view save job
-        Route::get('/{id}',[SaveJobController::class,'view']);
+        Route::get('/seeker-save-list',[SaveJobController::class,'view']);
         //remove save job
         Route::delete('/{id}',[SaveJobController::class,'destroy']);
     });

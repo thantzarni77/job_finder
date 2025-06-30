@@ -11,6 +11,6 @@ interface SaveJobRepositoryInterface
 {
     public function index();
     public function store(Request $request);
-    public function view($id);
+    public function view();
     public function destroy($id);
 }
