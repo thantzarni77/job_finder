@@ -1,6 +1,5 @@
 <?php
 
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SaveJobController;
@@ -16,11 +15,14 @@ Route::post('/register',[AuthController::class,'register']);
 Route::post('/login',[AuthController::class,'login']);
 
 
+
+
 Route::group(["middleware" => "AuthMiddleware"],function(){
     Route::get('/profile',[AuthController::class,'profile']);
     Route::post('/logout',[AuthController::class,'logout']);
     Route::post('/refresh',[AuthController::class,'refresh']);
     Route::delete('/removeuser',[AuthController::class,'removeUser']);
+    Route::post('/admin-account-creation',[AuthController::class,'adminAccountCreation']);
     Route::post('/auth/{provider}/call-back', [SocialLoginController::class, 'socialLogin']);
 
     Route::middleware("UserTypeMiddleware:superadmin")->group(function(){
@@ -54,7 +56,7 @@ Route::group(["middleware" => "AuthMiddleware"],function(){
         //making shortlist
         Route::patch('/shortlist/{id}', [ApplyJobController::class, 'addShortlist']);
         //employer view his uploaded jobs
-        Route::get('/employer/{id}', [ApplyJobController::class, 'employerPostedJobs']);
+        Route::get('/employer', [ApplyJobController::class, 'employerPostedJobs']);
         //seeker view his applied jobs
         Route::get('/seeker', [ApplyJobController::class, 'seekerAppliedJobs']);
         //employer view shorlist his posted jobs

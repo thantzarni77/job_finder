@@ -50,7 +50,7 @@ class ApplyJobRepository implements ApplyJobRepositoryInterface
     }
 
     //add to shortlist
-    public function addShportlist($id){
+    public function addShortlist($id){
         Apply_job::where('id', $id)->update(['shortlist' => true]);
         return response()->json(['status' => 'success', 'message' => 'Short List Addes successfully'], 201);
     }

@@ -23,7 +23,7 @@ class ApplyJobController extends Controller
     }
     //make shortlist
     public function addShortList($id){
-        return $this->applyJobRepositoryInterface->addShportlist($id);
+        return $this->applyJobRepositoryInterface->addShortlist($id);
     }
     //view employer posted job
     public function employerPostedJobs(){
