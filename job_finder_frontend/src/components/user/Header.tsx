@@ -174,7 +174,7 @@ export default function Header() {
 
           {/* left side of header  */}
           <Box sx={{ display: "flex", gap: 1 }}>
-            <Box sx={{ display: "flex", alignItems: "center" }}>
+            {/* <Box sx={{ display: "flex", alignItems: "center" }}>
               <IconButton color="inherit">
                 <MessageIcon />
               </IconButton>
@@ -185,7 +185,7 @@ export default function Header() {
               >
                 In Box
               </Typography>
-            </Box>
+            </Box> */}
             <IconButton color="inherit">
               <NotiIcon sx={{ fontSize: 27 }} />
             </IconButton>
