@@ -87,7 +87,7 @@ const ApplyJob = () => {
         }}
       >
         <ArrowBackIosIcon
-          onClick={() => navigate(-1)}
+          onClick={() => navigate("/job/JC-1111")}
           sx={{
             color: "primary.main",
             fontSize: 32,
