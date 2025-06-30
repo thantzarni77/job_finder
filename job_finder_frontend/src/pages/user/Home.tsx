@@ -21,7 +21,7 @@ export default function Home() {
       <Container>
         <Typography
           variant="h4"
-          sx={{ fontWeight: 600, textAlign: "center", my: 3 }}
+          sx={{ fontWeight: 600, textAlign: "center", my: 3, color: "black" }}
         >
           Find Your Dream Job Or Top Talent - All In One Place
         </Typography>
