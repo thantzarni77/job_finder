@@ -1,6 +1,18 @@
-import { createTheme, ThemeProvider } from "@mui/material";
+import { createTheme, GlobalStyles, ThemeProvider } from "@mui/material";
 import { RouterProvider } from "react-router";
 import { router } from "./Routes.tsx";
+
+//remove green box on input auto fill
+const inputGlobalStyles = (
+  <GlobalStyles
+    styles={{
+      "input:-webkit-autofill": {
+        WebkitBoxShadow: "0 0 0 100px white inset",
+        WebkitTextFillColor: "#000",
+      },
+    }}
+  />
+);
 
 export default function Theme() {
   const mode = "light";
@@ -9,6 +21,7 @@ export default function Theme() {
       mode,
       primary: {
         main: mode === "light" ? "#5f6caf" : "#1976d2",
+        light: "#898989",
       },
       secondary: {
         main: mode === "light" ? "#33373B" : "#ffffff",
@@ -40,6 +53,7 @@ export default function Theme() {
   });
   return (
     <ThemeProvider theme={theme}>
+      {inputGlobalStyles}
       <RouterProvider router={router}></RouterProvider>
     </ThemeProvider>
   );
