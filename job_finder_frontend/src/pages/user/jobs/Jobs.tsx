@@ -8,11 +8,13 @@ import {
   type SelectChangeEvent,
 } from "@mui/material";
 import HorizontalRuleOutlinedIcon from "@mui/icons-material/HorizontalRuleOutlined";
-import JobCard from "../../components/user/JobCard";
-import JobFilter from "../../components/user/JobFilter";
-import MapPin from "../../components/custom_svg/MapPin";
-import CustomSearchIcon from "../../components/custom_svg/CustomSearchIcon";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+
+import JobFilter from "../../../components/user/jobs/JobFilter";
+import CustomSearchIcon from "../../../components/custom_svg/CustomSearchIcon";
+import MapPin from "../../../components/custom_svg/MapPin";
+import JobCard from "../../../components/user/jobs/JobCard";
+
 import { useState } from "react";
 
 export default function Jobs() {
@@ -139,6 +141,7 @@ export default function Jobs() {
             bgColor: "red",
           }}
         >
+          {/* job posts section header */}
           <Box
             sx={{
               width: "inherit",
@@ -148,9 +151,10 @@ export default function Jobs() {
               mb: 2,
             }}
           >
-            <Typography variant="caption" sx={{ color: "gray" }}>
+            <Typography variant="caption" sx={{ color: "primary.light" }}>
               500+ jobs are found
             </Typography>
+            {/* filter box */}
             <Select
               open={open}
               onOpen={() => setOpen(true)}
@@ -243,6 +247,7 @@ export default function Jobs() {
               </MenuItem>
             </Select>
           </Box>
+          {/* jobs */}
           <Box
             sx={{
               display: "flex",

@@ -8,9 +8,9 @@ interface ApplyJobRepositoryInterface
 {
     public function applyJob(Request $request);
     public function applyJobData();
-    public function addShportlist(Request $request);
-    public function employerPostedJobs($id);
-    public function seekerAppliedJobs($id);
-    public function employerShortlistJobs($id);
+    public function addShortlist($id);
+    public function employerPostedJobs();
+    public function seekerAppliedJobs();
+    public function employerShortlistJobs();
     public function sendMail(Request $request);
 }
