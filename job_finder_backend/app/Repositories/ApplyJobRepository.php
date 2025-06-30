@@ -56,22 +56,22 @@ class ApplyJobRepository implements ApplyJobRepositoryInterface
     }
 
     //employer view his create job data
-    public function employerPostedJobs($id){
-        $data = Apply_job::where('employer_id', $id)->get();
+    public function employerPostedJobs(){
+        $data = Apply_job::where('employer_id', auth()->user()->id)->get();
         return $data;
         return response()->json(['status' => 'success', 'message' => 'You have successfully fetch your posted job postings.'], 200);
     }
 
     //seeeker view his applied jobs
-    public function seekerAppliedJobs($id){
-        $data = Apply_job::where('seeker_id', $id)->get();
+    public function seekerAppliedJobs(){
+        $data = Apply_job::where('seeker_id', auth()->user()->id)->get();
         return $data;
         return response()->json(['status' => 'success', 'message' => 'You have successfully fetch your applied job.'], 200);
     }
 
     //emoyer view his shortlisted jobs
-    public function employerShortlistJobs($id){
-        $data = Apply_job::where('employer_id', $id)->where('shortlist', true)->get();
+    public function employerShortlistJobs(){
+        $data = Apply_job::where('employer_id', auth()->user()->id )->where('shortlist', true)->get();
         return $data;
         return response()->json(['status' => 'success', 'message' => 'You have successfully fetch your shortlisted job postings.'], 200);
     }

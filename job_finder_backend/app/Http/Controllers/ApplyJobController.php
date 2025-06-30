@@ -12,8 +12,6 @@ class ApplyJobController extends Controller
     public function __construct(ApplyJobRepositoryInterface $applyJobRepositoryInterface)
     {
         $this->applyJobRepositoryInterface = $applyJobRepositoryInterface;
-
-
     }
     //create apply job
     public function applyJob(Request $request){
@@ -28,18 +26,18 @@ class ApplyJobController extends Controller
         return $this->applyJobRepositoryInterface->addShportlist($id);
     }
     //view employer posted job
-    public function employerPostedJobs($id){
-        return $this->applyJobRepositoryInterface->employerPostedJobs($id);
+    public function employerPostedJobs(){
+        return $this->applyJobRepositoryInterface->employerPostedJobs();
     }
 
     //seeker view his applied jobs
-    public function seekerAppliedJobs($id){
-        return $this->applyJobRepositoryInterface->seekerAppliedJobs($id);
+    public function seekerAppliedJobs(){
+        return $this->applyJobRepositoryInterface->seekerAppliedJobs();
     }
 
     //employer view his shortlisted jobs
-    public function employerShortlistJobs($id){
-        return $this->applyJobRepositoryInterface->employerShortlistJobs($id);
+    public function employerShortlistJobs(){
+        return $this->applyJobRepositoryInterface->employerShortlistJobs();
     }
 
     //mail send
@@ -47,4 +45,3 @@ class ApplyJobController extends Controller
         return $this->applyJobRepositoryInterface->sendMail($request);
     }
 }
-    
