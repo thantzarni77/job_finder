@@ -3,6 +3,7 @@
 use App\Http\Controllers\ApplyJobController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PostJobController;
 use App\Http\Controllers\JobDetailController;
 use App\Http\Controllers\JobCategoryController;
 
@@ -29,3 +30,7 @@ Route::prefix('apply-job')->group(function () {
 
 Route::apiResource('job-categories', JobCategoryController::class);
 Route::apiResource('job-details', JobDetailController::class);
+
+//swe
+Route::apiResource('post-jobs', PostJobController::class);
+
