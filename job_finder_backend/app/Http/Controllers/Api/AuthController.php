@@ -33,13 +33,19 @@ class AuthController extends Controller
 
             $refresh_token = Str::random(60);
 
-            $user = User::create([
-                "name" => $request->name,
-                "email" => $request->email,
-                "password" => Hash::make($request->password),
-                'refresh_token' => hash('sha256', $refresh_token),
-                "user_type" => $request->user_type ?? "seeker"
-            ]);
+            //user account checking and creation
+            if ($request->user_type === "admin") {
+                //can not create admin account if user_type is seeker and employer
+                return response()->json(['error' => 'Admin account can not be created'], 400);
+            } else {
+                $user = User::create([
+                    "name" => $request->name,
+                    "email" => $request->email,
+                    "password" => Hash::make($request->password),
+                    'refresh_token' => hash('sha256', $refresh_token),
+                    "user_type" => $request->user_type ?? "seeker"
+                ]);
+            }
 
             $token = JWTAuth::fromUser($user);
 
@@ -134,7 +140,7 @@ class AuthController extends Controller
                     'token' => $token,
                 ]
             ]);
-        }else {
+        } else {
             //if user is not super admin cancel the request
             return response()->json([
                 'statusCode' => 403,
