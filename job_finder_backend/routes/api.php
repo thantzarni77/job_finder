@@ -10,11 +10,13 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+Route::post('/admin/employerVerification/{id}', [EmployerVerficationController::class, 'updateStatus']);
 Route::group(["middleware" => "AuthMiddleware"], function () {
     Route::get('/profile', [AuthController::class, 'profile']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/refresh', [AuthController::class, 'refresh']);
     Route::delete('/removeuser', [AuthController::class, 'removeUser']);
+    Route::post('/admin-account-creation', [AuthController::class, 'adminAccountCreation']);
     Route::post('/auth/{provider}/call-back', [SocialLoginController::class, 'socialLogin']);
 
     Route::middleware("UserTypeMiddleware:superadmin")->group(function () {
