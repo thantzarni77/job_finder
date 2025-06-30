@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers\Api;
 
 use App\Models\User;
@@ -21,10 +20,10 @@ class AuthController extends Controller
 
         try {
             $validator = Validator::make($request->all(), [
-                "name" => "required",
-                "email" => "required|email|unique:users",
-                "password" => "required|min:6",
-                "user_type" => "nullable|in:admin,seeker,employer,super admin"
+                "name"      => "required",
+                "email"     => "required|email|unique:users",
+                "password"  => "required|min:6",
+                "user_type" => "nullable|in:admin,seeker,employer,super admin",
             ]);
 
             if ($validator->fails()) {
@@ -50,26 +49,29 @@ class AuthController extends Controller
             $token = JWTAuth::fromUser($user);
 
             return $this->successAuthResponse("Register Success", $user, $token, 201)->cookie('refresh_token', $refresh_token, 60 * 24 * 7, null, null, true, true);
+
         } catch (JWTException $e) {
             return $this->erorsResponse("Register Failed", null, 500);
         }
+
     }
 
     public function login(Request $request)
     {
-        $cred = $request->only("email", "password");
+        $cred  = $request->only("email", "password");
         $token = JWTAuth::attempt($cred);
 
-        if (!$token) {
+        if (! $token) {
             return $this->erorsResponse("Invalid Email or Password", null, 401);
         }
 
-        $user = JWTAuth::user();
+        $user          = JWTAuth::user();
         $refresh_token = Str::random(60);
         $user->update([
             'refresh_token' => hash('sha256', $refresh_token),
         ]);
         return $this->successAuthResponse("Login Success", $user, $token)->cookie('refresh_token', $refresh_token, 60 * 24 * 7, null, null, true, true);
+
     }
 
     public function profile()
@@ -87,9 +89,10 @@ class AuthController extends Controller
         try {
             JWTAuth::invalidate(JWTAuth::getToken());
             return response()->json([
-                'status' => 200,
+                'status'  => 200,
                 "message" => "Logout success",
-            ], 200)->cookie('refresh_token', null, -1, null, null, true, true);;
+            ], 200)->cookie('refresh_token', null, -1, null, null, true, true);
+
         } catch (JWTException $e) {
             return $this->erorsResponse("Unauthenticated", null, 401);
         }
@@ -101,7 +104,7 @@ class AuthController extends Controller
         $request->user()->delete();
 
         return response()->json([
-            'message' => 'Successfully deleted your account.'
+            'message' => 'Successfully deleted your account.',
         ])->cookie('refresh_token', null, -1, '/', null, true, true);
     }
 
@@ -153,11 +156,11 @@ class AuthController extends Controller
     public function refresh(Request $request)
     {
 
-        $refresh_token = $request->cookie('refresh_token');
+        $refresh_token        = $request->cookie('refresh_token');
         $hashed_refresh_token = hash('sha256', $refresh_token);
-        $user = User::where('refresh_token', $hashed_refresh_token)->first();
+        $user                 = User::where('refresh_token', $hashed_refresh_token)->first();
 
-        if (!$user) {
+        if (! $user) {
             return $this->erorsResponse("Unauthenticated", null, 401);
         }
 
@@ -169,10 +172,11 @@ class AuthController extends Controller
 
         return response()->json([
             'statusCode' => 200,
-            'message' => 'Access token refreshed successfully',
-            'data' => [
+            'message'    => 'Access token refreshed successfully',
+            'data'       => [
                 'access_token' => $new_access_token,
-            ]
+            ],
         ], 200);
     }
+
 }

@@ -23,7 +23,7 @@ const JobDetail = () => {
         }}
       >
         <ArrowBackIosIcon
-          onClick={() => navigate(-1)}
+          onClick={() => navigate("/jobs")}
           sx={{
             color: "primary.main",
             fontSize: 32,
