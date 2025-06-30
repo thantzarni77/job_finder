@@ -2,9 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SaveJobController;
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\ApplyJobController;
+use App\Http\Controllers\PostJobController;
 use App\Http\Controllers\JobDetailController;
 use App\Http\Controllers\Api\SeekerController;
 use App\Http\Controllers\JobCategoryController;
@@ -66,26 +64,10 @@ Route::group(["middleware" => "AuthMiddleware"],function(){
         Route::post('/mail', [ApplyJobController::class, 'sendMail']);
     });
 
-    //job save module
-    Route::prefix('save-job')->group(function () {
-        //save job list
-        Route::get('/',[SaveJobController::class,'index']);
-        // create save job
-        Route::post('/',[SaveJobController::class,'store']);
-        //view save job
-        Route::get('/seeker-save-list',[SaveJobController::class,'view']);
-        //remove save job
-        Route::delete('/{id}',[SaveJobController::class,'destroy']);
-    });
 
+Route::apiResource('job-categories', JobCategoryController::class);
+Route::apiResource('job-details', JobDetailController::class);
 
-
-    //job category route
-    Route::apiResource('job-categories', JobCategoryController::class);
-    //job detail route
-    Route::apiResource('job-details', JobDetailController::class);
-
-});
-
-
+//swe
+Route::apiResource('post-jobs', PostJobController::class);
 
