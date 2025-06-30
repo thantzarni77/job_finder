@@ -1,11 +1,14 @@
 <?php
 
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\EmployerController;
-use App\Http\Controllers\Api\SeekerController;
-use App\Http\Controllers\Api\SocialLoginController;
-use App\Http\Controllers\SaveJobController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SaveJobController;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\ApplyJobController;
+use App\Http\Controllers\JobDetailController;
+use App\Http\Controllers\Api\SeekerController;
+use App\Http\Controllers\JobCategoryController;
+use App\Http\Controllers\Api\EmployerController;
+use App\Http\Controllers\Api\SocialLoginController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
