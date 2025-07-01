@@ -10,6 +10,7 @@ import JobDetail from "./pages/user/jobs/JobDetail";
 import ApplyJob from "./components/user/jobs/ApplyJob";
 import JobApplyConfirm from "./components/user/jobs/JobApplyConfirm";
 import CompanyDetail from "./pages/user/CompanyDetail";
+import Profile from "./pages/user/Profile";
 
 export const router = createBrowserRouter([
   {
@@ -47,6 +48,10 @@ export const router = createBrowserRouter([
       {
         path: "/companies/:id",
         Component: CompanyDetail,
+      },
+      {
+        path: "/profile/:id",
+        Component: Profile,
       },
       // {
       //   path: "/post/job",

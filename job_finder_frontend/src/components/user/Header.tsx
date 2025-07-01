@@ -8,7 +8,7 @@ import {
   Avatar,
 } from "@mui/material";
 import {
-  ChatBubbleOutline as MessageIcon,
+  // ChatBubbleOutline as MessageIcon,
   SettingsOutlined as SettingIcon,
   NotificationsActiveOutlined as NotiIcon,
   Menu as MenuIcon,
@@ -16,6 +16,7 @@ import {
 import { NavLink, useLocation, matchPath } from "react-router";
 import { useAppStore } from "../../store/Appstore";
 import { useState, useRef, useEffect, useMemo, type RefObject } from "react";
+import { useNavigate } from "react-router";
 
 function findRefForPath(
   pathname: string,
@@ -31,6 +32,7 @@ function findRefForPath(
 }
 
 export default function Header() {
+  const navigate = useNavigate();
   //sample role test
   const [userRole] = useState("");
 
@@ -208,7 +210,7 @@ export default function Header() {
             <IconButton color="inherit">
               <SettingIcon />
             </IconButton>
-            <IconButton>
+            <IconButton onClick={() => navigate("/profile/1")}>
               <Avatar sx={{ width: 32, height: 32 }} />
             </IconButton>
           </Box>
