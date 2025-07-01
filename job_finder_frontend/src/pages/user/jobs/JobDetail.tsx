@@ -49,6 +49,7 @@ const JobDetail = () => {
         {/* Jobs and Job Badges */}
         <Box
           sx={{
+            mx: "auto",
             display: "flex",
             alignItems: "start",
             justifyContent: "space-between",
@@ -62,13 +63,18 @@ const JobDetail = () => {
             }}
           >
             <Box
-              sx={{ display: "flex", flexDirection: "column", gap: 1, mb: 3 }}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+                mb: 3,
+              }}
             >
               {/* jobs title and badge container */}
               <Box
                 sx={{
                   display: "flex",
-                  alignItems: "start",
+                  flexDirection: { xs: "column-reverse", md: "row" },
                   justifyContent: "space-between",
                 }}
               >
@@ -77,6 +83,7 @@ const JobDetail = () => {
                     display: "flex",
                     flexDirection: "column",
                     gap: 1,
+                    my: { xs: 2, md: 0 },
                   }}
                 >
                   <Typography variant="body1" sx={{ fontWeight: 600 }}>
@@ -93,9 +100,10 @@ const JobDetail = () => {
                 {/* Job badge */}
                 <Box
                   sx={{
-                    width: "80%",
+                    width: { xs: "100%", md: "80%" },
                     display: "flex",
-                    alignItems: "center",
+                    flexDirection: { xs: "column", lg: "row" },
+                    alignItems: { xs: "center", md: "start", lg: "center" },
                     gap: 2,
                   }}
                 >
@@ -170,7 +178,13 @@ const JobDetail = () => {
             </Box>
 
             <Box
-              sx={{ display: "flex", flexDirection: "column", gap: 1, my: 3 }}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+                my: 3,
+                mt: { xs: 0, md: -5, lg: 0 },
+              }}
             >
               <Typography variant="body1" sx={{ fontWeight: 600 }}>
                 Position
@@ -184,7 +198,12 @@ const JobDetail = () => {
             </Box>
 
             <Box
-              sx={{ display: "flex", flexDirection: "column", gap: 1, my: 3 }}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+                my: 3,
+              }}
             >
               <Typography variant="body1" sx={{ fontWeight: 600 }}>
                 Gender
@@ -198,7 +217,12 @@ const JobDetail = () => {
             </Box>
 
             <Box
-              sx={{ display: "flex", flexDirection: "column", gap: 1, my: 3 }}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+                my: 3,
+              }}
             >
               <Typography variant="body1" sx={{ fontWeight: 600 }}>
                 Salary
@@ -212,7 +236,12 @@ const JobDetail = () => {
             </Box>
 
             <Box
-              sx={{ display: "flex", flexDirection: "column", gap: 1, my: 3 }}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+                my: 3,
+              }}
             >
               <Typography variant="body1" sx={{ fontWeight: 600 }}>
                 Address
@@ -226,7 +255,12 @@ const JobDetail = () => {
             </Box>
 
             <Box
-              sx={{ display: "flex", flexDirection: "column", gap: 1, my: 3 }}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+                my: 3,
+              }}
             >
               <Typography variant="body1" sx={{ fontWeight: 600 }}>
                 Working Type
@@ -240,7 +274,12 @@ const JobDetail = () => {
             </Box>
 
             <Box
-              sx={{ display: "flex", flexDirection: "column", gap: 1, my: 3 }}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+                my: 3,
+              }}
             >
               <Typography variant="body1" sx={{ fontWeight: 600 }}>
                 Working hour
@@ -254,14 +293,23 @@ const JobDetail = () => {
             </Box>
 
             <Box
-              sx={{ display: "flex", flexDirection: "column", gap: 1, my: 3 }}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+                my: 3,
+              }}
             >
               <Typography variant="body1" sx={{ fontWeight: 600 }}>
                 Responsibilities
               </Typography>
               <Typography
                 variant="subtitle2"
-                sx={{ fontWeight: 400, color: "secondary.main", width: "70%" }}
+                sx={{
+                  fontWeight: 400,
+                  color: "secondary.main",
+                  width: { xs: "100%", md: "70%" },
+                }}
               >
                 Lorem ipsum dolor sit amet consectetur. Nec quis nec sagittis
                 ultrices egestas nunc urna cursus at. Lectus varius a libero
@@ -279,14 +327,23 @@ const JobDetail = () => {
             </Box>
 
             <Box
-              sx={{ display: "flex", flexDirection: "column", gap: 1, my: 3 }}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 1,
+                my: 3,
+              }}
             >
               <Typography variant="body1" sx={{ fontWeight: 600 }}>
                 Requirements
               </Typography>
               <Typography
                 variant="subtitle2"
-                sx={{ fontWeight: 400, color: "secondary.main", width: "70%" }}
+                sx={{
+                  fontWeight: 400,
+                  color: "secondary.main",
+                  width: { xs: "100%", md: "70%" },
+                }}
               >
                 Lorem ipsum dolor sit amet consectetur. Nec quis nec sagittis
                 ultrices egestas nunc urna cursus at. Lectus varius a libero
@@ -307,7 +364,7 @@ const JobDetail = () => {
               onClick={() => navigate("/job/JC-1111/apply")}
               variant="contained"
               sx={{
-                width: "73%",
+                width: { xs: "100%", md: "73%" },
                 boxShadow: "none",
                 textTransform: "none",
                 fontWeight: 400,
@@ -324,7 +381,7 @@ const JobDetail = () => {
         </Box>
 
         {/* employer card */}
-        <Box>
+        <Box sx={{ display: { xs: "none", md: "block" } }}>
           <EmployerCard />
         </Box>
       </Box>
@@ -344,7 +401,13 @@ const JobDetail = () => {
           Similar Jobs
         </Typography>
         <Box
-          sx={{ display: "flex", alignItems: "center", gap: 6, width: "100%" }}
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            alignItems: "center",
+            gap: 6,
+            width: "100%",
+          }}
         >
           <JobCard />
           <JobCard />

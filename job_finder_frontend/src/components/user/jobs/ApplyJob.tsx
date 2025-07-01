@@ -110,10 +110,12 @@ const ApplyJob = () => {
           gap: 10,
         }}
       >
-        <JobCard />
+        <Box sx={{ display: { xs: "none", md: "block" } }}>
+          <JobCard />
+        </Box>
 
         {/* application form */}
-        <Box>
+        <Box sx={{ mx: { xs: "auto", md: 0 } }}>
           <Box
             sx={{
               display: "flex",

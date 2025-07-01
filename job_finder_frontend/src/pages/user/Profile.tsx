@@ -6,7 +6,6 @@ import {
   Avatar,
   Card,
   CardContent,
-  CardActionArea,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import SchoolIcon from "@mui/icons-material/School";

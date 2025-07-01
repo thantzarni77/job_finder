@@ -125,6 +125,7 @@ export default function Jobs() {
           textAlign: "center",
           my: 3,
           display: "flex",
+          flexDirection: { xs: "column", md: "row" },
           alignItems: "start",
           width: "100%",
           p: 2,
@@ -138,7 +139,6 @@ export default function Jobs() {
             flexDirection: "column",
             alignItems: "center",
             width: "100%",
-            bgColor: "red",
           }}
         >
           {/* job posts section header */}
@@ -253,7 +253,7 @@ export default function Jobs() {
               display: "flex",
               width: "100%",
               justifyContent: "space-between",
-              gap: 4,
+              gap: { xs: 2, md: 4 },
               flexWrap: "wrap",
             }}
           >

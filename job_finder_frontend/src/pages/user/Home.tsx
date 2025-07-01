@@ -21,16 +21,51 @@ export default function Home() {
       <Container>
         <Typography
           variant="h4"
-          sx={{ fontWeight: 600, textAlign: "center", my: 3, color: "black" }}
+          sx={{
+            fontWeight: 600,
+            textAlign: "center",
+            my: 3,
+          }}
         >
           Find Your Dream Job Or Top Talent - All In One Place
         </Typography>
         <Box sx={{ display: "flex", justifyContent: "center", gap: 4, mb: 5 }}>
-          <Button variant="contained">Search Jobs</Button>
-          <Button variant="outlined">Find Talent</Button>
+          <Button
+            variant="contained"
+            sx={{
+              boxShadow: "none",
+              width: { xs: "200px", md: "320px" },
+              borderRadius: "8px",
+              p: 1,
+              textTransform: "none",
+              ":hover": {
+                boxShadow: "none",
+              },
+            }}
+          >
+            Search Jobs
+          </Button>
+          <Button
+            variant="outlined"
+            sx={{
+              boxShadow: "none",
+              width: { xs: "200px", md: "320px" },
+              borderRadius: "8px",
+              p: 1,
+              textTransform: "none",
+              ":hover": {
+                boxShadow: "none",
+              },
+            }}
+          >
+            Find Talent
+          </Button>
         </Box>
 
-        <Typography sx={{ mb: 2, textAlign: "center", fontWeight: 400 }}>
+        <Typography
+          variant="h6"
+          sx={{ mb: 2, textAlign: "center", fontWeight: 600 }}
+        >
           Recommeded Jobs For You
         </Typography>
 
@@ -56,7 +91,7 @@ export default function Home() {
           </Stack>
         </Box>
 
-        <Typography sx={{ textAlign: "center", mb: 3 }}>
+        <Typography sx={{ textAlign: "center", mb: 3, fontWeight: 600 }}>
           Top Employers
         </Typography>
         <Box className="lg-grid-cols-5 grid grid-cols-2 place-items-center gap-3 md:grid-cols-5">

@@ -12,11 +12,34 @@ export default function HomeCarousel() {
         }}
       >
         <div>
-          <Typography variant="h5" sx={{ fontWeight: 600, color: "black" }}>
+          <Typography
+            variant="h5"
+            sx={{ fontWeight: 700, fontSize: { xs: 25, md: 36 } }}
+          >
             Get Hired Today
           </Typography>
-          <Button variant="contained" sx={{ mt: 1 }}>
-            Build Your Profile Now
+          <Button
+            variant="contained"
+            sx={{
+              boxShadow: "none",
+              width: { xs: "200px", md: "300px" },
+              borderRadius: "8px",
+              p: 1,
+              my: 2,
+              textTransform: "none",
+              ":hover": {
+                boxShadow: "none",
+              },
+            }}
+          >
+            <Typography
+              sx={{
+                typography: { xs: "subtitle2", md: "body1" },
+                fontWeight: 300,
+              }}
+            >
+              Build Your Profile Now
+            </Typography>
           </Button>
         </div>
       </Box>

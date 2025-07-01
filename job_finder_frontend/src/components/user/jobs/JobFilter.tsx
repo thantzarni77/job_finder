@@ -32,19 +32,27 @@ const JobFilter = () => {
   const handleChange = (event: Event, newValue: number | number[]) => {
     setValue(newValue as number[]);
   };
+
   return (
     <Box
       sx={{
         display: "flex",
-        flexDirection: "column",
+        flexDirection: { xs: "row", md: "column" },
+        flexWrap: "wrap",
         gap: 2,
-        alignItems: "center",
+        alignItems: { xs: "flex-start", md: "center" },
       }}
     >
       {/* job type and filter */}
       <Paper
         elevation={2}
-        sx={{ padding: 2.5, width: 320, borderRadius: 3, boxShadow: "none" }}
+        sx={{
+          padding: 2.5,
+          width: 320,
+          borderRadius: 3,
+          boxShadow: "none",
+          mx: "auto",
+        }}
       >
         {/* Header Section */}
         <Box
@@ -87,7 +95,9 @@ const JobFilter = () => {
           >
             Job type
           </Typography>
-          <FormGroup>
+          <FormGroup
+            sx={{ display: "flex", flexDirection: { xs: "row", md: "column" } }}
+          >
             <FormControlLabel
               control={
                 <Checkbox
@@ -204,7 +214,13 @@ const JobFilter = () => {
       {/* Experience */}
       <Paper
         elevation={2}
-        sx={{ padding: 2.5, width: 320, borderRadius: 3, boxShadow: "none" }}
+        sx={{
+          padding: 2.5,
+          width: 320,
+          borderRadius: 3,
+          boxShadow: "none",
+          mx: "auto",
+        }}
       >
         <Box
           sx={{
@@ -222,7 +238,12 @@ const JobFilter = () => {
             >
               Experience
             </Typography>
-            <FormGroup>
+            <FormGroup
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "row", md: "column" },
+              }}
+            >
               <FormControlLabel
                 control={
                   <Checkbox
@@ -286,7 +307,13 @@ const JobFilter = () => {
       {/* Salary */}
       <Paper
         elevation={2}
-        sx={{ padding: 2.5, width: 320, borderRadius: 3, boxShadow: "none" }}
+        sx={{
+          padding: 2.5,
+          width: 320,
+          borderRadius: 3,
+          boxShadow: "none",
+          mx: "auto",
+        }}
       >
         <Box
           sx={{
@@ -351,7 +378,13 @@ const JobFilter = () => {
       {/* Job Categories */}
       <Paper
         elevation={2}
-        sx={{ padding: 2.5, width: 320, borderRadius: 3, boxShadow: "none" }}
+        sx={{
+          padding: 2.5,
+          width: 320,
+          borderRadius: 3,
+          boxShadow: "none",
+          mx: "auto",
+        }}
       >
         <Box
           sx={{

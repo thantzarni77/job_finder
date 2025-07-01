@@ -14,14 +14,22 @@ const JobApplyConfirm = () => {
       <Box
         sx={{
           display: "flex",
+          flexDirection: { xs: "column", md: "row" },
           alignItems: "center",
           justifyContent: "center",
           width: "100%",
         }}
       >
         <Typography
-          variant="h4"
-          sx={{ color: "primary.main", fontWeight: 700, width: "50%" }}
+          fontSize={{
+            md: 35,
+            xs: 25,
+          }}
+          sx={{
+            color: "primary.main",
+            fontWeight: 700,
+            width: { xs: "100%", md: "50%" },
+          }}
         >
           Thank you for applying. Your application for [Job Title] has been
           received. We’ll be in touch soon.

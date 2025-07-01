@@ -11,6 +11,7 @@ import BookmarkIcon from "@mui/icons-material/Bookmark";
 import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
+import VerifiedIcon from "@mui/icons-material/Verified";
 import { NavLink } from "react-router";
 
 const JobCard = () => {
@@ -25,7 +26,7 @@ const JobCard = () => {
         sx={{
           display: "flex",
           flexDirection: "column",
-          width: "380px",
+          width: { xs: "330px", md: "380px" },
           borderRadius: "20px",
           boxShadow: "none",
           px: 3,
@@ -54,16 +55,33 @@ const JobCard = () => {
                 KBZ <br />
                 Pay
               </Avatar>
-              <Typography
-                variant="body1"
+              <Box
                 sx={{
-                  fontWeight: "700",
-                  color: "secondary.main",
-                  ":hover": { cursor: "pointer", color: "primary.main" },
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
                 }}
               >
-                <NavLink to={"/job/JC-1111"}>Full Stack Developer</NavLink>
-              </Typography>
+                <Typography
+                  variant="body1"
+                  sx={{
+                    fontWeight: "700",
+                    color: "secondary.main",
+                    ":hover": { cursor: "pointer", color: "primary.main" },
+                  }}
+                >
+                  <NavLink to={"/job/JC-1111"}>Full Stack Developer</NavLink>
+                </Typography>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <VerifiedIcon sx={{ fontSize: "22px", color: "#75C149" }} />
+                  <Typography
+                    variant="body2"
+                    sx={{ fontWeight: 400, fontSize: "14px" }}
+                  >
+                    Verified
+                  </Typography>
+                </Box>
+              </Box>
             </Box>
             <Checkbox
               defaultChecked
