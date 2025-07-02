@@ -20,7 +20,12 @@ function formatValueLabel(value: number): string {
   return value.toLocaleString();
 }
 
-const JobFilter = () => {
+type Props = {
+  filterType: string;
+  filterTypeArray: string[];
+};
+
+const JobFilter = ({ filterType, filterTypeArray }: Props) => {
   // State to hold the slider's value range [min, max]
   const [value, setValue] = useState<number[]>([120000, 200000]);
 
@@ -93,120 +98,33 @@ const JobFilter = () => {
             fontWeight="700"
             sx={{ mb: 1, textAlign: "left" }}
           >
-            Job type
+            {filterType} type
           </Typography>
           <FormGroup
             sx={{ display: "flex", flexDirection: { xs: "row", md: "column" } }}
           >
-            <FormControlLabel
-              control={
-                <Checkbox
-                  defaultChecked
-                  disableRipple
-                  icon={<CustomCheckboxOutline />}
-                  checkedIcon={<CustomCheckbox />}
-                  name={"fullTime"}
-                />
-              }
-              label={"Full Time"}
-              sx={{
-                "& .MuiFormControlLabel-label": {
-                  color: "secondary.main",
-                  fontSize: 16,
-                  fontWeight: 400,
-                },
-              }}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  disableRipple
-                  icon={<CustomCheckboxOutline />}
-                  checkedIcon={<CustomCheckbox />}
-                  name={"partTime"}
-                />
-              }
-              label={"Part Time"}
-              sx={{
-                "& .MuiFormControlLabel-label": {
-                  color: "secondary.main",
-                  fontSize: 16,
-                  fontWeight: 400,
-                },
-              }}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  disableRipple
-                  icon={<CustomCheckboxOutline />}
-                  checkedIcon={<CustomCheckbox />}
-                  name={"internship"}
-                />
-              }
-              label={"Internship"}
-              sx={{
-                "& .MuiFormControlLabel-label": {
-                  color: "secondary.main",
-                  fontSize: 16,
-                  fontWeight: 400,
-                },
-              }}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  disableRipple
-                  icon={<CustomCheckboxOutline />}
-                  checkedIcon={<CustomCheckbox />}
-                  name={"volunteer"}
-                />
-              }
-              label={"Volunteer"}
-              sx={{
-                "& .MuiFormControlLabel-label": {
-                  color: "secondary.main",
-                  fontSize: 16,
-                  fontWeight: 400,
-                },
-              }}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  disableRipple
-                  icon={<CustomCheckboxOutline />}
-                  checkedIcon={<CustomCheckbox />}
-                  name={"freelancer"}
-                />
-              }
-              label={"Freelancer"}
-              sx={{
-                "& .MuiFormControlLabel-label": {
-                  color: "secondary.main",
-                  fontSize: 16,
-                  fontWeight: 400,
-                },
-              }}
-            />
-            <FormControlLabel
-              control={
-                <Checkbox
-                  disableRipple
-                  icon={<CustomCheckboxOutline />}
-                  checkedIcon={<CustomCheckbox />}
-                  name={"workFromHome"}
-                />
-              }
-              label={"Work From Home"}
-              sx={{
-                "& .MuiFormControlLabel-label": {
-                  color: "secondary.main",
-                  fontSize: 16,
-                  fontWeight: 400,
-                },
-              }}
-            />
+            {filterTypeArray.map((type) => (
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    defaultChecked
+                    disableRipple
+                    icon={<CustomCheckboxOutline />}
+                    checkedIcon={<CustomCheckbox />}
+                    name={type}
+                  />
+                }
+                label={type}
+                sx={{
+                  "& .MuiFormControlLabel-label": {
+                    color: "secondary.main",
+                    fontSize: 16,
+                    fontWeight: 400,
+                    textTransform: "capitalize",
+                  },
+                }}
+              />
+            ))}
           </FormGroup>
         </Box>
       </Paper>

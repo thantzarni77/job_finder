@@ -67,7 +67,7 @@ const JobDetail = () => {
                 display: "flex",
                 flexDirection: "column",
                 gap: 1,
-                mb: 3,
+                mb: { xs: 1, md: 3 },
               }}
             >
               {/* jobs title and badge container */}
@@ -103,7 +103,7 @@ const JobDetail = () => {
                     width: { xs: "100%", md: "80%" },
                     display: "flex",
                     flexDirection: { xs: "column", lg: "row" },
-                    alignItems: { xs: "center", md: "start", lg: "center" },
+                    alignItems: { xs: "start", md: "start", lg: "start" },
                     gap: 2,
                   }}
                 >

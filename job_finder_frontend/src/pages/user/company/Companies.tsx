@@ -10,21 +10,20 @@ import {
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 
 import JobFilter from "../../../components/user/jobs/JobFilter";
-import JobCard from "../../../components/user/jobs/JobCard";
 
 import { useState } from "react";
 import SearchBox from "../../../components/user/SearchBox";
+import CompanyCard from "../../../components/employer/CompanyCard";
 
-const jobs = [
-  "full Time",
-  "part Time",
-  "intership",
-  "volunteer",
-  "freelancer",
-  "work from home",
+const companyType = [
+  "public",
+  "private",
+  "government",
+  "non-profit",
+  "startup",
 ];
 
-const Jobs = () => {
+const Companies = () => {
   const [sortBy, setSortBy] = useState<string>("recent");
   const [open, setOpen] = useState<boolean>(false);
 
@@ -58,7 +57,7 @@ const Jobs = () => {
       }}
     >
       {/* search input */}
-      <SearchBox searchType={"Jobs"} />
+      <SearchBox searchType={"Company"} />
 
       {/* job posts and filter */}
       <Box
@@ -73,7 +72,7 @@ const Jobs = () => {
           gap: 6,
         }}
       >
-        <JobFilter filterType={"Job"} filterTypeArray={jobs} />
+        <JobFilter filterType={"Company"} filterTypeArray={companyType} />
         <Box
           sx={{
             display: "flex",
@@ -93,7 +92,7 @@ const Jobs = () => {
             }}
           >
             <Typography variant="caption" sx={{ color: "primary.light" }}>
-              500+ jobs are found
+              500+ companies are found
             </Typography>
             {/* filter box */}
             <Select
@@ -210,8 +209,13 @@ const Jobs = () => {
                 flexWrap: "wrap",
               }}
             >
-              <JobCard /> <JobCard /> <JobCard /> <JobCard /> <JobCard />
-              <JobCard /> <JobCard />
+              <CompanyCard />
+              <CompanyCard />
+              <CompanyCard />
+              <CompanyCard />
+              <CompanyCard />
+              <CompanyCard />
+              <CompanyCard />
             </Box>
             {/* pagination */}
             <Box
@@ -239,4 +243,4 @@ const Jobs = () => {
   );
 };
 
-export default Jobs;
+export default Companies;

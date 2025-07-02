@@ -1,15 +1,15 @@
 import { createBrowserRouter } from "react-router";
 import UserMainLayout from "./layouts/user/UserMainLayout";
 import Home from "./pages/user/Home";
-import Companies from "./pages/user/Companies";
 import Talent from "./pages/user/Talent";
+import Companies from "./pages/user/company/Companies";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Jobs from "./pages/user/jobs/Jobs";
 import JobDetail from "./pages/user/jobs/JobDetail";
 import ApplyJob from "./components/user/jobs/ApplyJob";
 import JobApplyConfirm from "./components/user/jobs/JobApplyConfirm";
-import CompanyDetail from "./pages/user/CompanyDetail";
+import CompanyDetail from "./pages/user/company/CompanyDetail";
 import Profile from "./pages/user/Profile";
 
 export const router = createBrowserRouter([

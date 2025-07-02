@@ -29,7 +29,6 @@ export default function Profile() {
         <Box sx={{ display: "flex", alignItems: "center", gap: 7 }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <Avatar sx={{ width: 80, height: 80 }} />
-
             <Box>
               <Typography variant="h6">John Doe</Typography>
               <Typography variant="body2" sx={{ opacity: 0.8 }}>
@@ -62,13 +61,13 @@ export default function Profile() {
             <Typography variant="h6">Education</Typography>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
               <SchoolIcon color="primary" />
-              <Typography variant="body2" sx={{ opacity: 0.7 }}>
+              <Typography variant="body2" sx={{ color: "secondary.main" }}>
                 Degree in Design
               </Typography>
             </Box>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
               <SchoolIcon color="primary" />
-              <Typography variant="body2" sx={{ opacity: 0.7 }}>
+              <Typography variant="body2" sx={{ color: "secondary.main" }}>
                 Diploma in Digital Marketing
               </Typography>
             </Box>
@@ -79,7 +78,7 @@ export default function Profile() {
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
               <WorkIcon color="primary" />
               <Box sx={{ display: "flex", flexDirection: "column" }}>
-                <Typography variant="body2" sx={{ opacity: 0.7 }}>
+                <Typography variant="body2" sx={{ color: "secondary.main" }}>
                   Weed Developer
                 </Typography>
                 <Typography variant="body2" color="primary">
@@ -90,7 +89,7 @@ export default function Profile() {
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
               <WorkIcon color="primary" />
               <Box sx={{ display: "flex", flexDirection: "column" }}>
-                <Typography variant="body2" sx={{ opacity: 0.7 }}>
+                <Typography variant="body2" sx={{ color: "secondary.main" }}>
                   Creative Studio
                 </Typography>
                 <Typography variant="body2" color="primary">
@@ -112,13 +111,13 @@ export default function Profile() {
             >
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <PhoneInTalkIcon color="primary" />
-                <Typography variant="body2" sx={{ opacity: 0.7 }}>
+                <Typography variant="body2" sx={{ color: "secondary.main" }}>
                   +09-123456789
                 </Typography>
               </Box>
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <EmailOutlinedIcon color="primary" />
-                <Typography variant="body2" sx={{ opacity: 0.7 }}>
+                <Typography variant="body2" sx={{ color: "secondary.main" }}>
                   abc@gmail.com
                 </Typography>
               </Box>
@@ -129,7 +128,7 @@ export default function Profile() {
             <Typography variant="h6">Social Media</Typography>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
               <LinkedInIcon color="primary" />
-              <Typography variant="body2" sx={{ opacity: 0.7 }}>
+              <Typography variant="body2" sx={{ color: "secondary.main" }}>
                 https://www.linkedin.com/in/johndoe
               </Typography>
             </Box>
@@ -139,59 +138,62 @@ export default function Profile() {
             <Typography variant="h6">Address</Typography>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
               <LocationOnIcon color="primary" />
-              <Typography variant="body2" sx={{ opacity: 0.7 }}>
+              <Typography variant="body2" sx={{ color: "secondary.main" }}>
                 123 Main Street, City, Country
               </Typography>
             </Box>
           </Box>
         </Box>
-      </Box>
 
-      <Box>
-        <Typography variant="h6" sx={{ mt: 5, mb: 3, textAlign: "center" }}>
-          Projects
-        </Typography>
-        <Box className="grid grid-cols-1 place-items-center gap-3 md:grid-cols-2 lg:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, index) => {
-            return (
-              <Card
-                sx={{
-                  borderTopRadius: "20px",
-                  backgroundColor: "transparent",
-                  boxShadow: "none",
-                  maxWidth: "90%",
-                }}
-                key={index}
-              >
-                <img
-                  src={UserProjectImage}
-                  alt=""
-                  style={{
-                    objectFit: "cover",
-                    width: "100%",
-                    height: "200px",
-                    borderRadius: "10px",
+        <Box>
+          <Typography variant="h6" sx={{ mt: 5, mb: 3, textAlign: "center" }}>
+            Projects
+          </Typography>
+          <Box className="grid grid-cols-1 place-items-center gap-3 md:grid-cols-2 lg:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, index) => {
+              return (
+                <Card
+                  sx={{
+                    borderTopRadius: "20px",
+                    backgroundColor: "transparent",
+                    boxShadow: "none",
+                    maxWidth: "95%",
                   }}
-                />
-                <CardContent>
-                  <Typography variant="h6">Project Name</Typography>
-                  <Typography variant="body2" sx={{ opacity: 0.7 }}>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Quisquam Lorem ipsum dolor sit amet consectetur adipisicing
-                    elit.
-                  </Typography>
-                  <Linkify>
+                  key={index}
+                >
+                  <img
+                    src={UserProjectImage}
+                    alt=""
+                    style={{
+                      objectFit: "cover",
+                      width: "100%",
+                      height: "200px",
+                      borderRadius: "10px",
+                    }}
+                  />
+                  <CardContent>
+                    <Typography variant="h6">Project Name</Typography>
                     <Typography
                       variant="body2"
-                      sx={{ opacity: 0.7, color: "blue" }}
+                      sx={{ color: "secondary.main" }}
                     >
-                      {exampleLink}
+                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                      Quisquam Lorem ipsum dolor sit amet consectetur
+                      adipisicing elit.
                     </Typography>
-                  </Linkify>
-                </CardContent>
-              </Card>
-            );
-          })}
+                    <Linkify>
+                      <Typography
+                        variant="body2"
+                        sx={{ opacity: 0.7, color: "blue" }}
+                      >
+                        {exampleLink}
+                      </Typography>
+                    </Linkify>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </Box>
         </Box>
       </Box>
     </Container>

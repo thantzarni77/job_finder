@@ -1,20 +1,12 @@
-import {
-  Avatar,
-  Box,
-  Checkbox,
-  Chip,
-  Divider,
-  Paper,
-  Typography,
-} from "@mui/material";
-import BookmarkIcon from "@mui/icons-material/Bookmark";
-import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
+import { Avatar, Box, Checkbox, Paper, Typography } from "@mui/material";
+import TurnedInIcon from "@mui/icons-material/TurnedIn";
+import TurnedInNotIcon from "@mui/icons-material/TurnedInNot";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
-import VerifiedIcon from "@mui/icons-material/Verified";
 import { NavLink } from "react-router";
+import CustomSuitCase from "../custom_svg/CustomSuitCase";
 
-const JobCard = () => {
+const CompanyCard = () => {
   return (
     <Box
       sx={{
@@ -26,7 +18,7 @@ const JobCard = () => {
         sx={{
           display: "flex",
           flexDirection: "column",
-          width: { xs: "325px", md: "375px" },
+          width: { xs: "330px", md: "380px" },
           borderRadius: "20px",
           boxShadow: "none",
           px: 3,
@@ -52,8 +44,7 @@ const JobCard = () => {
                 }}
                 variant="square"
               >
-                KBZ <br />
-                Pay
+                K
               </Avatar>
               <Box
                 sx={{
@@ -70,21 +61,11 @@ const JobCard = () => {
                     ":hover": { cursor: "pointer", color: "primary.main" },
                   }}
                 >
-                  <NavLink to={"/job/JC-1111"}>Full Stack Developer</NavLink>
+                  <NavLink to={"/companies/1"}>KBZ Bank</NavLink>
                 </Typography>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <VerifiedIcon sx={{ fontSize: "22px", color: "#75C149" }} />
-                  <Typography
-                    variant="body2"
-                    sx={{ fontWeight: 400, fontSize: "14px" }}
-                  >
-                    Verified
-                  </Typography>
-                </Box>
               </Box>
             </Box>
             <Checkbox
-              defaultChecked
               disableRipple
               sx={{
                 "& .MuiSvgIcon-root": { fontSize: 26, mr: -2 },
@@ -93,8 +74,8 @@ const JobCard = () => {
                   color: "primary.main",
                 },
               }}
-              icon={<BookmarkBorderOutlinedIcon />}
-              checkedIcon={<BookmarkIcon />}
+              icon={<TurnedInNotIcon />}
+              checkedIcon={<TurnedInIcon />}
               name={"fullTime"}
             />
           </Box>
@@ -106,6 +87,7 @@ const JobCard = () => {
                 textAlign: "left",
                 alignItems: "start",
                 gap: 1,
+                mb: 1,
               }}
             >
               <LocationOnOutlinedIcon
@@ -125,6 +107,7 @@ const JobCard = () => {
                 alignItems: "center",
                 textAlign: "left",
                 gap: 1,
+                mb: 1,
               }}
             >
               <QueryBuilderIcon sx={{ color: "primary.light", fontSize: 22 }} />
@@ -132,66 +115,25 @@ const JobCard = () => {
                 posted on 1 day ago
               </Typography>
             </Box>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                textAlign: "left",
+                gap: 1,
+                ml: "1px",
+              }}
+            >
+              <CustomSuitCase />
+              <Typography variant="caption" sx={{ color: "primary.light" }}>
+                30 opened vacancies
+              </Typography>
+            </Box>
           </Box>
-        </Box>
-        {/* tags */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
-          <Chip
-            sx={{
-              borderRadius: "4px",
-              backgroundColor: "primary.main",
-              color: "#ffffff",
-              width: "fit-content",
-              height: "28px",
-            }}
-            label="Chip Filled"
-          />
-          <Chip
-            sx={{
-              borderRadius: "4px",
-              backgroundColor: "primary.main",
-              color: "#ffffff",
-              width: "fit-content",
-              height: "28px",
-            }}
-            label="Chip Filled"
-          />
-          <Chip
-            sx={{
-              borderRadius: "4px",
-              backgroundColor: "primary.main",
-              color: "#ffffff",
-              width: "fit-content",
-              height: "28px",
-            }}
-            label="Chip Filled"
-          />
-        </Box>
-        <Divider flexItem />
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            mt: 1,
-          }}
-        >
-          <Typography
-            variant="body1"
-            sx={{ fontWeight: "bold", color: "secondary.main" }}
-          >
-            Salary
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{ fontWeight: "bold", color: "secondary.main" }}
-          >
-            800000MMK
-          </Typography>
         </Box>
       </Paper>
     </Box>
   );
 };
 
-export default JobCard;
+export default CompanyCard;
