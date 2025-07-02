@@ -64,8 +64,9 @@ export default function Header() {
         "/companies/:id": companiesRef,
         "/post/job": postJobRef,
         "/profile/:id": profileRef,
-        "/notifications": notificationsRef,
-        "/settings": settingsRef,
+        "/notifications/user/:id": notificationsRef,
+        "/settings/user/:id": settingsRef,
+        "/settings/user/:id/security": settingsRef,
       }),
       [],
     );
@@ -99,7 +100,7 @@ export default function Header() {
             <IconButton
               onClick={() => setShowDrawer(!showDrawer)}
               color="inherit"
-              sx={{ display: { md: "none" } }}
+              sx={{ display: { md: "none" }, ml: -2, mr: 1 }}
             >
               <MenuIcon />
             </IconButton>
@@ -172,14 +173,14 @@ export default function Header() {
             <IconButton
               color="inherit"
               ref={notificationsRef}
-              onClick={() => navigate("#")}
+              onClick={() => navigate("/notifications/user/1")}
             >
               <NotiIcon sx={{ fontSize: 27 }} />
             </IconButton>
             <IconButton
               color="inherit"
               ref={settingsRef}
-              onClick={() => navigate("#")}
+              onClick={() => navigate("/settings/user/1")}
             >
               <SettingIcon />
             </IconButton>

@@ -403,10 +403,12 @@ const JobDetail = () => {
         <Box
           sx={{
             display: "flex",
-            flexDirection: { xs: "column", md: "row" },
+            flexDirection: { xs: "column", md: "column", lg: "row" },
+            flexWrap: "wrap",
+            justifyContent: "center",
             alignItems: "center",
-            gap: 6,
             width: "100%",
+            gap: 6,
           }}
         >
           <JobCard />

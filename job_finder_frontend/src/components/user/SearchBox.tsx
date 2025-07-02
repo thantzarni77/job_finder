@@ -71,6 +71,9 @@ const SearchBox = ({ searchType }: Props) => {
           borderRadius: "10px",
           boxShadow: "none",
           textTransform: "none",
+          ":hover": {
+            boxShadow: "none",
+          },
         }}
       >
         Search

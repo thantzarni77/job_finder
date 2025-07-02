@@ -21,7 +21,7 @@ export default function Profile() {
 
   return (
     <Container sx={{ py: 3, mb: 20 }} maxWidth="lg">
-      <Typography variant="h5" sx={{ textAlign: "center" }}>
+      <Typography variant="h5" sx={{ textAlign: "center", fontWeight: 700 }}>
         Profile
       </Typography>
 
@@ -30,11 +30,17 @@ export default function Profile() {
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <Avatar sx={{ width: 80, height: 80 }} />
             <Box>
-              <Typography variant="h6">John Doe</Typography>
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                John Doe
+              </Typography>
               <Typography variant="body2" sx={{ opacity: 0.8 }}>
                 Graphic Designer
               </Typography>
-              <Typography variant="overline" color="success">
+              <Typography
+                variant="overline"
+                color={"#75C149"}
+                sx={{ fontWeight: 400, textTransform: "none" }}
+              >
                 Avaliable For Work
               </Typography>
             </Box>

@@ -11,6 +11,9 @@ import ApplyJob from "./components/user/jobs/ApplyJob";
 import JobApplyConfirm from "./components/user/jobs/JobApplyConfirm";
 import CompanyDetail from "./pages/user/company/CompanyDetail";
 import Profile from "./pages/user/Profile";
+import Notifications from "./pages/user/notifications/Notifications";
+import Settings from "./pages/user/settings/Settings";
+import SecuritySetting from "./pages/user/security/SecuritySetting";
 
 export const router = createBrowserRouter([
   {
@@ -52,6 +55,18 @@ export const router = createBrowserRouter([
       {
         path: "/profile/:id",
         Component: Profile,
+      },
+      {
+        path: "/notifications/user/:id",
+        Component: Notifications,
+      },
+      {
+        path: "/settings/user/:id",
+        Component: Settings,
+      },
+      {
+        path: "/settings/user/:id/security",
+        Component: SecuritySetting,
       },
       // {
       //   path: "/post/job",

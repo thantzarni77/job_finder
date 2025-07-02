@@ -84,7 +84,7 @@ const Companies = () => {
           {/* job posts section header */}
           <Box
             sx={{
-              width: "inherit",
+              width: "94%",
               display: "flex",
               alignItems: "start",
               justifyContent: "space-between",
@@ -200,11 +200,7 @@ const Companies = () => {
               sx={{
                 display: "flex",
                 width: "100%",
-                justifyContent: {
-                  xs: "center",
-                  md: "center",
-                  lg: "space-between",
-                },
+                justifyContent: "center",
                 gap: { xs: 2, md: 4 },
                 flexWrap: "wrap",
               }}

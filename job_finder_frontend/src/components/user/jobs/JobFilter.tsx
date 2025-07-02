@@ -45,7 +45,7 @@ const JobFilter = ({ filterType, filterTypeArray }: Props) => {
         flexDirection: { xs: "row", md: "column" },
         flexWrap: "wrap",
         gap: 2,
-        alignItems: { xs: "flex-start", md: "center" },
+        alignItems: { xs: "stretch", md: "center" },
       }}
     >
       {/* job type and filter */}
@@ -101,7 +101,10 @@ const JobFilter = ({ filterType, filterTypeArray }: Props) => {
             {filterType} type
           </Typography>
           <FormGroup
-            sx={{ display: "flex", flexDirection: { xs: "row", md: "column" } }}
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "row", md: "column" },
+            }}
           >
             {filterTypeArray.map((type) => (
               <FormControlLabel
@@ -307,6 +310,7 @@ const JobFilter = ({ filterType, filterTypeArray }: Props) => {
         <Box
           sx={{
             display: "flex",
+
             alignItems: "center",
             justifyContent: "space-between",
             mb: 1,
