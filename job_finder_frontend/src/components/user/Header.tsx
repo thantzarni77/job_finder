@@ -6,6 +6,8 @@ import {
   Button,
   IconButton,
   Avatar,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import {
   // ChatBubbleOutline as MessageIcon,
@@ -15,6 +17,7 @@ import {
   LightMode as LightModeIcon,
   DarkMode as DarkModeIcon,
 } from "@mui/icons-material";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { NavLink, useLocation, matchPath } from "react-router";
 import { useAppStore } from "../../store/Appstore";
 import { useState, useRef, useEffect, useMemo, type RefObject } from "react";
@@ -34,6 +37,14 @@ function findRefForPath(
 }
 
 export default function Header() {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   const mode = useThemeStore((state) => state.mode);
   const setMode = useThemeStore((state) => state.setMode);
   const navigate = useNavigate();
@@ -196,9 +207,34 @@ export default function Header() {
             >
               <SettingIcon />
             </IconButton>
-            <IconButton onClick={() => navigate("/profile/1")} ref={profileRef}>
+            <Button
+              endIcon={<ArrowDropDownIcon sx={{ color: "white" }} />}
+              id="basic-button"
+              aria-controls={open ? "basic-menu" : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? "true" : undefined}
+              onClick={handleClick}
+            >
               <Avatar sx={{ width: 32, height: 32 }} />
-            </IconButton>
+            </Button>
+            <Menu
+              id="basic-menu"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              onClick={handleClose}
+              slotProps={{
+                list: {
+                  "aria-labelledby": "basic-button",
+                },
+              }}
+            >
+              <MenuItem onClick={() => navigate("/profile/1")}>
+                Profile
+              </MenuItem>
+
+              <MenuItem>Logout</MenuItem>
+            </Menu>
           </Box>
 
           {/* Sliding underline*/}
