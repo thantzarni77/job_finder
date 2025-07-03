@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthSeeder extends Seeder
 {
@@ -14,11 +16,13 @@ class AuthSeeder extends Seeder
      */
     public function run(): void
     {
-        User::created([
+    
+        User::create([
             "name" => "admin",
             "email" => "admin@gmail.com",
             "password" => Hash::make("admin1234"),
-            "user_type" => "admin"
+            "user_type" => "admin"    
         ]);
+    
     }
 }
