@@ -6,16 +6,17 @@ import {
   Avatar,
   Card,
   CardContent,
+  CardActions,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import SchoolIcon from "@mui/icons-material/School";
+import AddIcon from "@mui/icons-material/Add";
 import WorkIcon from "@mui/icons-material/Work";
 import PhoneInTalkIcon from "@mui/icons-material/PhoneInTalk";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import UserProjectImage from "../../assets/Rectangle 94.png";
-import Linkify from "linkify-react";
 import { useNavigate } from "react-router";
 export default function Profile() {
   const exampleLink = "https://github.com/thantzarni77/job_finder/tree/main";
@@ -48,14 +49,24 @@ export default function Profile() {
             </Box>
           </Box>
 
-          <Button
-            variant="outlined"
-            size="small"
-            startIcon={<EditIcon />}
-            onClick={() => navigate(`/profile/1/edit`)}
-          >
-            Edit Profile
-          </Button>
+          <Box sx={{ display: "flex", gap: 2, flexDirection: "column" }}>
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<EditIcon />}
+              onClick={() => navigate(`/profile/1/edit`)}
+            >
+              Edit Profile
+            </Button>
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<AddIcon />}
+              onClick={() => navigate(`/project/add`)}
+            >
+              Add New Project
+            </Button>
+          </Box>
         </Box>
 
         <Box sx={{ mt: 3 }}>
@@ -194,15 +205,12 @@ export default function Profile() {
                       Quisquam Lorem ipsum dolor sit amet consectetur
                       adipisicing elit.
                     </Typography>
-                    <Linkify>
-                      <Typography
-                        variant="body2"
-                        sx={{ opacity: 0.7, color: "blue" }}
-                      >
-                        {exampleLink}
-                      </Typography>
-                    </Linkify>
                   </CardContent>
+                  <CardActions>
+                    <Button variant="outlined" fullWidth href={exampleLink}>
+                      View Project
+                    </Button>
+                  </CardActions>
                 </Card>
               );
             })}

@@ -56,6 +56,7 @@ export default function Theme() {
                 color: "#5f6caf",
                 opacity: 1,
                 fontWeight: "400",
+                fontSize: "12px",
               },
             },
           },
