@@ -12,11 +12,14 @@ import {
   SettingsOutlined as SettingIcon,
   NotificationsActiveOutlined as NotiIcon,
   Menu as MenuIcon,
+  LightMode as LightModeIcon,
+  DarkMode as DarkModeIcon,
 } from "@mui/icons-material";
 import { NavLink, useLocation, matchPath } from "react-router";
 import { useAppStore } from "../../store/Appstore";
 import { useState, useRef, useEffect, useMemo, type RefObject } from "react";
 import { useNavigate } from "react-router";
+import { useThemeStore } from "../../store/Appstore";
 
 function findRefForPath(
   pathname: string,
@@ -31,6 +34,8 @@ function findRefForPath(
 }
 
 export default function Header() {
+  const mode = useThemeStore((state) => state.mode);
+  const setMode = useThemeStore((state) => state.setMode);
   const navigate = useNavigate();
   const [userRole] = useState("");
 
@@ -172,11 +177,18 @@ export default function Header() {
           <Box sx={{ display: "flex", gap: 1 }}>
             <IconButton
               color="inherit"
+              onClick={() => setMode(mode === "light" ? "dark" : "light")}
+            >
+              {mode === "light" ? <LightModeIcon /> : <DarkModeIcon />}
+            </IconButton>
+            <IconButton
+              color="inherit"
               ref={notificationsRef}
               onClick={() => navigate("/notifications/user/1")}
             >
               <NotiIcon sx={{ fontSize: 27 }} />
             </IconButton>
+
             <IconButton
               color="inherit"
               ref={settingsRef}

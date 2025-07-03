@@ -16,8 +16,10 @@ import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import UserProjectImage from "../../assets/Rectangle 94.png";
 import Linkify from "linkify-react";
+import { useNavigate } from "react-router";
 export default function Profile() {
   const exampleLink = "https://github.com/thantzarni77/job_finder/tree/main";
+  const navigate = useNavigate();
 
   return (
     <Container sx={{ py: 3, mb: 20 }} maxWidth="lg">
@@ -46,7 +48,12 @@ export default function Profile() {
             </Box>
           </Box>
 
-          <Button variant="outlined" size="small" startIcon={<EditIcon />}>
+          <Button
+            variant="outlined"
+            size="small"
+            startIcon={<EditIcon />}
+            onClick={() => navigate(`/profile/1/edit`)}
+          >
             Edit Profile
           </Button>
         </Box>

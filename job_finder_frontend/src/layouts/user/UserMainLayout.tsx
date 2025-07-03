@@ -7,7 +7,7 @@ import Footer from "../../components/user/Footer";
 
 export default function UserMainLayout() {
   return (
-    <Box sx={{ backgroundColor: "#f5f5f5" }}>
+    <Box>
       <ScrollToTop />
       <Header />
       <AppDrawer />

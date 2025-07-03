@@ -6,12 +6,14 @@ import {
   LinkedIn as LinkedInIcon,
 } from "@mui/icons-material";
 import { Link } from "react-router";
+import { useTheme } from "@mui/material";
 export default function Footer() {
+  const theme = useTheme();
   return (
     <Box
       sx={{
         minHeight: "350px",
-        background: " #5f6caf",
+        backgroundColor: theme.palette.mode === "dark" ? "#272727" : "#5f6caf",
         color: "#ffffff",
         py: 3,
       }}

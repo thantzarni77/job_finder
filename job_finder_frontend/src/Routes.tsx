@@ -14,6 +14,7 @@ import Profile from "./pages/user/Profile";
 import Notifications from "./pages/user/notifications/Notifications";
 import Settings from "./pages/user/settings/Settings";
 import SecuritySetting from "./pages/user/security/SecuritySetting";
+import EditProfile from "./pages/user/EditProfile";
 
 export const router = createBrowserRouter([
   {
@@ -55,6 +56,10 @@ export const router = createBrowserRouter([
       {
         path: "/profile/:id",
         Component: Profile,
+      },
+      {
+        path: "/profile/:id/edit",
+        Component: EditProfile,
       },
       {
         path: "/notifications/user/:id",
