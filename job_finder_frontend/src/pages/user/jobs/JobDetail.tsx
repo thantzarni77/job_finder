@@ -53,7 +53,7 @@ const JobDetail = () => {
             display: "flex",
             alignItems: "start",
             justifyContent: "space-between",
-            width: "80%",
+            width: { xs: "100%", md: "80%" },
           }}
         >
           {/* Job*/}
@@ -369,7 +369,7 @@ const JobDetail = () => {
                 textTransform: "none",
                 fontWeight: 400,
                 borderRadius: "8px",
-                px: 1,
+                p: 1,
                 "&:hover": {
                   boxShadow: "none",
                 },

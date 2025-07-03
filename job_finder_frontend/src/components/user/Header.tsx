@@ -66,7 +66,12 @@ export default function Header() {
         "/profile/:id": profileRef,
         "/notifications/user/:id": notificationsRef,
         "/settings/user/:id": settingsRef,
+        "/settings/user/:id/bookmarks": settingsRef,
+        "/settings/user/:id/bookmarks/savedJobs": settingsRef,
+        "/settings/user/:id/bookmarks/following": settingsRef,
         "/settings/user/:id/security": settingsRef,
+        "/settings/user/:id/security/changeEmail": settingsRef,
+        "/settings/user/:id/security/changePassword": settingsRef,
       }),
       [],
     );

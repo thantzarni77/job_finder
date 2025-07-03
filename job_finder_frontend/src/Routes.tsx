@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter, Navigate } from "react-router";
 import UserMainLayout from "./layouts/user/UserMainLayout";
 import Home from "./pages/user/Home";
 import Talent from "./pages/user/Talent";
@@ -14,6 +14,11 @@ import Profile from "./pages/user/Profile";
 import Notifications from "./pages/user/notifications/Notifications";
 import Settings from "./pages/user/settings/Settings";
 import SecuritySetting from "./pages/user/security/SecuritySetting";
+import ChangeEmail from "./pages/user/settings/ChangeEmail";
+import ChangePassword from "./pages/user/settings/ChangePassword";
+import BookmarkMainLayout from "./layouts/user/BookmarkMainLayout";
+import BookmarkSavedJob from "./components/user/settings/BookmarkSavedJob";
+import BookmarkFollowing from "./components/user/settings/BookmarkFollowing";
 
 export const router = createBrowserRouter([
   {
@@ -22,6 +27,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "/",
+        index: true,
         Component: Home,
       },
       {
@@ -65,8 +71,34 @@ export const router = createBrowserRouter([
         Component: Settings,
       },
       {
+        path: "/settings/user/:id/bookmarks",
+        Component: BookmarkMainLayout,
+        children: [
+          {
+            index: true,
+            element: <Navigate to="savedJobs" replace />,
+          },
+          {
+            path: "savedJobs",
+            Component: BookmarkSavedJob,
+          },
+          {
+            path: "following",
+            Component: BookmarkFollowing,
+          },
+        ],
+      },
+      {
         path: "/settings/user/:id/security",
         Component: SecuritySetting,
+      },
+      {
+        path: "/settings/user/:id/security/changeEmail",
+        Component: ChangeEmail,
+      },
+      {
+        path: "/settings/user/:id/security/changePassword",
+        Component: ChangePassword,
       },
       // {
       //   path: "/post/job",
