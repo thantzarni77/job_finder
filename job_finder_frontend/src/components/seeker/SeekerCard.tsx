@@ -1,12 +1,19 @@
-import { Avatar, Box, Checkbox, Paper, Typography } from "@mui/material";
-import TurnedInIcon from "@mui/icons-material/TurnedIn";
-import TurnedInNotIcon from "@mui/icons-material/TurnedInNot";
+import {
+  Avatar,
+  Box,
+  Checkbox,
+  Chip,
+  Divider,
+  Paper,
+  Typography,
+} from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
 import { NavLink } from "react-router";
-import CustomSuitCase from "../custom_svg/CustomSuitCase";
 
-const CompanyCard = () => {
+const SeekerCard = () => {
   return (
     <Box
       sx={{
@@ -44,7 +51,7 @@ const CompanyCard = () => {
                 }}
                 variant="square"
               >
-                K
+                F
               </Avatar>
               <Box
                 sx={{
@@ -61,7 +68,7 @@ const CompanyCard = () => {
                     ":hover": { cursor: "pointer", color: "primary.main" },
                   }}
                 >
-                  <NavLink to={"/companies/1"}>KBZ Bank</NavLink>
+                  <NavLink to={""}>Full Stack Developer</NavLink>
                 </Typography>
               </Box>
             </Box>
@@ -74,8 +81,8 @@ const CompanyCard = () => {
                   color: "primary.main",
                 },
               }}
-              icon={<TurnedInNotIcon />}
-              checkedIcon={<TurnedInIcon />}
+              icon={<AddCircleIcon />}
+              checkedIcon={<CheckCircleIcon sx={{ color: "#75C149" }} />}
               name={"fullTime"}
             />
           </Box>
@@ -94,11 +101,8 @@ const CompanyCard = () => {
                 sx={{ color: "primary.light", fontSize: 22 }}
               />
 
-              <Typography
-                variant="caption"
-                sx={{ color: "primary.light", width: "250px" }}
-              >
-                N0.123, Yadanar St, Marchart Road, Yangon
+              <Typography variant="caption" sx={{ color: "primary.light" }}>
+                Yangon
               </Typography>
             </Box>
             <Box
@@ -115,20 +119,61 @@ const CompanyCard = () => {
                 posted on 1 day ago
               </Typography>
             </Box>
-            <Box
+          </Box>
+          {/* tags */}
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
+            <Chip
               sx={{
-                display: "flex",
-                alignItems: "center",
-                textAlign: "left",
-                gap: 1,
-                ml: "1px",
+                borderRadius: "4px",
+                backgroundColor: "primary.main",
+                color: "#ffffff",
+                width: "fit-content",
+                height: "28px",
               }}
+              label="Chip Filled"
+            />
+            <Chip
+              sx={{
+                borderRadius: "4px",
+                backgroundColor: "primary.main",
+                color: "#ffffff",
+                width: "fit-content",
+                height: "28px",
+              }}
+              label="Chip Filled"
+            />
+            <Chip
+              sx={{
+                borderRadius: "4px",
+                backgroundColor: "primary.main",
+                color: "#ffffff",
+                width: "fit-content",
+                height: "28px",
+              }}
+              label="Chip Filled"
+            />
+          </Box>
+          <Divider flexItem />
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              mt: 1,
+            }}
+          >
+            <Typography
+              variant="body1"
+              sx={{ fontWeight: "bold", color: "secondary.main" }}
             >
-              <CustomSuitCase />
-              <Typography variant="caption" sx={{ color: "primary.light" }}>
-                30 opened vacancies
-              </Typography>
-            </Box>
+              Salary
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{ fontWeight: "bold", color: "secondary.main" }}
+            >
+              800000MMK
+            </Typography>
           </Box>
         </Box>
       </Paper>
@@ -136,4 +181,4 @@ const CompanyCard = () => {
   );
 };
 
-export default CompanyCard;
+export default SeekerCard;

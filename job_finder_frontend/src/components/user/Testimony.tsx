@@ -9,6 +9,7 @@ const Testimony = () => {
         p: 2,
         boxShadow: "none",
         borderRadius: "12px",
+        width: { xs: "325px", md: "375px" },
       }}
     >
       <Box

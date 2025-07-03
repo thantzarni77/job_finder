@@ -51,7 +51,7 @@ const JobApplyConfirm = () => {
         <Button
           onClick={() => navigate("/")}
           sx={{
-            width: "40%",
+            width: { xs: "fit-content", md: "40%" },
             boxShadow: "none",
             textTransform: "none",
             fontWeight: 400,
@@ -70,7 +70,7 @@ const JobApplyConfirm = () => {
         <Button
           onClick={() => navigate("/jobs")}
           sx={{
-            width: "40%",
+            width: { xs: "fit-content", md: "40%" },
             boxShadow: "none",
             textTransform: "none",
             fontWeight: 400,

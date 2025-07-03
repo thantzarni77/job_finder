@@ -1,31 +1,45 @@
-import {
-  Box,
-  Container,
-  Button,
-  Typography,
-  Stack,
-  Pagination,
-} from "@mui/material";
+import { Box, Button, Typography, Stack, Pagination } from "@mui/material";
 import Kpay from "../../../assets/kpay.png";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import GroupsIcon from "@mui/icons-material/Groups";
 import PhoneInTalkIcon from "@mui/icons-material/PhoneInTalk";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import LanguageOutlinedIcon from "@mui/icons-material/LanguageOutlined";
 import JobCard from "../../../components/user/jobs/JobCard";
 import Testimony from "../../../components/user/Testimony";
+import { useNavigate } from "react-router";
 
 export default function CompanyDetail() {
+  const navigate = useNavigate();
   return (
     <>
-      <Container sx={{ py: 5, mb: 5 }}>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 7 }}>
+      <Box sx={{ pt: 3, pb: 5, mb: 2, width: "90%", mx: "auto" }}>
+        <ArrowBackIosIcon
+          onClick={() => navigate("/companies")}
+          sx={{
+            color: "primary.main",
+            fontSize: 32,
+            ":hover": {
+              color: "secondary.main",
+              cursor: "pointer",
+            },
+          }}
+        />
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 7,
+            mt: 2,
+          }}
+        >
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <img src={Kpay} alt="" style={{ width: "70px", height: "auto" }} />
             <Box>
               <Typography sx={{ fontWeight: 600 }}>KBZ Bank</Typography>
-              <Typography variant="body2" sx={{ opacity: 0.5 }}>
+              <Typography variant="body2" sx={{ color: "primary.light" }}>
                 Banking
               </Typography>
             </Box>
@@ -40,7 +54,7 @@ export default function CompanyDetail() {
         </Box>
         <Box sx={{ mt: 4 }}>
           <Typography sx={{ fontWeight: 600 }}>Description</Typography>
-          <Typography variant="body2" sx={{ mt: 1, opacity: 0.8 }}>
+          <Typography variant="body2" sx={{ mt: 1, color: "secondary.main" }}>
             Lorem ipsum dolor sit, amet consectetur adipisicing elit. Blanditiis
             tempora sapiente quos, dignissimos deleniti veritatis! Aperiam quae
             reprehenderit odio provident, deleniti, veniam recusandae itaque
@@ -111,7 +125,16 @@ export default function CompanyDetail() {
               https://www.companywebsite.com
             </Typography>
           </Box>
-          <Box sx={{ mt: 4, mb: 2 }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              width: "100%",
+              gap: 2,
+              my: 5,
+            }}
+          >
             <Typography
               sx={{
                 color: "secondary.main",
@@ -123,7 +146,17 @@ export default function CompanyDetail() {
             >
               Open Vacancies
             </Typography>
-            <Box className="grid grid-cols-1 place-items-center gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", md: "column", lg: "row" },
+                justifyContent: "center",
+                alignItems: "center",
+                gap: 5,
+                flexWrap: "wrap",
+                width: "100%",
+              }}
+            >
               <JobCard />
               <JobCard />
               <JobCard />
@@ -139,7 +172,17 @@ export default function CompanyDetail() {
             </Stack>
           </Box>
 
-          <Box sx={{ mt: 4, mb: 15 }}>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              width: "100%",
+              gap: 2,
+              mt: 5,
+              mb: 15,
+            }}
+          >
             <Typography
               sx={{
                 color: "secondary.main",
@@ -151,7 +194,17 @@ export default function CompanyDetail() {
             >
               Testimonial
             </Typography>
-            <Box className="grid grid-cols-1 place-items-center gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", md: "column", lg: "row" },
+                justifyContent: "center",
+                alignItems: "center",
+                gap: 5,
+                flexWrap: "wrap",
+                width: "100%",
+              }}
+            >
               <Testimony />
               <Testimony />
               <Testimony />
@@ -167,7 +220,7 @@ export default function CompanyDetail() {
             </Stack>
           </Box>
         </Box>
-      </Container>
+      </Box>
     </>
   );
 }

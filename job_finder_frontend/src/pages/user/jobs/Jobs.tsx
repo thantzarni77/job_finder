@@ -67,9 +67,8 @@ const Jobs = () => {
           my: 3,
           display: "flex",
           flexDirection: { xs: "column", md: "row" },
-          alignItems: "start",
+          alignItems: { xs: "center", md: "start" },
           width: "100%",
-          p: 2,
           gap: 6,
         }}
       >
@@ -85,9 +84,9 @@ const Jobs = () => {
           {/* job posts section header */}
           <Box
             sx={{
-              width: "94%",
+              width: { xs: "100%", md: "92%" },
               display: "flex",
-              alignItems: "start",
+              alignItems: { xs: "center", md: "start" },
               justifyContent: "space-between",
               mb: 2,
             }}
@@ -202,7 +201,7 @@ const Jobs = () => {
                 display: "flex",
                 width: "100%",
                 justifyContent: "center",
-                gap: { xs: 2, md: 4 },
+                gap: { xs: 2, md: 6 },
                 flexWrap: "wrap",
               }}
             >

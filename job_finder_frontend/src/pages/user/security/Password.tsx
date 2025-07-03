@@ -6,7 +6,7 @@ const Password = () => {
   const navigate = useNavigate();
   return (
     <Container
-      onClick={() => navigate("/settings/user/1/security")}
+      onClick={() => navigate("/settings/user/1/security/changePassword")}
       sx={{
         display: "flex",
         alignItems: "flex-start",
