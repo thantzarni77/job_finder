@@ -1,9 +1,7 @@
 <?php
-
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -16,12 +14,11 @@ class AuthSeeder extends Seeder
      */
     public function run(): void
     {
-    
         User::create([
-            "name" => "admin",
-            "email" => "admin@gmail.com",
-            "password" => Hash::make("admin1234"),
-            "user_type" => "admin"    
+            "name"      => "admin",
+            "email"     => "admin@gmail.com",
+            "password"  => Hash::make("admin1234"),
+            "user_type" => "admin"
         ]);
     
     }

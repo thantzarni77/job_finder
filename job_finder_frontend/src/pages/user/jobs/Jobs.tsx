@@ -1,21 +1,30 @@
 import {
   Box,
-  Button,
   MenuItem,
+  Pagination,
   Select,
-  TextField,
+  Stack,
   Typography,
   type SelectChangeEvent,
 } from "@mui/material";
-import HorizontalRuleOutlinedIcon from "@mui/icons-material/HorizontalRuleOutlined";
-import JobCard from "../../components/user/JobCard";
-import JobFilter from "../../components/user/JobFilter";
-import MapPin from "../../components/custom_svg/MapPin";
-import CustomSearchIcon from "../../components/custom_svg/CustomSearchIcon";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
-import { useState } from "react";
 
-export default function Jobs() {
+import JobFilter from "../../../components/user/jobs/JobFilter";
+import JobCard from "../../../components/user/jobs/JobCard";
+
+import { useState } from "react";
+import SearchBox from "../../../components/user/SearchBox";
+
+const jobs = [
+  "full Time",
+  "part Time",
+  "intership",
+  "volunteer",
+  "freelancer",
+  "work from home",
+];
+
+const Jobs = () => {
   const [sortBy, setSortBy] = useState<string>("recent");
   const [open, setOpen] = useState<boolean>(false);
 
@@ -49,73 +58,7 @@ export default function Jobs() {
       }}
     >
       {/* search input */}
-      <Box
-        sx={{
-          width: "62%",
-          height: { xs: "200px", md: "100px" },
-          backgroundColor: "#ffffff",
-          mx: "auto",
-          display: "flex",
-          flexDirection: { xs: "column", md: "row" },
-          justifyContent: "space-between",
-          alignItems: "center",
-          p: 3,
-          borderRadius: "20px",
-          border: "1.5px solid ",
-          borderColor: "primary.main",
-        }}
-      >
-        <Box sx={{ display: "flex", alignItems: "center", gap: "15px" }}>
-          {/* <SearchIcon
-            sx={{
-              rotate: "90deg",
-              color: "primary.main",
-              fontSize: "32px",
-            }}
-          /> */}
-          <CustomSearchIcon />
-          <TextField
-            id="outlined-basic"
-            variant="standard"
-            placeholder="Job Title or Keyword"
-            sx={{
-              "& > div > textarea": {
-                color: "primary.main",
-              },
-            }}
-          />
-        </Box>
-        <HorizontalRuleOutlinedIcon
-          sx={{
-            rotate: { xs: "0deg", md: "90deg" },
-            transform: { xs: "scale(10, 0.5)", md: "scale(2.5, 0.5)" },
-          }}
-        />
-        <Box sx={{ display: "flex", alignItems: "center", gap: "15px" }}>
-          {/* <LocationOnOutlinedIcon
-            sx={{
-              color: "primary.main",
-              fontSize: "32px",
-            }}
-          /> */}
-          <MapPin />
-          <TextField
-            id="outlined-basic"
-            variant="standard"
-            placeholder="Add Country or City"
-          />
-        </Box>
-        <Button
-          variant="contained"
-          sx={{
-            borderRadius: "10px",
-            boxShadow: "none",
-            textTransform: "none",
-          }}
-        >
-          Search
-        </Button>
-      </Box>
+      <SearchBox searchType={"Jobs"} />
 
       {/* job posts and filter */}
       <Box
@@ -123,34 +66,36 @@ export default function Jobs() {
           textAlign: "center",
           my: 3,
           display: "flex",
+          flexDirection: { xs: "column", md: "row" },
           alignItems: "start",
           width: "100%",
           p: 2,
           gap: 6,
         }}
       >
-        <JobFilter />
+        <JobFilter filterType={"Job"} filterTypeArray={jobs} />
         <Box
           sx={{
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             width: "100%",
-            bgColor: "red",
           }}
         >
+          {/* job posts section header */}
           <Box
             sx={{
-              width: "inherit",
+              width: "94%",
               display: "flex",
               alignItems: "start",
               justifyContent: "space-between",
               mb: 2,
             }}
           >
-            <Typography variant="caption" sx={{ color: "gray" }}>
+            <Typography variant="caption" sx={{ color: "primary.light" }}>
               500+ jobs are found
             </Typography>
+            {/* filter box */}
             <Select
               open={open}
               onOpen={() => setOpen(true)}
@@ -243,20 +188,51 @@ export default function Jobs() {
               </MenuItem>
             </Select>
           </Box>
+          {/* jobs */}
           <Box
             sx={{
               display: "flex",
               width: "100%",
-              justifyContent: "space-between",
-              gap: 4,
-              flexWrap: "wrap",
+              flexDirection: "column",
+              alignItems: "center",
             }}
           >
-            <JobCard /> <JobCard /> <JobCard /> <JobCard /> <JobCard />
-            <JobCard /> <JobCard />
+            <Box
+              sx={{
+                display: "flex",
+                width: "100%",
+                justifyContent: "center",
+                gap: { xs: 2, md: 4 },
+                flexWrap: "wrap",
+              }}
+            >
+              <JobCard /> <JobCard /> <JobCard /> <JobCard /> <JobCard />
+              <JobCard /> <JobCard />
+            </Box>
+            {/* pagination */}
+            <Box
+              sx={{ display: "flex", justifyContent: "center", mt: 5, mb: 10 }}
+            >
+              <Stack>
+                <Pagination
+                  count={10}
+                  shape="rounded"
+                  variant="outlined"
+                  color="primary"
+                  sx={{
+                    "& .MuiPaginationItem-root": {
+                      color: "#5f6caf",
+                      borderColor: "#5f6caf",
+                    },
+                  }}
+                />
+              </Stack>
+            </Box>
           </Box>
         </Box>
       </Box>
     </Box>
   );
-}
+};
+
+export default Jobs;

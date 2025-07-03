@@ -25,12 +25,12 @@ class EmployerController extends Controller
     }
 
     public function store(Request $request){
-            
+
         $validator = Validator::make($request->all(),[
             "company_name" => "required",
             "company_address" => "required",
             "company_phone" => "required",
-            "company_email" => "required|email",            
+            "company_email" => "required|email",
             "company_description" => "required",
             "company_type" => "required",
             "verification" => "required",
@@ -61,7 +61,7 @@ class EmployerController extends Controller
             $file->move(public_path('assets/img/employers/'),$imagenewname);
             $filepath = 'assets/img/employers/'.$imagenewname;
             $employer->company_image = $filepath;
-        } 
+        }
 
         $employer->save();
 
@@ -70,12 +70,12 @@ class EmployerController extends Controller
 
 
     public function update(Request $request,string $id){
-            
+
         $validator = Validator::make($request->all(),[
             "company_name" => "required",
             "company_address" => "required",
             "company_phone" => "required",
-            "company_email" => "required|email",            
+            "company_email" => "required|email",
             "company_description" => "required",
             "company_type" => "required",
             "verification" => "required",
@@ -114,7 +114,7 @@ class EmployerController extends Controller
             $file->move(public_path('assets/img/employers/'),$imagenewname);
             $filepath = 'assets/img/employers/'.$imagenewname;
             $employer->company_image = $filepath;
-        } 
+        }
 
         $employer->save();
 

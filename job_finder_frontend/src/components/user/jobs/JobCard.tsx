@@ -11,21 +11,26 @@ import BookmarkIcon from "@mui/icons-material/Bookmark";
 import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
+import VerifiedIcon from "@mui/icons-material/Verified";
+import { NavLink } from "react-router";
 
 const JobCard = () => {
   return (
-    <Box sx={{ textAlign: "center" }}>
+    <Box
+      sx={{
+        textAlign: "center",
+      }}
+    >
       <Paper
         elevation={1}
         sx={{
           display: "flex",
           flexDirection: "column",
-          width: "380px",
+          width: { xs: "325px", md: "375px" },
           borderRadius: "20px",
           boxShadow: "none",
           px: 3,
           py: 2,
-          ":hover": { cursor: "pointer" },
         }}
       >
         <Box>
@@ -50,12 +55,33 @@ const JobCard = () => {
                 KBZ <br />
                 Pay
               </Avatar>
-              <Typography
-                variant="body1"
-                sx={{ fontWeight: "700", color: "secondary.main" }}
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                }}
               >
-                Full Stack Developer
-              </Typography>
+                <Typography
+                  variant="body1"
+                  sx={{
+                    fontWeight: "700",
+                    color: "secondary.main",
+                    ":hover": { cursor: "pointer", color: "primary.main" },
+                  }}
+                >
+                  <NavLink to={"/job/JC-1111"}>Full Stack Developer</NavLink>
+                </Typography>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <VerifiedIcon sx={{ fontSize: "22px", color: "#75C149" }} />
+                  <Typography
+                    variant="body2"
+                    sx={{ fontWeight: 400, fontSize: "14px" }}
+                  >
+                    Verified
+                  </Typography>
+                </Box>
+              </Box>
             </Box>
             <Checkbox
               defaultChecked
@@ -82,11 +108,13 @@ const JobCard = () => {
                 gap: 1,
               }}
             >
-              <LocationOnOutlinedIcon sx={{ color: "gray", fontSize: 22 }} />
+              <LocationOnOutlinedIcon
+                sx={{ color: "primary.light", fontSize: 22 }}
+              />
 
               <Typography
                 variant="caption"
-                sx={{ color: "gray", width: "250px" }}
+                sx={{ color: "primary.light", width: "250px" }}
               >
                 N0.123, Yadanar St, Marchart Road, Yangon
               </Typography>
@@ -99,8 +127,8 @@ const JobCard = () => {
                 gap: 1,
               }}
             >
-              <QueryBuilderIcon sx={{ color: "gray", fontSize: 22 }} />
-              <Typography variant="caption" sx={{ color: "gray" }}>
+              <QueryBuilderIcon sx={{ color: "primary.light", fontSize: 22 }} />
+              <Typography variant="caption" sx={{ color: "primary.light" }}>
                 posted on 1 day ago
               </Typography>
             </Box>
