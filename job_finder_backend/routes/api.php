@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\NewPasswordController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SaveJobController;
@@ -14,6 +15,8 @@ use App\Http\Controllers\EmployerVerficationController;
 
 Route::post('/register',[AuthController::class,'register']);
 Route::post('/login',[AuthController::class,'login']);
+Route::post('/forgot-password',[NewPasswordController::class,'forgotPassword']);
+Route::post('/reset-password',[NewPasswordController::class,'resetPassword']);
 
 Route::post('/admin/employerVerification/{id}', [EmployerVerficationController::class, 'updateStatus']);
 
@@ -21,6 +24,7 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
     Route::get('/profile', [AuthController::class, 'profile']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/refresh', [AuthController::class, 'refresh']);
+    Route::post('/update-mail',[AuthController::class,'updateMail']);   
     Route::delete('/removeuser', [AuthController::class, 'removeUser']);
     Route::post('/admin-account-creation', [AuthController::class, 'adminAccountCreation']);
     Route::post('/auth/{provider}/call-back', [SocialLoginController::class, 'socialLogin']);

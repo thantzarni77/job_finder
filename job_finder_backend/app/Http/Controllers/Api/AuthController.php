@@ -58,14 +58,14 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $cred  = $request->only("email", "password");
+        $cred = $request->only("email", "password");
         $token = JWTAuth::attempt($cred);
 
         if (! $token) {
             return $this->erorsResponse("Invalid Email or Password", null, 401);
         }
 
-        $user          = JWTAuth::user();
+        $user = JWTAuth::user();
         $refresh_token = Str::random(60);
         $user->update([
             'refresh_token' => hash('sha256', $refresh_token),
@@ -152,13 +152,49 @@ class AuthController extends Controller
         }
     }
 
+    public function updateMail(Request $request)
+    {
+        try{
+            // Validate the new email
+            $validator = Validator::make($request->all(), [
+                'email' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'message' => 'Invalid email.',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            // Get authenticated user
+            $user = JWTAuth::parseToken()->authenticate();
+
+            // Update the email
+            $user->email = $request->input('email');
+            $user->save();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Email updated successfully.',
+                'data' => $user
+            ]);
+
+        }catch(\Exception $e){
+            return response()->json([
+                'message' => 'An error occurred while updating the email.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 
     public function refresh(Request $request)
     {
 
-        $refresh_token        = $request->cookie('refresh_token');
+        $refresh_token = $request->cookie('refresh_token');
         $hashed_refresh_token = hash('sha256', $refresh_token);
-        $user                 = User::where('refresh_token', $hashed_refresh_token)->first();
+        $user = User::where('refresh_token', $hashed_refresh_token)->first();
 
         if (! $user) {
             return $this->erorsResponse("Unauthenticated", null, 401);
@@ -172,8 +208,8 @@ class AuthController extends Controller
 
         return response()->json([
             'statusCode' => 200,
-            'message'    => 'Access token refreshed successfully',
-            'data'       => [
+            'message' => 'Access token refreshed successfully',
+            'data' => [
                 'access_token' => $new_access_token,
             ],
         ], 200);
