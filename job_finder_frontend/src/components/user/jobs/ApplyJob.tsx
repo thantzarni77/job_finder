@@ -107,20 +107,30 @@ const ApplyJob = () => {
           width: "100%",
           display: "flex",
           alignItems: "flex-start",
-          gap: 10,
+          gap: { xs: 0, md: 5 },
         }}
       >
-        <JobCard />
+        <Box sx={{ display: { xs: "none", md: "block" } }}>
+          <JobCard />
+        </Box>
 
         {/* application form */}
-        <Box>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            width: { xs: "90%", md: "60%", lg: "35%" },
+            gap: 3,
+            mx: { xs: "auto", md: 0 },
+          }}
+        >
           <Box
             sx={{
               display: "flex",
               flexDirection: "column",
               gap: "8px",
-              width: "400px",
-              mb: 4,
+              width: "full",
               mt: 3,
             }}
           >
@@ -169,8 +179,7 @@ const ApplyJob = () => {
               display: "flex",
               flexDirection: "column",
               gap: "8px",
-              width: "400px",
-              my: 3,
+              width: "full",
             }}
           >
             <Typography
@@ -218,8 +227,7 @@ const ApplyJob = () => {
               display: "flex",
               flexDirection: "column",
               gap: "8px",
-              width: "400px",
-              my: 3,
+              width: "full",
             }}
           >
             <Typography
@@ -267,8 +275,7 @@ const ApplyJob = () => {
               display: "flex",
               flexDirection: "column",
               gap: "8px",
-              width: "400px",
-              my: 3,
+              width: "full",
             }}
           >
             <Typography
@@ -318,8 +325,7 @@ const ApplyJob = () => {
               display: "flex",
               flexDirection: "column",
               gap: "8px",
-              width: "400px",
-              my: 3,
+              width: "full",
             }}
           >
             <Typography
@@ -424,7 +430,7 @@ const ApplyJob = () => {
                 textTransform: "none",
                 fontWeight: 400,
                 borderRadius: "8px",
-                px: 1,
+                p: 1,
                 "&:hover": {
                   boxShadow: "none",
                 },

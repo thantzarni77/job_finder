@@ -4,6 +4,8 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthSeeder extends Seeder
 {
@@ -16,7 +18,8 @@ class AuthSeeder extends Seeder
             "name"      => "admin",
             "email"     => "admin@gmail.com",
             "password"  => Hash::make("admin1234"),
-            "user_type" => "admin",
+            "user_type" => "admin"
         ]);
+    
     }
 }

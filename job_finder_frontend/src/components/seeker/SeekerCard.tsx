@@ -7,14 +7,13 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import BookmarkIcon from "@mui/icons-material/Bookmark";
-import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
-import VerifiedIcon from "@mui/icons-material/Verified";
 import { NavLink } from "react-router";
 
-const JobCard = () => {
+const SeekerCard = () => {
   return (
     <Box
       sx={{
@@ -52,8 +51,7 @@ const JobCard = () => {
                 }}
                 variant="square"
               >
-                KBZ <br />
-                Pay
+                F
               </Avatar>
               <Box
                 sx={{
@@ -70,21 +68,11 @@ const JobCard = () => {
                     ":hover": { cursor: "pointer", color: "primary.main" },
                   }}
                 >
-                  <NavLink to={"/job/JC-1111"}>Full Stack Developer</NavLink>
+                  <NavLink to={""}>Full Stack Developer</NavLink>
                 </Typography>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <VerifiedIcon sx={{ fontSize: "22px", color: "#75C149" }} />
-                  <Typography
-                    variant="body2"
-                    sx={{ fontWeight: 400, fontSize: "14px" }}
-                  >
-                    Verified
-                  </Typography>
-                </Box>
               </Box>
             </Box>
             <Checkbox
-              defaultChecked
               disableRipple
               sx={{
                 "& .MuiSvgIcon-root": { fontSize: 26, mr: -2 },
@@ -93,8 +81,8 @@ const JobCard = () => {
                   color: "primary.main",
                 },
               }}
-              icon={<BookmarkBorderOutlinedIcon />}
-              checkedIcon={<BookmarkIcon />}
+              icon={<AddCircleIcon />}
+              checkedIcon={<CheckCircleIcon sx={{ color: "#75C149" }} />}
               name={"fullTime"}
             />
           </Box>
@@ -106,17 +94,15 @@ const JobCard = () => {
                 textAlign: "left",
                 alignItems: "start",
                 gap: 1,
+                mb: 1,
               }}
             >
               <LocationOnOutlinedIcon
                 sx={{ color: "primary.light", fontSize: 22 }}
               />
 
-              <Typography
-                variant="caption"
-                sx={{ color: "primary.light", width: "250px" }}
-              >
-                N0.123, Yadanar St, Marchart Road, Yangon
+              <Typography variant="caption" sx={{ color: "primary.light" }}>
+                Yangon
               </Typography>
             </Box>
             <Box
@@ -125,6 +111,7 @@ const JobCard = () => {
                 alignItems: "center",
                 textAlign: "left",
                 gap: 1,
+                mb: 1,
               }}
             >
               <QueryBuilderIcon sx={{ color: "primary.light", fontSize: 22 }} />
@@ -133,65 +120,65 @@ const JobCard = () => {
               </Typography>
             </Box>
           </Box>
-        </Box>
-        {/* tags */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
-          <Chip
+          {/* tags */}
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
+            <Chip
+              sx={{
+                borderRadius: "4px",
+                backgroundColor: "primary.main",
+                color: "#ffffff",
+                width: "fit-content",
+                height: "28px",
+              }}
+              label="Chip Filled"
+            />
+            <Chip
+              sx={{
+                borderRadius: "4px",
+                backgroundColor: "primary.main",
+                color: "#ffffff",
+                width: "fit-content",
+                height: "28px",
+              }}
+              label="Chip Filled"
+            />
+            <Chip
+              sx={{
+                borderRadius: "4px",
+                backgroundColor: "primary.main",
+                color: "#ffffff",
+                width: "fit-content",
+                height: "28px",
+              }}
+              label="Chip Filled"
+            />
+          </Box>
+          <Divider flexItem />
+          <Box
             sx={{
-              borderRadius: "4px",
-              backgroundColor: "primary.main",
-              color: "#ffffff",
-              width: "fit-content",
-              height: "28px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              mt: 1,
             }}
-            label="Chip Filled"
-          />
-          <Chip
-            sx={{
-              borderRadius: "4px",
-              backgroundColor: "primary.main",
-              color: "#ffffff",
-              width: "fit-content",
-              height: "28px",
-            }}
-            label="Chip Filled"
-          />
-          <Chip
-            sx={{
-              borderRadius: "4px",
-              backgroundColor: "primary.main",
-              color: "#ffffff",
-              width: "fit-content",
-              height: "28px",
-            }}
-            label="Chip Filled"
-          />
-        </Box>
-        <Divider flexItem />
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            mt: 1,
-          }}
-        >
-          <Typography
-            variant="body1"
-            sx={{ fontWeight: "bold", color: "secondary.main" }}
           >
-            Salary
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{ fontWeight: "bold", color: "secondary.main" }}
-          >
-            800000MMK
-          </Typography>
+            <Typography
+              variant="body1"
+              sx={{ fontWeight: "bold", color: "secondary.main" }}
+            >
+              Salary
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{ fontWeight: "bold", color: "secondary.main" }}
+            >
+              800000MMK
+            </Typography>
+          </Box>
         </Box>
       </Paper>
     </Box>
   );
 };
 
-export default JobCard;
+export default SeekerCard;

@@ -1,15 +1,16 @@
 <?php
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Traits\HttpResponseTrait;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Traits\HttpResponseTrait;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Tymon\JWTAuth\Exceptions\JWTException;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
@@ -31,13 +32,19 @@ class AuthController extends Controller
 
             $refresh_token = Str::random(60);
 
-            $user = User::create([
-                "name"          => $request->name,
-                "email"         => $request->email,
-                "password"      => Hash::make($request->password),
-                'refresh_token' => hash('sha256', $refresh_token),
-                "user_type"     => $request->user_type ?? "seeker",
-            ]);
+            //user account checking and creation
+            if ($request->user_type === "admin") {
+                //can not create admin account if user_type is seeker and employer
+                return response()->json(['error' => 'Admin account can not be created'], 400);
+            } else {
+                $user = User::create([
+                    "name" => $request->name,
+                    "email" => $request->email,
+                    "password" => Hash::make($request->password),
+                    'refresh_token' => hash('sha256', $refresh_token),
+                    "user_type" => $request->user_type ?? "seeker"
+                ]);
+            }
 
             $token = JWTAuth::fromUser($user);
 
@@ -51,14 +58,14 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $cred  = $request->only("email", "password");
+        $cred = $request->only("email", "password");
         $token = JWTAuth::attempt($cred);
 
         if (! $token) {
             return $this->erorsResponse("Invalid Email or Password", null, 401);
         }
 
-        $user          = JWTAuth::user();
+        $user = JWTAuth::user();
         $refresh_token = Str::random(60);
         $user->update([
             'refresh_token' => hash('sha256', $refresh_token),
@@ -101,12 +108,93 @@ class AuthController extends Controller
         ])->cookie('refresh_token', null, -1, '/', null, true, true);
     }
 
+    public function adminAccountCreation(Request $request)
+    {
+
+        if (Auth::user()->user_type === "super admin") {
+            //check validation
+            $validated = Validator::make($request->all(), [
+                "name" => "required",
+                "email" => "required|email|unique:users",
+                "password" => "required|min:6",
+            ]);
+            //if validation fails cancel the request
+            if ($validated->fails()) {
+                return $this->erorsResponse("Validator fails", $validated->messages());
+            };
+
+            $refresh_token = Str::random(60);
+
+            $user = User::create([
+                "name" => $request->name,
+                "email" => $request->email,
+                "password" => Hash::make($request->password),
+                "refresh_token" => hash('sha256', $refresh_token),
+                "user_type" => "admin"
+            ]);
+
+            $token = JWTAuth::fromUser($user);
+
+            return response()->json([
+                'statusCode' => 200,
+                'message' => 'Admin account created successfully',
+                'data' => [
+                    'data' => $user,
+                    'token' => $token,
+                ]
+            ]);
+        } else {
+            //if user is not super admin cancel the request
+            return response()->json([
+                'statusCode' => 403,
+                'message' => 'You are not authorized to create admin account',
+            ]);
+        }
+    }
+
+    public function updateMail(Request $request)
+    {
+        try{
+            // Validate the new email
+            $validator = Validator::make($request->all(), [
+                'email' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'message' => 'Invalid email.',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            // Get authenticated user
+            $user = JWTAuth::parseToken()->authenticate();
+
+            // Update the email
+            $user->email = $request->input('email');
+            $user->save();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Email updated successfully.',
+                'data' => $user
+            ]);
+
+        }catch(\Exception $e){
+            return response()->json([
+                'message' => 'An error occurred while updating the email.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
     public function refresh(Request $request)
     {
 
-        $refresh_token        = $request->cookie('refresh_token');
+        $refresh_token = $request->cookie('refresh_token');
         $hashed_refresh_token = hash('sha256', $refresh_token);
-        $user                 = User::where('refresh_token', $hashed_refresh_token)->first();
+        $user = User::where('refresh_token', $hashed_refresh_token)->first();
 
         if (! $user) {
             return $this->erorsResponse("Unauthenticated", null, 401);
@@ -120,8 +208,8 @@ class AuthController extends Controller
 
         return response()->json([
             'statusCode' => 200,
-            'message'    => 'Access token refreshed successfully',
-            'data'       => [
+            'message' => 'Access token refreshed successfully',
+            'data' => [
                 'access_token' => $new_access_token,
             ],
         ], 200);

@@ -10,21 +10,20 @@ import {
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 
 import JobFilter from "../../../components/user/jobs/JobFilter";
-import JobCard from "../../../components/user/jobs/JobCard";
 
 import { useState } from "react";
 import SearchBox from "../../../components/user/SearchBox";
+import CompanyCard from "../../../components/employer/CompanyCard";
 
-const jobs = [
-  "full Time",
-  "part Time",
-  "intership",
-  "volunteer",
-  "freelancer",
-  "work from home",
+const companyType = [
+  "public",
+  "private",
+  "government",
+  "non-profit",
+  "startup",
 ];
 
-const Jobs = () => {
+const Companies = () => {
   const [sortBy, setSortBy] = useState<string>("recent");
   const [open, setOpen] = useState<boolean>(false);
 
@@ -58,7 +57,7 @@ const Jobs = () => {
       }}
     >
       {/* search input */}
-      <SearchBox searchType={"Jobs"} />
+      <SearchBox searchType={"Company"} />
 
       {/* job posts and filter */}
       <Box
@@ -67,12 +66,13 @@ const Jobs = () => {
           my: 3,
           display: "flex",
           flexDirection: { xs: "column", md: "row" },
-          alignItems: { xs: "center", md: "start" },
+          alignItems: "start",
           width: "100%",
+          p: 2,
           gap: 6,
         }}
       >
-        <JobFilter filterType={"Job"} filterTypeArray={jobs} />
+        <JobFilter filterType={"Company"} filterTypeArray={companyType} />
         <Box
           sx={{
             display: "flex",
@@ -84,15 +84,15 @@ const Jobs = () => {
           {/* job posts section header */}
           <Box
             sx={{
-              width: { xs: "100%", md: "92%" },
+              width: "94%",
               display: "flex",
-              alignItems: { xs: "center", md: "start" },
+              alignItems: "start",
               justifyContent: "space-between",
               mb: 2,
             }}
           >
             <Typography variant="caption" sx={{ color: "primary.light" }}>
-              500+ jobs are found
+              500+ companies are found
             </Typography>
             {/* filter box */}
             <Select
@@ -201,12 +201,17 @@ const Jobs = () => {
                 display: "flex",
                 width: "100%",
                 justifyContent: "center",
-                gap: { xs: 2, md: 6 },
+                gap: { xs: 2, md: 4 },
                 flexWrap: "wrap",
               }}
             >
-              <JobCard /> <JobCard /> <JobCard /> <JobCard /> <JobCard />
-              <JobCard /> <JobCard />
+              <CompanyCard />
+              <CompanyCard />
+              <CompanyCard />
+              <CompanyCard />
+              <CompanyCard />
+              <CompanyCard />
+              <CompanyCard />
             </Box>
             {/* pagination */}
             <Box
@@ -234,4 +239,4 @@ const Jobs = () => {
   );
 };
 
-export default Jobs;
+export default Companies;
