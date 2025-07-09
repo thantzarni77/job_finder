@@ -5,15 +5,13 @@ import { useNavigate } from "react-router";
 const ChangePassword = () => {
   const navigate = useNavigate();
   return (
-    <Box sx={{ width: "90%", mx: "auto" }}>
+    <Box sx={{ width: "90%", mx: "auto", p: 2, mt: 5, mb: 10 }}>
       {/* Form Title & back button */}
       <Box
         sx={{
           width: "100%",
           display: "flex",
           alignItems: "center",
-          mt: 5,
-          mb: 2,
         }}
       >
         <ArrowBackIosIcon

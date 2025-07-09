@@ -35,6 +35,7 @@ export default function Theme() {
           },
           secondary: {
             main: "#33373B",
+            light: "#f5f5f5",
           },
         }),
       },

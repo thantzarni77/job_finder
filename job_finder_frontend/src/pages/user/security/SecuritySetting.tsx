@@ -1,5 +1,5 @@
-import { Box, Container, Typography } from "@mui/material";
-import ArrowBackIosNewOutlinedIcon from "@mui/icons-material/ArrowBackIosNewOutlined";
+import { Box, Typography } from "@mui/material";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import Email from "./Email";
 import Password from "./Password";
 import { useNavigate } from "react-router";
@@ -7,13 +7,13 @@ import { useNavigate } from "react-router";
 const SecuritySetting = () => {
   const navigate = useNavigate();
   return (
-    <Container
+    <Box
       sx={{
         mx: "auto",
         p: 2,
         mt: 5,
         mb: 15,
-        width: "100%",
+        width: "90%",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -27,10 +27,10 @@ const SecuritySetting = () => {
           justifyContent: "space-between",
         }}
       >
-        <ArrowBackIosNewOutlinedIcon
+        <ArrowBackIosIcon
           onClick={() => navigate("/settings/user/1/")}
           sx={{
-            fontSize: "30px",
+            fontSize: "32px",
             color: "primary.main",
             ":hover": { cursor: "pointer" },
           }}
@@ -48,7 +48,7 @@ const SecuritySetting = () => {
         <Email />
         <Password />
       </Box>
-    </Container>
+    </Box>
   );
 };
 
