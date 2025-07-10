@@ -41,7 +41,7 @@ const AdminSeekerCard = () => {
       </MuiLink>
 
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-        <CircleIcon sx={{ color: "#75C149", fontSize: "20px" }} />
+        <CircleIcon sx={{ color: "success.main", fontSize: "20px" }} />
         <Typography variant="subtitle2" sx={{ fontWeight: 400 }}>
           Active
         </Typography>
@@ -77,7 +77,7 @@ const AdminSeekerCard = () => {
             textTransform: "none",
           }}
         >
-          <DeleteOutlineOutlinedIcon sx={{ color: "#EA4335" }} />
+          <DeleteOutlineOutlinedIcon sx={{ color: "error.main" }} />
           <Typography
             variant="subtitle2"
             sx={{ fontWeight: 300, color: "#000000" }}

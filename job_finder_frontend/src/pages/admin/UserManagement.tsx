@@ -147,7 +147,7 @@ const UserManagement = () => {
           >
             <Typography
               variant="subtitle2"
-              sx={{ fontWeight: 400, color: "#EA4335" }}
+              sx={{ fontWeight: 400, color: "error.main" }}
             >
               Suspended Users
             </Typography>

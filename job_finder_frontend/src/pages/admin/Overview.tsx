@@ -81,7 +81,7 @@ const Overview = () => {
           >
             <Typography
               variant="subtitle2"
-              sx={{ fontWeight: 400, color: "#75C149" }}
+              sx={{ fontWeight: 400, color: "success.main" }}
             >
               Verified Jobs
             </Typography>
@@ -100,7 +100,7 @@ const Overview = () => {
           >
             <Typography
               variant="subtitle2"
-              sx={{ fontWeight: 400, color: "#EA4335" }}
+              sx={{ fontWeight: 400, color: "error.main" }}
             >
               Rejected Jobs
             </Typography>
@@ -231,7 +231,7 @@ const Overview = () => {
           >
             <Typography
               variant="subtitle2"
-              sx={{ fontWeight: 400, color: "#EA4335" }}
+              sx={{ fontWeight: 400, color: "error.main" }}
             >
               Suspended Users
             </Typography>

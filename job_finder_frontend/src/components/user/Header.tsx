@@ -213,6 +213,7 @@ export default function Header() {
               <SettingIcon />
             </IconButton>
             <Button
+              ref={profileRef}
               endIcon={<ArrowDropDownIcon sx={{ color: "white" }} />}
               id="basic-button"
               aria-controls={open ? "basic-menu" : undefined}

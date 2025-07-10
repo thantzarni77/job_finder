@@ -185,7 +185,7 @@ const UserDetailManage = () => {
             </Typography>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <CircleIcon sx={{ color: "#EA4335", fontSize: "20px" }} />
+            <CircleIcon sx={{ color: "error.main", fontSize: "20px" }} />
             <Typography variant="subtitle2" sx={{ fontWeight: 400 }}>
               Ban status : None
             </Typography>
@@ -247,7 +247,7 @@ const UserDetailManage = () => {
               border: 1,
             }}
           >
-            <Typography sx={{ color: "#EA4335" }}> Suspend User</Typography>
+            <Typography sx={{ color: "error.main" }}> Suspend User</Typography>
           </Button>
           <Button
             sx={{
@@ -259,7 +259,7 @@ const UserDetailManage = () => {
               border: 1,
             }}
           >
-            <Typography sx={{ color: "#EA4335" }}> Delete</Typography>
+            <Typography sx={{ color: "error.main" }}> Delete</Typography>
           </Button>
         </Box>
         <Button

@@ -69,7 +69,7 @@ const JobManagement = () => {
           >
             <Typography
               variant="subtitle2"
-              sx={{ fontWeight: 400, color: "#75C149" }}
+              sx={{ fontWeight: 400, color: "success.main" }}
             >
               Verified Jobs
             </Typography>
@@ -88,7 +88,7 @@ const JobManagement = () => {
           >
             <Typography
               variant="subtitle2"
-              sx={{ fontWeight: 400, color: "#EA4335" }}
+              sx={{ fontWeight: 400, color: "error.main" }}
             >
               Rejected Jobs
             </Typography>

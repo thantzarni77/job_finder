@@ -73,7 +73,9 @@ const JobCard = () => {
                   <NavLink to={"/job/JC-1111"}>Full Stack Developer</NavLink>
                 </Typography>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <VerifiedIcon sx={{ fontSize: "22px", color: "#75C149" }} />
+                  <VerifiedIcon
+                    sx={{ fontSize: "22px", color: "success.main" }}
+                  />
                   <Typography
                     variant="body2"
                     sx={{ fontWeight: 400, fontSize: "14px" }}

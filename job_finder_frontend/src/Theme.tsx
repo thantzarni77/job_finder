@@ -30,12 +30,18 @@ export default function Theme() {
         mode,
         ...(mode === "light" && {
           primary: {
-            main: "#5f6caf",
-            light: "#898989",
+            main: "#5f6caf", //purple
+            light: "#898989", //light gray
           },
           secondary: {
-            main: "#33373B",
-            light: "#f5f5f5",
+            main: "#33373B", //dark gray
+            light: "#f5f5f5", //bg white
+          },
+          error: {
+            main: "#EA4335",
+          },
+          success: {
+            main: "#75C149",
           },
         }),
       },
