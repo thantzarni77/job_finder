@@ -13,7 +13,7 @@ const BookmarkFollowing = () => {
         gap: { xs: 2, md: 2, lg: 1 },
         width: "100%",
         mx: "auto",
-        mb: 10,
+        mb: 11,
       }}
     >
       <SeekerCard />

@@ -1,15 +1,27 @@
 import { create } from "zustand";
 import type { PaletteMode } from "@mui/material";
 
-type AppStore = {
+type AppDrawerStore = {
   showDrawer: boolean;
   setShowDrawer: (value: boolean) => void;
 };
 
-export const useAppStore = create<AppStore>((set) => ({
+export const useAppStore = create<AppDrawerStore>((set) => ({
   showDrawer: false,
   setShowDrawer: (userValue) => {
     set({ showDrawer: userValue });
+  },
+}));
+
+type FilterDrawerStore = {
+  showFilterDrawer: boolean;
+  setShowFilterDrawer: (value: boolean) => void;
+};
+
+export const useFilterStore = create<FilterDrawerStore>((set) => ({
+  showFilterDrawer: false,
+  setShowFilterDrawer: (userValue) => {
+    set({ showFilterDrawer: userValue });
   },
 }));
 

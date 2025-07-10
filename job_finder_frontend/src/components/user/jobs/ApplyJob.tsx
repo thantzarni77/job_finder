@@ -75,7 +75,7 @@ const ApplyJob = () => {
   };
 
   return (
-    <Box sx={{ width: "90%", mx: "auto" }}>
+    <Box sx={{ width: "90%", mx: "auto", mb: 15 }}>
       {/* Form Title & back button */}
       <Box
         sx={{
@@ -106,13 +106,12 @@ const ApplyJob = () => {
         sx={{
           width: "100%",
           display: "flex",
-          alignItems: "flex-start",
-          gap: { xs: 0, md: 5 },
+          flexDirection: { xs: "column", md: "column", lg: "row" },
+          alignItems: { xs: "center", md: "center", lg: "flex-start" },
+          gap: { xs: 0, md: 0, lg: 5 },
         }}
       >
-        <Box sx={{ display: { xs: "none", md: "block" } }}>
-          <JobCard />
-        </Box>
+        <JobCard />
 
         {/* application form */}
         <Box

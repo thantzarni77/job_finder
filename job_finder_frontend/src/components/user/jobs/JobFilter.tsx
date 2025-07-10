@@ -42,10 +42,10 @@ const JobFilter = ({ filterType, filterTypeArray }: Props) => {
     <Box
       sx={{
         display: "flex",
-        flexDirection: { xs: "row", md: "column" },
+        flexDirection: "column",
         flexWrap: "wrap",
         gap: 2,
-        alignItems: { xs: "stretch", md: "center" },
+        alignItems: "center",
       }}
     >
       {/* job type and filter */}
