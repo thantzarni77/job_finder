@@ -24,14 +24,19 @@ export default function Profile() {
 
   return (
     <Container sx={{ py: 3, mb: 20 }} maxWidth="lg">
-      <Typography variant="h5" sx={{ textAlign: "center", fontWeight: 700 }}>
+      <Typography
+        variant="h5"
+        sx={{ textAlign: "center", fontWeight: 700, mb: 5 }}
+      >
         Profile
       </Typography>
 
       <Box>
         <Box sx={{ display: "flex", alignItems: "center", gap: 7 }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Avatar sx={{ width: 80, height: 80 }} />
+            <Avatar
+              sx={{ width: { xs: 50, md: 80 }, height: { xs: 50, md: 80 } }}
+            />
             <Box>
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
                 John Doe
@@ -52,19 +57,44 @@ export default function Profile() {
           <Box sx={{ display: "flex", gap: 2, flexDirection: "column" }}>
             <Button
               variant="outlined"
-              size="small"
-              startIcon={<EditIcon />}
+              sx={{
+                width: { xs: "20px", sm: " 150px", md: "150px" },
+                height: "30px",
+              }}
               onClick={() => navigate(`/profile/1/edit`)}
             >
-              Edit Profile
+              <EditIcon sx={{ fontSize: "20px" }} />
+              <Typography
+                variant="subtitle2"
+                sx={{
+                  mx: 1,
+                  textTransform: "none",
+                  display: { xs: "none", sm: "inline-flex", md: "inline-flex" },
+                }}
+              >
+                Edit Profile
+              </Typography>
             </Button>
+
             <Button
+              sx={{
+                width: { xs: "20px", sm: " 185px", md: "185px" },
+                height: "30px",
+              }}
               variant="outlined"
-              size="small"
-              startIcon={<AddIcon />}
               onClick={() => navigate(`/project/add`)}
             >
-              Add New Project
+              <AddIcon sx={{ fontSize: "20px" }} />
+              <Typography
+                variant="subtitle2"
+                sx={{
+                  mx: 1,
+                  textTransform: "none",
+                  display: { xs: "none", sm: "inline-flex", md: "inline-flex" },
+                }}
+              >
+                Add New Project
+              </Typography>
             </Button>
           </Box>
         </Box>

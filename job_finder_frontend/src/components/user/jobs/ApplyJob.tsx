@@ -86,17 +86,19 @@ const ApplyJob = () => {
           mb: 4,
         }}
       >
-        <ArrowBackIosIcon
-          onClick={() => navigate("/job/JC-1111")}
-          sx={{
-            color: "primary.main",
-            fontSize: 32,
-            ":hover": {
-              color: "secondary.main",
-              cursor: "pointer",
-            },
-          }}
-        />
+        <IconButton onClick={() => navigate("/job/JC-1111")}>
+          <ArrowBackIosIcon
+            sx={{
+              color: "primary.main",
+              fontSize: 32,
+              ":hover": {
+                color: "secondary.main",
+                cursor: "pointer",
+              },
+            }}
+          />
+        </IconButton>
+
         <Typography variant="h5" sx={{ fontWeight: 600, mx: "auto" }}>
           Application Form
         </Typography>

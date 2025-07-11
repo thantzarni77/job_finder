@@ -1,4 +1,4 @@
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Box, Button, IconButton, TextField, Typography } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { useNavigate } from "react-router";
 
@@ -14,17 +14,19 @@ const ChangeEmail = () => {
           alignItems: "center",
         }}
       >
-        <ArrowBackIosIcon
-          onClick={() => navigate("/settings/user/1/security")}
-          sx={{
-            color: "primary.main",
-            fontSize: 32,
-            ":hover": {
-              color: "secondary.main",
-              cursor: "pointer",
-            },
-          }}
-        />
+        <IconButton onClick={() => navigate("/settings/user/1/security")}>
+          <ArrowBackIosIcon
+            sx={{
+              color: "primary.main",
+              fontSize: 32,
+              ":hover": {
+                color: "secondary.main",
+                cursor: "pointer",
+              },
+            }}
+          />
+        </IconButton>
+
         <Typography variant="h5" sx={{ fontWeight: 600, mx: "auto" }}>
           Email
         </Typography>

@@ -39,6 +39,18 @@ export const useCompanyFilterStore = create<CompanyFilterDrawerStore>(
   }),
 );
 
+type TalentFilterDrawerStore = {
+  showTalentFilterDrawer: boolean;
+  setShowTalentFilterDrawer: (value: boolean) => void;
+};
+
+export const useTalentFilterStore = create<TalentFilterDrawerStore>((set) => ({
+  showTalentFilterDrawer: false,
+  setShowTalentFilterDrawer: (userValue) => {
+    set({ showTalentFilterDrawer: userValue });
+  },
+}));
+
 // light mode dark mode
 type ThemeStore = {
   mode: PaletteMode;

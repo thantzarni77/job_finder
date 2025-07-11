@@ -11,8 +11,9 @@ const SearchBox = ({ searchType }: Props) => {
   return (
     <Box
       sx={{
-        width: { xs: "95%", md: "62%" },
-        height: { xs: "200px", md: "100px" },
+        width: { xs: "100%", sm: "80%", md: "70%", lg: "70%" },
+        height: { xs: "50px", md: "100px" },
+        backgroundColor: "#ffffff",
         mx: "auto",
         display: "flex",
         justifyContent: "space-between",

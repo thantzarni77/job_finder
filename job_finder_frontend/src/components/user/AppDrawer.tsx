@@ -8,10 +8,8 @@ import {
 } from "@mui/material";
 import { useAppStore } from "../../store/Appstore";
 import { Link } from "react-router";
-import { useNavigate } from "react-router";
 
 export default function AppDrawer() {
-  const navigate = useNavigate();
   const showDrawer = useAppStore((state) => state.showDrawer);
   const setShowDrawer = useAppStore((state) => state.setShowDrawer);
 
@@ -37,7 +35,7 @@ export default function AppDrawer() {
             </ListItemButton>
           </ListItem>
 
-          <ListItem>
+          <ListItem sx={{ display: { xs: "inline-flex", sm: "none" } }}>
             <ListItemButton>
               <Link to="/jobs">
                 <Typography>Jobs</Typography>
@@ -45,15 +43,15 @@ export default function AppDrawer() {
             </ListItemButton>
           </ListItem>
 
-          <ListItem>
+          <ListItem sx={{ display: { xs: "inline-flex", sm: "none" } }}>
             <ListItemButton>
-              <Link to="/talent">
-                <Typography>Talent</Typography>
+              <Link to="/talents">
+                <Typography>Talents</Typography>
               </Link>
             </ListItemButton>
           </ListItem>
 
-          <ListItem>
+          <ListItem sx={{ display: { xs: "inline-flex", sm: "none" } }}>
             <ListItemButton>
               <Link to="/companies">
                 <Typography>Companies</Typography>
@@ -61,13 +59,14 @@ export default function AppDrawer() {
             </ListItemButton>
           </ListItem>
 
-          <ListItem>
+          <ListItem sx={{ display: { xs: "inline-flex", sm: "none" } }}>
             <ListItemButton>
               <Link to="/post/job">
                 <Typography>Post A Job</Typography>
               </Link>
             </ListItemButton>
           </ListItem>
+
           <ListItem>
             <ListItemButton>
               <Link to="/profile/1">
@@ -75,36 +74,20 @@ export default function AppDrawer() {
               </Link>
             </ListItemButton>
           </ListItem>
-          <ListItem>
+
+          <ListItem sx={{ display: { xs: "inline-flex", sm: "none" } }}>
             <ListItemButton>
               <Link to="/notifications/user/1">
                 <Typography>Notifications</Typography>
               </Link>
             </ListItemButton>
           </ListItem>
-          <ListItem>
+
+          <ListItem sx={{ display: { xs: "inline-flex", sm: "none" } }}>
             <ListItemButton>
               <Link to="/settings/user/1">
                 <Typography>Settings</Typography>
               </Link>
-            </ListItemButton>
-          </ListItem>
-
-          <ListItem
-            onClick={() => navigate("/notifications/user/1")}
-            sx={{ display: { xs: "inline-flex", sm: "none" } }}
-          >
-            <ListItemButton sx={{ justifyContent: "center" }}>
-              <Typography>Notifications</Typography>
-            </ListItemButton>
-          </ListItem>
-
-          <ListItem
-            onClick={() => navigate("/settings/user/1")}
-            sx={{ display: { xs: "inline-flex", sm: "none" } }}
-          >
-            <ListItemButton sx={{ justifyContent: "center" }}>
-              <Typography>Settings</Typography>
             </ListItemButton>
           </ListItem>
         </List>

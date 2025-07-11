@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   MenuItem,
   Pagination,
   Select,
@@ -8,12 +9,15 @@ import {
   type SelectChangeEvent,
 } from "@mui/material";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import FilterListIcon from "@mui/icons-material/FilterList";
 
 import JobFilter from "../../components/user/jobs/JobFilter";
 import TalentCard from "../../components/user/TalentCard";
 
 import { useState } from "react";
 import SearchBox from "../../components/user/SearchBox";
+import TalentFilterDrawer from "../../components/user/TalentFilterDrawer";
+import { useTalentFilterStore } from "../../store/Appstore";
 
 const jobs = [
   "full Time",
@@ -27,6 +31,13 @@ const jobs = [
 export default function Talent() {
   const [sortBy, setSortBy] = useState<string>("recent");
   const [open, setOpen] = useState<boolean>(false);
+
+  const showTalentFilterDrawer = useTalentFilterStore(
+    (state) => state.showTalentFilterDrawer,
+  );
+  const setShowTalentFilterDrawer = useTalentFilterStore(
+    (state) => state.setShowTalentFilterDrawer,
+  );
 
   const handleChange = (event: SelectChangeEvent<string>) => {
     setSortBy(event.target.value);
@@ -52,15 +63,55 @@ export default function Talent() {
     <Box
       sx={{
         my: 3,
-        p: 4,
-        width: "95%",
+        p: { xs: 0, sm: 2, md: 2, lg: 4 },
+        width: { xs: "100", sm: "100%", md: "95%" },
         mx: "auto",
       }}
     >
-      {/* search input */}
-      <SearchBox searchType={"Jobs"} />
+      {/* search input && filter button*/}
+      <Box
+        sx={{
+          display: { xs: "block", sm: "flex" },
+          alignItems: "center",
+          width: "95%",
+          mx: "auto",
+        }}
+      >
+        <SearchBox searchType={"Talents"} />
+        <Button
+          variant="contained"
+          onClick={() => setShowTalentFilterDrawer(!showTalentFilterDrawer)}
+          sx={{
+            mx: { xs: "auto", sm: "none" },
+            display: { xs: "block", md: "none" },
+            color: "primary.main",
+            boxShadow: "none",
+            p: "5px",
+            my: 2,
+            ":hover": {
+              boxShadow: "none",
+            },
+          }}
+        >
+          <Typography
+            sx={{
+              display: { xs: "none", sm: "inline" },
+              color: "white",
+              mx: 1,
+              textTransform: "none",
+              boxShadow: "none",
+              ":hover": {
+                boxShadow: "none",
+              },
+            }}
+          >
+            Filter
+          </Typography>
+          <FilterListIcon sx={{ color: "white" }} />
+        </Button>
+      </Box>
 
-      {/* job posts and filter */}
+      {/* talents and filter */}
       <Box
         sx={{
           textAlign: "center",
@@ -87,7 +138,7 @@ export default function Talent() {
           {/* job posts section header */}
           <Box
             sx={{
-              width: { xs: "100%", md: "92%" },
+              width: { xs: "82%", sm: "90%", md: "92%" },
               display: "flex",
               alignItems: { xs: "center", md: "start" },
               justifyContent: "space-between",
@@ -111,6 +162,7 @@ export default function Talent() {
                 fontWeight: 400,
                 fontSize: "14px",
                 borderRadius: "5px",
+                bgcolor: "#ffffff",
                 color: "primary.main",
 
                 // Crucially, hide the default input border
@@ -130,6 +182,7 @@ export default function Talent() {
                   paper: {
                     sx: {
                       width: 155,
+                      bgcolor: "#ffffff",
                       borderRadius: "5px",
                       boxShadow: "none",
                       color: "primary.main",
@@ -146,7 +199,7 @@ export default function Talent() {
                   fontWeight: 400,
                   margin: "4px",
                   borderLeft: "4px solid transparent",
-
+                  bgColor: "#ffffff",
                   color: "primary.main",
                   fontSize: "14px",
                   // Style for the currently selected item in the list
@@ -169,6 +222,7 @@ export default function Talent() {
                   borderRadius: "8px",
                   margin: "4px",
                   borderLeft: "4px solid transparent",
+                  bgColor: "#ffffff",
                   color: "primary.main",
                   fontWeight: 400,
                   fontSize: "14px",
@@ -187,7 +241,7 @@ export default function Talent() {
               </MenuItem>
             </Select>
           </Box>
-          {/* jobs */}
+          {/* talents */}
           <Box
             sx={{
               display: "flex",
@@ -199,9 +253,13 @@ export default function Talent() {
             <Box
               sx={{
                 display: "flex",
-                width: "100%",
-                justifyContent: "center",
-                gap: { xs: 2, md: 6 },
+                width: { xs: "100%", sm: "90%", md: "100%" },
+                justifyContent: {
+                  xs: "center",
+                  sm: "space-between",
+                  md: "center",
+                },
+                gap: { xs: 2, md: 4 },
                 flexWrap: "wrap",
               }}
             >
@@ -234,6 +292,7 @@ export default function Talent() {
           </Box>
         </Box>
       </Box>
+      <TalentFilterDrawer />
     </Box>
   );
 }

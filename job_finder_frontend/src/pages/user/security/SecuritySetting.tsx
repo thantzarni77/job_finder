@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import Email from "./Email";
 import Password from "./Password";
@@ -27,14 +27,15 @@ const SecuritySetting = () => {
           justifyContent: "space-between",
         }}
       >
-        <ArrowBackIosIcon
-          onClick={() => navigate("/settings/user/1/")}
-          sx={{
-            fontSize: "32px",
-            color: "primary.main",
-            ":hover": { cursor: "pointer" },
-          }}
-        />
+        <IconButton onClick={() => navigate("/settings/user/1/")}>
+          <ArrowBackIosIcon
+            sx={{
+              fontSize: "32px",
+              color: "primary.main",
+              ":hover": { cursor: "pointer" },
+            }}
+          />
+        </IconButton>
         <Typography variant="h5" sx={{ fontWeight: 600, mx: "auto" }}>
           Security
         </Typography>

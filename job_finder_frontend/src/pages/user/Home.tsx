@@ -75,7 +75,7 @@ export default function Home() {
           Recommeded Jobs For You
         </Typography>
 
-        <Box className="grid grid-cols-1 place-items-center gap-3 md:grid-cols-2 lg:grid-cols-3">
+        <Box className="flex flex-wrap items-center gap-3 md:justify-center">
           <JobCard />
           <JobCard />
           <JobCard />

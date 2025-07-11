@@ -122,13 +122,19 @@ export default function EditProfile() {
           </Box>
           <Box sx={{ mt: 3, display: "flex", flexDirection: "column", gap: 2 }}>
             <Box>
-              <InputLabel htmlFor="name">Your Name</InputLabel>
+              <InputLabel
+                htmlFor="name"
+                sx={{ color: "secondary.main", mb: 1 }}
+              >
+                Your Name
+              </InputLabel>
               <OutlinedInput
                 type="text"
                 id="name"
                 placeholder="Please Enter Your Name"
                 size="small"
                 fullWidth
+                sx={{ bgcolor: "#ffffff" }}
                 {...register("name", { required: true })}
                 error={!!errors.name}
               />
@@ -143,12 +149,18 @@ export default function EditProfile() {
               )}
             </Box>
             <Box>
-              <InputLabel htmlFor="jobTitle">Job Title</InputLabel>
+              <InputLabel
+                htmlFor="jobTitle"
+                sx={{ color: "secondary.main", mb: 1 }}
+              >
+                Job Title
+              </InputLabel>
               <OutlinedInput
                 type="text"
                 id="jobTitle"
                 placeholder="Please Enter Your Job Title"
                 size="small"
+                sx={{ bgcolor: "#ffffff" }}
                 fullWidth
                 {...register("jobTitle", { required: true })}
                 error={!!errors.jobTitle}
@@ -164,7 +176,9 @@ export default function EditProfile() {
               )}
             </Box>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-              <InputLabel htmlFor="education">Education</InputLabel>
+              <InputLabel htmlFor="education" sx={{ color: "secondary.main" }}>
+                Education
+              </InputLabel>
               <Box>
                 <OutlinedInput
                   type="text"
@@ -174,7 +188,7 @@ export default function EditProfile() {
                   fullWidth
                   {...register("education", { required: true })}
                   error={!!errors.education}
-                  sx={{ flex: 1 }}
+                  sx={{ flex: 1, bgcolor: "#ffffff" }}
                 />
                 {errors.education && (
                   <Typography
@@ -194,6 +208,7 @@ export default function EditProfile() {
                   size="small"
                   fullWidth
                   sx={{
+                    bgcolor: "#ffffff",
                     "& input::placeholder": {
                       textAlign: "center",
                     },
@@ -203,7 +218,9 @@ export default function EditProfile() {
             </Box>
 
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-              <InputLabel htmlFor="experience">Experience</InputLabel>
+              <InputLabel htmlFor="experience" sx={{ color: "secondary.main" }}>
+                Experience
+              </InputLabel>
               <Box>
                 <OutlinedInput
                   type="text"
@@ -213,7 +230,7 @@ export default function EditProfile() {
                   fullWidth
                   {...register("experience", { required: true })}
                   error={!!errors.experience}
-                  sx={{ flex: 1 }}
+                  sx={{ flex: 1, bgcolor: "#ffffff" }}
                 />
                 {errors.experience && (
                   <Typography
@@ -232,6 +249,7 @@ export default function EditProfile() {
                   size="small"
                   fullWidth
                   sx={{
+                    bgcolor: "#ffffff",
                     "& input::placeholder": {
                       textAlign: "center",
                     },
@@ -241,13 +259,19 @@ export default function EditProfile() {
             </Box>
 
             <Box>
-              <InputLabel htmlFor="email">Email Address</InputLabel>
+              <InputLabel
+                htmlFor="email"
+                sx={{ color: "secondary.main", mb: 1 }}
+              >
+                Email Address
+              </InputLabel>
               <OutlinedInput
                 type="email"
                 id="email"
                 placeholder="Please Enter Your Email Address"
                 size="small"
                 fullWidth
+                sx={{ bgcolor: "#ffffff" }}
                 {...register("email", { required: true })}
                 error={!!errors.email}
               />
@@ -263,13 +287,19 @@ export default function EditProfile() {
             </Box>
 
             <Box>
-              <InputLabel htmlFor="phone">Phone Number</InputLabel>
+              <InputLabel
+                htmlFor="phone"
+                sx={{ color: "secondary.main", mb: 1 }}
+              >
+                Phone Number
+              </InputLabel>
               <OutlinedInput
                 type="tel"
                 id="phone"
                 placeholder="Please Enter Your Phone Number"
                 size="small"
                 fullWidth
+                sx={{ bgcolor: "#ffffff" }}
                 {...register("phone", { required: true })}
                 error={!!errors.phone}
               />
@@ -285,7 +315,12 @@ export default function EditProfile() {
             </Box>
 
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-              <InputLabel htmlFor="socialMedia">Social Media</InputLabel>
+              <InputLabel
+                htmlFor="socialMedia"
+                sx={{ color: "secondary.main" }}
+              >
+                Social Media
+              </InputLabel>
               <Box>
                 <OutlinedInput
                   type="text"
@@ -295,7 +330,7 @@ export default function EditProfile() {
                   fullWidth
                   {...register("socialMedia", { required: true })}
                   error={!!errors.socialMedia}
-                  sx={{ flex: 1 }}
+                  sx={{ flex: 1, bgcolor: "#ffffff" }}
                 />
                 {errors.socialMedia && (
                   <Typography
@@ -314,6 +349,7 @@ export default function EditProfile() {
                   size="small"
                   fullWidth
                   sx={{
+                    bgcolor: "#ffffff",
                     "& input::placeholder": {
                       textAlign: "center",
                     },
@@ -323,9 +359,12 @@ export default function EditProfile() {
             </Box>
 
             <Box>
-              <InputLabel htmlFor="cv">CV</InputLabel>
+              <InputLabel htmlFor="cv" sx={{ color: "secondary.main", mb: 1 }}>
+                CV
+              </InputLabel>
               <OutlinedInput
                 sx={{
+                  bgcolor: "#ffffff",
                   height: 200,
                   "& input::placeholder": {
                     textAlign: "center",
@@ -338,7 +377,7 @@ export default function EditProfile() {
             </Box>
           </Box>
           <Box>
-            <Button type="submit" variant="outlined" fullWidth sx={{ mt: 3 }}>
+            <Button type="submit" variant="contained" fullWidth sx={{ mt: 3 }}>
               Save
             </Button>
           </Box>

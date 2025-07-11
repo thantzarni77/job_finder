@@ -63,6 +63,7 @@ export default function AddNewProject() {
                 placeholder="+"
                 size="small"
                 sx={{
+                  bgcolor: "#ffffff",
                   height: 200,
                   "& input::placeholder": {
                     fontSize: 30,
@@ -70,16 +71,34 @@ export default function AddNewProject() {
                   },
                 }}
               />
-              <Typography>Upload Cover Photo</Typography>
+              <Typography sx={{ color: "secondary.main" }}>
+                Upload Cover Photo
+              </Typography>
             </Box>
             <Box sx={{ mt: 2 }}>
-              <InputLabel htmlFor="description">Project Description</InputLabel>
-              <TextField fullWidth multiline rows={4} id="description" />
+              <InputLabel
+                htmlFor="description"
+                sx={{ color: "secondary.main", mb: 1 }}
+              >
+                Project Description
+              </InputLabel>
+              <TextField
+                fullWidth
+                multiline
+                rows={4}
+                id="description"
+                sx={{ bgcolor: "#ffffff" }}
+              />
             </Box>
 
             <Box sx={{ mt: 2 }}>
-              <InputLabel htmlFor="link">Link</InputLabel>
-              <OutlinedInput fullWidth id="link" />
+              <InputLabel
+                htmlFor="link"
+                sx={{ color: "secondary.main", mb: 1 }}
+              >
+                Link
+              </InputLabel>
+              <OutlinedInput fullWidth id="link" sx={{ bgcolor: "#ffffff" }} />
             </Box>
           </Box>
           <Box sx={{ mt: 2 }}>
@@ -89,6 +108,7 @@ export default function AddNewProject() {
               size="small"
               fullWidth
               sx={{
+                bgcolor: "#ffffff",
                 "& input::placeholder": {
                   textAlign: "center",
                 },
@@ -96,7 +116,12 @@ export default function AddNewProject() {
             />
           </Box>
 
-          <Button type="submit" variant="contained" fullWidth sx={{ mt: 2 }}>
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            sx={{ mt: 2, textTransform: "none" }}
+          >
             Upload
           </Button>
         </Container>

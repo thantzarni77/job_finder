@@ -1,4 +1,4 @@
-import { Box, Button, Checkbox, Typography } from "@mui/material";
+import { Box, Button, Checkbox, IconButton, Typography } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
@@ -23,17 +23,19 @@ const JobDetail = () => {
           mb: 4,
         }}
       >
-        <ArrowBackIosIcon
-          onClick={() => navigate("/jobs")}
-          sx={{
-            color: "primary.main",
-            fontSize: 32,
-            ":hover": {
-              color: "secondary.main",
-              cursor: "pointer",
-            },
-          }}
-        />
+        <IconButton onClick={() => navigate("/jobs")}>
+          <ArrowBackIosIcon
+            sx={{
+              color: "primary.main",
+              fontSize: 32,
+              ":hover": {
+                color: "secondary.main",
+                cursor: "pointer",
+              },
+            }}
+          />
+        </IconButton>
+
         <Typography variant="h6" sx={{ fontWeight: 600, mx: "auto" }}>
           Job Details
         </Typography>

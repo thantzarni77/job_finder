@@ -1,4 +1,4 @@
-import { Box, Typography, Link } from "@mui/material";
+import { Box, Typography, Link, IconButton } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import {
   NavLink,
@@ -74,14 +74,16 @@ const BookmarkNav = () => {
           mb: 2,
         }}
       >
-        <ArrowBackIosIcon
-          onClick={() => navigate(`/settings/user/${id}`)}
-          sx={{
-            color: "primary.main",
-            fontSize: 32,
-            ":hover": { color: "secondary.main", cursor: "pointer" },
-          }}
-        />
+        <IconButton onClick={() => navigate(`/settings/user/${id}`)}>
+          <ArrowBackIosIcon
+            sx={{
+              color: "primary.main",
+              fontSize: 32,
+              ":hover": { color: "secondary.main", cursor: "pointer" },
+            }}
+          />
+        </IconButton>
+
         <Typography variant="h5" sx={{ fontWeight: 600, mx: "auto" }}>
           Bookmarks
         </Typography>

@@ -1,4 +1,11 @@
-import { Box, Button, Typography, Stack, Pagination } from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  Stack,
+  Pagination,
+  IconButton,
+} from "@mui/material";
 import Kpay from "../../../assets/kpay.png";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
@@ -16,17 +23,19 @@ export default function CompanyDetail() {
   return (
     <>
       <Box sx={{ pt: 3, pb: 5, mb: 2, width: "90%", mx: "auto" }}>
-        <ArrowBackIosIcon
-          onClick={() => navigate("/companies")}
-          sx={{
-            color: "primary.main",
-            fontSize: 32,
-            ":hover": {
-              color: "secondary.main",
-              cursor: "pointer",
-            },
-          }}
-        />
+        <IconButton onClick={() => navigate("/companies")}>
+          <ArrowBackIosIcon
+            sx={{
+              color: "primary.main",
+              fontSize: 32,
+              ":hover": {
+                color: "secondary.main",
+                cursor: "pointer",
+              },
+            }}
+          />
+        </IconButton>
+
         <Box
           sx={{
             display: "flex",
@@ -149,10 +158,15 @@ export default function CompanyDetail() {
             <Box
               sx={{
                 display: "flex",
-                flexDirection: { xs: "column", md: "column", lg: "row" },
+                flexDirection: {
+                  xs: "column",
+                  sm: "row",
+                  md: "row",
+                  lg: "row",
+                },
                 justifyContent: "center",
                 alignItems: "center",
-                gap: 5,
+                gap: { xs: 4, sm: 4, md: 5 },
                 flexWrap: "wrap",
                 width: "100%",
               }}
@@ -197,7 +211,12 @@ export default function CompanyDetail() {
             <Box
               sx={{
                 display: "flex",
-                flexDirection: { xs: "column", md: "column", lg: "row" },
+                flexDirection: {
+                  xs: "column",
+                  sm: "row",
+                  md: "row",
+                  lg: "row",
+                },
                 justifyContent: "center",
                 alignItems: "center",
                 gap: 5,

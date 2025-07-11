@@ -141,7 +141,7 @@ export default function Header() {
             <Box
               sx={{
                 pl: 5,
-                display: { md: "flex", sm: "none", xs: "none" },
+                display: { md: "flex", sm: "flex", xs: "none" },
               }}
             >
               <NavLink to="/">
@@ -168,7 +168,7 @@ export default function Header() {
                   ref={talentRef}
                   color="inherit"
                 >
-                  Talent
+                  Talents
                 </Button>
               </NavLink>
               <NavLink to="/companies">
@@ -227,6 +227,7 @@ export default function Header() {
                   <SettingIcon />
                 </IconButton>
                 <Button
+                  ref={profileRef}
                   endIcon={<ArrowDropDownIcon sx={{ color: "white" }} />}
                   id="basic-button"
                   aria-controls={open ? "basic-menu" : undefined}
@@ -257,8 +258,16 @@ export default function Header() {
               </Box>
             </Box>
           ) : (
-            <Button variant="contained" color="primary" onClick={() => login()}>
-              Login
+            <Button
+              sx={{
+                color: "#ffffff",
+                textTransform: "none",
+                borderRadius: "5px",
+                boxShadow: "none",
+              }}
+              onClick={() => login()}
+            >
+              <Typography fontWeight={600}>Login</Typography>
             </Button>
           )}
 
