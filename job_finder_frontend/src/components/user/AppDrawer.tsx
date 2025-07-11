@@ -7,13 +7,13 @@ import {
   ListItemButton,
 } from "@mui/material";
 import { useAppStore } from "../../store/Appstore";
+import { Link } from "react-router";
 import { useNavigate } from "react-router";
 
 export default function AppDrawer() {
+  const navigate = useNavigate();
   const showDrawer = useAppStore((state) => state.showDrawer);
   const setShowDrawer = useAppStore((state) => state.setShowDrawer);
-
-  const navigate = useNavigate();
 
   return (
     <Drawer
@@ -29,33 +29,64 @@ export default function AppDrawer() {
           LOGO
         </Typography>
         <List>
-          <ListItem onClick={() => navigate("/")}>
-            <ListItemButton sx={{ justifyContent: "center" }}>
-              <Typography>Home</Typography>
-            </ListItemButton>
-          </ListItem>
-
-          <ListItem onClick={() => navigate("/jobs")}>
-            <ListItemButton sx={{ justifyContent: "center" }}>
-              <Typography>Jobs</Typography>
-            </ListItemButton>
-          </ListItem>
-
-          <ListItem onClick={() => navigate("/talents")}>
-            <ListItemButton sx={{ justifyContent: "center" }}>
-              <Typography>Talents</Typography>
-            </ListItemButton>
-          </ListItem>
-
-          <ListItem onClick={() => navigate("/companies")}>
-            <ListItemButton sx={{ justifyContent: "center" }}>
-              <Typography>Companies</Typography>
+          <ListItem>
+            <ListItemButton>
+              <Link to="/">
+                <Typography>Home</Typography>
+              </Link>
             </ListItemButton>
           </ListItem>
 
           <ListItem>
-            <ListItemButton sx={{ justifyContent: "center" }}>
-              <Typography>Post A Job</Typography>
+            <ListItemButton>
+              <Link to="/jobs">
+                <Typography>Jobs</Typography>
+              </Link>
+            </ListItemButton>
+          </ListItem>
+
+          <ListItem>
+            <ListItemButton>
+              <Link to="/talent">
+                <Typography>Talent</Typography>
+              </Link>
+            </ListItemButton>
+          </ListItem>
+
+          <ListItem>
+            <ListItemButton>
+              <Link to="/companies">
+                <Typography>Companies</Typography>
+              </Link>
+            </ListItemButton>
+          </ListItem>
+
+          <ListItem>
+            <ListItemButton>
+              <Link to="/post/job">
+                <Typography>Post A Job</Typography>
+              </Link>
+            </ListItemButton>
+          </ListItem>
+          <ListItem>
+            <ListItemButton>
+              <Link to="/profile/1">
+                <Typography>Profile</Typography>
+              </Link>
+            </ListItemButton>
+          </ListItem>
+          <ListItem>
+            <ListItemButton>
+              <Link to="/notifications/user/1">
+                <Typography>Notifications</Typography>
+              </Link>
+            </ListItemButton>
+          </ListItem>
+          <ListItem>
+            <ListItemButton>
+              <Link to="/settings/user/1">
+                <Typography>Settings</Typography>
+              </Link>
             </ListItemButton>
           </ListItem>
 

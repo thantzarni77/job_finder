@@ -117,6 +117,7 @@ export default function Header() {
           sx={{
             display: "flex",
             justifyContent: "space-between",
+<<<<<<< HEAD
             position: "relative",
             minHeight: { xs: 56, sm: 64 },
             px: { xs: 0, sm: 2 },
@@ -144,6 +145,11 @@ export default function Header() {
               <MenuIcon />
             </IconButton>
 
+=======
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
+>>>>>>> 9e7a7fbe (rebase)
             <Typography
               onClick={() => navigate("/")}
               component="h1"
@@ -215,6 +221,7 @@ export default function Header() {
           </Box>
 
           {/* Right side of header */}
+<<<<<<< HEAD
           <Box
             sx={{
               display: "flex",
@@ -223,6 +230,16 @@ export default function Header() {
               alignItems: "center",
             }}
           >
+=======
+          <IconButton
+            onClick={() => setShowDrawer(!showDrawer)}
+            color="inherit"
+            sx={{ display: { md: "none" }, ml: -2, mr: 1 }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Box sx={{ gap: 1, display: { md: "flex", sm: "none", xs: "none" } }}>
+>>>>>>> 9e7a7fbe (rebase)
             <IconButton
               color="inherit"
               onClick={() => setMode(mode === "light" ? "dark" : "light")}

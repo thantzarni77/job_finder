@@ -16,6 +16,7 @@ export default function Footer() {
         backgroundColor: theme.palette.mode === "dark" ? "#272727" : "#5f6caf",
         color: "#ffffff",
         py: 3,
+        mt: 20,
       }}
       className="grid grid-cols-1 md:grid-cols-2"
     >
