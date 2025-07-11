@@ -23,6 +23,7 @@ import { useAppStore } from "../../store/Appstore";
 import { useState, useRef, useEffect, useMemo, type RefObject } from "react";
 import { useNavigate } from "react-router";
 import { useThemeStore } from "../../store/Appstore";
+import { useUserStore } from "../../store/UserStore";
 
 function findRefForPath(
   pathname: string,
@@ -37,6 +38,9 @@ function findRefForPath(
 }
 
 export default function Header() {
+  const user = useUserStore((state) => state.user);
+  const login = useUserStore((state) => state.login);
+  const logout = useUserStore((state) => state.logout);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -117,39 +121,9 @@ export default function Header() {
           sx={{
             display: "flex",
             justifyContent: "space-between",
-<<<<<<< HEAD
-            position: "relative",
-            minHeight: { xs: 56, sm: 64 },
-            px: { xs: 0, sm: 2 },
-          }}
-        >
-          {/* Left side of header */}
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              flexGrow: 1,
-              minWidth: 0,
-            }}
-          >
-            <IconButton
-              onClick={() => setShowDrawer(!showDrawer)}
-              color="inherit"
-              sx={{
-                display: { md: "none" },
-                ml: -1,
-                mr: 1,
-                p: 1,
-              }}
-            >
-              <MenuIcon />
-            </IconButton>
-
-=======
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
->>>>>>> 9e7a7fbe (rebase)
             <Typography
               onClick={() => navigate("/")}
               component="h1"
@@ -219,97 +193,74 @@ export default function Header() {
               )}
             </Box>
           </Box>
+          {user ? (
+            <Box>
+              <IconButton
+                onClick={() => setShowDrawer(!showDrawer)}
+                color="inherit"
+                sx={{ display: { md: "none" }, ml: -2, mr: 1 }}
+              >
+                <MenuIcon />
+              </IconButton>
+              <Box
+                sx={{ gap: 1, display: { md: "flex", sm: "none", xs: "none" } }}
+              >
+                <IconButton
+                  color="inherit"
+                  onClick={() => setMode(mode === "light" ? "dark" : "light")}
+                >
+                  {mode === "light" ? <LightModeIcon /> : <DarkModeIcon />}
+                </IconButton>
+                <IconButton
+                  color="inherit"
+                  ref={notificationsRef}
+                  onClick={() => navigate("/notifications/user/1")}
+                >
+                  <NotiIcon sx={{ fontSize: 27 }} />
+                </IconButton>
 
-          {/* Right side of header */}
-<<<<<<< HEAD
-          <Box
-            sx={{
-              display: "flex",
-              gap: { xs: 0.5, sm: 1 },
-              flexShrink: 0,
-              alignItems: "center",
-            }}
-          >
-=======
-          <IconButton
-            onClick={() => setShowDrawer(!showDrawer)}
-            color="inherit"
-            sx={{ display: { md: "none" }, ml: -2, mr: 1 }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Box sx={{ gap: 1, display: { md: "flex", sm: "none", xs: "none" } }}>
->>>>>>> 9e7a7fbe (rebase)
-            <IconButton
-              color="inherit"
-              onClick={() => setMode(mode === "light" ? "dark" : "light")}
-              sx={{
-                p: { xs: 0.5, sm: 1 },
-              }}
-            >
-              {mode === "light" ? <LightModeIcon /> : <DarkModeIcon />}
-            </IconButton>
+                <IconButton
+                  color="inherit"
+                  ref={settingsRef}
+                  onClick={() => navigate("/settings/user/1")}
+                >
+                  <SettingIcon />
+                </IconButton>
+                <Button
+                  endIcon={<ArrowDropDownIcon sx={{ color: "white" }} />}
+                  id="basic-button"
+                  aria-controls={open ? "basic-menu" : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open ? "true" : undefined}
+                  onClick={handleClick}
+                >
+                  <Avatar sx={{ width: 32, height: 32 }} />
+                </Button>
+                <Menu
+                  id="basic-menu"
+                  anchorEl={anchorEl}
+                  open={open}
+                  onClose={handleClose}
+                  onClick={handleClose}
+                  slotProps={{
+                    list: {
+                      "aria-labelledby": "basic-button",
+                    },
+                  }}
+                >
+                  <MenuItem onClick={() => navigate("/profile/1")}>
+                    Profile
+                  </MenuItem>
 
-            <IconButton
-              color="inherit"
-              ref={notificationsRef}
-              onClick={() => navigate("/notifications/user/1")}
-              sx={{
-                p: { xs: 0.5, sm: 1 },
-                display: { xs: "none", sm: "inline-flex" },
-              }}
-            >
-              <NotiIcon sx={{ fontSize: { xs: 22, sm: 27 } }} />
-            </IconButton>
-
-            <IconButton
-              color="inherit"
-              ref={settingsRef}
-              onClick={() => navigate("/settings/user/1")}
-              sx={{
-                p: { xs: 0.5, sm: 1 },
-                display: { xs: "none", sm: "inline-flex" },
-              }}
-            >
-              <SettingIcon />
-            </IconButton>
-
-            <Button
-              ref={profileRef}
-              endIcon={<ArrowDropDownIcon sx={{ color: "white" }} />}
-              id="basic-button"
-              aria-controls={open ? "basic-menu" : undefined}
-              aria-haspopup="true"
-              aria-expanded={open ? "true" : undefined}
-              onClick={handleClick}
-              sx={{
-                minWidth: "auto",
-                p: { xs: 0.5, sm: 1 },
-              }}
-            >
-              <Avatar
-                sx={{ width: { xs: 28, sm: 32 }, height: { xs: 28, sm: 32 } }}
-              />
+                  <MenuItem onClick={() => logout()}>Logout</MenuItem>
+                </Menu>
+              </Box>
+            </Box>
+          ) : (
+            <Button variant="contained" color="primary" onClick={() => login()}>
+              Login
             </Button>
-
-            <Menu
-              id="basic-menu"
-              anchorEl={anchorEl}
-              open={open}
-              onClose={handleClose}
-              onClick={handleClose}
-              slotProps={{
-                list: {
-                  "aria-labelledby": "basic-button",
-                },
-              }}
-            >
-              <MenuItem onClick={() => navigate("/profile/1")}>
-                Profile
-              </MenuItem>
-              <MenuItem>Logout</MenuItem>
-            </Menu>
-          </Box>
+          )}
 
           {/* Sliding underline*/}
           <Box

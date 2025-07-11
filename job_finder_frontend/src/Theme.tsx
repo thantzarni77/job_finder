@@ -46,11 +46,11 @@ export default function Theme() {
         }),
       },
       components: {
-        MuiButtonBase: {
-          defaultProps: {
-            disableRipple: true,
-          },
-        },
+        // MuiButtonBase: {
+        //   defaultProps: {
+        //     disableRipple: true,
+        //   },
+        // },
         MuiInput: {
           defaultProps: {
             disableUnderline: true,
