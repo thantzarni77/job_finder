@@ -7,10 +7,13 @@ import {
   ListItemButton,
 } from "@mui/material";
 import { useAppStore } from "../../store/Appstore";
+import { useNavigate } from "react-router";
 
 export default function AppDrawer() {
   const showDrawer = useAppStore((state) => state.showDrawer);
   const setShowDrawer = useAppStore((state) => state.setShowDrawer);
+
+  const navigate = useNavigate();
 
   return (
     <Drawer
@@ -26,25 +29,25 @@ export default function AppDrawer() {
           LOGO
         </Typography>
         <List>
-          <ListItem>
+          <ListItem onClick={() => navigate("/")}>
             <ListItemButton sx={{ justifyContent: "center" }}>
               <Typography>Home</Typography>
             </ListItemButton>
           </ListItem>
 
-          <ListItem>
+          <ListItem onClick={() => navigate("/jobs")}>
             <ListItemButton sx={{ justifyContent: "center" }}>
               <Typography>Jobs</Typography>
             </ListItemButton>
           </ListItem>
 
-          <ListItem>
+          <ListItem onClick={() => navigate("/talents")}>
             <ListItemButton sx={{ justifyContent: "center" }}>
-              <Typography>Talent</Typography>
+              <Typography>Talents</Typography>
             </ListItemButton>
           </ListItem>
 
-          <ListItem>
+          <ListItem onClick={() => navigate("/companies")}>
             <ListItemButton sx={{ justifyContent: "center" }}>
               <Typography>Companies</Typography>
             </ListItemButton>
@@ -53,6 +56,24 @@ export default function AppDrawer() {
           <ListItem>
             <ListItemButton sx={{ justifyContent: "center" }}>
               <Typography>Post A Job</Typography>
+            </ListItemButton>
+          </ListItem>
+
+          <ListItem
+            onClick={() => navigate("/notifications/user/1")}
+            sx={{ display: { xs: "inline-flex", sm: "none" } }}
+          >
+            <ListItemButton sx={{ justifyContent: "center" }}>
+              <Typography>Notifications</Typography>
+            </ListItemButton>
+          </ListItem>
+
+          <ListItem
+            onClick={() => navigate("/settings/user/1")}
+            sx={{ display: { xs: "inline-flex", sm: "none" } }}
+          >
+            <ListItemButton sx={{ justifyContent: "center" }}>
+              <Typography>Settings</Typography>
             </ListItemButton>
           </ListItem>
         </List>

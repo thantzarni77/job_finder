@@ -11,14 +11,14 @@ const SearchBox = ({ searchType }: Props) => {
   return (
     <Box
       sx={{
-        width: { xs: "100%", sm: "70%" },
+        width: { xs: "100%", sm: "80%", md: "70%", lg: "70%" },
         height: { xs: "50px", md: "100px" },
         backgroundColor: "#ffffff",
         mx: "auto",
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        p: { xs: 1, md: 3 },
+        p: { xs: 1, sm: 1, md: 3 },
         borderRadius: { xs: "5px", sm: "10px", md: "20px" },
         border: "1px solid",
         // border: { xs: "none", md: "1.5px solid" },
@@ -41,10 +41,10 @@ const SearchBox = ({ searchType }: Props) => {
           sx={{
             "& .MuiInputBase-input::placeholder": {
               color: "primary.main",
-              fontSize: { xs: "13px", sm: "14px", md: "16px" },
+              fontSize: { xs: "12px", sm: "14px", md: "16px" },
             },
             "& .MuiInputBase-input": {
-              fontSize: { xs: "13px", sm: "14px", md: "16px" },
+              fontSize: { xs: "12px", sm: "14px", md: "16px" },
             },
           }}
         />
@@ -72,10 +72,10 @@ const SearchBox = ({ searchType }: Props) => {
           sx={{
             "& .MuiInputBase-input::placeholder": {
               color: "primary.main",
-              fontSize: { xs: "13px", sm: "14px", md: "16px" },
+              fontSize: { xs: "12px", sm: "14px", md: "16px" },
             },
             "& .MuiInputBase-input": {
-              fontSize: { xs: "13px", sm: "14px", md: "16px" },
+              fontSize: { xs: "12px", sm: "14px", md: "16px" },
             },
           }}
         />

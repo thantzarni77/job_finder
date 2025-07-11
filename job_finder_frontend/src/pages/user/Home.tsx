@@ -13,15 +13,17 @@ import WaveMoney from "../../assets/wavemoney.png";
 import Meta from "../../assets/meta.png";
 import AyaBank from "../../assets/ayabank.jpeg";
 import Xiaomi from "../../assets/Xiaomi.png";
+import { useNavigate } from "react-router";
 
 export default function Home() {
+  const navigate = useNavigate();
   return (
     <Box>
       <HomeCarousel />
       <Container>
         <Typography
-          variant="h4"
           sx={{
+            fontSize: { xs: "18px", md: "30px" },
             fontWeight: 600,
             textAlign: "center",
             my: 3,
@@ -31,10 +33,12 @@ export default function Home() {
         </Typography>
         <Box sx={{ display: "flex", justifyContent: "center", gap: 4, mb: 5 }}>
           <Button
+            onClick={() => navigate("/jobs")}
             variant="contained"
             sx={{
               boxShadow: "none",
-              width: { xs: "200px", md: "320px" },
+              width: { xs: "170px", sm: "200px", md: "250px" },
+              height: { xs: "30px", sm: "40px", md: "45px" },
               borderRadius: "8px",
               p: 1,
               textTransform: "none",
@@ -46,10 +50,12 @@ export default function Home() {
             Search Jobs
           </Button>
           <Button
+            onClick={() => navigate("/talents")}
             variant="outlined"
             sx={{
               boxShadow: "none",
-              width: { xs: "200px", md: "320px" },
+              width: { xs: "170px", sm: "200px", md: "250px" },
+              height: { xs: "30px", sm: "40px", md: "45px" },
               borderRadius: "8px",
               p: 1,
               textTransform: "none",

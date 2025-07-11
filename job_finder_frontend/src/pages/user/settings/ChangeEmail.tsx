@@ -33,7 +33,7 @@ const ChangeEmail = () => {
       {/* application form */}
       <Box
         sx={{
-          width: { xs: "80%", md: "60%", lg: "40%" },
+          width: { xs: "100%", md: "60%", lg: "40%" },
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",

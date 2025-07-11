@@ -16,8 +16,8 @@ import JobCard from "../../../components/user/jobs/JobCard";
 
 import { useState } from "react";
 import SearchBox from "../../../components/user/SearchBox";
-import { useFilterStore } from "../../../store/Appstore";
-import FilterDrawer from "../../../components/user/FilterDrawer";
+import { useJobFilterStore } from "../../../store/Appstore";
+import JobFilterDrawer from "../../../components/user/JobFilterDrawer";
 
 const jobs = [
   "full Time",
@@ -32,9 +32,11 @@ const Jobs = () => {
   const [sortBy, setSortBy] = useState<string>("recent");
   const [open, setOpen] = useState<boolean>(false);
 
-  const showFilterDrawer = useFilterStore((state) => state.showFilterDrawer);
-  const setShowFilterDrawer = useFilterStore(
-    (state) => state.setShowFilterDrawer,
+  const showJobFilterDrawer = useJobFilterStore(
+    (state) => state.showJobFilterDrawer,
+  );
+  const setShowJobFilterDrawer = useJobFilterStore(
+    (state) => state.setShowJobFilterDrawer,
   );
 
   const handleChange = (event: SelectChangeEvent<string>) => {
@@ -61,8 +63,8 @@ const Jobs = () => {
     <Box
       sx={{
         my: 3,
-        p: { xs: 0, lg: 4 },
-        width: "95%",
+        p: { xs: 0, sm: 2, md: 2, lg: 4 },
+        width: { xs: "100", sm: "100%", md: "95%" },
         mx: "auto",
       }}
     >
@@ -78,7 +80,7 @@ const Jobs = () => {
         <SearchBox searchType={"Jobs"} />
         <Button
           variant="contained"
-          onClick={() => setShowFilterDrawer(!showFilterDrawer)}
+          onClick={() => setShowJobFilterDrawer(!showJobFilterDrawer)}
           sx={{
             mx: { xs: "auto", sm: "none" },
             display: { xs: "block", md: "none" },
@@ -136,7 +138,7 @@ const Jobs = () => {
           {/* job posts section header */}
           <Box
             sx={{
-              width: { xs: "82%", sm: "86%", md: "92%" },
+              width: { xs: "82%", sm: "90%", md: "92%" },
               display: "flex",
               alignItems: { xs: "center", md: "start" },
               justifyContent: "space-between",
@@ -251,9 +253,13 @@ const Jobs = () => {
             <Box
               sx={{
                 display: "flex",
-                width: "100%",
-                justifyContent: "center",
-                gap: { xs: 2, md: 6 },
+                width: { xs: "100%", sm: "90%", md: "100%" },
+                justifyContent: {
+                  xs: "center",
+                  sm: "space-between",
+                  md: "center",
+                },
+                gap: { xs: 2, md: 4 },
                 flexWrap: "wrap",
               }}
             >
@@ -282,7 +288,7 @@ const Jobs = () => {
           </Box>
         </Box>
       </Box>
-      <FilterDrawer />
+      <JobFilterDrawer />
     </Box>
   );
 };

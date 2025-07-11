@@ -103,7 +103,7 @@ const JobFilter = ({ filterType, filterTypeArray }: Props) => {
           <FormGroup
             sx={{
               display: "flex",
-              flexDirection: { xs: "row", md: "column" },
+              flexDirection: "column",
             }}
           >
             {filterTypeArray.map((type) => (

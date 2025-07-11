@@ -75,7 +75,7 @@ export default function Header() {
         "/job/:id": jobsRef,
         "/job/:id/apply": jobsRef,
         "/job/:id/apply/confirm": jobsRef,
-        "/talent": talentRef,
+        "/talents": talentRef,
         "/companies": companiesRef,
         "/companies/:id": companiesRef,
         "/post/job": postJobRef,
@@ -109,30 +109,55 @@ export default function Header() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" sx={{ px: 5, boxShadow: "none" }}>
+      <AppBar
+        position="static"
+        sx={{ px: { xs: 2, md: 5 }, boxShadow: "none" }}
+      >
         <Toolbar
           sx={{
             display: "flex",
             justifyContent: "space-between",
             position: "relative",
+            minHeight: { xs: 56, sm: 64 },
+            px: { xs: 0, sm: 2 },
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
+          {/* Left side of header */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              flexGrow: 1,
+              minWidth: 0,
+            }}
+          >
             <IconButton
               onClick={() => setShowDrawer(!showDrawer)}
               color="inherit"
-              sx={{ display: { md: "none" }, ml: -2, mr: 1 }}
+              sx={{
+                display: { md: "none" },
+                ml: -1,
+                mr: 1,
+                p: 1,
+              }}
             >
               <MenuIcon />
             </IconButton>
 
             <Typography
+              onClick={() => navigate("/")}
               component="h1"
-              sx={{ fontSize: "36px", fontWeight: "700" }}
+              sx={{
+                fontSize: { xs: "24px", sm: "30px", md: "36px" },
+                fontWeight: "700",
+                cursor: "pointer",
+                flexShrink: 0,
+              }}
             >
               LOGO
             </Typography>
 
+            {/* Desktop Navigation */}
             <Box
               sx={{
                 pl: 5,
@@ -157,7 +182,7 @@ export default function Header() {
                   Jobs
                 </Button>
               </NavLink>
-              <NavLink to="/talent">
+              <NavLink to="/talents">
                 <Button
                   sx={{ fontWeight: "700", textTransform: "none" }}
                   ref={talentRef}
@@ -190,28 +215,48 @@ export default function Header() {
           </Box>
 
           {/* Right side of header */}
-          <Box sx={{ display: "flex", gap: 1 }}>
+          <Box
+            sx={{
+              display: "flex",
+              gap: { xs: 0.5, sm: 1 },
+              flexShrink: 0,
+              alignItems: "center",
+            }}
+          >
             <IconButton
               color="inherit"
               onClick={() => setMode(mode === "light" ? "dark" : "light")}
+              sx={{
+                p: { xs: 0.5, sm: 1 },
+              }}
             >
               {mode === "light" ? <LightModeIcon /> : <DarkModeIcon />}
             </IconButton>
+
             <IconButton
               color="inherit"
               ref={notificationsRef}
               onClick={() => navigate("/notifications/user/1")}
+              sx={{
+                p: { xs: 0.5, sm: 1 },
+                display: { xs: "none", sm: "inline-flex" },
+              }}
             >
-              <NotiIcon sx={{ fontSize: 27 }} />
+              <NotiIcon sx={{ fontSize: { xs: 22, sm: 27 } }} />
             </IconButton>
 
             <IconButton
               color="inherit"
               ref={settingsRef}
               onClick={() => navigate("/settings/user/1")}
+              sx={{
+                p: { xs: 0.5, sm: 1 },
+                display: { xs: "none", sm: "inline-flex" },
+              }}
             >
               <SettingIcon />
             </IconButton>
+
             <Button
               ref={profileRef}
               endIcon={<ArrowDropDownIcon sx={{ color: "white" }} />}
@@ -220,9 +265,16 @@ export default function Header() {
               aria-haspopup="true"
               aria-expanded={open ? "true" : undefined}
               onClick={handleClick}
+              sx={{
+                minWidth: "auto",
+                p: { xs: 0.5, sm: 1 },
+              }}
             >
-              <Avatar sx={{ width: 32, height: 32 }} />
+              <Avatar
+                sx={{ width: { xs: 28, sm: 32 }, height: { xs: 28, sm: 32 } }}
+              />
             </Button>
+
             <Menu
               id="basic-menu"
               anchorEl={anchorEl}
@@ -238,7 +290,6 @@ export default function Header() {
               <MenuItem onClick={() => navigate("/profile/1")}>
                 Profile
               </MenuItem>
-
               <MenuItem>Logout</MenuItem>
             </Menu>
           </Box>

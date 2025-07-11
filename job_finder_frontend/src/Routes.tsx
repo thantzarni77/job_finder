@@ -59,7 +59,7 @@ export const router = createBrowserRouter([
         Component: JobApplyConfirm,
       },
       {
-        path: "/talent",
+        path: "/talents",
         Component: Talent,
       },
       {

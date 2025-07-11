@@ -42,7 +42,7 @@ const SecuritySetting = () => {
       <Box
         sx={{
           my: 4,
-          width: { xs: "90%", md: "70%" },
+          width: { xs: "100%", md: "70%" },
         }}
       >
         <Email />

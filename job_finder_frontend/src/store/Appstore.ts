@@ -13,17 +13,31 @@ export const useAppStore = create<AppDrawerStore>((set) => ({
   },
 }));
 
-type FilterDrawerStore = {
-  showFilterDrawer: boolean;
-  setShowFilterDrawer: (value: boolean) => void;
+type JobFilterDrawerStore = {
+  showJobFilterDrawer: boolean;
+  setShowJobFilterDrawer: (value: boolean) => void;
 };
 
-export const useFilterStore = create<FilterDrawerStore>((set) => ({
-  showFilterDrawer: false,
-  setShowFilterDrawer: (userValue) => {
-    set({ showFilterDrawer: userValue });
+export const useJobFilterStore = create<JobFilterDrawerStore>((set) => ({
+  showJobFilterDrawer: false,
+  setShowJobFilterDrawer: (userValue) => {
+    set({ showJobFilterDrawer: userValue });
   },
 }));
+
+type CompanyFilterDrawerStore = {
+  showCompanyFilterDrawer: boolean;
+  setShowCompanyFilterDrawer: (value: boolean) => void;
+};
+
+export const useCompanyFilterStore = create<CompanyFilterDrawerStore>(
+  (set) => ({
+    showCompanyFilterDrawer: false,
+    setShowCompanyFilterDrawer: (userValue) => {
+      set({ showCompanyFilterDrawer: userValue });
+    },
+  }),
+);
 
 // light mode dark mode
 type ThemeStore = {
