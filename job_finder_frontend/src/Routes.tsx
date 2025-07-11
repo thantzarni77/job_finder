@@ -28,6 +28,10 @@ import JobManagement from "./pages/admin/JobManagement";
 import UserManagement from "./pages/admin/UserManagement";
 import UserDetailManage from "./pages/admin/UserDetailManage";
 import JobDetailManage from "./pages/admin/JobDetailManage";
+import EditUser from "./pages/admin/EditUser";
+import EditJob from "./pages/admin/EditJob";
+import EmployerDetail from "./pages/admin/EmployerDetail";
+import EditEmployer from "./pages/admin/EditEmployer";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -153,6 +157,23 @@ export const router = createBrowserRouter([
       {
         path: "user/:id/manage",
         Component: UserDetailManage,
+      },
+      {
+        path: "user/:id/edit",
+        Component: EditUser,
+      },
+      {
+        path: "job/:id/edit",
+        Component: EditJob,
+      },
+
+      {
+        path: "employer/:id/manage",
+        Component: EmployerDetail,
+      },
+      {
+        path: "employer/:id/edit",
+        Component: EditEmployer,
       },
     ],
   },

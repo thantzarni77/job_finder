@@ -9,12 +9,14 @@ const SidePanel = () => {
   const jobsPath = "/admin/jobs/manage";
   const usersPath = "/admin/users/manage";
   const userDetailPath = "/admin/user/:id/manage";
+  const seekerPath = "/admin/seeker/manage";
 
   const isOverviewActive = useMatch(overviewPath);
   const isJobsActive = useMatch(jobsPath);
   const isUsersListActive = useMatch(usersPath);
   const isUserDetailActive = useMatch(userDetailPath);
   const isUserManagementActive = isUsersListActive || isUserDetailActive;
+  const isSeekerActive = useMatch(seekerPath);
 
   const baseButtonSx = {
     width: "fit-content",
@@ -87,6 +89,22 @@ const SidePanel = () => {
           }}
         >
           User management
+        </Button>
+
+        <Button
+          onClick={() => navigate(seekerPath)}
+          sx={{
+            ...baseButtonSx,
+            backgroundColor: isSeekerActive ? "#ffffff" : "transparent",
+            color: isSeekerActive ? "primary.main" : "#ffffff",
+            "&:hover": {
+              backgroundColor: isSeekerActive
+                ? "#ffffff"
+                : "rgba(255, 255, 255, 0.08)",
+            },
+          }}
+        >
+          Seeker management
         </Button>
       </Stack>
     </Box>
