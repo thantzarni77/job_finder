@@ -160,7 +160,7 @@ const Companies = () => {
                 fontWeight: 400,
                 fontSize: "14px",
                 borderRadius: "5px",
-                bgcolor: "#ffffff",
+                bgcolor: "background.paper",
                 color: "primary.main",
 
                 // Crucially, hide the default input border
@@ -180,7 +180,7 @@ const Companies = () => {
                   paper: {
                     sx: {
                       width: 155,
-                      bgcolor: "#ffffff",
+                      bgcolor: "background.paper",
                       borderRadius: "5px",
                       boxShadow: "none",
                       color: "primary.main",
@@ -197,7 +197,7 @@ const Companies = () => {
                   fontWeight: 400,
                   margin: "4px",
                   borderLeft: "4px solid transparent",
-                  bgColor: "#ffffff",
+                  bgColor: "background.paper",
                   color: "primary.main",
                   fontSize: "14px",
                   // Style for the currently selected item in the list
@@ -220,7 +220,7 @@ const Companies = () => {
                   borderRadius: "8px",
                   margin: "4px",
                   borderLeft: "4px solid transparent",
-                  bgColor: "#ffffff",
+                  bgColor: "background.paper",
                   color: "primary.main",
                   fontWeight: 400,
                   fontSize: "14px",
@@ -254,7 +254,7 @@ const Companies = () => {
                 width: { xs: "100%", sm: "92%", md: "100%" },
                 justifyContent: {
                   xs: "center",
-                  sm: "space-between",
+                  sm: "center",
                   md: "center",
                 },
                 gap: { xs: 2, md: 4 },

@@ -20,7 +20,7 @@ const ChangePassword = () => {
               color: "primary.main",
               fontSize: 32,
               ":hover": {
-                color: "secondary.main",
+                color: "text.secondary",
                 cursor: "pointer",
               },
             }}
@@ -72,7 +72,7 @@ const ChangePassword = () => {
             sx={{
               // root of the OutlinedInput
               "& .MuiOutlinedInput-root": {
-                backgroundColor: "#ffffff",
+                backgroundColor: "background.paper",
                 borderRadius: "13px",
 
                 //  border
@@ -120,7 +120,7 @@ const ChangePassword = () => {
             sx={{
               // root of the OutlinedInput
               "& .MuiOutlinedInput-root": {
-                backgroundColor: "#ffffff",
+                backgroundColor: "background.paper",
                 borderRadius: "13px",
 
                 //  border
@@ -174,7 +174,7 @@ const ChangePassword = () => {
             sx={{
               // root of the OutlinedInput
               "& .MuiOutlinedInput-root": {
-                backgroundColor: "#ffffff",
+                backgroundColor: "background.paper",
                 borderRadius: "13px",
 
                 //  border

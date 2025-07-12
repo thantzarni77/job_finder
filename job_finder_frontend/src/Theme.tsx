@@ -9,6 +9,13 @@ import { RouterProvider } from "react-router";
 import { router } from "./Routes.tsx";
 import { useThemeStore } from "./store/Appstore";
 import { useMemo } from "react";
+
+declare module "@mui/material/styles" {
+  interface TypeBackground {
+    hover?: string;
+  }
+}
+
 //remove green box on input auto fill
 const inputGlobalStyles = (
   <GlobalStyles
@@ -33,9 +40,13 @@ export default function Theme() {
             main: "#5f6caf", //purple
             light: "#898989", //light gray
           },
-          secondary: {
-            main: "#33373B", //dark gray
-            light: "#f5f5f5", //bg white
+          background: {
+            default: "#f5f5f5",
+            paper: "#ffffff",
+            hover: "#5F6CAF3D",
+          },
+          text: {
+            secondary: "#33373B",
           },
           error: {
             main: "#EA4335",
@@ -46,11 +57,6 @@ export default function Theme() {
         }),
       },
       components: {
-        // MuiButtonBase: {
-        //   defaultProps: {
-        //     disableRipple: true,
-        //   },
-        // },
         MuiInput: {
           defaultProps: {
             disableUnderline: true,

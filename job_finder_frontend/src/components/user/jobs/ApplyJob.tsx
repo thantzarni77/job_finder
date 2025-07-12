@@ -153,7 +153,7 @@ const ApplyJob = () => {
               sx={{
                 // root of the OutlinedInput
                 "& .MuiOutlinedInput-root": {
-                  backgroundColor: "#ffffff",
+                  backgroundColor: "background.paper",
                   borderRadius: "13px",
 
                   //  border
@@ -201,7 +201,7 @@ const ApplyJob = () => {
               sx={{
                 // root of the OutlinedInput
                 "& .MuiOutlinedInput-root": {
-                  backgroundColor: "#ffffff",
+                  backgroundColor: "background.paper",
                   borderRadius: "13px",
 
                   //  border
@@ -249,7 +249,7 @@ const ApplyJob = () => {
               sx={{
                 // root of the OutlinedInput
                 "& .MuiOutlinedInput-root": {
-                  backgroundColor: "#ffffff",
+                  backgroundColor: "background.paper",
                   borderRadius: "13px",
 
                   //  border
@@ -299,7 +299,7 @@ const ApplyJob = () => {
               sx={{
                 // root of the OutlinedInput
                 "& .MuiOutlinedInput-root": {
-                  backgroundColor: "#ffffff",
+                  backgroundColor: "background.paper",
                   borderRadius: "13px",
 
                   //  border
@@ -352,13 +352,15 @@ const ApplyJob = () => {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                backgroundColor: "#fff",
+                backgroundColor: "background.paper",
                 cursor: previewUrl ? "default" : "pointer", // Change cursor based on state
                 transition: "background-color 0.2s ease",
                 position: "relative",
                 overflow: "hidden",
                 "&:hover": {
-                  backgroundColor: previewUrl ? "#fff" : "#fafafa",
+                  backgroundColor: previewUrl
+                    ? "background.paper"
+                    : "backgorund.default",
                 },
               }}
             >

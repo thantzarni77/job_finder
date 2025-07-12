@@ -5,7 +5,7 @@ import BookmarkIcon from "@mui/icons-material/Bookmark";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
 import JobCard from "../../../components/user/jobs/JobCard";
-import CustomAppilicant from "../../../components/custom_svg/CustomAppilicant";
+import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import { useNavigate } from "react-router";
 import EmployerCard from "../../../components/employer/EmployerCard";
 
@@ -29,7 +29,7 @@ const JobDetail = () => {
               color: "primary.main",
               fontSize: 32,
               ":hover": {
-                color: "secondary.main",
+                color: "text.secondary",
                 cursor: "pointer",
               },
             }}
@@ -57,7 +57,7 @@ const JobDetail = () => {
             display: "flex",
             width: "fit-content",
             alignItems: "center",
-            bgcolor: "#ffffff",
+            bgcolor: "background.paper",
             border: 1,
             borderColor: "primary.main",
             borderRadius: "4px",
@@ -76,7 +76,7 @@ const JobDetail = () => {
             display: "flex",
             alignItems: "center",
             width: "fit-content",
-            bgcolor: "#ffffff",
+            bgcolor: "background.paper",
             border: 1,
             borderColor: "primary.main",
             borderRadius: "4px",
@@ -107,7 +107,7 @@ const JobDetail = () => {
             display: "flex",
             alignItems: "center",
             bgcolor: "primary.main",
-            color: "#ffffff",
+            color: "background.paper",
             borderRadius: "4px",
             height: "28px",
             px: "5px",
@@ -115,7 +115,7 @@ const JobDetail = () => {
             gap: "5px",
           }}
         >
-          <CustomAppilicant />
+          <GroupsOutlinedIcon />
           <Typography variant="caption">24 applicants</Typography>
         </Box>
 
@@ -125,7 +125,7 @@ const JobDetail = () => {
             display: "flex",
             alignItems: "center",
             bgcolor: "primary.main",
-            color: "#ffffff",
+            color: "background.paper",
             borderRadius: "4px",
             height: "28px",
             px: "5px",
@@ -168,7 +168,7 @@ const JobDetail = () => {
             </Typography>
             <Typography
               variant="subtitle2"
-              sx={{ fontWeight: 400, color: "secondary.main" }}
+              sx={{ fontWeight: 400, color: "text.secondary" }}
             >
               Full Stack Developer
             </Typography>
@@ -187,7 +187,7 @@ const JobDetail = () => {
             </Typography>
             <Typography
               variant="subtitle2"
-              sx={{ fontWeight: 400, color: "secondary.main" }}
+              sx={{ fontWeight: 400, color: "text.secondary" }}
             >
               Senior
             </Typography>
@@ -206,7 +206,7 @@ const JobDetail = () => {
             </Typography>
             <Typography
               variant="subtitle2"
-              sx={{ fontWeight: 400, color: "secondary.main" }}
+              sx={{ fontWeight: 400, color: "text.secondary" }}
             >
               All
             </Typography>
@@ -225,7 +225,7 @@ const JobDetail = () => {
             </Typography>
             <Typography
               variant="subtitle2"
-              sx={{ fontWeight: 400, color: "secondary.main" }}
+              sx={{ fontWeight: 400, color: "text.secondary" }}
             >
               500000MMK
             </Typography>
@@ -244,7 +244,7 @@ const JobDetail = () => {
             </Typography>
             <Typography
               variant="subtitle2"
-              sx={{ fontWeight: 400, color: "secondary.main" }}
+              sx={{ fontWeight: 400, color: "text.secondary" }}
             >
               No.123, Yadanar St, Marchart Road, Yangon
             </Typography>
@@ -263,7 +263,7 @@ const JobDetail = () => {
             </Typography>
             <Typography
               variant="subtitle2"
-              sx={{ fontWeight: 400, color: "secondary.main" }}
+              sx={{ fontWeight: 400, color: "text.secondary" }}
             >
               Full time
             </Typography>
@@ -282,7 +282,7 @@ const JobDetail = () => {
             </Typography>
             <Typography
               variant="subtitle2"
-              sx={{ fontWeight: 400, color: "secondary.main" }}
+              sx={{ fontWeight: 400, color: "text.secondary" }}
             >
               9:00 am to 5:00 pm
             </Typography>
@@ -303,7 +303,7 @@ const JobDetail = () => {
               variant="subtitle2"
               sx={{
                 fontWeight: 400,
-                color: "secondary.main",
+                color: "text.secondary",
                 width: { xs: "100%", md: "100%", lg: "70%" },
               }}
             >
@@ -336,7 +336,7 @@ const JobDetail = () => {
               variant="subtitle2"
               sx={{
                 fontWeight: 400,
-                color: "secondary.main",
+                color: "text.secondary",
                 width: { xs: "100%", md: "100%", lg: "70%" },
               }}
             >

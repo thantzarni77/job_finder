@@ -63,7 +63,7 @@ export default function AddNewProject() {
                 placeholder="+"
                 size="small"
                 sx={{
-                  bgcolor: "#ffffff",
+                  bgcolor: "background.paper",
                   height: 200,
                   "& input::placeholder": {
                     fontSize: 30,
@@ -71,14 +71,14 @@ export default function AddNewProject() {
                   },
                 }}
               />
-              <Typography sx={{ color: "secondary.main" }}>
+              <Typography sx={{ color: "text.secondary" }}>
                 Upload Cover Photo
               </Typography>
             </Box>
             <Box sx={{ mt: 2 }}>
               <InputLabel
                 htmlFor="description"
-                sx={{ color: "secondary.main", mb: 1 }}
+                sx={{ color: "text.secondary", mb: 1 }}
               >
                 Project Description
               </InputLabel>
@@ -87,18 +87,22 @@ export default function AddNewProject() {
                 multiline
                 rows={4}
                 id="description"
-                sx={{ bgcolor: "#ffffff" }}
+                sx={{ bgcolor: "background.paper" }}
               />
             </Box>
 
             <Box sx={{ mt: 2 }}>
               <InputLabel
                 htmlFor="link"
-                sx={{ color: "secondary.main", mb: 1 }}
+                sx={{ color: "text.secondary", mb: 1 }}
               >
                 Link
               </InputLabel>
-              <OutlinedInput fullWidth id="link" sx={{ bgcolor: "#ffffff" }} />
+              <OutlinedInput
+                fullWidth
+                id="link"
+                sx={{ bgcolor: "background.paper" }}
+              />
             </Box>
           </Box>
           <Box sx={{ mt: 2 }}>
@@ -108,7 +112,7 @@ export default function AddNewProject() {
               size="small"
               fullWidth
               sx={{
-                bgcolor: "#ffffff",
+                bgcolor: "background.paper",
                 "& input::placeholder": {
                   textAlign: "center",
                 },
@@ -120,7 +124,14 @@ export default function AddNewProject() {
             type="submit"
             variant="contained"
             fullWidth
-            sx={{ mt: 2, textTransform: "none" }}
+            sx={{
+              mt: 4,
+              textTransform: "none",
+              boxShadow: "none",
+              ":hover": {
+                boxShadow: "none",
+              },
+            }}
           >
             Upload
           </Button>

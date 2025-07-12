@@ -124,7 +124,7 @@ export default function EditProfile() {
             <Box>
               <InputLabel
                 htmlFor="name"
-                sx={{ color: "secondary.main", mb: 1 }}
+                sx={{ color: "text.secondary", mb: 1 }}
               >
                 Your Name
               </InputLabel>
@@ -134,7 +134,7 @@ export default function EditProfile() {
                 placeholder="Please Enter Your Name"
                 size="small"
                 fullWidth
-                sx={{ bgcolor: "#ffffff" }}
+                sx={{ bgcolor: "background.paper" }}
                 {...register("name", { required: true })}
                 error={!!errors.name}
               />
@@ -151,7 +151,7 @@ export default function EditProfile() {
             <Box>
               <InputLabel
                 htmlFor="jobTitle"
-                sx={{ color: "secondary.main", mb: 1 }}
+                sx={{ color: "text.secondary", mb: 1 }}
               >
                 Job Title
               </InputLabel>
@@ -160,7 +160,7 @@ export default function EditProfile() {
                 id="jobTitle"
                 placeholder="Please Enter Your Job Title"
                 size="small"
-                sx={{ bgcolor: "#ffffff" }}
+                sx={{ bgcolor: "background.paper" }}
                 fullWidth
                 {...register("jobTitle", { required: true })}
                 error={!!errors.jobTitle}
@@ -176,7 +176,7 @@ export default function EditProfile() {
               )}
             </Box>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-              <InputLabel htmlFor="education" sx={{ color: "secondary.main" }}>
+              <InputLabel htmlFor="education" sx={{ color: "text.secondary" }}>
                 Education
               </InputLabel>
               <Box>
@@ -188,7 +188,7 @@ export default function EditProfile() {
                   fullWidth
                   {...register("education", { required: true })}
                   error={!!errors.education}
-                  sx={{ flex: 1, bgcolor: "#ffffff" }}
+                  sx={{ flex: 1, bgcolor: "background.paper" }}
                 />
                 {errors.education && (
                   <Typography
@@ -208,7 +208,7 @@ export default function EditProfile() {
                   size="small"
                   fullWidth
                   sx={{
-                    bgcolor: "#ffffff",
+                    bgcolor: "background.paper",
                     "& input::placeholder": {
                       textAlign: "center",
                     },
@@ -218,7 +218,7 @@ export default function EditProfile() {
             </Box>
 
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-              <InputLabel htmlFor="experience" sx={{ color: "secondary.main" }}>
+              <InputLabel htmlFor="experience" sx={{ color: "text.secondary" }}>
                 Experience
               </InputLabel>
               <Box>
@@ -230,7 +230,7 @@ export default function EditProfile() {
                   fullWidth
                   {...register("experience", { required: true })}
                   error={!!errors.experience}
-                  sx={{ flex: 1, bgcolor: "#ffffff" }}
+                  sx={{ flex: 1, bgcolor: "background.paper" }}
                 />
                 {errors.experience && (
                   <Typography
@@ -249,7 +249,7 @@ export default function EditProfile() {
                   size="small"
                   fullWidth
                   sx={{
-                    bgcolor: "#ffffff",
+                    bgcolor: "background.paper",
                     "& input::placeholder": {
                       textAlign: "center",
                     },
@@ -261,7 +261,7 @@ export default function EditProfile() {
             <Box>
               <InputLabel
                 htmlFor="email"
-                sx={{ color: "secondary.main", mb: 1 }}
+                sx={{ color: "text.secondary", mb: 1 }}
               >
                 Email Address
               </InputLabel>
@@ -271,7 +271,7 @@ export default function EditProfile() {
                 placeholder="Please Enter Your Email Address"
                 size="small"
                 fullWidth
-                sx={{ bgcolor: "#ffffff" }}
+                sx={{ bgcolor: "background.paper" }}
                 {...register("email", { required: true })}
                 error={!!errors.email}
               />
@@ -289,7 +289,7 @@ export default function EditProfile() {
             <Box>
               <InputLabel
                 htmlFor="phone"
-                sx={{ color: "secondary.main", mb: 1 }}
+                sx={{ color: "text.secondary", mb: 1 }}
               >
                 Phone Number
               </InputLabel>
@@ -299,7 +299,7 @@ export default function EditProfile() {
                 placeholder="Please Enter Your Phone Number"
                 size="small"
                 fullWidth
-                sx={{ bgcolor: "#ffffff" }}
+                sx={{ bgcolor: "background.paper" }}
                 {...register("phone", { required: true })}
                 error={!!errors.phone}
               />
@@ -317,7 +317,7 @@ export default function EditProfile() {
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
               <InputLabel
                 htmlFor="socialMedia"
-                sx={{ color: "secondary.main" }}
+                sx={{ color: "text.secondary" }}
               >
                 Social Media
               </InputLabel>
@@ -330,7 +330,7 @@ export default function EditProfile() {
                   fullWidth
                   {...register("socialMedia", { required: true })}
                   error={!!errors.socialMedia}
-                  sx={{ flex: 1, bgcolor: "#ffffff" }}
+                  sx={{ flex: 1, bgcolor: "background.paper" }}
                 />
                 {errors.socialMedia && (
                   <Typography
@@ -349,7 +349,7 @@ export default function EditProfile() {
                   size="small"
                   fullWidth
                   sx={{
-                    bgcolor: "#ffffff",
+                    bgcolor: "background.paper",
                     "& input::placeholder": {
                       textAlign: "center",
                     },
@@ -359,12 +359,12 @@ export default function EditProfile() {
             </Box>
 
             <Box>
-              <InputLabel htmlFor="cv" sx={{ color: "secondary.main", mb: 1 }}>
+              <InputLabel htmlFor="cv" sx={{ color: "text.secondary", mb: 1 }}>
                 CV
               </InputLabel>
               <OutlinedInput
                 sx={{
-                  bgcolor: "#ffffff",
+                  bgcolor: "background.paper",
                   height: 200,
                   "& input::placeholder": {
                     textAlign: "center",
@@ -377,7 +377,18 @@ export default function EditProfile() {
             </Box>
           </Box>
           <Box>
-            <Button type="submit" variant="contained" fullWidth sx={{ mt: 3 }}>
+            <Button
+              type="submit"
+              variant="contained"
+              fullWidth
+              sx={{
+                mt: 3,
+                boxShadow: "none",
+                ":hover": {
+                  boxShadow: "none",
+                },
+              }}
+            >
               Save
             </Button>
           </Box>

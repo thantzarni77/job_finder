@@ -1,7 +1,7 @@
 import { Avatar, Box, Button, Paper, Typography } from "@mui/material";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import { NavLink } from "react-router";
-import CustomApplicantBlack from "../custom_svg/CustomApplicantBlack";
+import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import ApartmentIcon from "@mui/icons-material/Apartment";
 
 const EmployerCard = () => {
@@ -59,13 +59,13 @@ const EmployerCard = () => {
                   variant="body1"
                   sx={{
                     fontWeight: "700",
-                    color: "secondary.main",
+                    color: "text.secondary",
                     ":hover": { cursor: "pointer", color: "primary.main" },
                   }}
                 >
                   <NavLink to={"#"}>KBZ Bank</NavLink>
                 </Typography>
-                <Typography variant="caption" sx={{ color: "secondary.main" }}>
+                <Typography variant="caption" sx={{ color: "text.secondary" }}>
                   Bank
                 </Typography>
               </Box>
@@ -100,7 +100,7 @@ const EmployerCard = () => {
                 gap: 1,
               }}
             >
-              <CustomApplicantBlack />
+              <GroupsOutlinedIcon />
               <Typography variant="caption" sx={{ color: "primary.light" }}>
                 5,000 employees on site
               </Typography>

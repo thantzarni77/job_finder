@@ -79,7 +79,7 @@ const BookmarkNav = () => {
             sx={{
               color: "primary.main",
               fontSize: 32,
-              ":hover": { color: "secondary.main", cursor: "pointer" },
+              ":hover": { color: "text.secondary", cursor: "pointer" },
             }}
           />
         </IconButton>

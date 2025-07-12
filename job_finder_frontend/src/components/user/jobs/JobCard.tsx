@@ -66,7 +66,7 @@ const JobCard = () => {
                   variant="body1"
                   sx={{
                     fontWeight: "700",
-                    color: "secondary.main",
+                    color: "text.secondary",
                     ":hover": { cursor: "pointer", color: "primary.main" },
                   }}
                 >
@@ -142,7 +142,7 @@ const JobCard = () => {
             sx={{
               borderRadius: "4px",
               backgroundColor: "primary.main",
-              color: "#ffffff",
+              color: "background.paper",
               width: "fit-content",
               height: "28px",
             }}
@@ -152,7 +152,7 @@ const JobCard = () => {
             sx={{
               borderRadius: "4px",
               backgroundColor: "primary.main",
-              color: "#ffffff",
+              color: "background.paper",
               width: "fit-content",
               height: "28px",
             }}
@@ -162,7 +162,7 @@ const JobCard = () => {
             sx={{
               borderRadius: "4px",
               backgroundColor: "primary.main",
-              color: "#ffffff",
+              color: "background.paper",
               width: "fit-content",
               height: "28px",
             }}
@@ -180,13 +180,13 @@ const JobCard = () => {
         >
           <Typography
             variant="body1"
-            sx={{ fontWeight: "bold", color: "secondary.main" }}
+            sx={{ fontWeight: "bold", color: "text.secondary" }}
           >
             Salary
           </Typography>
           <Typography
             variant="body1"
-            sx={{ fontWeight: "bold", color: "secondary.main" }}
+            sx={{ fontWeight: "bold", color: "text.secondary" }}
           >
             800000MMK
           </Typography>

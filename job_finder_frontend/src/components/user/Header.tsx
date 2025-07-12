@@ -84,6 +84,7 @@ export default function Header() {
         "/companies/:id": companiesRef,
         "/post/job": postJobRef,
         "/profile/:id": profileRef,
+        "/project/add": profileRef,
         "/notifications/user/:id": notificationsRef,
         "/settings/user/:id": settingsRef,
         "/settings/user/:id/bookmarks": settingsRef,

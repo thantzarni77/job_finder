@@ -115,13 +115,13 @@ export default function Profile() {
             <Typography variant="h6">Education</Typography>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
               <SchoolIcon color="primary" />
-              <Typography variant="body2" sx={{ color: "secondary.main" }}>
+              <Typography variant="body2" sx={{ color: "text.secondary" }}>
                 Degree in Design
               </Typography>
             </Box>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
               <SchoolIcon color="primary" />
-              <Typography variant="body2" sx={{ color: "secondary.main" }}>
+              <Typography variant="body2" sx={{ color: "text.secondary" }}>
                 Diploma in Digital Marketing
               </Typography>
             </Box>
@@ -132,7 +132,7 @@ export default function Profile() {
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
               <WorkIcon color="primary" />
               <Box sx={{ display: "flex", flexDirection: "column" }}>
-                <Typography variant="body2" sx={{ color: "secondary.main" }}>
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
                   Weed Developer
                 </Typography>
                 <Typography variant="body2" color="primary">
@@ -143,7 +143,7 @@ export default function Profile() {
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
               <WorkIcon color="primary" />
               <Box sx={{ display: "flex", flexDirection: "column" }}>
-                <Typography variant="body2" sx={{ color: "secondary.main" }}>
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
                   Creative Studio
                 </Typography>
                 <Typography variant="body2" color="primary">
@@ -165,13 +165,13 @@ export default function Profile() {
             >
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <PhoneInTalkIcon color="primary" />
-                <Typography variant="body2" sx={{ color: "secondary.main" }}>
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
                   +09-123456789
                 </Typography>
               </Box>
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <EmailOutlinedIcon color="primary" />
-                <Typography variant="body2" sx={{ color: "secondary.main" }}>
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
                   abc@gmail.com
                 </Typography>
               </Box>
@@ -182,7 +182,7 @@ export default function Profile() {
             <Typography variant="h6">Social Media</Typography>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
               <LinkedInIcon color="primary" />
-              <Typography variant="body2" sx={{ color: "secondary.main" }}>
+              <Typography variant="body2" sx={{ color: "text.secondary" }}>
                 https://www.linkedin.com/in/johndoe
               </Typography>
             </Box>
@@ -192,7 +192,7 @@ export default function Profile() {
             <Typography variant="h6">Address</Typography>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
               <LocationOnIcon color="primary" />
-              <Typography variant="body2" sx={{ color: "secondary.main" }}>
+              <Typography variant="body2" sx={{ color: "text.secondary" }}>
                 123 Main Street, City, Country
               </Typography>
             </Box>
@@ -229,7 +229,7 @@ export default function Profile() {
                     <Typography variant="h6">Project Name</Typography>
                     <Typography
                       variant="body2"
-                      sx={{ color: "secondary.main" }}
+                      sx={{ color: "text.secondary" }}
                     >
                       Lorem ipsum dolor sit amet consectetur adipisicing elit.
                       Quisquam Lorem ipsum dolor sit amet consectetur

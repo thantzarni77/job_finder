@@ -120,7 +120,7 @@ const JobFilter = ({ filterType, filterTypeArray }: Props) => {
                 label={type}
                 sx={{
                   "& .MuiFormControlLabel-label": {
-                    color: "secondary.main",
+                    color: "text.secondary",
                     fontSize: 16,
                     fontWeight: 400,
                     textTransform: "capitalize",
@@ -178,7 +178,7 @@ const JobFilter = ({ filterType, filterTypeArray }: Props) => {
                 label={"Senior"}
                 sx={{
                   "& .MuiFormControlLabel-label": {
-                    color: "secondary.main",
+                    color: "text.secondary",
                     fontSize: 16,
                     fontWeight: 400,
                   },
@@ -196,7 +196,7 @@ const JobFilter = ({ filterType, filterTypeArray }: Props) => {
                 label={"Mid"}
                 sx={{
                   "& .MuiFormControlLabel-label": {
-                    color: "secondary.main",
+                    color: "text.secondary",
                     fontSize: 16,
                     fontWeight: 400,
                   },
@@ -214,7 +214,7 @@ const JobFilter = ({ filterType, filterTypeArray }: Props) => {
                 label={"Junior"}
                 sx={{
                   "& .MuiFormControlLabel-label": {
-                    color: "secondary.main",
+                    color: "text.secondary",
                     fontSize: 16,
                     fontWeight: 400,
                   },
@@ -338,7 +338,7 @@ const JobFilter = ({ filterType, filterTypeArray }: Props) => {
                 label={"Accounting & Finance"}
                 sx={{
                   "& .MuiFormControlLabel-label": {
-                    color: "secondary.main",
+                    color: "text.secondary",
                     fontSize: 16,
                     fontWeight: 400,
                   },
@@ -356,7 +356,7 @@ const JobFilter = ({ filterType, filterTypeArray }: Props) => {
                 label={"Administration"}
                 sx={{
                   "& .MuiFormControlLabel-label": {
-                    color: "secondary.main",
+                    color: "text.secondary",
                     fontSize: 16,
                     fontWeight: 400,
                   },
@@ -374,7 +374,7 @@ const JobFilter = ({ filterType, filterTypeArray }: Props) => {
                 label={"Advertising"}
                 sx={{
                   "& .MuiFormControlLabel-label": {
-                    color: "secondary.main",
+                    color: "text.secondary",
                     fontSize: 16,
                     fontWeight: 400,
                   },

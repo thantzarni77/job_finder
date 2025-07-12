@@ -57,7 +57,7 @@ export default function TalentCard() {
                   variant="body1"
                   sx={{
                     fontWeight: "700",
-                    color: "secondary.main",
+                    color: "text.secondary",
                     ":hover": { cursor: "pointer", color: "primary.main" },
                   }}
                 >
@@ -150,13 +150,13 @@ export default function TalentCard() {
         >
           <Typography
             variant="body1"
-            sx={{ fontWeight: "bold", color: "secondary.main" }}
+            sx={{ fontWeight: "bold", color: "text.secondary" }}
           >
             Salary
           </Typography>
           <Typography
             variant="body1"
-            sx={{ fontWeight: "bold", color: "secondary.main" }}
+            sx={{ fontWeight: "bold", color: "text.secondary" }}
           >
             50MMK
           </Typography>
