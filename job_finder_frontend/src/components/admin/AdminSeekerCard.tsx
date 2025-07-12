@@ -12,7 +12,7 @@ const AdminSeekerCard = () => {
   return (
     <Box
       sx={{
-        backgroundColor: "#ffffff",
+        backgroundColor: "background.paper",
         p: 2,
         borderRadius: "15px",
         width: "280px",
@@ -26,12 +26,12 @@ const AdminSeekerCard = () => {
       {/* seeker details */}
       <MuiLink
         component={RouterLink}
-        to={"/admin/user/1/manage"}
+        to={"/admin/seeker/1/manage"}
         sx={{
           textDecoration: "none",
           ":hover": {
             cursor: "pointer",
-            color: "#000000",
+            color: "text.primary",
           },
         }}
       >
@@ -80,7 +80,7 @@ const AdminSeekerCard = () => {
           <DeleteOutlineOutlinedIcon sx={{ color: "error.main" }} />
           <Typography
             variant="subtitle2"
-            sx={{ fontWeight: 300, color: "#000000" }}
+            sx={{ fontWeight: 300, color: "text.primary" }}
           >
             Delete
           </Typography>
@@ -99,7 +99,7 @@ const AdminSeekerCard = () => {
             />
             <Typography
               variant="subtitle2"
-              sx={{ fontWeight: 300, color: "#000000" }}
+              sx={{ fontWeight: 300, color: "text.primary" }}
             >
               Edit
             </Typography>
@@ -115,7 +115,7 @@ const AdminSeekerCard = () => {
             <RemoveRedEyeOutlinedIcon sx={{ color: "primary.main" }} />
             <Typography
               variant="subtitle2"
-              sx={{ fontWeight: 300, color: "#000000" }}
+              sx={{ fontWeight: 300, color: "text.primary" }}
             >
               View
             </Typography>

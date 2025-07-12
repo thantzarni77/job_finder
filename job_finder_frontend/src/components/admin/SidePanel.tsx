@@ -7,8 +7,8 @@ const SidePanel = () => {
   // paths for each route
   const overviewPath = "/admin/overview";
   const jobsPath = "/admin/jobs/manage";
-  const usersPath = "/admin/users/manage";
-  const userDetailPath = "/admin/user/:id/manage";
+  const usersPath = "/admin/seekers/manage";
+  const userDetailPath = "/admin/seeker/:id/manage";
   const seekerPath = "/admin/seeker/manage";
 
   const isOverviewActive = useMatch(overviewPath);
@@ -74,23 +74,7 @@ const SidePanel = () => {
           Job management
         </Button>
 
-        {/* --- User Management Button --- */}
-        <Button
-          onClick={() => navigate(usersPath)}
-          sx={{
-            ...baseButtonSx,
-            backgroundColor: isUserManagementActive ? "#ffffff" : "transparent",
-            color: isUserManagementActive ? "primary.main" : "#ffffff",
-            "&:hover": {
-              backgroundColor: isUserManagementActive
-                ? "#ffffff"
-                : "rgba(255, 255, 255, 0.08)",
-            },
-          }}
-        >
-          User management
-        </Button>
-
+        {/* --- Employer Management Button --- */}
         <Button
           onClick={() => navigate(seekerPath)}
           sx={{
@@ -99,6 +83,23 @@ const SidePanel = () => {
             color: isSeekerActive ? "primary.main" : "#ffffff",
             "&:hover": {
               backgroundColor: isSeekerActive
+                ? "#ffffff"
+                : "rgba(255, 255, 255, 0.08)",
+            },
+          }}
+        >
+          Employer management
+        </Button>
+
+        {/* --- Seeker Management Button --- */}
+        <Button
+          onClick={() => navigate(usersPath)}
+          sx={{
+            ...baseButtonSx,
+            backgroundColor: isUserManagementActive ? "#ffffff" : "transparent",
+            color: isUserManagementActive ? "primary.main" : "#ffffff",
+            "&:hover": {
+              backgroundColor: isUserManagementActive
                 ? "#ffffff"
                 : "rgba(255, 255, 255, 0.08)",
             },

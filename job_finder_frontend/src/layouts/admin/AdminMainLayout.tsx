@@ -20,7 +20,7 @@ const AdminMainLayout = () => {
         component="main"
         sx={{
           flexGrow: 1,
-          bgcolor: "secondary.light",
+          bgcolor: "background.default",
           p: 4,
         }}
       >

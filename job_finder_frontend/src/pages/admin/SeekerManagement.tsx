@@ -11,7 +11,7 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import SearchIcon from "@mui/icons-material/Search";
 import AdminSeekerCard from "../../components/admin/AdminSeekerCard";
 
-const UserManagement = () => {
+const SeekerManagement = () => {
   return (
     <Box
       sx={{
@@ -24,7 +24,7 @@ const UserManagement = () => {
       }}
     >
       <Typography variant="h4" sx={{ fontWeight: 700 }}>
-        User Management
+        Seeker Management
       </Typography>
       <Typography variant="subtitle1" sx={{ fontWeight: 400, mb: 2 }}>
         15 Jul 2025
@@ -43,7 +43,7 @@ const UserManagement = () => {
         >
           <Box
             sx={{
-              backgroundColor: "#ffffff",
+              backgroundColor: "background.paper",
               width: "200px",
               p: 3,
               height: "fit-content",
@@ -62,7 +62,7 @@ const UserManagement = () => {
           </Box>
           <Box
             sx={{
-              backgroundColor: "#ffffff",
+              backgroundColor: "background.paper",
               width: "200px",
               p: 3,
               height: "fit-content",
@@ -81,7 +81,7 @@ const UserManagement = () => {
           </Box>
           <Box
             sx={{
-              backgroundColor: "#ffffff",
+              backgroundColor: "background.paper",
               width: "200px",
               p: 3,
               height: "fit-content",
@@ -100,7 +100,7 @@ const UserManagement = () => {
           </Box>
           <Box
             sx={{
-              backgroundColor: "#ffffff",
+              backgroundColor: "background.paper",
               width: "200px",
               p: 3,
               height: "fit-content",
@@ -119,7 +119,7 @@ const UserManagement = () => {
           </Box>
           <Box
             sx={{
-              backgroundColor: "#ffffff",
+              backgroundColor: "background.paper",
               width: "200px",
               p: 3,
               height: "fit-content",
@@ -138,7 +138,7 @@ const UserManagement = () => {
           </Box>
           <Box
             sx={{
-              backgroundColor: "#ffffff",
+              backgroundColor: "background.paper",
               width: "200px",
               p: 3,
               height: "fit-content",
@@ -178,7 +178,7 @@ const UserManagement = () => {
               maxWidth: "250px",
               "& .MuiOutlinedInput-root": {
                 borderRadius: "8px",
-                backgroundColor: "#ffffff",
+                backgroundColor: "background.paper",
               },
               "& fieldset": {
                 borderColor: "primary.main",
@@ -194,7 +194,7 @@ const UserManagement = () => {
               borderColor: "primary.main",
               color: "primary.main",
               borderRadius: "8px",
-              bgcolor: "#ffffff",
+              bgcolor: "background.paper",
             }}
           >
             Filter
@@ -238,4 +238,4 @@ const UserManagement = () => {
   );
 };
 
-export default UserManagement;
+export default SeekerManagement;

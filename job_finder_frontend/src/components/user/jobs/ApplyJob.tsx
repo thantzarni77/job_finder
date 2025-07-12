@@ -117,6 +117,7 @@ const ApplyJob = () => {
 
         {/* application form */}
         <Box
+          component="form"
           sx={{
             display: "flex",
             flexDirection: "column",

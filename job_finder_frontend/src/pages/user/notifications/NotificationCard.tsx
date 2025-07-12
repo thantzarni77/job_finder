@@ -82,7 +82,7 @@ const NotificationCard = ({ title, message }: Props) => {
           >
             <DeleteOutlineIcon
               sx={{ color: "primary.main" }}
-              fontSize="small"
+              fontSize="medium"
             />
           </IconButton>
         </Box>

@@ -68,7 +68,9 @@ const SeekerCard = () => {
                     ":hover": { cursor: "pointer", color: "primary.main" },
                   }}
                 >
-                  <NavLink to={""}>Full Stack Developer</NavLink>
+                  <NavLink to={"/talent/1/profile"}>
+                    Full Stack Developer
+                  </NavLink>
                 </Typography>
               </Box>
             </Box>

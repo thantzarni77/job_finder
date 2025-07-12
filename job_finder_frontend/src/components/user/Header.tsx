@@ -80,6 +80,7 @@ export default function Header() {
         "/job/:id/apply": jobsRef,
         "/job/:id/apply/confirm": jobsRef,
         "/talents": talentRef,
+        "/talent/:id/profile": talentRef,
         "/companies": companiesRef,
         "/companies/:id": companiesRef,
         "/post/job": postJobRef,

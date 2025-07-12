@@ -1,4 +1,12 @@
-import { Box, Button, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Pagination,
+  Stack,
+  Tab,
+  Tabs,
+  Typography,
+} from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRenameOutlineOutlined";
 import HourglassBottomOutlinedIcon from "@mui/icons-material/HourglassBottomOutlined";
@@ -16,9 +24,17 @@ import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import { useNavigate } from "react-router";
 import { Link as MuiLink } from "@mui/material";
 import { Link as RouterLink } from "react-router";
+import { useState } from "react";
+import JobCard from "../../components/user/jobs/JobCard";
 
-const UserDetailManage = () => {
+const SeekerDetailManage = () => {
   const navigate = useNavigate();
+
+  const [activeTab, setActiveTab] = useState(0);
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setActiveTab(newValue);
+  };
   return (
     <Box sx={{ width: "90%", mx: 6 }}>
       {/* back arrow and top part */}
@@ -42,7 +58,7 @@ const UserDetailManage = () => {
             }}
           />
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
-            User detail view
+            Seeker detail view
           </Typography>
         </Box>
         <Button
@@ -226,6 +242,7 @@ const UserDetailManage = () => {
           </Box>
         </Box>
       </Box>
+
       {/* action buttons */}
       <Box
         sx={{
@@ -275,8 +292,94 @@ const UserDetailManage = () => {
           <Typography>Send reset password link</Typography>
         </Button>
       </Box>
+
+      {/* --- Jobs & Users Tab Navigation --- */}
+
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          width: "100%",
+        }}
+      >
+        <Tabs
+          sx={{ mb: 2 }}
+          value={activeTab}
+          onChange={handleTabChange}
+          aria-label="submitted jobs and saved jobs"
+        >
+          <Tab
+            label="Submitted Jobs"
+            sx={{
+              textTransform: "none",
+              fontSize: "1rem",
+              fontWeight: 600,
+              color: "#000000",
+              "&.Mui-selected": {
+                color: "#000000",
+              },
+            }}
+          />
+          <Tab
+            label="Saved Jobs"
+            sx={{
+              textTransform: "none",
+              fontSize: "1rem",
+              fontWeight: 600,
+              color: "#000000",
+              "&.Mui-selected": {
+                color: "#000000",
+              },
+            }}
+          />
+        </Tabs>
+
+        {/* --- Placeholder for the actual content --- */}
+        <Box sx={{ mt: 2 }}>
+          {activeTab === 0 && (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 3,
+                flexWrap: "wrap",
+              }}
+            >
+              <JobCard />
+              <JobCard />
+            </Box>
+          )}
+          {activeTab === 1 && (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 3,
+                flexWrap: "wrap",
+              }}
+            >
+              <JobCard />
+            </Box>
+          )}
+        </Box>
+        <Stack sx={{ my: 4, ml: "15%" }}>
+          <Pagination
+            count={5}
+            shape="rounded"
+            variant="outlined"
+            color="primary"
+            sx={{
+              ml: "12%",
+              "& .MuiPaginationItem-root": {
+                color: "#5f6caf",
+                borderColor: "#5f6caf",
+              },
+            }}
+          />
+        </Stack>
+      </Box>
     </Box>
   );
 };
 
-export default UserDetailManage;
+export default SeekerDetailManage;
