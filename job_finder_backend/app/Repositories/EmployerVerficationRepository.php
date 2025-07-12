@@ -9,7 +9,7 @@ class EmployerVerficationRepository implements EmployerVerificationInterface
 {
     public function updateStatus(int $id,string $status){
         $employer = Employer::findOrFail($id);
-        $employer->verfication = $status;
+        $employer->verification = $status;
         $employer->save();
         return $employer;
     }

@@ -15,7 +15,7 @@ use App\Http\Controllers\EmployerVerficationController;
 Route::post('/register',[AuthController::class,'register']);
 Route::post('/login',[AuthController::class,'login']);
 
-Route::post('/admin/employerVerification/{id}', [EmployerVerficationController::class, 'updateStatus']);
+Route::post('/employer/update-status/{id}', [EmployerVerficationController::class, 'updateStatus']);
 
 Route::group(["middleware" => "AuthMiddleware"], function () {
     Route::get('/profile', [AuthController::class, 'profile']);
