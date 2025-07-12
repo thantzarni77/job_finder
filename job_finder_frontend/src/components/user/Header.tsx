@@ -23,6 +23,7 @@ import { useAppStore } from "../../store/Appstore";
 import { useState, useRef, useEffect, useMemo, type RefObject } from "react";
 import { useNavigate } from "react-router";
 import { useThemeStore } from "../../store/Appstore";
+import { useUserStore } from "../../store/UserStore";
 
 function findRefForPath(
   pathname: string,
@@ -37,6 +38,9 @@ function findRefForPath(
 }
 
 export default function Header() {
+  const user = useUserStore((state) => state.user);
+  const login = useUserStore((state) => state.login);
+  const logout = useUserStore((state) => state.logout);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -75,11 +79,12 @@ export default function Header() {
         "/job/:id": jobsRef,
         "/job/:id/apply": jobsRef,
         "/job/:id/apply/confirm": jobsRef,
-        "/talent": talentRef,
+        "/talents": talentRef,
         "/companies": companiesRef,
         "/companies/:id": companiesRef,
         "/post/job": postJobRef,
         "/profile/:id": profileRef,
+        "/project/add": profileRef,
         "/notifications/user/:id": notificationsRef,
         "/settings/user/:id": settingsRef,
         "/settings/user/:id/bookmarks": settingsRef,
@@ -109,34 +114,35 @@ export default function Header() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" sx={{ px: 5, boxShadow: "none" }}>
+      <AppBar
+        position="static"
+        sx={{ px: { xs: 2, md: 5 }, boxShadow: "none" }}
+      >
         <Toolbar
           sx={{
             display: "flex",
             justifyContent: "space-between",
-            position: "relative",
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
-            <IconButton
-              onClick={() => setShowDrawer(!showDrawer)}
-              color="inherit"
-              sx={{ display: { md: "none" }, ml: -2, mr: 1 }}
-            >
-              <MenuIcon />
-            </IconButton>
-
             <Typography
+              onClick={() => navigate("/")}
               component="h1"
-              sx={{ fontSize: "36px", fontWeight: "700" }}
+              sx={{
+                fontSize: { xs: "24px", sm: "30px", md: "36px" },
+                fontWeight: "700",
+                cursor: "pointer",
+                flexShrink: 0,
+              }}
             >
               LOGO
             </Typography>
 
+            {/* Desktop Navigation */}
             <Box
               sx={{
                 pl: 5,
-                display: { md: "flex", sm: "none", xs: "none" },
+                display: { md: "flex", sm: "flex", xs: "none" },
               }}
             >
               <NavLink to="/">
@@ -157,13 +163,13 @@ export default function Header() {
                   Jobs
                 </Button>
               </NavLink>
-              <NavLink to="/talent">
+              <NavLink to="/talents">
                 <Button
                   sx={{ fontWeight: "700", textTransform: "none" }}
                   ref={talentRef}
                   color="inherit"
                 >
-                  Talent
+                  Talents
                 </Button>
               </NavLink>
               <NavLink to="/companies">
@@ -188,59 +194,83 @@ export default function Header() {
               )}
             </Box>
           </Box>
+          {user ? (
+            <Box>
+              <IconButton
+                onClick={() => setShowDrawer(!showDrawer)}
+                color="inherit"
+                sx={{ display: { md: "none" }, ml: -2, mr: 1 }}
+              >
+                <MenuIcon />
+              </IconButton>
+              <Box
+                sx={{ gap: 1, display: { md: "flex", sm: "none", xs: "none" } }}
+              >
+                <IconButton
+                  color="inherit"
+                  onClick={() => setMode(mode === "light" ? "dark" : "light")}
+                >
+                  {mode === "light" ? <LightModeIcon /> : <DarkModeIcon />}
+                </IconButton>
+                <IconButton
+                  color="inherit"
+                  ref={notificationsRef}
+                  onClick={() => navigate("/notifications/user/1")}
+                >
+                  <NotiIcon sx={{ fontSize: 27 }} />
+                </IconButton>
 
-          {/* Right side of header */}
-          <Box sx={{ display: "flex", gap: 1 }}>
-            <IconButton
-              color="inherit"
-              onClick={() => setMode(mode === "light" ? "dark" : "light")}
-            >
-              {mode === "light" ? <LightModeIcon /> : <DarkModeIcon />}
-            </IconButton>
-            <IconButton
-              color="inherit"
-              ref={notificationsRef}
-              onClick={() => navigate("/notifications/user/1")}
-            >
-              <NotiIcon sx={{ fontSize: 27 }} />
-            </IconButton>
+                <IconButton
+                  color="inherit"
+                  ref={settingsRef}
+                  onClick={() => navigate("/settings/user/1")}
+                >
+                  <SettingIcon />
+                </IconButton>
+                <Button
+                  ref={profileRef}
+                  endIcon={<ArrowDropDownIcon sx={{ color: "white" }} />}
+                  id="basic-button"
+                  aria-controls={open ? "basic-menu" : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open ? "true" : undefined}
+                  onClick={handleClick}
+                >
+                  <Avatar sx={{ width: 32, height: 32 }} />
+                </Button>
+                <Menu
+                  id="basic-menu"
+                  anchorEl={anchorEl}
+                  open={open}
+                  onClose={handleClose}
+                  onClick={handleClose}
+                  slotProps={{
+                    list: {
+                      "aria-labelledby": "basic-button",
+                    },
+                  }}
+                >
+                  <MenuItem onClick={() => navigate("/profile/1")}>
+                    Profile
+                  </MenuItem>
 
-            <IconButton
-              color="inherit"
-              ref={settingsRef}
-              onClick={() => navigate("/settings/user/1")}
-            >
-              <SettingIcon />
-            </IconButton>
+                  <MenuItem onClick={() => logout()}>Logout</MenuItem>
+                </Menu>
+              </Box>
+            </Box>
+          ) : (
             <Button
-              endIcon={<ArrowDropDownIcon sx={{ color: "white" }} />}
-              id="basic-button"
-              aria-controls={open ? "basic-menu" : undefined}
-              aria-haspopup="true"
-              aria-expanded={open ? "true" : undefined}
-              onClick={handleClick}
-            >
-              <Avatar sx={{ width: 32, height: 32 }} />
-            </Button>
-            <Menu
-              id="basic-menu"
-              anchorEl={anchorEl}
-              open={open}
-              onClose={handleClose}
-              onClick={handleClose}
-              slotProps={{
-                list: {
-                  "aria-labelledby": "basic-button",
-                },
+              sx={{
+                color: "#ffffff",
+                textTransform: "none",
+                borderRadius: "5px",
+                boxShadow: "none",
               }}
+              onClick={() => login()}
             >
-              <MenuItem onClick={() => navigate("/profile/1")}>
-                Profile
-              </MenuItem>
-
-              <MenuItem>Logout</MenuItem>
-            </Menu>
-          </Box>
+              <Typography fontWeight={600}>Login</Typography>
+            </Button>
+          )}
 
           {/* Sliding underline*/}
           <Box

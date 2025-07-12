@@ -22,7 +22,16 @@ import BookmarkFollowing from "./components/user/settings/BookmarkFollowing";
 import EditProfile from "./pages/user/EditProfile";
 import AddNewProject from "./pages/user/AddNewProject";
 import PostAJob from "./pages/user/jobs/PostAJob";
-
+import AdminMainLayout from "./layouts/admin/AdminMainLayout";
+import Overview from "./pages/admin/Overview";
+import JobManagement from "./pages/admin/JobManagement";
+import UserManagement from "./pages/admin/UserManagement";
+import UserDetailManage from "./pages/admin/UserDetailManage";
+import JobDetailManage from "./pages/admin/JobDetailManage";
+import EditUser from "./pages/admin/EditUser";
+import EditJob from "./pages/admin/EditJob";
+import EmployerDetail from "./pages/admin/EmployerDetail";
+import EditEmployer from "./pages/admin/EditEmployer";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -54,7 +63,7 @@ export const router = createBrowserRouter([
         Component: JobApplyConfirm,
       },
       {
-        path: "/talent",
+        path: "/talents",
         Component: Talent,
       },
       {
@@ -119,6 +128,53 @@ export const router = createBrowserRouter([
       //   path: "/post/job",
       //   Component: PostAJob,
       // },
+    ],
+  },
+  {
+    path: "/admin",
+    Component: AdminMainLayout,
+    children: [
+      {
+        index: true,
+        element: <Navigate to="overview" replace />,
+      },
+      {
+        path: "overview",
+        Component: Overview,
+      },
+      {
+        path: "jobs/manage",
+        Component: JobManagement,
+      },
+      {
+        path: "jobs/detail/:id",
+        Component: JobDetailManage,
+      },
+      {
+        path: "users/manage",
+        Component: UserManagement,
+      },
+      {
+        path: "user/:id/manage",
+        Component: UserDetailManage,
+      },
+      {
+        path: "user/:id/edit",
+        Component: EditUser,
+      },
+      {
+        path: "job/:id/edit",
+        Component: EditJob,
+      },
+
+      {
+        path: "employer/:id/manage",
+        Component: EmployerDetail,
+      },
+      {
+        path: "employer/:id/edit",
+        Component: EditEmployer,
+      },
     ],
   },
   {

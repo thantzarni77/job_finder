@@ -1,32 +1,32 @@
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Box, Button, IconButton, TextField, Typography } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { useNavigate } from "react-router";
 
 const ChangePassword = () => {
   const navigate = useNavigate();
   return (
-    <Box sx={{ width: "90%", mx: "auto" }}>
+    <Box sx={{ width: "90%", mx: "auto", p: 2, mt: 5, mb: 10 }}>
       {/* Form Title & back button */}
       <Box
         sx={{
           width: "100%",
           display: "flex",
           alignItems: "center",
-          mt: 5,
-          mb: 2,
         }}
       >
-        <ArrowBackIosIcon
-          onClick={() => navigate("/settings/user/1/security")}
-          sx={{
-            color: "primary.main",
-            fontSize: 32,
-            ":hover": {
-              color: "secondary.main",
-              cursor: "pointer",
-            },
-          }}
-        />
+        <IconButton onClick={() => navigate("/settings/user/1/security")}>
+          <ArrowBackIosIcon
+            sx={{
+              color: "primary.main",
+              fontSize: 32,
+              ":hover": {
+                color: "text.secondary",
+                cursor: "pointer",
+              },
+            }}
+          />
+        </IconButton>
+
         <Typography variant="h5" sx={{ fontWeight: 600, mx: "auto" }}>
           Password
         </Typography>
@@ -35,7 +35,7 @@ const ChangePassword = () => {
       {/* application form */}
       <Box
         sx={{
-          width: { xs: "80%", md: "60%", lg: "40%" },
+          width: { xs: "100%", md: "60%", lg: "40%" },
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
@@ -72,7 +72,7 @@ const ChangePassword = () => {
             sx={{
               // root of the OutlinedInput
               "& .MuiOutlinedInput-root": {
-                backgroundColor: "#ffffff",
+                backgroundColor: "background.paper",
                 borderRadius: "13px",
 
                 //  border
@@ -120,7 +120,7 @@ const ChangePassword = () => {
             sx={{
               // root of the OutlinedInput
               "& .MuiOutlinedInput-root": {
-                backgroundColor: "#ffffff",
+                backgroundColor: "background.paper",
                 borderRadius: "13px",
 
                 //  border
@@ -174,7 +174,7 @@ const ChangePassword = () => {
             sx={{
               // root of the OutlinedInput
               "& .MuiOutlinedInput-root": {
-                backgroundColor: "#ffffff",
+                backgroundColor: "background.paper",
                 borderRadius: "13px",
 
                 //  border

@@ -1,20 +1,19 @@
 import {
   Avatar,
   Box,
-  Checkbox,
   Chip,
   Divider,
+  IconButton,
   Paper,
   Typography,
 } from "@mui/material";
-import BookmarkIcon from "@mui/icons-material/Bookmark";
-import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
+
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
-import VerifiedIcon from "@mui/icons-material/Verified";
+import AddIcon from "@mui/icons-material/Add";
 import { NavLink } from "react-router";
 
-const JobCard = () => {
+export default function TalentCard() {
   return (
     <Box
       sx={{
@@ -42,19 +41,11 @@ const JobCard = () => {
               justifyContent: "space-between",
             }}
           >
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
               <Avatar
-                sx={{
-                  bgcolor: "primary.main",
-                  borderRadius: "12px",
-                  fontSize: "12px",
-                  fontWeight: "bold",
-                }}
-                variant="square"
-              >
-                KBZ <br />
-                Pay
-              </Avatar>
+                src="../../src/assets/1.jpg"
+                sx={{ width: 56, height: 56 }}
+              />
               <Box
                 sx={{
                   display: "flex",
@@ -72,42 +63,21 @@ const JobCard = () => {
                 >
                   <NavLink to={"/job/JC-1111"}>Full Stack Developer</NavLink>
                 </Typography>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <VerifiedIcon
-                    sx={{ fontSize: "22px", color: "success.main" }}
-                  />
-                  <Typography
-                    variant="body2"
-                    sx={{ fontWeight: 400, fontSize: "14px" }}
-                  >
-                    Verified
-                  </Typography>
-                </Box>
               </Box>
             </Box>
-            <Checkbox
-              defaultChecked
-              disableRipple
-              sx={{
-                "& .MuiSvgIcon-root": { fontSize: 26, mr: -2 },
-                color: "primary.main",
-                "&.Mui-checked": {
-                  color: "primary.main",
-                },
-              }}
-              icon={<BookmarkBorderOutlinedIcon />}
-              checkedIcon={<BookmarkIcon />}
-              name={"fullTime"}
-            />
+            <IconButton>
+              <AddIcon />
+            </IconButton>
           </Box>
           {/* location date */}
-          <Box sx={{ my: 1 }}>
+          <Box sx={{ my: 2 }}>
             <Box
               sx={{
                 display: "flex",
                 textAlign: "left",
                 alignItems: "start",
                 gap: 1,
+                mb: 1,
               }}
             >
               <LocationOnOutlinedIcon
@@ -118,7 +88,7 @@ const JobCard = () => {
                 variant="caption"
                 sx={{ color: "primary.light", width: "250px" }}
               >
-                N0.123, Yadanar St, Marchart Road, Yangon
+                Yangon
               </Typography>
             </Box>
             <Box
@@ -142,31 +112,31 @@ const JobCard = () => {
             sx={{
               borderRadius: "4px",
               backgroundColor: "primary.main",
-              color: "background.paper",
+              color: "primary.contrastText",
               width: "fit-content",
               height: "28px",
             }}
-            label="Chip Filled"
+            label="Full Time"
           />
           <Chip
             sx={{
               borderRadius: "4px",
               backgroundColor: "primary.main",
-              color: "background.paper",
+              color: "primary.contrastText",
               width: "fit-content",
               height: "28px",
             }}
-            label="Chip Filled"
+            label="Senior"
           />
           <Chip
             sx={{
               borderRadius: "4px",
               backgroundColor: "primary.main",
-              color: "background.paper",
+              color: "primary.contrastText",
               width: "fit-content",
               height: "28px",
             }}
-            label="Chip Filled"
+            label="IT"
           />
         </Box>
         <Divider flexItem />
@@ -188,12 +158,10 @@ const JobCard = () => {
             variant="body1"
             sx={{ fontWeight: "bold", color: "text.secondary" }}
           >
-            800000MMK
+            50MMK
           </Typography>
         </Box>
       </Paper>
     </Box>
   );
-};
-
-export default JobCard;
+}

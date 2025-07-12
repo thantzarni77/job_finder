@@ -57,7 +57,7 @@ const CompanyCard = () => {
                   variant="body1"
                   sx={{
                     fontWeight: "700",
-                    color: "secondary.main",
+                    color: "text.secondary",
                     ":hover": { cursor: "pointer", color: "primary.main" },
                   }}
                 >

@@ -57,7 +57,7 @@ const JobApplyConfirm = () => {
             fontWeight: 400,
             border: 2,
             borderRadius: "8px",
-            bgcolor: "#ffffff",
+            bgcolor: "background.paper",
             p: 1,
             "&:hover": {
               boxShadow: "none",

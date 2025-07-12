@@ -24,14 +24,19 @@ export default function Profile() {
 
   return (
     <Container sx={{ py: 3, mb: 20 }} maxWidth="lg">
-      <Typography variant="h5" sx={{ textAlign: "center", fontWeight: 700 }}>
+      <Typography
+        variant="h5"
+        sx={{ textAlign: "center", fontWeight: 700, mb: 5 }}
+      >
         Profile
       </Typography>
 
       <Box>
         <Box sx={{ display: "flex", alignItems: "center", gap: 7 }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Avatar sx={{ width: 80, height: 80 }} />
+            <Avatar
+              sx={{ width: { xs: 50, md: 80 }, height: { xs: 50, md: 80 } }}
+            />
             <Box>
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
                 John Doe
@@ -52,19 +57,44 @@ export default function Profile() {
           <Box sx={{ display: "flex", gap: 2, flexDirection: "column" }}>
             <Button
               variant="outlined"
-              size="small"
-              startIcon={<EditIcon />}
+              sx={{
+                width: { xs: "20px", sm: " 150px", md: "150px" },
+                height: "30px",
+              }}
               onClick={() => navigate(`/profile/1/edit`)}
             >
-              Edit Profile
+              <EditIcon sx={{ fontSize: "20px" }} />
+              <Typography
+                variant="subtitle2"
+                sx={{
+                  mx: 1,
+                  textTransform: "none",
+                  display: { xs: "none", sm: "inline-flex", md: "inline-flex" },
+                }}
+              >
+                Edit Profile
+              </Typography>
             </Button>
+
             <Button
+              sx={{
+                width: { xs: "20px", sm: " 185px", md: "185px" },
+                height: "30px",
+              }}
               variant="outlined"
-              size="small"
-              startIcon={<AddIcon />}
               onClick={() => navigate(`/project/add`)}
             >
-              Add New Project
+              <AddIcon sx={{ fontSize: "20px" }} />
+              <Typography
+                variant="subtitle2"
+                sx={{
+                  mx: 1,
+                  textTransform: "none",
+                  display: { xs: "none", sm: "inline-flex", md: "inline-flex" },
+                }}
+              >
+                Add New Project
+              </Typography>
             </Button>
           </Box>
         </Box>
@@ -85,13 +115,13 @@ export default function Profile() {
             <Typography variant="h6">Education</Typography>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
               <SchoolIcon color="primary" />
-              <Typography variant="body2" sx={{ color: "secondary.main" }}>
+              <Typography variant="body2" sx={{ color: "text.secondary" }}>
                 Degree in Design
               </Typography>
             </Box>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
               <SchoolIcon color="primary" />
-              <Typography variant="body2" sx={{ color: "secondary.main" }}>
+              <Typography variant="body2" sx={{ color: "text.secondary" }}>
                 Diploma in Digital Marketing
               </Typography>
             </Box>
@@ -102,7 +132,7 @@ export default function Profile() {
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
               <WorkIcon color="primary" />
               <Box sx={{ display: "flex", flexDirection: "column" }}>
-                <Typography variant="body2" sx={{ color: "secondary.main" }}>
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
                   Weed Developer
                 </Typography>
                 <Typography variant="body2" color="primary">
@@ -113,7 +143,7 @@ export default function Profile() {
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
               <WorkIcon color="primary" />
               <Box sx={{ display: "flex", flexDirection: "column" }}>
-                <Typography variant="body2" sx={{ color: "secondary.main" }}>
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
                   Creative Studio
                 </Typography>
                 <Typography variant="body2" color="primary">
@@ -135,13 +165,13 @@ export default function Profile() {
             >
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <PhoneInTalkIcon color="primary" />
-                <Typography variant="body2" sx={{ color: "secondary.main" }}>
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
                   +09-123456789
                 </Typography>
               </Box>
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <EmailOutlinedIcon color="primary" />
-                <Typography variant="body2" sx={{ color: "secondary.main" }}>
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
                   abc@gmail.com
                 </Typography>
               </Box>
@@ -152,7 +182,7 @@ export default function Profile() {
             <Typography variant="h6">Social Media</Typography>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
               <LinkedInIcon color="primary" />
-              <Typography variant="body2" sx={{ color: "secondary.main" }}>
+              <Typography variant="body2" sx={{ color: "text.secondary" }}>
                 https://www.linkedin.com/in/johndoe
               </Typography>
             </Box>
@@ -162,7 +192,7 @@ export default function Profile() {
             <Typography variant="h6">Address</Typography>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
               <LocationOnIcon color="primary" />
-              <Typography variant="body2" sx={{ color: "secondary.main" }}>
+              <Typography variant="body2" sx={{ color: "text.secondary" }}>
                 123 Main Street, City, Country
               </Typography>
             </Box>
@@ -199,7 +229,7 @@ export default function Profile() {
                     <Typography variant="h6">Project Name</Typography>
                     <Typography
                       variant="body2"
-                      sx={{ color: "secondary.main" }}
+                      sx={{ color: "text.secondary" }}
                     >
                       Lorem ipsum dolor sit amet consectetur adipisicing elit.
                       Quisquam Lorem ipsum dolor sit amet consectetur

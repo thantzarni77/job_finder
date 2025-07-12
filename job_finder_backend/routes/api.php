@@ -20,8 +20,12 @@ Route::post('/login',[AuthController::class,'login']);
 Route::post('/forgot-password',[NewPasswordController::class,'forgotPassword']);
 Route::post('/reset-password',[NewPasswordController::class,'resetPassword']);
 
+<<<<<<< HEAD
 Route::post('/admin/employerVerification/{id}', [EmployerVerficationController::class, 'updateStatus']);
     Route::apiResource('project', ProjectController::class);
+=======
+Route::post('/employer/update-status/{id}', [EmployerVerficationController::class, 'updateStatus']);
+>>>>>>> 36dc0702bdcc7d8b6829286bfdbff84dc372c495
 
 Route::group(["middleware" => "AuthMiddleware"], function () {
     Route::get('/profile', [AuthController::class, 'profile']);

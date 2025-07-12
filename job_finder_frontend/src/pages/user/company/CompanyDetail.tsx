@@ -1,4 +1,11 @@
-import { Box, Button, Typography, Stack, Pagination } from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  Stack,
+  Pagination,
+  IconButton,
+} from "@mui/material";
 import Kpay from "../../../assets/kpay.png";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
@@ -16,17 +23,19 @@ export default function CompanyDetail() {
   return (
     <>
       <Box sx={{ pt: 3, pb: 5, mb: 2, width: "90%", mx: "auto" }}>
-        <ArrowBackIosIcon
-          onClick={() => navigate("/companies")}
-          sx={{
-            color: "primary.main",
-            fontSize: 32,
-            ":hover": {
-              color: "secondary.main",
-              cursor: "pointer",
-            },
-          }}
-        />
+        <IconButton onClick={() => navigate("/companies")}>
+          <ArrowBackIosIcon
+            sx={{
+              color: "primary.main",
+              fontSize: 32,
+              ":hover": {
+                color: "text.secondary",
+                cursor: "pointer",
+              },
+            }}
+          />
+        </IconButton>
+
         <Box
           sx={{
             display: "flex",
@@ -47,14 +56,14 @@ export default function CompanyDetail() {
           <Button
             variant="outlined"
             size="small"
-            sx={{ backgroundColor: "#ffffff", textTransform: "none" }}
+            sx={{ backgroundColor: "background.paper", textTransform: "none" }}
           >
             + Follow
           </Button>
         </Box>
         <Box sx={{ mt: 4 }}>
           <Typography sx={{ fontWeight: 600 }}>Description</Typography>
-          <Typography variant="body2" sx={{ mt: 1, color: "secondary.main" }}>
+          <Typography variant="body2" sx={{ mt: 1, color: "text.secondary" }}>
             Lorem ipsum dolor sit, amet consectetur adipisicing elit. Blanditiis
             tempora sapiente quos, dignissimos deleniti veritatis! Aperiam quae
             reprehenderit odio provident, deleniti, veniam recusandae itaque
@@ -69,7 +78,7 @@ export default function CompanyDetail() {
           <Typography sx={{ fontWeight: 600 }}>Address</Typography>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
             <LocationOnIcon color="primary" />
-            <Typography variant="body2" sx={{ color: "secondary.main" }}>
+            <Typography variant="body2" sx={{ color: "text.secondary" }}>
               123 Main Street, City, Country
             </Typography>
           </Box>
@@ -78,7 +87,7 @@ export default function CompanyDetail() {
           <Typography sx={{ fontWeight: 600 }}>Company Type</Typography>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
             <AccountBalanceIcon color="primary" />
-            <Typography variant="body2" sx={{ color: "secondary.main" }}>
+            <Typography variant="body2" sx={{ color: "text.secondary" }}>
               Public Limited
             </Typography>
           </Box>
@@ -88,7 +97,7 @@ export default function CompanyDetail() {
           <Typography sx={{ fontWeight: 600 }}> Number of Employees</Typography>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
             <GroupsIcon color="primary" />
-            <Typography variant="body2" sx={{ color: "secondary.main" }}>
+            <Typography variant="body2" sx={{ color: "text.secondary" }}>
               1000+
             </Typography>
           </Box>
@@ -105,13 +114,13 @@ export default function CompanyDetail() {
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <EmailOutlinedIcon color="primary" />
-              <Typography variant="body2" sx={{ color: "secondary.main" }}>
+              <Typography variant="body2" sx={{ color: "text.secondary" }}>
                 abc@gmail.com
               </Typography>
             </Box>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <PhoneInTalkIcon color="primary" />
-              <Typography variant="body2" sx={{ color: "secondary.main" }}>
+              <Typography variant="body2" sx={{ color: "text.secondary" }}>
                 +09-123456789
               </Typography>
             </Box>
@@ -121,7 +130,7 @@ export default function CompanyDetail() {
           <Typography sx={{ fontWeight: 600 }}>Company Website</Typography>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
             <LanguageOutlinedIcon color="primary" />
-            <Typography variant="body2" sx={{ color: "secondary.main" }}>
+            <Typography variant="body2" sx={{ color: "text.secondary" }}>
               https://www.companywebsite.com
             </Typography>
           </Box>
@@ -137,7 +146,7 @@ export default function CompanyDetail() {
           >
             <Typography
               sx={{
-                color: "secondary.main",
+                color: "text.secondary",
                 fontWeight: 600,
                 mt: 5,
                 mb: 3,
@@ -149,10 +158,15 @@ export default function CompanyDetail() {
             <Box
               sx={{
                 display: "flex",
-                flexDirection: { xs: "column", md: "column", lg: "row" },
+                flexDirection: {
+                  xs: "column",
+                  sm: "row",
+                  md: "row",
+                  lg: "row",
+                },
                 justifyContent: "center",
                 alignItems: "center",
-                gap: 5,
+                gap: { xs: 4, sm: 4, md: 5 },
                 flexWrap: "wrap",
                 width: "100%",
               }}
@@ -185,7 +199,7 @@ export default function CompanyDetail() {
           >
             <Typography
               sx={{
-                color: "secondary.main",
+                color: "text.secondary",
                 fontWeight: 600,
                 mt: 5,
                 mb: 3,
@@ -197,7 +211,12 @@ export default function CompanyDetail() {
             <Box
               sx={{
                 display: "flex",
-                flexDirection: { xs: "column", md: "column", lg: "row" },
+                flexDirection: {
+                  xs: "column",
+                  sm: "row",
+                  md: "row",
+                  lg: "row",
+                },
                 justifyContent: "center",
                 alignItems: "center",
                 gap: 5,
