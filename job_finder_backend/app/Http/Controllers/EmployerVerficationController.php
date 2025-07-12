@@ -8,22 +8,18 @@ use Exception;
 
 class EmployerVerficationController extends Controller
 {
-    private EmployerVerificationInterface $employerVerficationInterface;
+    private $employerVerficationInterface;
+
     public function __construct(EmployerVerificationInterface $employerVerficationInterface)
     {
         $this->employerVerficationInterface = $employerVerficationInterface;
     }
-    public function updateStatus($id,Request $request){
-        try{
-            $employer = $this->employerVerficationInterface->updateStatus($request->status,$id);
-        return response()->json([
-            'employer' => $employer,
-            'message' => 'Updated verification successfully'], 200);
-        }catch(Exception $e){
-            return response()->json([
-                'error' => 'Something\'s went wrong',
-                'message' => $e->getMessage()
-            ],500);
-        }
+    public function updateStatus($id, Request $request)
+    {
+
+        $data = $request->validate([
+            'status' => 'required',
+        ]);
+        return $this->employerVerficationInterface->updateStatus($id, $data);
     }
 }

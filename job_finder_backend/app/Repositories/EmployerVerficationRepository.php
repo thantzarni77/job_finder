@@ -7,10 +7,11 @@ use App\Interfaces\EmployerVerificationInterface;
 
 class EmployerVerficationRepository implements EmployerVerificationInterface
 {
-    public function updateStatus(int $id,string $status){
-        $employer = Employer::findOrFail($id);
-        $employer->verification = $status;
-        $employer->save();
-        return $employer;
+    public function updateStatus(int $id,array $data){
+        $verifyEmployer  = Employer::findOrFail($id)->update(['verification' => $data['status']]);
+        return response()->json([
+            'data' => $verifyEmployer,
+            'message' => 'Updated verification successfully'
+        ], 200);
     }
 }

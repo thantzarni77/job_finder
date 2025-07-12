@@ -25,7 +25,7 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         try {
-            dd($request->all());
+            // dd($request->all());
             $data = $request->validate([
                 'title' => 'required|min:3|max:100',
                 'description' => 'required|max:100',
@@ -40,6 +40,7 @@ class ProjectController extends Controller
                 $image->move(public_path('image'), $name);
                 $data['image'] = $name;
             }
+            // $data['seeker_id']= $request->user()->id;
             $data['seeker_id'] = 7;
             return $this->projectRepo->create($data);
         } catch (\Exception $e) {
@@ -67,9 +68,11 @@ class ProjectController extends Controller
                 'link' => 'max:100',
             ]);
 
+            //image file store at public/image folder
             if ($request->hasFile('image')) {
-                if (file_exists(public_path('image/' . $project->image))) {
-                    unlink(public_path('image/' . $project->image));
+                $oldImagePath = public_path('image/' . $project->image);
+                if (file_exists($oldImagePath)) {
+                    unlink($oldImagePath);
                 }
 
                 $image = $request->file('image');
@@ -77,15 +80,15 @@ class ProjectController extends Controller
                 $image->move(public_path('image'), $name);
                 $data['image'] = $name;
             }
-            $data['seeker_id']= 3;
+            // $data['seeker_id']= $request->user()->id;
+            $data['seeker_id'] = 7;
+            // dd($data);
             $project->update($data);
             return response()->json(['status' => 'success', 'message' => 'Project updated successfully', 'data' => $project], 200);
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }
     }
-
-
 
     public function destory($id)
     {
