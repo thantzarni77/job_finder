@@ -82,4 +82,10 @@ class JobDetailController extends Controller
             // 'data' => $deletedJobDetail
         ]);
     }
+
+    //type api start
+    public function types()
+    {
+        return response()->json($this->repo->jobType());
+    }
 }

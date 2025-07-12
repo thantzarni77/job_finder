@@ -17,8 +17,10 @@ class ApplyJobRepository implements ApplyJobRepositoryInterface
 
     public function applyJobData(){
         //get data from database
-        return Apply_job::get();
+        $data = Apply_job::get();
+        return response()->json(['status' => 'success', 'message' => 'Apply job fetched successfully', 'data' => $data], 200);
     }
+    //seeker apply a job
     public function applyJob($request)
     {
         $validator = Validator::make($request->all(), [
@@ -46,7 +48,7 @@ class ApplyJobRepository implements ApplyJobRepositoryInterface
 
         Apply_job::create($data);
 
-        return response()->json(['status' => 'success', 'message' => 'Apply job successfully'], 201);
+        return response()->json(['status' => 'success', 'message' => 'Job applied successfully.Good luck for your interview.'], 201);
     }
 
     //add to shortlist
@@ -58,22 +60,19 @@ class ApplyJobRepository implements ApplyJobRepositoryInterface
     //employer view his create job data
     public function employerPostedJobs(){
         $data = Apply_job::where('employer_id', auth()->user()->id)->get();
-        return $data;
-        return response()->json(['status' => 'success', 'message' => 'You have successfully fetch your posted job postings.'], 200);
+        return response()->json(['status' => 'success', 'message' => 'You have successfully fetch your posted job postings.', 'data' => $data], 200);
     }
 
     //seeeker view his applied jobs
     public function seekerAppliedJobs(){
         $data = Apply_job::where('seeker_id', auth()->user()->id)->get();
-        return $data;
-        return response()->json(['status' => 'success', 'message' => 'You have successfully fetch your applied job.'], 200);
+        return response()->json(['status' => 'success', 'message' => 'You have successfully fetch your applied job.', 'data' => $data], 200);
     }
 
     //emoyer view his shortlisted jobs
     public function employerShortlistJobs(){
         $data = Apply_job::where('employer_id', auth()->user()->id )->where('shortlist', true)->get();
-        return $data;
-        return response()->json(['status' => 'success', 'message' => 'You have successfully fetch your shortlisted job postings.'], 200);
+        return response()->json(['status' => 'success', 'message' => 'You have successfully fetch your shortlisted job postings.', 'data' => $data], 200);
     }
 
     //mail send to seeker

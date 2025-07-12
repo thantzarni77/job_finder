@@ -21,7 +21,7 @@ Route::post('/forgot-password',[NewPasswordController::class,'forgotPassword']);
 Route::post('/reset-password',[NewPasswordController::class,'resetPassword']);
 
 Route::post('/admin/employerVerification/{id}', [EmployerVerficationController::class, 'updateStatus']);
-    Route::apiResource('project', ProjectController::class);
+
 
 Route::group(["middleware" => "AuthMiddleware"], function () {
     Route::get('/profile', [AuthController::class, 'profile']);
@@ -84,14 +84,16 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
         Route::delete('/{id}',[SaveJobController::class,'destroy']);
     });
 
-
+    //seeker show his experience project route
+    Route::apiResource('project', ProjectController::class);
 
     //job category route
     Route::apiResource('job-categories', JobCategoryController::class);
     //job detail route
     Route::apiResource('job-details', JobDetailController::class);
-
+    Route::get('types', [JobDetailController::class, 'types']);
 });
+
 
 
 
