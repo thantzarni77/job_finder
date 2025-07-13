@@ -3,28 +3,29 @@
 import { Box } from "@mui/material";
 import { Outlet } from "react-router";
 import SidePanel from "../../components/admin/SidePanel";
+import AdminHeader from "../../components/admin/AdminHeader";
 
 const AdminMainLayout = () => {
   return (
-    <Box sx={{ display: "flex", bgcolor: "primary.main", minHeight: "100vh" }}>
-      <Box
-        component="aside"
-        sx={{
-          width: "200px",
-          flexShrink: 0,
-        }}
-      >
-        <SidePanel />
-      </Box>
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          bgcolor: "background.default",
-          p: 4,
-        }}
-      >
-        <Outlet />
+    <Box>
+      <Box sx={{ display: "flex", minHeight: "100vh" }}>
+        <Box component="aside" sx={{ bgcolor: "primary.main" }}>
+          <SidePanel />
+        </Box>
+
+        <Box>
+          <AdminHeader />
+          <Box
+            component="main"
+            sx={{
+              flexGrow: 1,
+              bgcolor: "background.default",
+              p: 2,
+            }}
+          >
+            <Outlet />
+          </Box>
+        </Box>
       </Box>
     </Box>
   );
