@@ -32,15 +32,6 @@ class TalentRepository implements TalentRepositoryInterface
         ],200);
     }
 
-    public function show($id)
-    {
-        $data = Talent::FindOrFail($id);
-        return response()->json([
-            'data' => $data,
-            'message' => 'Talents show successfully'
-        ],200);
-    }
-
     public function update(array $data,$id)
     {
         $talent = Talent::FindOrFail($id);
@@ -51,4 +42,14 @@ class TalentRepository implements TalentRepositoryInterface
             'message' => 'Talents updated successfully'
         ],200);
     }
+
+    public function destroy($id)
+    {
+        $data = Talent::FindOrFail($id)->delete();
+        return response()->json([
+            'data' => $data,
+            'message' => 'Talent delete successfully'
+        ],200);
+    }
+
 }

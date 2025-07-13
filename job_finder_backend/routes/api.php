@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TalentController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SaveJobController;
 use App\Http\Controllers\Api\AuthController;
@@ -82,6 +83,18 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
         Route::get('/seeker-save-list',[SaveJobController::class,'view']);
         //remove save job
         Route::delete('/{id}',[SaveJobController::class,'destroy']);
+    });
+
+    //talent module
+    Route::prefix('talent')->group(function () {
+        //save job list
+        Route::get('/',[TalentController::class,'index']);
+        // create save job
+        Route::post('/',[TalentController::class,'create']);
+        //view save job
+        Route::put('/{id}',[TalentController::class,'update']);
+        //remove save job
+        Route::delete('/{id}',[TalentController::class,'destroy']);
     });
 
     //seeker show his experience project route
