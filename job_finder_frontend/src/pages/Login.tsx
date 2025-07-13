@@ -1,111 +1,221 @@
 import {
   Box,
-  Container,
   Button,
   Typography,
   OutlinedInput,
   IconButton,
+  Container,
 } from "@mui/material";
 import {
-  Facebook as FacebookIcon,
   Google as GoogleIcon,
-  LinkedIn as LinkedInIcon,
-  MailOutline as MailOutlineIcon,
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,
 } from "@mui/icons-material";
 import { useState } from "react";
+import { Link as MuiLink } from "@mui/material";
+import { Link as RouterLink } from "react-router";
+import BG_IMG from "../assets/login_signup_bg.jpg";
 
-import { Link } from "react-router";
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   return (
     <Box
       sx={{
-        height: "100vh",
+        backgroundImage: `url(${BG_IMG})`,
+        backgroundSize: "cover",
+        minHeight: "100vh",
         alignItems: "center",
-        justifyContent: "center",
+        flexDirection: "column",
         display: "flex",
       }}
     >
+      <Typography variant="h4" sx={{ fontWeight: 700, mt: 4, mb: 2 }}>
+        LOGO
+      </Typography>
+      <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
+        Login to Job Finder
+      </Typography>
       <Container
-        maxWidth="sm"
         sx={{
-          border: "1px solid rgba(0, 0, 0, 0.1)",
-          borderRadius: 3,
-          boxShadow: 3,
-          py: 3,
+          width: { xs: "95%", sm: "75%", md: "65%", lg: "50%" },
+          bgcolor: "background.paper",
+          borderRadius: "12px",
+          py: 5,
+          mb: 5,
         }}
       >
-        <Typography variant="h4" sx={{ textAlign: "center", fontWeight: 700 }}>
-          Login
-        </Typography>
-
-        <form
-          style={{
+        <Box
+          component="form"
+          sx={{
+            width: { xs: "85%", sm: "80%", md: "75%", lg: "65%" },
+            margin: "0 auto",
             display: "flex",
             flexDirection: "column",
             gap: "20px",
-            marginTop: "10px",
           }}
         >
-          <OutlinedInput
-            fullWidth
-            type="email"
-            placeholder="E-mail"
-            endAdornment={
-              <IconButton>
-                <MailOutlineIcon />
-              </IconButton>
-            }
-          />
-          <OutlinedInput
-            fullWidth
-            type={showPassword ? "text" : "password"}
-            placeholder="Password"
-            endAdornment={
-              <IconButton onClick={() => setShowPassword(!showPassword)}>
-                {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
-              </IconButton>
-            }
-          />
-          <Button variant="contained">Login</Button>
-        </form>
-
-        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
-          <Link to="/login">
-            <Typography variant="body2" color="primary">
-              Forget Password?
+          {/* email */}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "8px",
+              width: "full",
+            }}
+          >
+            <Typography
+              component="label"
+              htmlFor="email"
+              sx={{
+                fontWeight: 300,
+              }}
+            >
+              Email
+              <span style={{ color: "#ef4444" }}>*</span> {/* Red asterisk */}
             </Typography>
-          </Link>
+            <OutlinedInput
+              id="email"
+              type="email"
+              fullWidth
+              placeholder="Please enter your email"
+              sx={{
+                // root of the OutlinedInput
+                "& .MuiOutlinedInput-root": {
+                  backgroundColor: "background.paper",
+                  borderRadius: "13px",
 
-          <Link to="/register">
-            <Typography variant="body2" color="primary">
-              Register Account
+                  //  border
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "primary.main",
+                  },
+
+                  // Style the border when focused
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "primary.light", // Use theme's primary color on focus
+                  },
+                },
+                //  placeholder text
+                "& .MuiInputBase-input::placeholder": {
+                  color: "primary.main",
+                  fontSize: "13px",
+                  fontWeight: 400,
+                },
+              }}
+            />
+          </Box>
+          {/* password */}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "8px",
+              width: "full",
+            }}
+          >
+            <Typography
+              component="label"
+              htmlFor="password"
+              sx={{
+                fontWeight: 300,
+              }}
+            >
+              Password
+              <span style={{ color: "#ef4444" }}>*</span> {/* Red asterisk */}
             </Typography>
-          </Link>
+            <OutlinedInput
+              id="password"
+              endAdornment={
+                <IconButton onClick={() => setShowPassword(!showPassword)}>
+                  {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                </IconButton>
+              }
+              type={showPassword ? "text" : "password"}
+              fullWidth
+              placeholder="Please enter your password"
+              sx={{
+                // root of the OutlinedInput
+                "& .MuiOutlinedInput-root": {
+                  backgroundColor: "background.paper",
+                  borderRadius: "13px",
+
+                  //  border
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "primary.main",
+                  },
+
+                  // Style the border when focused
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "primary.light", // Use theme's primary color on focus
+                  },
+                },
+                //  placeholder text
+                "& .MuiInputBase-input::placeholder": {
+                  color: "primary.main",
+                  fontSize: "13px",
+                  fontWeight: 400,
+                },
+              }}
+            />
+          </Box>
+
+          <Typography sx={{ alignSelf: "center" }}>
+            By continuing, you agree to{" "}
+            <MuiLink component={RouterLink} to={""}>
+              Terms & Conditions{" "}
+            </MuiLink>
+          </Typography>
+          <Button
+            variant="contained"
+            sx={{
+              py: 2,
+              borderRadius: 2,
+              textTransform: "none",
+              boxShadow: "none",
+              ":hover": {
+                boxShadow: "none",
+              },
+            }}
+          >
+            <Typography variant="body1" fontWeight={400}>
+              Login
+            </Typography>
+          </Button>
         </Box>
 
         <Typography
           variant="subtitle2"
           sx={{ opacity: 0.5, textAlign: "center", my: 2 }}
         >
-          or sign in with
+          OR
         </Typography>
 
-        <Box sx={{ mt: 2, display: "flex", justifyContent: "space-around" }}>
-          <Button variant="outlined">
-            <GoogleIcon />
-          </Button>
-
-          <Button variant="outlined">
-            <FacebookIcon />
-          </Button>
-
-          <Button variant="outlined">
-            <LinkedInIcon />
+        <Box
+          sx={{
+            mt: 2,
+            width: "100%",
+            display: "flex",
+            justifyContent: "space-around",
+          }}
+        >
+          <Button
+            variant="outlined"
+            sx={{
+              width: { xs: "85%", sm: "75%", md: "70%", lg: "65%" },
+              textTransform: "none",
+              py: 1,
+              borderRadius: 2,
+            }}
+          >
+            <GoogleIcon sx={{ mx: 1, fontSize: "35px" }} />
+            <Typography>Continue with google account</Typography>
           </Button>
         </Box>
+        <Typography sx={{ textAlign: "center", my: 2 }}>
+          Don't have an account?
+          <MuiLink sx={{ mx: 1 }} component={RouterLink} to={"/register"}>
+            Register here
+          </MuiLink>
+        </Typography>
       </Container>
     </Box>
   );

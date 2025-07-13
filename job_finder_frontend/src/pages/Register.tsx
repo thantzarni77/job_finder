@@ -1,114 +1,85 @@
-import {
-  Box,
-  Container,
-  Button,
-  Typography,
-  OutlinedInput,
-  IconButton,
-  Avatar,
-} from "@mui/material";
-import {
-  Facebook as FacebookIcon,
-  Google as GoogleIcon,
-  LinkedIn as LinkedInIcon,
-  MailOutline as MailOutlineIcon,
-  Visibility as VisibilityIcon,
-  VisibilityOff as VisibilityOffIcon,
-} from "@mui/icons-material";
-import { useState } from "react";
+import { Box, Container, Typography, Tabs, Tab } from "@mui/material";
 
-import { Link } from "react-router";
+import BG_IMG from "../assets/login_signup_bg.jpg";
+import { useState } from "react";
+import SeekerRegister from "./SeekerRegister";
+import EmployerRegister from "./EmployerRegister";
+
 export default function Register() {
-  const [showPassword, setShowPassword] = useState(false);
+  const [activeTab, setActiveTab] = useState(0);
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setActiveTab(newValue);
+  };
   return (
     <Box
       sx={{
-        height: "100vh",
+        backgroundImage: `url(${BG_IMG})`,
+        backgroundSize: "cover",
+        minHeight: "100vh",
         alignItems: "center",
-        justifyContent: "center",
+        flexDirection: "column",
         display: "flex",
       }}
     >
-      <Container
-        maxWidth="sm"
+      <Typography variant="h4" sx={{ fontWeight: 700, mt: 8, my: 2 }}>
+        LOGO
+      </Typography>
+      <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
+        Register a free {activeTab ? "employer" : "seeker"} account
+      </Typography>
+      <Tabs
         sx={{
-          border: "1px solid rgba(0, 0, 0, 0.1)",
-          borderRadius: 3,
-          boxShadow: 3,
-          py: 3,
+          bgcolor: "background.paper",
+          width: { xs: "95%", sm: "75%", md: "65%", lg: "50%" },
+          borderRadius: "12px 12px 0 0",
+        }}
+        value={activeTab}
+        onChange={handleTabChange}
+        aria-label="seeker and employer register"
+      >
+        <Tab
+          label="Seeker"
+          sx={{
+            width: "50%",
+            textTransform: "none",
+            fontSize: "1rem",
+            fontWeight: 600,
+            color: "text.primary",
+            bgcolor: activeTab ? "" : "background.hover",
+            "&.Mui-selected": {
+              color: "primary.main",
+            },
+          }}
+        />
+        <Tab
+          label="Employer"
+          sx={{
+            width: "50%",
+            textTransform: "none",
+            fontSize: "1rem",
+            fontWeight: 600,
+            color: "text.primary",
+            bgcolor: activeTab ? "background.hover" : "",
+            "&.Mui-selected": {
+              color: "primary.main",
+            },
+          }}
+        />
+      </Tabs>
+
+      {/* --- Placeholder for the actual content --- */}
+      <Container
+        sx={{
+          width: { xs: "95%", sm: "75%", md: "65%", lg: "50%" },
+          bgcolor: "background.paper",
+          borderRadius: "0 0 12px 12px",
+          py: 5,
+          mb: 5,
         }}
       >
-        <Typography variant="h4" sx={{ textAlign: "center", fontWeight: 700 }}>
-          Register
-        </Typography>
-
-        <form
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "20px",
-            marginTop: "10px",
-          }}
-        >
-          <OutlinedInput
-            fullWidth
-            type="name"
-            placeholder="UserName"
-            endAdornment={
-              <IconButton>
-                <Avatar sx={{ width: 25, height: 25 }} />
-              </IconButton>
-            }
-          />
-          <OutlinedInput
-            fullWidth
-            type="email"
-            placeholder="E-mail"
-            endAdornment={
-              <IconButton>
-                <MailOutlineIcon />
-              </IconButton>
-            }
-          />
-          <OutlinedInput
-            fullWidth
-            type={showPassword ? "text" : "password"}
-            placeholder="Password"
-            endAdornment={
-              <IconButton onClick={() => setShowPassword(!showPassword)}>
-                {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
-              </IconButton>
-            }
-          />
-          <Button variant="contained">Register</Button>
-        </form>
-
-        <Link to="/login">
-          <Typography variant="body2" color="primary" sx={{ mt: 2 }}>
-            Already Have Account?Login.
-          </Typography>
-        </Link>
-
-        <Typography
-          variant="subtitle2"
-          sx={{ opacity: 0.5, textAlign: "center", my: 2 }}
-        >
-          or sign in with
-        </Typography>
-
-        <Box sx={{ mt: 2, display: "flex", justifyContent: "space-around" }}>
-          <Button variant="outlined">
-            <GoogleIcon />
-          </Button>
-
-          <Button variant="outlined">
-            <FacebookIcon />
-          </Button>
-
-          <Button variant="outlined">
-            <LinkedInIcon />
-          </Button>
-        </Box>
+        {activeTab === 0 && <SeekerRegister />}
+        {activeTab === 1 && <EmployerRegister />}
       </Container>
     </Box>
   );

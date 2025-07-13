@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostJobController;
+use App\Http\Controllers\TalentController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SaveJobController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\ApplyJobController;
@@ -14,6 +16,7 @@ use App\Http\Controllers\Api\NewPasswordController;
 use App\Http\Controllers\Api\SocialLoginController;
 use App\Http\Controllers\EmployerVerficationController;
 
+
 Route::post('/register',[AuthController::class,'register']);
 Route::post('/login',[AuthController::class,'login']);
 Route::post('/forgot-password',[NewPasswordController::class,'forgotPassword']);
@@ -21,11 +24,12 @@ Route::post('/reset-password',[NewPasswordController::class,'resetPassword']);
 
 Route::post('/admin/employerVerification/{id}', [EmployerVerficationController::class, 'updateStatus']);
 
+
 Route::group(["middleware" => "AuthMiddleware"], function () {
     Route::get('/profile', [AuthController::class, 'profile']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/refresh', [AuthController::class, 'refresh']);
-    Route::post('/update-mail',[AuthController::class,'updateMail']);   
+    Route::post('/update-mail',[AuthController::class,'updateMail']);
     Route::delete('/removeuser', [AuthController::class, 'removeUser']);
     Route::post('/admin-account-creation', [AuthController::class, 'adminAccountCreation']);
     Route::post('/auth/{provider}/call-back', [SocialLoginController::class, 'socialLogin']);
@@ -82,7 +86,20 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
         Route::delete('/{id}',[SaveJobController::class,'destroy']);
     });
 
+    //talent module
+    Route::prefix('talent')->group(function () {
+        //save job list
+        Route::get('/',[TalentController::class,'index']);
+        // create save job
+        Route::post('/',[TalentController::class,'create']);
+        //view save job
+        Route::put('/{id}',[TalentController::class,'update']);
+        //remove save job
+        Route::delete('/{id}',[TalentController::class,'destroy']);
+    });
 
+    //seeker show his experience project route
+    Route::apiResource('project', ProjectController::class);
 
     //job category route
     Route::apiResource('job-categories', JobCategoryController::class);
@@ -92,7 +109,9 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
     Route::apiResource('post-jobs', PostJobController::class);
 
 
+    Route::get('types', [JobDetailController::class, 'types']);
 });
+
 
 
 
