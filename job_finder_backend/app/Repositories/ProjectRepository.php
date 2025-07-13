@@ -14,7 +14,7 @@ class ProjectRepository implements ProjectRepositoryInterface
     //index
     public function index()
     {
-        $data = Project::all();
+        $data = Project::where('seeker_id', 7)->get();
         return response()->json(['status' => 'success', 'message' => 'Projects fetched successfully', 'data' => $data], 200);
     }
     //store project

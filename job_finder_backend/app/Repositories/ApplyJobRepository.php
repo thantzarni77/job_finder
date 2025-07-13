@@ -5,9 +5,9 @@ namespace App\Repositories;
 use App\Models\Apply_job;
 use App\Mail\ShortlistContactMail;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use App\Interfaces\ApplyJobRepositoryInterface;
-use Illuminate\Support\Facades\Mail;
 
 class ApplyJobRepository implements ApplyJobRepositoryInterface
 {
@@ -21,57 +21,52 @@ class ApplyJobRepository implements ApplyJobRepositoryInterface
         return response()->json(['status' => 'success', 'message' => 'Apply job fetched successfully', 'data' => $data], 200);
     }
     //seeker apply a job
-    public function applyJob($request)
+    public function applyJob(array $applyData)
     {
-        $validator = Validator::make($request->all(), [
-                'document' => 'required|max:5000',
-                'message' => 'max:200',
-        ]);
 
-        if ($validator->fails()) {
-            return response()->json(['status' => 'error', 'message' => $validator->errors()], 422);
-        }
 
-        $data = $this->applyData($request);
-
-        // Handle multiple file upload (CV,resume)
-        if($request->hasFile('document')){
-            $document = [];
-            foreach($request->file('document') as $file){
-                $name = uniqid().'_' . $file->getClientOriginalName();
-                $file->move(public_path('document'), $name);
-                array_push($document, $name);
-            }
-
-            $data['document'] = json_encode($document);
-        }
-
+        $data = [
+            'post_job_id' => 3,
+            'employer_id' => 6,
+            'seeker_id' => 7,
+            'shortlist' => false,
+            'document' => $applyData['document'],
+            'message' => $applyData['message'],
+            'expected_salary' => $applyData['expected_salary'],
+        ];
         Apply_job::create($data);
 
-        return response()->json(['status' => 'success', 'message' => 'Job applied successfully.Good luck for your interview.'], 201);
+        return response()->json(['status' => 'success', 'message' => 'Job applied successfully.Good luck for your interview.', 'data' => $data], 201);
     }
 
     //add to shortlist
     public function addShortlist($id){
         Apply_job::where('id', $id)->update(['shortlist' => true]);
-        return response()->json(['status' => 'success', 'message' => 'Short List Addes successfully'], 201);
+        return response()->json(['status' => 'success', 'message' => 'Short List Added successfully'], 201);
     }
 
     //employer view his create job data
     public function employerPostedJobs(){
+
         $data = Apply_job::where('employer_id', auth()->user()->id)->get();
+        if(!$data){
+            return response()->json(['status' => 'success', 'message' => 'You have not posted any job postings yet.', 'data' => $data],400);
+        }
         return response()->json(['status' => 'success', 'message' => 'You have successfully fetch your posted job postings.', 'data' => $data], 200);
     }
 
     //seeeker view his applied jobs
     public function seekerAppliedJobs(){
-        $data = Apply_job::where('seeker_id', auth()->user()->id)->get();
+        $data = Apply_job::where('seeker_id', 8)->get();
+        if(!$data){
+            return response()->json(['status' => 'success', 'message' => 'You have not applied any job postings yet.', 'data' => $data],400);
+        }
         return response()->json(['status' => 'success', 'message' => 'You have successfully fetch your applied job.', 'data' => $data], 200);
     }
 
     //emoyer view his shortlisted jobs
     public function employerShortlistJobs(){
-        $data = Apply_job::where('employer_id', auth()->user()->id )->where('shortlist', true)->get();
+        $data = Apply_job::where('employer_id', 6)->where('shortlist', true)->get();
         return response()->json(['status' => 'success', 'message' => 'You have successfully fetch your shortlisted job postings.', 'data' => $data], 200);
     }
 
