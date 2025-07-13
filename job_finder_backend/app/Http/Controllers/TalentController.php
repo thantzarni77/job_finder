@@ -38,7 +38,7 @@ class TalentController extends Controller
     public function destroy($id)
     {
         $talent = Talent::FindOrFail($id);
-        return $talent->$this->talentRepo->delete();
+        return $talent->$this->talentRepo->delete($id);
     }
 
 }
