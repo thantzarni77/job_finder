@@ -11,10 +11,33 @@ use App\Http\Controllers\ApplyJobController;
 use App\Http\Controllers\JobDetailController;
 use App\Http\Controllers\Api\SeekerController;
 use App\Http\Controllers\JobCategoryController;
+<<<<<<< HEAD
 use App\Http\Controllers\Api\EmployerController;
 use App\Http\Controllers\Api\NewPasswordController;
 use App\Http\Controllers\Api\SocialLoginController;
 use App\Http\Controllers\EmployerVerficationController;
+=======
+
+// Route::get('/user', function (Request $request) {
+//     return $request->user();
+// })->middleware('auth:sanctum');
+
+//apply job module
+Route::prefix('apply-job')->group(function () {
+    Route::post('/', [ApplyJobController::class, 'applyJob']);
+    Route::get('/', [ApplyJobController::class, 'applyJobData']);
+    //making shortlist
+    Route::patch('/shortlist/{id}', [ApplyJobController::class, 'addShortlist']);
+    //employer view his uploaded jobs
+    Route::get('/employer/{id}', [ApplyJobController::class, 'employerPostedJobs']);
+    //seeker view his applied jobs
+    Route::get('/seeker/{id}', [ApplyJobController::class, 'seekerAppliedJobs']);
+    //employer view shorlist his posted jobs
+    Route::get('/shortlist/employer/{id}', [ApplyJobController::class, 'employerShortlistJobs']);
+    //mail send to seeker
+    Route::post('/mail', [ApplyJobController::class, 'sendMail']);
+});
+>>>>>>> 5ac1da8bcb0c583173dfa1be93270822948f511b
 
 
 Route::post('/register',[AuthController::class,'register']);
@@ -49,7 +72,17 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
        Route::delete('/seeker/{id}',[SeekerController::class,'destroy']);
     });
 
+<<<<<<< HEAD
     Route::middleware("UserTypeMiddleware:employer")->group(function(){
+=======
+Route::apiResource('job-categories', JobCategoryController::class);
+Route::apiResource('job-details', JobDetailController::class);
+
+//swe
+Route::apiResource('post-jobs', PostJobController::class);
+
+    Route::middleware("UserTypeMiddleware:employer")->group(function () {
+>>>>>>> 5ac1da8bcb0c583173dfa1be93270822948f511b
 
         Route::get('/employer',[EmployerController::class,'index']);
         Route::post('/employer',[EmployerController::class,'store']);
@@ -112,6 +145,10 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
     Route::get('types', [JobDetailController::class, 'types']);
 });
 
+<<<<<<< HEAD
 
 
+=======
+Route::apiResource('post-jobs', PostJobController::class);
+>>>>>>> 5ac1da8bcb0c583173dfa1be93270822948f511b
 
