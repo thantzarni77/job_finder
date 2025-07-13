@@ -6,6 +6,7 @@ use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Database\Seeders\TypeSeeder;
+use Database\Seeders\TalentSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,7 +19,8 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             AuthSeeder::class,
-            TypeSeeder::class
+            TypeSeeder::class,
+            TalentSeeder::class
         ]);
     }
 }
