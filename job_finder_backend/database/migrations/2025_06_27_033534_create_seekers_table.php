@@ -20,7 +20,7 @@ return new class extends Migration
             $table->enum('role', ['junior', 'mid-level', 'senior'])->default('junior')->nullable();
             $table->enum('talent',['Developer', 'Designer', 'Marketer', 'Writer','Manager','Coordinator','Architect', 'Analyst','Other'])->default('Other')->nullable();
             $table->json('social_media_link')->nullable();
-            $table->string('image');
+            $table->string('seeker_image');
             $table->longText('bio');
             $table->timestamps();
         });
