@@ -5,6 +5,8 @@ import {
   OutlinedInput,
   IconButton,
   Container,
+  FormHelperText,
+  Alert,
 } from "@mui/material";
 import {
   Google as GoogleIcon,
@@ -13,16 +15,57 @@ import {
 } from "@mui/icons-material";
 import { useState } from "react";
 import { Link as MuiLink } from "@mui/material";
-import { Link as RouterLink } from "react-router";
+import { Link as RouterLink, useNavigate } from "react-router";
 import BG_IMG from "../assets/login_signup_bg.jpg";
+import { useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+import { loginUser } from "../helper/authApiFunctions";
+import { useUserStore, type User } from "../store/UserStore";
+import { isAxiosError } from "axios";
+
+export type LoginData = {
+  email: string;
+  password: string;
+};
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+
+  const setUserData = useUserStore((state) => state.setUserData);
+  const errMessage = useUserStore((state) => state.errMessage);
+  const setErrMessage = useUserStore((state) => state.setErrMessage);
+  const removeErrMessage = useUserStore((state) => state.removeErrMessage);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginData>({ mode: "onBlur" });
+
+  const loginMutation = useMutation({
+    mutationFn: loginUser,
+    onSuccess: (data: { data: User }) => {
+      setUserData(data.data);
+      localStorage.setItem("token", data.data.token);
+      navigate("/");
+    },
+    onError: (err) => {
+      if (isAxiosError(err)) {
+        setErrMessage(err.response?.data.message);
+      }
+    },
+  });
+
+  const loginHandler = (payload: LoginData) => {
+    loginMutation.mutate(payload);
+  };
   return (
     <Box
       sx={{
         backgroundImage: `url(${BG_IMG})`,
         backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
         minHeight: "100vh",
         alignItems: "center",
         flexDirection: "column",
@@ -46,6 +89,7 @@ export default function Login() {
       >
         <Box
           component="form"
+          onSubmit={handleSubmit(loginHandler)}
           sx={{
             width: { xs: "85%", sm: "80%", md: "75%", lg: "65%" },
             margin: "0 auto",
@@ -74,6 +118,13 @@ export default function Login() {
               <span style={{ color: "#ef4444" }}>*</span> {/* Red asterisk */}
             </Typography>
             <OutlinedInput
+              {...register("email", {
+                required: "Email is required",
+                pattern: {
+                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                  message: "Please enter a valid email address.",
+                },
+              })}
               id="email"
               type="email"
               fullWidth
@@ -101,7 +152,13 @@ export default function Login() {
                   fontWeight: 400,
                 },
               }}
+              error={!!errors.email}
             />
+            {errors.email && (
+              <FormHelperText error id="email">
+                {errors.email.message as string}
+              </FormHelperText>
+            )}
           </Box>
           {/* password */}
           <Box
@@ -123,6 +180,27 @@ export default function Login() {
               <span style={{ color: "#ef4444" }}>*</span> {/* Red asterisk */}
             </Typography>
             <OutlinedInput
+              {...register("password", {
+                required: "Password is required.",
+                minLength: {
+                  value: 8,
+                  message: "Password must be at least 8 characters long.",
+                },
+                validate: {
+                  hasNumber: (value) =>
+                    /[0-9]/.test(value) ||
+                    "Password must contain at least one number",
+                  hasUpperCase: (value) =>
+                    /[A-Z]/.test(value) ||
+                    "Password must contain at least one uppercase letter.",
+                  hasLowerCase: (value) =>
+                    /[a-z]/.test(value) ||
+                    "Password must contain at least one lowercase letter.",
+                  // hasSpecialChar: (value) =>
+                  //   /[!@#$%^&*(),.?":{}|<>]/.test(value) ||
+                  //   "Password must contain at least one special character.",
+                },
+              })}
               id="password"
               endAdornment={
                 <IconButton onClick={() => setShowPassword(!showPassword)}>
@@ -155,17 +233,36 @@ export default function Login() {
                   fontWeight: 400,
                 },
               }}
+              error={!!errors.password}
             />
+            {errors.password && (
+              <FormHelperText error id="password">
+                {errors.password.message as string}
+              </FormHelperText>
+            )}
           </Box>
-
+          {errMessage && (
+            <Alert
+              sx={{ borderRadius: 3 }}
+              variant="outlined"
+              severity="error"
+              onClose={() => {
+                removeErrMessage();
+              }}
+            >
+              {errMessage}
+            </Alert>
+          )}
           <Typography sx={{ alignSelf: "center" }}>
             By continuing, you agree to{" "}
             <MuiLink component={RouterLink} to={""}>
-              Terms & Conditions{" "}
+              Terms & Conditions
             </MuiLink>
           </Typography>
           <Button
+            loading={loginMutation.isPending}
             variant="contained"
+            type="submit"
             sx={{
               py: 2,
               borderRadius: 2,

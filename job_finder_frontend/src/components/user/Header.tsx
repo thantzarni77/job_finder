@@ -39,8 +39,8 @@ function findRefForPath(
 
 export default function Header() {
   const user = useUserStore((state) => state.user);
-  const login = useUserStore((state) => state.login);
   const logout = useUserStore((state) => state.logout);
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -267,7 +267,7 @@ export default function Header() {
                 borderRadius: "5px",
                 boxShadow: "none",
               }}
-              onClick={() => login()}
+              onClick={() => navigate("/login")}
             >
               <Typography fontWeight={600}>Login</Typography>
             </Button>

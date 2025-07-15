@@ -64,10 +64,9 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
 
   const methods = useForm({ mode: "onBlur" });
-  const handleSubmit = methods.handleSubmit;
-  const trigger = methods.trigger;
-  const watch = methods.watch;
+  const { handleSubmit, trigger, watch } = methods;
 
+  //for optional filed
   const phoneValue = watch("phone");
 
   //on final submit
@@ -298,6 +297,8 @@ export default function Register() {
       sx={{
         backgroundImage: `url(${BG_IMG})`,
         backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
         minHeight: "100vh",
         alignItems: "center",
         flexDirection: "column",

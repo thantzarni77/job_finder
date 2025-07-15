@@ -1,30 +1,39 @@
 import { create } from "zustand";
 
-type User = {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
+export type User = {
+  user_id: number;
+  user_name: string;
+  user_email: string;
+  user_type: string;
+  token: string;
 };
+
 type UserStore = {
   user: User | null;
-  login: () => void;
+  setUserData: (loginData: User) => void;
   logout: () => void;
 };
 
-export const useUserStore = create<UserStore>((set) => ({
+type UserError = {
+  errMessage: string | null;
+  setErrMessage: (message: string) => void;
+  removeErrMessage: () => void;
+};
+
+export const useUserStore = create<UserStore & UserError>((set) => ({
   user: null,
-  login: () => {
-    set({
-      user: {
-        id: 1,
-        name: "John Doe",
-        email: "john.doe@example.com",
-        role: "user",
-      },
-    });
+  errMessage: null,
+  setErrMessage: (message) => {
+    set({ errMessage: message });
+  },
+  removeErrMessage: () => {
+    set({ errMessage: null });
+  },
+  setUserData: (loginData) => {
+    set({ user: loginData });
   },
   logout: () => {
     set({ user: null });
+    localStorage.removeItem("token");
   },
 }));

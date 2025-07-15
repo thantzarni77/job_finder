@@ -33,6 +33,7 @@ import EditEmployer from "./pages/admin/EditEmployer";
 import SeekerManagement from "./pages/admin/SeekerManagement";
 import SeekerDetailManage from "./pages/admin/SeekerDetailManage";
 import TalentProfile from "./pages/user/TalentProfile";
+import IsLoginnedMiddleware from "./protected_routes/IsLoginnedMiddleware";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -41,7 +42,11 @@ export const router = createBrowserRouter([
       {
         path: "/",
         index: true,
-        Component: Home,
+        element: (
+          <IsLoginnedMiddleware>
+            <Home />
+          </IsLoginnedMiddleware>
+        ),
       },
       {
         path: "/jobs",
@@ -81,7 +86,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "/profile/:id",
-        Component: Profile,
+        element: (
+          <IsLoginnedMiddleware>
+            <Profile />
+          </IsLoginnedMiddleware>
+        ),
       },
       {
         path: "/profile/:id/edit",
