@@ -24,6 +24,8 @@ import { useState, useRef, useEffect, useMemo, type RefObject } from "react";
 import { useNavigate } from "react-router";
 import { useThemeStore } from "../../store/Appstore";
 import { useUserStore } from "../../store/UserStore";
+import { useMutation } from "@tanstack/react-query";
+import { logoutUser } from "../../helper/authApiFunctions";
 
 function findRefForPath(
   pathname: string,
@@ -39,7 +41,8 @@ function findRefForPath(
 
 export default function Header() {
   const user = useUserStore((state) => state.user);
-  const logout = useUserStore((state) => state.logout);
+  const setUserData = useUserStore((state) => state.setUserData);
+  const accessToken = localStorage.getItem("token");
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -112,6 +115,16 @@ export default function Header() {
       });
     }
   }, [location.pathname, pathRefMap]);
+
+  const logoutMutate = useMutation({
+    mutationFn: logoutUser,
+    onSuccess: ({ data }) => {
+      if (data.status == 200) {
+        setUserData(null);
+        localStorage.removeItem("token");
+      }
+    },
+  });
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -195,7 +208,7 @@ export default function Header() {
               )}
             </Box>
           </Box>
-          {user ? (
+          {user || accessToken ? (
             <Box>
               <IconButton
                 onClick={() => setShowDrawer(!showDrawer)}
@@ -255,7 +268,9 @@ export default function Header() {
                     Profile
                   </MenuItem>
 
-                  <MenuItem onClick={() => logout()}>Logout</MenuItem>
+                  <MenuItem onClick={() => logoutMutate.mutate()}>
+                    Logout
+                  </MenuItem>
                 </Menu>
               </Box>
             </Box>

@@ -86,11 +86,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/profile/:id",
-        element: (
-          <IsLoginnedMiddleware>
-            <Profile />
-          </IsLoginnedMiddleware>
-        ),
+        element: <Profile />,
       },
       {
         path: "/profile/:id/edit",

@@ -7,12 +7,12 @@ type UserID = {
 
 type SeekerProfile = {
   id: number | null;
-  skills: string;
-  education: string;
-  work_experience: string;
+  skills: string[];
+  education: string[];
+  work_experience: string[];
   role: string;
   talent: string;
-  social_media_link: string;
+  social_media_link: string[];
   seeker_image: string;
   bio: string;
   user_id: UserID;
@@ -26,12 +26,12 @@ type SeekerProfileState = {
 export const useSeekerProfileStore = create<SeekerProfileState>((set) => ({
   seekerProfile: {
     id: null,
-    skills: "",
-    education: "",
-    work_experience: "",
+    skills: [],
+    education: [],
+    work_experience: [],
     role: "",
     talent: "",
-    social_media_link: "",
+    social_media_link: [],
     seeker_image: "",
     bio: "",
     user_id: {

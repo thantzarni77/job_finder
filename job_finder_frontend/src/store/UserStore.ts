@@ -1,16 +1,17 @@
 import { create } from "zustand";
 
-export type User = {
+type LoginUser = {
   user_id: number;
   user_name: string;
   user_email: string;
   user_type: string;
-  token: string;
 };
 
 type UserStore = {
-  user: User | null;
-  setUserData: (loginData: User) => void;
+  user: null | LoginUser;
+  token: null | string;
+  setToken: (token: string) => void;
+  setUserData: (loginData: LoginUser | null) => void;
   logout: () => void;
 };
 
@@ -22,12 +23,10 @@ type UserError = {
 
 export const useUserStore = create<UserStore & UserError>((set) => ({
   user: null,
-  errMessage: null,
-  setErrMessage: (message) => {
-    set({ errMessage: message });
-  },
-  removeErrMessage: () => {
-    set({ errMessage: null });
+  token: null,
+  setToken: (tokenFromServer: string) => {
+    set({ token: tokenFromServer });
+    localStorage.setItem("token", tokenFromServer);
   },
   setUserData: (loginData) => {
     set({ user: loginData });
@@ -35,5 +34,12 @@ export const useUserStore = create<UserStore & UserError>((set) => ({
   logout: () => {
     set({ user: null });
     localStorage.removeItem("token");
+  },
+  errMessage: null,
+  setErrMessage: (message) => {
+    set({ errMessage: message });
+  },
+  removeErrMessage: () => {
+    set({ errMessage: null });
   },
 }));

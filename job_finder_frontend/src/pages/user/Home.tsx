@@ -17,7 +17,6 @@ import { useNavigate } from "react-router";
 
 export default function Home() {
   const navigate = useNavigate();
-
   return (
     <Box>
       <HomeCarousel />
@@ -32,6 +31,7 @@ export default function Home() {
         >
           Find Your Dream Job Or Top Talent - All In One Place
         </Typography>
+
         <Box sx={{ display: "flex", justifyContent: "center", gap: 4, mb: 5 }}>
           <Button
             onClick={() => navigate("/jobs")}

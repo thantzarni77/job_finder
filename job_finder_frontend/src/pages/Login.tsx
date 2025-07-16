@@ -20,7 +20,7 @@ import BG_IMG from "../assets/login_signup_bg.jpg";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { loginUser } from "../helper/authApiFunctions";
-import { useUserStore, type User } from "../store/UserStore";
+import { useUserStore } from "../store/UserStore";
 import { isAxiosError } from "axios";
 
 export type LoginData = {
@@ -28,11 +28,22 @@ export type LoginData = {
   password: string;
 };
 
+export type LoginUserWithToken = {
+  data: {
+    user_id: number;
+    user_name: string;
+    user_email: string;
+    user_type: string;
+    token: string;
+  };
+};
+
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const setUserData = useUserStore((state) => state.setUserData);
+  const setToken = useUserStore((state) => state.setToken);
   const errMessage = useUserStore((state) => state.errMessage);
   const setErrMessage = useUserStore((state) => state.setErrMessage);
   const removeErrMessage = useUserStore((state) => state.removeErrMessage);
@@ -44,9 +55,9 @@ export default function Login() {
 
   const loginMutation = useMutation({
     mutationFn: loginUser,
-    onSuccess: (data: { data: User }) => {
-      setUserData(data.data);
-      localStorage.setItem("token", data.data.token);
+    onSuccess: ({ data }: LoginUserWithToken) => {
+      setUserData(data);
+      setToken(data.token);
       navigate("/");
     },
     onError: (err) => {

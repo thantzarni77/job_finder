@@ -13,7 +13,7 @@ import AddIcon from "@mui/icons-material/Add";
 import WorkIcon from "@mui/icons-material/Work";
 import PhoneInTalkIcon from "@mui/icons-material/PhoneInTalk";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
-import LinkedInIcon from "@mui/icons-material/LinkedIn";
+import { Facebook, Instagram } from "@mui/icons-material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import UserProjectImage from "../../assets/Rectangle 94.png";
 import { useNavigate } from "react-router";
@@ -21,6 +21,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getSeekerProfile } from "../../helper/profileApiFunctions";
 import { useEffect } from "react";
 import { useSeekerProfileStore } from "../../store/ProfileStore";
+
 export default function Profile() {
   const exampleLink = "https://github.com/thantzarni77/job_finder/tree/main";
   const navigate = useNavigate();
@@ -149,58 +150,58 @@ export default function Profile() {
 
               <Box sx={{ mt: 4 }}>
                 <Typography variant="h6">Education</Typography>
-                <Box
-                  sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}
-                >
-                  <SchoolIcon color="primary" />
-                  <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                    {seekerProfile.education}
-                  </Typography>
-                </Box>
-                <Box
-                  sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}
-                >
-                  <SchoolIcon color="primary" />
-                  <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                    Diploma in Digital Marketing
-                  </Typography>
-                </Box>
+                {seekerProfile.education.map((single) => {
+                  return (
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                        mt: 1,
+                      }}
+                    >
+                      <SchoolIcon color="primary" />
+                      <Typography
+                        variant="body2"
+                        sx={{ color: "text.secondary" }}
+                      >
+                        {single}
+                      </Typography>
+                    </Box>
+                  );
+                })}
               </Box>
 
               <Box sx={{ mt: 4 }}>
                 <Typography variant="h6">Experience</Typography>
-                <Box
-                  sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}
-                >
-                  <WorkIcon color="primary" />
-                  <Box sx={{ display: "flex", flexDirection: "column" }}>
-                    <Typography
-                      variant="body2"
-                      sx={{ color: "text.secondary" }}
-                    >
-                      {seekerProfile.work_experience}
-                    </Typography>
-                    <Typography variant="body2" color="primary">
-                      2018 - 2022
-                    </Typography>
-                  </Box>
-                </Box>
-                <Box
-                  sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}
-                >
-                  <WorkIcon color="primary" />
-                  <Box sx={{ display: "flex", flexDirection: "column" }}>
-                    <Typography
-                      variant="body2"
-                      sx={{ color: "text.secondary" }}
-                    >
-                      Creative Studio
-                    </Typography>
-                    <Typography variant="body2" color="primary">
-                      2018 - 2022
-                    </Typography>
-                  </Box>
-                </Box>
+
+                {seekerProfile.work_experience.map((single) => {
+                  return (
+                    <>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1,
+                          my: 1,
+                        }}
+                      >
+                        <WorkIcon color="primary" />
+                        <Box sx={{ display: "flex", flexDirection: "column" }}>
+                          <Typography
+                            variant="body2"
+                            sx={{ color: "text.secondary" }}
+                          >
+                            {single}
+                          </Typography>
+                          <Typography variant="body2" color="primary">
+                            2018 - 2022
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </>
+                  );
+                })}
               </Box>
 
               <Box sx={{ mt: 4 }}>
@@ -236,14 +237,31 @@ export default function Profile() {
 
               <Box sx={{ mt: 4 }}>
                 <Typography variant="h6">Social Media</Typography>
-                <Box
-                  sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}
-                >
-                  <LinkedInIcon color="primary" />
-                  <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                    {seekerProfile.social_media_link}
-                  </Typography>
-                </Box>
+                {seekerProfile.social_media_link.map((single) => {
+                  return (
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                        mt: 1,
+                      }}
+                    >
+                      {single.includes("facebook") && (
+                        <Facebook color="primary" />
+                      )}
+                      {single.includes("instagram") && (
+                        <Instagram color="primary" />
+                      )}
+                      <Typography
+                        variant="body2"
+                        sx={{ color: "text.secondary" }}
+                      >
+                        {single}
+                      </Typography>
+                    </Box>
+                  );
+                })}
               </Box>
 
               <Box sx={{ mt: 4 }}>
