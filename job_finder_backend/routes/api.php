@@ -9,6 +9,7 @@ use App\Http\Controllers\ApplyJobController;
 use App\Http\Controllers\EmployerVerficationController;
 use App\Http\Controllers\JobCategoryController;
 use App\Http\Controllers\JobDetailController;
+use App\Http\Controllers\PostJobController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SaveJobController;
 use App\Http\Controllers\TalentController;
@@ -51,6 +52,9 @@ Route::middleware("UserTypeMiddleware:employer")->group(function () {
     Route::post('/employer', [EmployerController::class, 'store']);
     Route::post('/employer/{id}', [EmployerController::class, 'update']);
     Route::delete('/employer/{id}', [EmployerController::class, 'destroy']);
+
+    //employer post job
+    Route::apiResource('post-jobs', PostJobController::class);
 
 });
 
