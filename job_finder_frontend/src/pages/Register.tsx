@@ -9,26 +9,21 @@ import {
   useTheme,
 } from "@mui/material";
 import BG_IMG from "../assets/login_signup_bg.jpg";
-
 import { useState } from "react";
-
-import FormWrapper from "./user/register/FormWrapper";
-import UserDetailsForm from "./user/register/UserDetailsForm";
-import PasswordInputFields from "./user/register/PasswordInputFields";
-import SeekerDetailsFrom from "./user/register/SeekerDetailsForm";
-import CompanyInfoForm from "./user/register/CompanyInfoForm";
-import ContactToAdminForm from "./user/register/ContactToAdminForm";
-// import { useBasicDetailStore } from "../store/RegisterInfoStore";
+import UserDetailsForm from "./registerComponent/UserDetailsForm";
+import PasswordInputFields from "./registerComponent/PasswordInputFields";
+import SeekerDetailsFrom from "./registerComponent/SeekerDetailsForm";
+import CompanyInfoForm from "./registerComponent/CompanyInfoForm";
+import ContactToAdminForm from "./registerComponent/ContactToAdminForm";
 import { FormProvider, useForm } from "react-hook-form";
 
 const STEP_LABELS = {
-  USER_DETAILS: "Enter your details",
-  CHOOSE_USER_TYPE: "Are you a seeker or employer?",
-  SEEKER_PROFILE_AND_PASS: "Profile & Password",
-  CHOOSE_EMPLOYER_TYPE: "Are you an individual or a company?",
-  COMPANY_INFO_AND_PASS: "Info & Password", // Renamed and combined
-  ADMIN_CONTACT: "Contact administrator",
-  CREATE_PASSWORD: "Create your password",
+  YOUR_DETAILS_AND_ROLE: "Your Details & Role",
+  SEEKER_PROFILE_AND_PASS: "Details & Password",
+  CHOOSE_EMPLOYER_TYPE: "Choose Employer Type",
+  COMPANY_INFO_AND_PASS: "Company Info & Password",
+  ADMIN_CONTACT: "Contact Administrator",
+  CREATE_PASSWORD: "Create Your Password",
 };
 
 type ChoiceButtonsProps = {
@@ -38,50 +33,34 @@ type ChoiceButtonsProps = {
   secondaryText: string;
 };
 
-type UserType = "seeker" | "employer" | "";
-type EmployerType = "individual" | "company" | "";
-
 export default function Register() {
-  // const name = useBasicDetailStore((state) => state.name);
-  // const email = useBasicDetailStore((state) => state.email);
-  // const phoneNum = useBasicDetailStore((state) => state.phoneNum);
-
-  // console.log(`Name : ${name}`);
-  // console.log(`Email : ${email}`);
-  // console.log(`Phone No : ${phoneNum}`);
-
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const [activeStep, setActiveStep] = useState(0);
-  const [steps, setSteps] = useState([
-    STEP_LABELS.USER_DETAILS,
-    STEP_LABELS.CHOOSE_USER_TYPE,
-  ]);
+  const methods = useForm({
+    mode: "onBlur",
+  });
+  const { handleSubmit, trigger, getValues, watch } = methods;
 
-  const [userType, setUserType] = useState<UserType>("");
-  const [employerType, setEmployerType] = useState<EmployerType>("");
+  const phoneField = watch("phone");
+
+  const [employerType, setEmployerType] = useState("");
+  const [activeStep, setActiveStep] = useState(0);
+  const [steps, setSteps] = useState([STEP_LABELS.YOUR_DETAILS_AND_ROLE]);
   const [showPassword, setShowPassword] = useState(false);
 
-  const methods = useForm({ mode: "onBlur" });
-  const { handleSubmit, trigger, watch } = methods;
-
-  //for optional filed
-  const phoneValue = watch("phone");
-
-  //on final submit
   const onFinalSubmit = (data) => {
-    console.log(data);
-
-    // setActiveStep((prev) => prev + 1);
+    console.log("FINAL FORM SUBMITTED:", data);
+    setActiveStep((prev) => prev + 1);
   };
 
   const handleNext = async () => {
-    //check which fields to validate
-    const fieldsToValidate = {
-      [STEP_LABELS.USER_DETAILS]: phoneValue
-        ? ["name", "email", "phone"]
-        : ["name", "email"],
+    const currentStepLabel = steps[activeStep];
+
+    const fieldsPerStep = {
+      [STEP_LABELS.YOUR_DETAILS_AND_ROLE]: phoneField
+        ? ["name", "email", "phone", "userType"]
+        : ["name", "email", "userType"],
       [STEP_LABELS.SEEKER_PROFILE_AND_PASS]: [
         "skill",
         "education",
@@ -90,92 +69,101 @@ export default function Register() {
         "bio",
         "talent",
         "socialLink",
-        "password",
+        "seekerPassword",
       ],
+      [STEP_LABELS.COMPANY_INFO_AND_PASS]: [
+        "companyName",
+        "companyAddress",
+        "companyPhone",
+        "companyEmail",
+        "companyDescription",
+        "companyType",
+        "companyPassword",
+      ],
+      [STEP_LABELS.ADMIN_CONTACT]: ["title", "message"],
+      [STEP_LABELS.CREATE_PASSWORD]: ["password"],
     };
 
-    //for example, on activeStep 1, we validate ['name' and 'email']
-    const currentStepFields = fieldsToValidate[steps[activeStep]];
-    // manually trigger validation for only the fields in the current step
-    const isValid = currentStepFields ? await trigger(currentStepFields) : true;
+    const fieldsToValidate = fieldsPerStep[currentStepLabel];
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    const isValid = fieldsToValidate ? await trigger(fieldsToValidate) : true;
 
-    //let go to next step only if validation pass
-    if (isValid) {
-      setActiveStep((prev) => prev + 1);
+    if (!isValid) {
+      return;
     }
+
+    //Only define the next steps when advancing from the *first* step.
+    if (currentStepLabel === STEP_LABELS.YOUR_DETAILS_AND_ROLE) {
+      const { userType } = getValues();
+      if (userType === "seeker") {
+        setSteps([
+          STEP_LABELS.YOUR_DETAILS_AND_ROLE,
+          STEP_LABELS.SEEKER_PROFILE_AND_PASS,
+        ]);
+      } else if (userType === "employer") {
+        setSteps([
+          STEP_LABELS.YOUR_DETAILS_AND_ROLE,
+          STEP_LABELS.CHOOSE_EMPLOYER_TYPE,
+        ]);
+      }
+    }
+
+    // API Calls can remain here
+    if (currentStepLabel === STEP_LABELS.YOUR_DETAILS_AND_ROLE) {
+      const { name, email, phone, userType } = getValues();
+      //api call here
+      console.log("API CALL: Registering initial details...", {
+        name,
+        email,
+        phone,
+        userType,
+      });
+    }
+
+    if (
+      employerType == "individual" &&
+      currentStepLabel === STEP_LABELS.ADMIN_CONTACT
+    ) {
+      const { title, message } = getValues();
+      console.log("API CALL (Admin Contact): Posting message...", {
+        title,
+        message,
+      });
+    }
+
+    // 4. Advance to the next step
+    setActiveStep((prev) => prev + 1);
   };
 
   const handleBack = () => {
-    const currentStepLabel = steps[activeStep];
-    if (
-      [
-        STEP_LABELS.SEEKER_PROFILE_AND_PASS,
-        STEP_LABELS.CHOOSE_EMPLOYER_TYPE,
-      ].includes(currentStepLabel)
-    ) {
-      setSteps([STEP_LABELS.USER_DETAILS, STEP_LABELS.CHOOSE_USER_TYPE]);
-      setUserType("");
-    } else if (
-      [STEP_LABELS.COMPANY_INFO_AND_PASS, STEP_LABELS.ADMIN_CONTACT].includes(
-        currentStepLabel,
-      )
-    ) {
-      setSteps([
-        STEP_LABELS.USER_DETAILS,
-        STEP_LABELS.CHOOSE_USER_TYPE,
-        STEP_LABELS.CHOOSE_EMPLOYER_TYPE,
-      ]);
-      setEmployerType("");
-    } else if (currentStepLabel === STEP_LABELS.CREATE_PASSWORD) {
-      const newSteps = [...steps];
-      newSteps.pop();
-      setSteps(newSteps);
-    }
     setActiveStep((prev) => prev - 1);
   };
 
   const handleReset = () => {
     setActiveStep(0);
-    setSteps([STEP_LABELS.USER_DETAILS, STEP_LABELS.CHOOSE_USER_TYPE]);
-    setUserType("");
-    setEmployerType("");
-  };
-
-  const handleSelectSeeker = () => {
-    setUserType("seeker");
-    setSteps([
-      STEP_LABELS.USER_DETAILS,
-      STEP_LABELS.CHOOSE_USER_TYPE,
-      STEP_LABELS.SEEKER_PROFILE_AND_PASS,
-    ]);
-    handleNext();
-  };
-
-  const handleSelectEmployer = () => {
-    setUserType("employer");
-    setSteps([
-      STEP_LABELS.USER_DETAILS,
-      STEP_LABELS.CHOOSE_USER_TYPE,
-      STEP_LABELS.CHOOSE_EMPLOYER_TYPE,
-    ]);
-    handleNext();
+    setSteps([STEP_LABELS.YOUR_DETAILS_AND_ROLE]);
+    methods.reset();
   };
 
   const handleSelectIndividual = () => {
     setEmployerType("individual");
-    // individual still needs a separate password step
-    setSteps((prevSteps) => [
-      ...prevSteps,
+    setSteps([
+      STEP_LABELS.YOUR_DETAILS_AND_ROLE,
+      STEP_LABELS.CHOOSE_EMPLOYER_TYPE,
       STEP_LABELS.ADMIN_CONTACT,
       STEP_LABELS.CREATE_PASSWORD,
     ]);
-    handleNext();
+    setActiveStep((prev) => prev + 1);
   };
 
   const handleSelectCompany = () => {
     setEmployerType("company");
-    setSteps((prevSteps) => [...prevSteps, STEP_LABELS.COMPANY_INFO_AND_PASS]);
-    handleNext();
+    setSteps([
+      STEP_LABELS.YOUR_DETAILS_AND_ROLE,
+      STEP_LABELS.CHOOSE_EMPLOYER_TYPE,
+      STEP_LABELS.COMPANY_INFO_AND_PASS,
+    ]);
+    setActiveStep((prev) => prev + 1);
   };
 
   const ChoiceButtons = ({
@@ -190,6 +178,7 @@ export default function Register() {
         display: "flex",
         gap: 2,
         width: "100%",
+
         flexDirection: { xs: "column", sm: "row" },
       }}
     >
@@ -198,9 +187,9 @@ export default function Register() {
         onClick={onSelectPrimary}
         sx={{
           flexGrow: 1,
-          borderRadius: 2,
-          textTransform: "none",
+          borderRadius: 3,
           boxShadow: "none",
+          textTransform: "none",
           ":hover": {
             boxShadow: "none",
           },
@@ -213,7 +202,7 @@ export default function Register() {
         onClick={onSelectSecondary}
         sx={{
           flexGrow: 1,
-          borderRadius: 2,
+          borderRadius: 3,
           boxShadow: "none",
           textTransform: "none",
           ":hover": {
@@ -226,34 +215,14 @@ export default function Register() {
     </Box>
   );
 
-  //render step content function
+  //render contents
   const getStepContent = (stepIndex: number) => {
     const currentStepLabel = steps[stepIndex];
-
     switch (currentStepLabel) {
-      case STEP_LABELS.USER_DETAILS:
+      case STEP_LABELS.YOUR_DETAILS_AND_ROLE:
         return <UserDetailsForm />;
-
-      case STEP_LABELS.CHOOSE_USER_TYPE:
-        return (
-          <ChoiceButtons
-            onSelectPrimary={handleSelectSeeker}
-            onSelectSecondary={handleSelectEmployer}
-            primaryText="I'm a Seeker"
-            secondaryText="I'm an Employer"
-          />
-        );
-
       case STEP_LABELS.SEEKER_PROFILE_AND_PASS:
-        return (
-          <SeekerDetailsFrom>
-            <PasswordInputFields
-              showPassword={showPassword}
-              onToggleVisibility={() => setShowPassword(!showPassword)}
-            />
-          </SeekerDetailsFrom>
-        );
-
+        return <SeekerDetailsFrom />;
       case STEP_LABELS.CHOOSE_EMPLOYER_TYPE:
         return (
           <ChoiceButtons
@@ -263,34 +232,23 @@ export default function Register() {
             secondaryText="Company"
           />
         );
-
       case STEP_LABELS.COMPANY_INFO_AND_PASS:
-        return (
-          <CompanyInfoForm>
-            <PasswordInputFields
-              showPassword={showPassword}
-              onToggleVisibility={() => setShowPassword(!showPassword)}
-            />
-          </CompanyInfoForm>
-        );
-
+        return <CompanyInfoForm />;
       case STEP_LABELS.ADMIN_CONTACT:
         return <ContactToAdminForm />;
-
       case STEP_LABELS.CREATE_PASSWORD:
         return (
-          <FormWrapper>
-            <PasswordInputFields
-              showPassword={showPassword}
-              onToggleVisibility={() => setShowPassword(!showPassword)}
-            />
-          </FormWrapper>
+          <PasswordInputFields
+            showPassword={showPassword}
+            onToggleVisibility={() => setShowPassword(!showPassword)}
+          />
         );
-
       default:
         return <Typography>Unknown step</Typography>;
     }
   };
+
+  const isLastStep = activeStep === steps.length - 1 && steps.length > 1;
 
   return (
     <Box
@@ -304,14 +262,11 @@ export default function Register() {
         flexDirection: "column",
         display: "flex",
         py: 4,
-        px: { xs: 2, sm: 3, md: 4 },
+        px: { xs: 2, sm: 3 },
       }}
     >
       <Typography
-        sx={{
-          fontWeight: 700,
-          fontSize: { xs: "25px", md: "28px" },
-        }}
+        sx={{ fontWeight: 700, fontSize: { xs: "25px", md: "28px" } }}
       >
         LOGO
       </Typography>
@@ -323,9 +278,9 @@ export default function Register() {
       </Typography>
 
       <FormProvider {...methods}>
-        {/* stepper and contents  */}
         <Box
           component="form"
+          noValidate
           onSubmit={handleSubmit(onFinalSubmit)}
           sx={{
             width: { xs: "100%", sm: "90%", md: "700px" },
@@ -373,49 +328,23 @@ export default function Register() {
                   color="inherit"
                   disabled={activeStep === 0}
                   onClick={handleBack}
-                  sx={{
-                    mr: 1,
-                    borderRadius: 2,
-                    boxShadow: "none",
-                    textTransform: "none",
-                    ":hover": {
-                      boxShadow: "none",
-                    },
-                  }}
+                  sx={{ mr: 1, borderRadius: 2 }}
                 >
                   Back
                 </Button>
                 <Box sx={{ flex: "1 1 auto" }} />
-                {![
-                  STEP_LABELS.CHOOSE_USER_TYPE,
-                  STEP_LABELS.CHOOSE_EMPLOYER_TYPE,
-                ].includes(steps[activeStep]) && (
+
+                {![STEP_LABELS.CHOOSE_EMPLOYER_TYPE].includes(
+                  steps[activeStep],
+                ) && (
                   <Button
                     variant="contained"
-                    // If it's the last step, make it a submit button
-                    type={activeStep === steps.length - 1 ? "submit" : "button"}
-                    // Otherwise, trigger per-step validation
-                    onClick={
-                      activeStep === steps.length - 1 ? undefined : handleNext
-                    }
-                    sx={{
-                      borderRadius: 2,
-                      boxShadow: "none",
-                      textTransform: "none",
-                      ":hover": {
-                        boxShadow: "none",
-                      },
-                    }}
+                    type={isLastStep ? "submit" : "button"}
+                    onClick={isLastStep ? undefined : handleNext}
+                    sx={{ borderRadius: 2 }}
                   >
-                    {activeStep === steps.length - 1 ? "Finish" : "Next"}
+                    {isLastStep ? "Finish" : "Next"}
                   </Button>
-                  // <Button
-                  //   variant="contained"
-                  //   onClick={handleNext}
-
-                  // >
-                  //   {activeStep === steps.length - 1 ? "Finish" : "Next"}
-                  // </Button>
                 )}
               </Box>
             </>

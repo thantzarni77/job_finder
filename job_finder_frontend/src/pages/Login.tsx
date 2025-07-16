@@ -188,29 +188,10 @@ export default function Login() {
               }}
             >
               Password
-              <span style={{ color: "#ef4444" }}>*</span> {/* Red asterisk */}
             </Typography>
             <OutlinedInput
               {...register("password", {
                 required: "Password is required.",
-                minLength: {
-                  value: 8,
-                  message: "Password must be at least 8 characters long.",
-                },
-                validate: {
-                  hasNumber: (value) =>
-                    /[0-9]/.test(value) ||
-                    "Password must contain at least one number",
-                  hasUpperCase: (value) =>
-                    /[A-Z]/.test(value) ||
-                    "Password must contain at least one uppercase letter.",
-                  hasLowerCase: (value) =>
-                    /[a-z]/.test(value) ||
-                    "Password must contain at least one lowercase letter.",
-                  // hasSpecialChar: (value) =>
-                  //   /[!@#$%^&*(),.?":{}|<>]/.test(value) ||
-                  //   "Password must contain at least one special character.",
-                },
               })}
               id="password"
               endAdornment={

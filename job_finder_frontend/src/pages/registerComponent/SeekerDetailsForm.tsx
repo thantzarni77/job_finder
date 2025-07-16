@@ -7,9 +7,12 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import FormWrapper from "./FormWrapper";
 import CloseIcon from "@mui/icons-material/Close";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
+import {
+  Visibility as VisibilityIcon,
+  VisibilityOff as VisibilityOffIcon,
+} from "@mui/icons-material";
 import { useEffect, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
@@ -25,10 +28,12 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
-const SeekerDetailsFrom = ({ children }: { children?: React.ReactNode }) => {
+const SeekerDetailsFrom = () => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -77,7 +82,17 @@ const SeekerDetailsFrom = ({ children }: { children?: React.ReactNode }) => {
     }
   };
   return (
-    <FormWrapper>
+    <Box
+      sx={{
+        bgcolor: "background.paper",
+        p: { xs: 2, sm: 3 },
+        borderRadius: 2,
+        display: "flex",
+        flexDirection: "column",
+        gap: "20px",
+        width: "100%",
+      }}
+    >
       {/* skill */}
       <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
         <Typography component="label" htmlFor="skill" sx={{ fontWeight: 300 }}>
@@ -365,8 +380,87 @@ const SeekerDetailsFrom = ({ children }: { children?: React.ReactNode }) => {
           )}
         </Box>
       </Box>
-      {children}
-    </FormWrapper>
+      {/* password */}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "8px",
+          width: "full",
+        }}
+      >
+        <Typography
+          component="label"
+          htmlFor="seekerPassword"
+          sx={{
+            fontWeight: 300,
+          }}
+        >
+          Password
+        </Typography>
+        <OutlinedInput
+          {...register("seekerPassword", {
+            required: "Password is required.",
+            minLength: {
+              value: 8,
+              message: "Password must be at least 8 characters long.",
+            },
+            validate: {
+              hasNumber: (value) =>
+                /[0-9]/.test(value) ||
+                "Password must contain at least one number",
+              hasUpperCase: (value) =>
+                /[A-Z]/.test(value) ||
+                "Password must contain at least one uppercase letter.",
+              hasLowerCase: (value) =>
+                /[a-z]/.test(value) ||
+                "Password must contain at least one lowercase letter.",
+              hasSpecialChar: (value) =>
+                /[!@#$%^&*(),.?":{}|<>]/.test(value) ||
+                "Password must contain at least one special character.",
+            },
+          })}
+          id="seekerPassword"
+          endAdornment={
+            <IconButton onClick={() => setShowPassword(!showPassword)}>
+              {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+            </IconButton>
+          }
+          type={showPassword ? "text" : "password"}
+          fullWidth
+          placeholder="Please enter your password"
+          sx={{
+            // root of the OutlinedInput
+            "& .MuiOutlinedInput-root": {
+              backgroundColor: "background.paper",
+              borderRadius: "13px",
+
+              //  border
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: "primary.main",
+              },
+
+              // Style the border when focused
+              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                borderColor: "primary.light", // Use theme's primary color on focus
+              },
+            },
+            //  placeholder text
+            "& .MuiInputBase-input::placeholder": {
+              color: "primary.main",
+              fontSize: "13px",
+              fontWeight: 400,
+            },
+          }}
+          error={!!errors.seekerPassword}
+        />
+        {errors.seekerPassword && (
+          <FormHelperText error id="seekerPassword">
+            {errors.seekerPassword.message as string}
+          </FormHelperText>
+        )}
+      </Box>
+    </Box>
   );
 };
 
