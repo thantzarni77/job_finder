@@ -28,16 +28,16 @@ class JobDetailController extends Controller
     {
         $data = $request->validate([
             'post_job_id' => 'required|exists:post_jobs,id',
-            'job_requirements' => 'required|string',
-            'job_description' => 'required|string',
-            'dead_line' => 'required|date',
+            'requirements' => 'required|string',
+            'description' => 'required|string',
+            'deadline' => 'required|date',
             'vacancy' => 'required|integer',
             'note' => 'nullable|string',
             'benefits' => 'nullable|string',
             'gender' => 'nullable|in:male,female,both',
             'save_count' => 'nullable|integer',
             'apply_count' => 'nullable|integer',
-            'job_benefits' => 'nullable|string',
+            // 'job_benefits' => 'nullable|string',
         ]);
 
         $jobDetail = $this->repo->create($data);
