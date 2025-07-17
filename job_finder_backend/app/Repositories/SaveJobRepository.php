@@ -9,7 +9,8 @@ class SaveJobRepository implements SaveJobRepositoryInterface
 {
     //save job list
     public function index(){
-        return Save_job::get();
+        $data = Save_job::get();
+        return response()->json(['status' => 'success', 'message' => 'Save job fetched successfully', 'data' => $data], 200);
     }
 
     //create save job
@@ -24,7 +25,8 @@ class SaveJobRepository implements SaveJobRepositoryInterface
 
     //view save job
     public function view(){
-        return Save_job::where('seeker_id',auth()->user()->id)->get();
+        $data = Save_job::where('seeker_id',auth()->user()->id)->get();
+        return response()->json(['status' => 'success', 'message' => 'Seeker Save job fetched successfully', 'data' => $data], 200);
     }
 
     //remove save job

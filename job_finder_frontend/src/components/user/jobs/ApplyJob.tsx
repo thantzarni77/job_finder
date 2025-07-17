@@ -75,7 +75,7 @@ const ApplyJob = () => {
   };
 
   return (
-    <Box sx={{ width: "90%", mx: "auto" }}>
+    <Box sx={{ width: "90%", mx: "auto", mb: 15 }}>
       {/* Form Title & back button */}
       <Box
         sx={{
@@ -86,17 +86,19 @@ const ApplyJob = () => {
           mb: 4,
         }}
       >
-        <ArrowBackIosIcon
-          onClick={() => navigate("/job/JC-1111")}
-          sx={{
-            color: "primary.main",
-            fontSize: 32,
-            ":hover": {
-              color: "secondary.main",
-              cursor: "pointer",
-            },
-          }}
-        />
+        <IconButton onClick={() => navigate("/job/JC-1111")}>
+          <ArrowBackIosIcon
+            sx={{
+              color: "primary.main",
+              fontSize: 32,
+              ":hover": {
+                color: "secondary.main",
+                cursor: "pointer",
+              },
+            }}
+          />
+        </IconButton>
+
         <Typography variant="h5" sx={{ fontWeight: 600, mx: "auto" }}>
           Application Form
         </Typography>
@@ -106,23 +108,31 @@ const ApplyJob = () => {
         sx={{
           width: "100%",
           display: "flex",
-          alignItems: "flex-start",
-          gap: 10,
+          flexDirection: { xs: "column", md: "column", lg: "row" },
+          alignItems: { xs: "center", md: "center", lg: "flex-start" },
+          gap: { xs: 0, md: 0, lg: 5 },
         }}
       >
-        <Box sx={{ display: { xs: "none", md: "block" } }}>
-          <JobCard />
-        </Box>
+        <JobCard />
 
         {/* application form */}
-        <Box sx={{ mx: { xs: "auto", md: 0 } }}>
+        <Box
+          component="form"
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            width: { xs: "90%", md: "60%", lg: "35%" },
+            gap: 3,
+            mx: { xs: "auto", md: 0 },
+          }}
+        >
           <Box
             sx={{
               display: "flex",
               flexDirection: "column",
               gap: "8px",
-              width: "400px",
-              mb: 4,
+              width: "full",
               mt: 3,
             }}
           >
@@ -144,7 +154,7 @@ const ApplyJob = () => {
               sx={{
                 // root of the OutlinedInput
                 "& .MuiOutlinedInput-root": {
-                  backgroundColor: "#ffffff",
+                  backgroundColor: "background.paper",
                   borderRadius: "13px",
 
                   //  border
@@ -171,8 +181,7 @@ const ApplyJob = () => {
               display: "flex",
               flexDirection: "column",
               gap: "8px",
-              width: "400px",
-              my: 3,
+              width: "full",
             }}
           >
             <Typography
@@ -193,7 +202,7 @@ const ApplyJob = () => {
               sx={{
                 // root of the OutlinedInput
                 "& .MuiOutlinedInput-root": {
-                  backgroundColor: "#ffffff",
+                  backgroundColor: "background.paper",
                   borderRadius: "13px",
 
                   //  border
@@ -220,8 +229,7 @@ const ApplyJob = () => {
               display: "flex",
               flexDirection: "column",
               gap: "8px",
-              width: "400px",
-              my: 3,
+              width: "full",
             }}
           >
             <Typography
@@ -242,7 +250,7 @@ const ApplyJob = () => {
               sx={{
                 // root of the OutlinedInput
                 "& .MuiOutlinedInput-root": {
-                  backgroundColor: "#ffffff",
+                  backgroundColor: "background.paper",
                   borderRadius: "13px",
 
                   //  border
@@ -269,8 +277,7 @@ const ApplyJob = () => {
               display: "flex",
               flexDirection: "column",
               gap: "8px",
-              width: "400px",
-              my: 3,
+              width: "full",
             }}
           >
             <Typography
@@ -293,7 +300,7 @@ const ApplyJob = () => {
               sx={{
                 // root of the OutlinedInput
                 "& .MuiOutlinedInput-root": {
-                  backgroundColor: "#ffffff",
+                  backgroundColor: "background.paper",
                   borderRadius: "13px",
 
                   //  border
@@ -320,8 +327,7 @@ const ApplyJob = () => {
               display: "flex",
               flexDirection: "column",
               gap: "8px",
-              width: "400px",
-              my: 3,
+              width: "full",
             }}
           >
             <Typography
@@ -347,13 +353,15 @@ const ApplyJob = () => {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                backgroundColor: "#fff",
+                backgroundColor: "background.paper",
                 cursor: previewUrl ? "default" : "pointer", // Change cursor based on state
                 transition: "background-color 0.2s ease",
                 position: "relative",
                 overflow: "hidden",
                 "&:hover": {
-                  backgroundColor: previewUrl ? "#fff" : "#fafafa",
+                  backgroundColor: previewUrl
+                    ? "background.paper"
+                    : "backgorund.default",
                 },
               }}
             >
@@ -426,7 +434,7 @@ const ApplyJob = () => {
                 textTransform: "none",
                 fontWeight: 400,
                 borderRadius: "8px",
-                px: 1,
+                p: 1,
                 "&:hover": {
                   boxShadow: "none",
                 },
