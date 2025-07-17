@@ -16,6 +16,7 @@ class EmployerResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            "id" => $this->id,
             "company_name" => $this->company_name ,
             "company_address" => $this->company_address ,
             "company_phone" => $this->company_phone ,

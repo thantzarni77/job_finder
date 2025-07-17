@@ -24,14 +24,24 @@ class EmployerController extends Controller
         ],200);
     }
 
-    public function store(Request $request){
+    public function getdata(string $id){
+        try{
+            $data = Employer::findOrFail($id);
+            return new EmployerResource($data);
+        }catch(\Exception $e){
+            return response()->json([
+                "message" => "Data not Found"
+            ],404);
+        }
+    }
+
+    public function store(Request $request,string $id){
 
         $validator = Validator::make($request->all(),[
             "company_name" => "required",
             "company_address" => "required",
             "company_phone" => "required",
             "company_email" => "required|email",
-            "company_description" => "required",
             "company_type" => "required",
             "verification" => "required",
             "company_image" => "required"
@@ -40,9 +50,8 @@ class EmployerController extends Controller
         if($validator->fails()){
             return $this->erorsResponse("Validator fails",$validator->messages());
         }
-
-        $user = Auth::user();
-        $user_id = $user->id;
+        
+        $user_id = $id;
 
         $employer = new Employer();
         $employer->user_id = $user_id;
@@ -50,7 +59,6 @@ class EmployerController extends Controller
         $employer->company_address = $request['company_address'];
         $employer->company_phone = $request['company_phone'];
         $employer->company_email = $request['company_email'];
-        $employer->company_description = $request['company_description'];
         $employer->company_type = $request['company_type'];
         $employer->verification = $request['verification'];
 
@@ -76,7 +84,6 @@ class EmployerController extends Controller
             "company_address" => "required",
             "company_phone" => "required",
             "company_email" => "required|email",
-            "company_description" => "required",
             "company_type" => "required",
             "verification" => "required",
             "company_image" => "required"
@@ -89,18 +96,17 @@ class EmployerController extends Controller
         $user = Auth::user();
         $user_id = $user->id;
 
-        $employer = new Employer();
+        $employer = Employer::findOrFail($id);
         $employer->user_id = $user_id;
         $employer->company_name = $request->company_name;
         $employer->company_address = $request['company_address'];
         $employer->company_phone = $request['company_phone'];
         $employer->company_email = $request['company_email'];
-        $employer->company_description = $request['company_description'];
         $employer->company_type = $request['company_type'];
         $employer->verification = $request['verification'];
 
-        if($request->hasFile('image')){
-            $path = $employer->seeker_image;
+        if($request->hasFile('company_image')){
+            $path = $employer->company_image;
 
             if(File::exists($path)){
                 File::delete($path);
