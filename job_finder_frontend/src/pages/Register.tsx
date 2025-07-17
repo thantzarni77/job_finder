@@ -19,7 +19,7 @@ import { FormProvider, useForm } from "react-hook-form";
 
 const STEP_LABELS = {
   YOUR_DETAILS_AND_ROLE: "Your Details & Role",
-  SEEKER_PROFILE_AND_PASS: "Details & Password",
+  SEEKER_PROFILE_AND_PASS: "Seeker Details & Password",
   CHOOSE_EMPLOYER_TYPE: "Choose Employer Type",
   COMPANY_INFO_AND_PASS: "Company Info & Password",
   ADMIN_CONTACT: "Contact Administrator",
@@ -33,15 +33,50 @@ type ChoiceButtonsProps = {
   secondaryText: string;
 };
 
+type RegisterFormData = {
+  // From UserDetailsForm
+  name: string;
+  email: string;
+  userType: "seeker" | "employer";
+  phone?: string;
+
+  // From SeekerDetailsForm.tsx
+  skills?: string;
+  education?: string;
+  work_experience?: string;
+  role?: "junior" | "mid-level" | "senior";
+  bio?: string;
+  talent?: string;
+  social_media_link?: string;
+  seekerPassword?: string;
+
+  // From CompanyInfoForm
+  companyName?: string;
+  companyAddress?: string;
+  companyPhone?: string;
+  companyEmail?: string;
+  companyDescription?: string;
+  companyType?: string;
+  companyPassword?: string;
+
+  // From ContactToAdminForm
+  title?: string;
+  message?: string;
+
+  // From PasswordInputFields
+  password?: string;
+};
+
 export default function Register() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const methods = useForm({
+  const methods = useForm<RegisterFormData>({
     mode: "onBlur",
   });
   const { handleSubmit, trigger, getValues, watch } = methods;
 
+  const userType = watch("userType");
   const phoneField = watch("phone");
 
   const [employerType, setEmployerType] = useState("");
@@ -49,26 +84,49 @@ export default function Register() {
   const [steps, setSteps] = useState([STEP_LABELS.YOUR_DETAILS_AND_ROLE]);
   const [showPassword, setShowPassword] = useState(false);
 
-  const onFinalSubmit = (data) => {
-    console.log("FINAL FORM SUBMITTED:", data);
+  const onFinalSubmit = (data: RegisterFormData) => {
+    if (userType == "seeker") {
+      const {
+        skills,
+        education,
+        work_experience,
+        role,
+        bio,
+        talent,
+        social_media_link,
+        seekerPassword,
+      } = data;
+
+      console.log(
+        skills,
+        education,
+        work_experience,
+        role,
+        bio,
+        talent,
+        social_media_link,
+        seekerPassword,
+      );
+    }
+    // console.log("FINAL FORM SUBMITTED:", data);
     setActiveStep((prev) => prev + 1);
   };
 
   const handleNext = async () => {
     const currentStepLabel = steps[activeStep];
 
-    const fieldsPerStep = {
+    const fieldsPerStep: { [key: string]: (keyof RegisterFormData)[] } = {
       [STEP_LABELS.YOUR_DETAILS_AND_ROLE]: phoneField
         ? ["name", "email", "phone", "userType"]
         : ["name", "email", "userType"],
       [STEP_LABELS.SEEKER_PROFILE_AND_PASS]: [
-        "skill",
+        "skills",
         "education",
-        "workExp",
+        "work_experience",
         "role",
         "bio",
         "talent",
-        "socialLink",
+        "social_media_link",
         "seekerPassword",
       ],
       [STEP_LABELS.COMPANY_INFO_AND_PASS]: [

@@ -1,8 +1,14 @@
 import {
   Box,
+  FormControl,
+  FormControlLabel,
   FormHelperText,
   IconButton,
+  MenuItem,
   OutlinedInput,
+  Radio,
+  RadioGroup,
+  Select,
   styled,
   TextField,
   Typography,
@@ -13,8 +19,11 @@ import {
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,
 } from "@mui/icons-material";
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import { useEffect, useRef, useState } from "react";
-import { useFormContext } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
+import { useQuery } from "@tanstack/react-query";
+import { getAllTalents } from "../../helper/getTalentApiFunctions";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -28,6 +37,13 @@ const VisuallyHiddenInput = styled("input")({
   width: 1,
 });
 
+type SingleTalent = {
+  id: number;
+  name: string;
+  created_at: string;
+  updated_at: string;
+};
+
 const SeekerDetailsFrom = () => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -35,8 +51,16 @@ const SeekerDetailsFrom = () => {
 
   const [showPassword, setShowPassword] = useState(false);
 
+  const [talents, setTalents] = useState<SingleTalent[]>([]);
+
+  const { data, isSuccess } = useQuery({
+    queryKey: ["talents"],
+    queryFn: getAllTalents,
+  });
+
   const {
     register,
+    control,
     formState: { errors },
   } = useFormContext();
 
@@ -48,6 +72,12 @@ const SeekerDetailsFrom = () => {
       }
     };
   }, [previewUrl]);
+
+  useEffect(() => {
+    if (data && isSuccess) {
+      setTalents(data.data.data);
+    }
+  }, [data, isSuccess]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -95,21 +125,21 @@ const SeekerDetailsFrom = () => {
     >
       {/* skill */}
       <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-        <Typography component="label" htmlFor="skill" sx={{ fontWeight: 300 }}>
+        <Typography component="label" htmlFor="skills" sx={{ fontWeight: 300 }}>
           Skill
         </Typography>
         <OutlinedInput
-          {...register("skill", {
+          {...register("skills", {
             required: "Skill is required",
           })}
-          id="skill"
+          id="skills"
           fullWidth
-          placeholder="Please enter your skill"
-          error={!!errors.skill}
+          placeholder="Please enter your skills"
+          error={!!errors.skills}
         />
-        {errors.skill && (
-          <FormHelperText error id="skill">
-            {errors.skill.message as string}
+        {errors.skills && (
+          <FormHelperText error id="skills">
+            {errors.skills.message as string}
           </FormHelperText>
         )}
       </Box>
@@ -146,56 +176,142 @@ const SeekerDetailsFrom = () => {
       <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
         <Typography
           component="label"
-          htmlFor="workExp"
+          htmlFor="work_experience"
           sx={{ fontWeight: 300 }}
         >
           Work Expericence
         </Typography>
         <OutlinedInput
-          {...register("workExp", {
+          {...register("work_experience", {
             required: "Work experience is required",
             maxLength: {
               value: 100,
               message: "Shouldn't be more than 100 words",
             },
           })}
-          id="workExp"
+          id="work_experience"
           type="text"
           fullWidth
           placeholder="Please enter your work experience"
-          error={!!errors.workExp}
+          error={!!errors.work_experience}
         />
-        {errors.workExp && (
-          <FormHelperText error id="workExp">
-            {errors.workExp.message as string}
+        {errors.work_experience && (
+          <FormHelperText error id="work_experience">
+            {errors.work_experience.message as string}
           </FormHelperText>
         )}
       </Box>
-      {/* role  */}
+      {/* role */}
       <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
         <Typography component="label" htmlFor="role" sx={{ fontWeight: 300 }}>
-          Seeker Role
+          Choose Seeker Role
         </Typography>
-        <OutlinedInput
-          {...register("role", {
-            required: "Role is required",
-            maxLength: {
-              value: 100,
-              message: "Shouldn't be more than 100 words",
-            },
-          })}
-          id="role"
-          type="text"
-          fullWidth
-          placeholder="Please enter your role"
-          error={!!errors.role}
+        <Controller
+          name="role"
+          control={control}
+          defaultValue="junior"
+          rules={{ required: "Please select a seeker role" }}
+          render={({ field, fieldState: { error } }) => (
+            <FormControl error={!!error}>
+              <Select
+                {...field}
+                IconComponent={ArrowDropUpIcon}
+                MenuProps={{
+                  slotProps: {
+                    paper: {
+                      sx: {
+                        width: 155,
+                        bgcolor: "background.paper",
+                        borderRadius: "5px",
+                        boxShadow: "none",
+                        color: "primary.main",
+                      },
+                    },
+                  },
+                }}
+                sx={{
+                  width: 200,
+                  height: 40,
+                  fontWeight: 400,
+                  fontSize: "14px",
+                  borderRadius: "5px",
+                  bgcolor: "background.paper",
+                  color: "text.secondary",
+                }}
+              >
+                <MenuItem
+                  value="junior"
+                  sx={{
+                    padding: "10px 16px",
+                    borderRadius: "5px",
+                    fontWeight: 400,
+                    margin: "4px",
+                    borderLeft: "4px solid transparent",
+                    bgColor: "background.paper",
+                    fontSize: "14px",
+                    "&.Mui-selected": {
+                      borderLeft: "4px solid",
+                      borderColor: " primary.main",
+                      fontWeight: 600,
+                      "&:hover": {
+                        backgroundColor: "rgba(106, 103, 193, 0.1)",
+                      },
+                    },
+                  }}
+                >
+                  Junior
+                </MenuItem>
+                <MenuItem
+                  value="mid-level"
+                  sx={{
+                    padding: "10px 16px",
+                    borderRadius: "8px",
+                    margin: "4px",
+                    borderLeft: "4px solid transparent",
+                    bgColor: "background.paper",
+                    fontWeight: 400,
+                    fontSize: "14px",
+                    "&.Mui-selected": {
+                      borderLeft: "4px solid",
+                      borderColor: " primary.main",
+                      fontWeight: 600,
+                      "&:hover": {
+                        backgroundColor: "rgba(106, 103, 193, 0.1)",
+                      },
+                    },
+                  }}
+                >
+                  Mid Level
+                </MenuItem>
+                <MenuItem
+                  value="senior"
+                  sx={{
+                    padding: "10px 16px",
+                    borderRadius: "8px",
+                    margin: "4px",
+                    borderLeft: "4px solid transparent",
+                    bgColor: "background.paper",
+                    fontWeight: 400,
+                    fontSize: "14px",
+                    "&.Mui-selected": {
+                      borderLeft: "4px solid",
+                      borderColor: " primary.main",
+                      fontWeight: 600,
+                      "&:hover": {
+                        backgroundColor: "rgba(106, 103, 193, 0.1)",
+                      },
+                    },
+                  }}
+                >
+                  Senior
+                </MenuItem>
+              </Select>
+              {error && <FormHelperText>{error.message}</FormHelperText>}
+            </FormControl>
+          )}
         />
-        {errors.role && (
-          <FormHelperText error id="role">
-            {errors.role.message as string}
-          </FormHelperText>
-        )}
       </Box>
+
       {/* bio */}
       <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
         <Typography component="label" htmlFor="bio" sx={{ fontWeight: 300 }}>
@@ -222,60 +338,78 @@ const SeekerDetailsFrom = () => {
           </FormHelperText>
         )}
       </Box>
+
       {/* talent */}
       <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-        <Typography component="label" htmlFor="talent" sx={{ fontWeight: 300 }}>
-          Talent
+        <Typography component="label" sx={{ fontWeight: 300 }}>
+          Select your talent
         </Typography>
-        <OutlinedInput
-          {...register("talent", {
-            required: "Talent is required",
-            maxLength: {
-              value: 100,
-              message: "Shouldn't be more than 100 words",
-            },
-          })}
-          id="talent"
-          type="text"
-          fullWidth
-          placeholder="Please enter your talent"
-          error={!!errors.talent}
+        <Controller
+          name="talent"
+          control={control}
+          defaultValue="Developer"
+          rules={{ required: "You must select a talent" }}
+          render={({ field, fieldState: { error } }) => (
+            <FormControl error={!!error}>
+              <RadioGroup
+                {...field}
+                row
+                aria-labelledby="talent-radio-buttons-group-label"
+                name="talent-radio-buttons-group"
+              >
+                {talents.map((talent) => (
+                  <FormControlLabel
+                    key={talent.id}
+                    value={talent.name}
+                    control={<Radio />}
+                    label={talent.name}
+                    sx={{
+                      "& .MuiTypography-root": {
+                        fontWeight: 300,
+                        fontSize: 15,
+                      },
+                    }}
+                  />
+                ))}
+              </RadioGroup>
+              {error && (
+                <FormHelperText sx={{ ml: 0 }}>{error.message}</FormHelperText>
+              )}
+            </FormControl>
+          )}
         />
-        {errors.talent && (
-          <FormHelperText error id="talent">
-            {errors.talent.message as string}
-          </FormHelperText>
-        )}
       </Box>
+
       {/* social link */}
       <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
         <Typography
           component="label"
-          htmlFor="socialLink"
+          htmlFor="social_media_link"
           sx={{ fontWeight: 300 }}
         >
           Social Links
         </Typography>
         <OutlinedInput
-          {...register("socialLink", {
+          {...register("social_media_link", {
             required: "Bio is required",
             maxLength: {
               value: 100,
               message: "Shouldn't be more than 100 words",
             },
           })}
-          id="socialLink"
+          id="social_media_link"
           type="text"
           fullWidth
-          placeholder="Please enter your social links"
-          error={!!errors.socialLink}
+          placeholder="Please enter your social links separated by ,"
+          error={!!errors.social_media_link}
         />
-        {errors.socialLink && (
-          <FormHelperText error id="socialLink">
-            {errors.socialLink.message as string}
+        {errors.social_media_link && (
+          <FormHelperText error id="social_media_link">
+            {errors.social_media_link.message as string}
           </FormHelperText>
         )}
       </Box>
+
       {/* seeker profile  */}
       <Box
         sx={{
@@ -300,7 +434,7 @@ const SeekerDetailsFrom = () => {
         <Box
           onClick={handleContainerClick}
           sx={{
-            width: "100%",
+            width: "50%",
             height: "220px",
             border: "1px solid",
             borderColor: "primary.main",
