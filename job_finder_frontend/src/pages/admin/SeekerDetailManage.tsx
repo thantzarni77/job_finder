@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  IconButton,
   Pagination,
   Stack,
   Tab,
@@ -36,27 +37,30 @@ const SeekerDetailManage = () => {
     setActiveTab(newValue);
   };
   return (
-    <Box sx={{ width: "90%", mx: 6 }}>
+    <Box sx={{ width: "94%", mx: 6 }}>
       {/* back arrow and top part */}
       <Box
         sx={{
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
+          width: "100%",
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <ArrowBackIosIcon
-            onClick={() => navigate(-1)}
-            sx={{
-              color: "primary.main",
-              fontSize: 32,
-              ":hover": {
-                color: "secondary.main",
-                cursor: "pointer",
-              },
-            }}
-          />
+          <IconButton>
+            <ArrowBackIosIcon
+              onClick={() => navigate(-1)}
+              sx={{
+                color: "primary.main",
+                fontSize: 32,
+                ":hover": {
+                  color: "text.primary",
+                  cursor: "pointer",
+                },
+              }}
+            />
+          </IconButton>
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
             Seeker detail view
           </Typography>
@@ -264,7 +268,7 @@ const SeekerDetailManage = () => {
               border: 1,
             }}
           >
-            <Typography sx={{ color: "error.main" }}> Suspend User</Typography>
+            <Typography color="warning"> Suspend User</Typography>
           </Button>
           <Button
             sx={{

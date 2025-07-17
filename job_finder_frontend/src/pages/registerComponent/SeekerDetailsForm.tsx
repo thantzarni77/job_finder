@@ -4,11 +4,9 @@ import {
   FormControlLabel,
   FormHelperText,
   IconButton,
-  MenuItem,
   OutlinedInput,
   Radio,
   RadioGroup,
-  Select,
   styled,
   TextField,
   Typography,
@@ -19,11 +17,13 @@ import {
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,
 } from "@mui/icons-material";
-import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import { useEffect, useRef, useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
-import { getAllTalents } from "../../helper/getTalentApiFunctions";
+import {
+  getAllRoles,
+  getAllTalents,
+} from "../../helper/talentAndRoleApiFunctions";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -44,6 +44,11 @@ type SingleTalent = {
   updated_at: string;
 };
 
+type SingleRole = {
+  id: number;
+  name: string;
+};
+
 const SeekerDetailsFrom = () => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -52,10 +57,16 @@ const SeekerDetailsFrom = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const [talents, setTalents] = useState<SingleTalent[]>([]);
+  const [roles, setRoles] = useState<SingleRole[]>([]);
 
-  const { data, isSuccess } = useQuery({
+  const talentsQuery = useQuery({
     queryKey: ["talents"],
     queryFn: getAllTalents,
+  });
+
+  const rolesQuery = useQuery({
+    queryKey: ["roles"],
+    queryFn: getAllRoles,
   });
 
   const {
@@ -74,10 +85,16 @@ const SeekerDetailsFrom = () => {
   }, [previewUrl]);
 
   useEffect(() => {
-    if (data && isSuccess) {
-      setTalents(data.data.data);
+    if (talentsQuery.data && talentsQuery.isSuccess) {
+      setTalents(talentsQuery.data.data.data);
     }
-  }, [data, isSuccess]);
+  }, [talentsQuery.data, talentsQuery.isSuccess]);
+
+  useEffect(() => {
+    if (rolesQuery.data && rolesQuery.isSuccess) {
+      setRoles(rolesQuery.data.data.data);
+    }
+  }, [rolesQuery.data, rolesQuery.isSuccess]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -209,104 +226,34 @@ const SeekerDetailsFrom = () => {
         <Controller
           name="role"
           control={control}
-          defaultValue="junior"
-          rules={{ required: "Please select a seeker role" }}
+          defaultValue=""
+          rules={{ required: "You must select a role" }}
           render={({ field, fieldState: { error } }) => (
             <FormControl error={!!error}>
-              <Select
+              <RadioGroup
                 {...field}
-                IconComponent={ArrowDropUpIcon}
-                MenuProps={{
-                  slotProps: {
-                    paper: {
-                      sx: {
-                        width: 155,
-                        bgcolor: "background.paper",
-                        borderRadius: "5px",
-                        boxShadow: "none",
-                        color: "primary.main",
-                      },
-                    },
-                  },
-                }}
-                sx={{
-                  width: 200,
-                  height: 40,
-                  fontWeight: 400,
-                  fontSize: "14px",
-                  borderRadius: "5px",
-                  bgcolor: "background.paper",
-                  color: "text.secondary",
-                }}
+                row
+                aria-labelledby="role-radio-buttons-group-label"
+                name="role-radio-buttons-group"
               >
-                <MenuItem
-                  value="junior"
-                  sx={{
-                    padding: "10px 16px",
-                    borderRadius: "5px",
-                    fontWeight: 400,
-                    margin: "4px",
-                    borderLeft: "4px solid transparent",
-                    bgColor: "background.paper",
-                    fontSize: "14px",
-                    "&.Mui-selected": {
-                      borderLeft: "4px solid",
-                      borderColor: " primary.main",
-                      fontWeight: 600,
-                      "&:hover": {
-                        backgroundColor: "rgba(106, 103, 193, 0.1)",
+                {roles.map((role) => (
+                  <FormControlLabel
+                    key={role.id}
+                    value={role.name}
+                    control={<Radio />}
+                    label={role.name}
+                    sx={{
+                      "& .MuiTypography-root": {
+                        fontWeight: 300,
+                        fontSize: 15,
                       },
-                    },
-                  }}
-                >
-                  Junior
-                </MenuItem>
-                <MenuItem
-                  value="mid-level"
-                  sx={{
-                    padding: "10px 16px",
-                    borderRadius: "8px",
-                    margin: "4px",
-                    borderLeft: "4px solid transparent",
-                    bgColor: "background.paper",
-                    fontWeight: 400,
-                    fontSize: "14px",
-                    "&.Mui-selected": {
-                      borderLeft: "4px solid",
-                      borderColor: " primary.main",
-                      fontWeight: 600,
-                      "&:hover": {
-                        backgroundColor: "rgba(106, 103, 193, 0.1)",
-                      },
-                    },
-                  }}
-                >
-                  Mid Level
-                </MenuItem>
-                <MenuItem
-                  value="senior"
-                  sx={{
-                    padding: "10px 16px",
-                    borderRadius: "8px",
-                    margin: "4px",
-                    borderLeft: "4px solid transparent",
-                    bgColor: "background.paper",
-                    fontWeight: 400,
-                    fontSize: "14px",
-                    "&.Mui-selected": {
-                      borderLeft: "4px solid",
-                      borderColor: " primary.main",
-                      fontWeight: 600,
-                      "&:hover": {
-                        backgroundColor: "rgba(106, 103, 193, 0.1)",
-                      },
-                    },
-                  }}
-                >
-                  Senior
-                </MenuItem>
-              </Select>
-              {error && <FormHelperText>{error.message}</FormHelperText>}
+                    }}
+                  />
+                ))}
+              </RadioGroup>
+              {error && (
+                <FormHelperText sx={{ ml: 0 }}>{error.message}</FormHelperText>
+              )}
             </FormControl>
           )}
         />

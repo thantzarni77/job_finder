@@ -97,7 +97,7 @@ export default function Register() {
         seekerPassword,
       } = data;
 
-      console.log(
+      console.log("Seeker Details", {
         skills,
         education,
         work_experience,
@@ -106,7 +106,7 @@ export default function Register() {
         talent,
         social_media_link,
         seekerPassword,
-      );
+      });
     }
     // console.log("FINAL FORM SUBMITTED:", data);
     setActiveStep((prev) => prev + 1);

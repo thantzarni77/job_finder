@@ -38,34 +38,56 @@ const SidePanel = () => {
     textTransform: "none",
     fontWeight: 600,
     fontSize: "0.9rem",
-    // borderRadius: "8px",
+    borderRadius: "12px",
     whiteSpace: "nowrap",
+    padding: "8px 12px",
+  };
+
+  const listItemContainerSx = {
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+    px: 5,
   };
 
   return (
     <Box>
       <Typography
-        variant="h5"
+        variant="h6"
         sx={{
           fontWeight: "bold",
           flexGrow: 1,
           textAlign: "center",
           my: 3,
+          color: "#ffffff",
         }}
-        fontSize="medium"
       >
         LOGO
       </Typography>
-      <ListItem disableGutters sx={{ width: "100%" }}>
-        <ListItemButton>
-          <ListItemIcon sx={{ ...baseButtonSx }}>
+      <ListItem disableGutters sx={{ listItemContainerSx }}>
+        <ListItemButton
+          sx={{
+            ...baseButtonSx,
+            backgroundColor: "transparent",
+            color: "#ffffff",
+            "&:hover": {
+              bgcolor: "rgba(255, 255, 255, 0.08)",
+            },
+          }}
+        >
+          <ListItemIcon
+            sx={{
+              ...baseButtonSx,
+              color: "#ffffff",
+            }}
+          >
             <DashboardIcon />
           </ListItemIcon>
           {showMenu && <ListItemText primary="DashBoard" />}
         </ListItemButton>
       </ListItem>
 
-      <ListItem disableGutters sx={{ width: "100%" }}>
+      <ListItem disableGutters sx={{ listItemContainerSx }}>
         <ListItemButton
           onClick={() => navigate(overviewPath)}
           sx={{
@@ -91,7 +113,7 @@ const SidePanel = () => {
         </ListItemButton>
       </ListItem>
 
-      <ListItem disableGutters sx={{ width: "100%" }}>
+      <ListItem disableGutters sx={{ listItemContainerSx }}>
         <ListItemButton
           onClick={() => navigate(jobsPath)}
           sx={{
@@ -117,7 +139,7 @@ const SidePanel = () => {
         </ListItemButton>
       </ListItem>
 
-      <ListItem disableGutters sx={{ width: "100%" }}>
+      <ListItem disableGutters sx={{ listItemContainerSx }}>
         <ListItemButton
           onClick={() => navigate(employerPath)}
           sx={{
@@ -143,7 +165,7 @@ const SidePanel = () => {
         </ListItemButton>
       </ListItem>
 
-      <ListItem disableGutters sx={{ width: "100%" }}>
+      <ListItem disableGutters sx={{ listItemContainerSx }}>
         <ListItemButton
           onClick={() => navigate(usersPath)}
           sx={{

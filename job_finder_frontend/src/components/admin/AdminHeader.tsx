@@ -8,24 +8,22 @@ export default function AdminHeader() {
   const setShowMenu = useAdminMenuStore((state) => state.setShowMenu);
 
   return (
-    <Box>
-      <AppBar
-        position="static"
-        sx={{ backgroundColor: "transparent", boxShadow: "none" }}
-      >
-        <Toolbar>
-          <IconButton size="large" onClick={() => setShowMenu(!showMenu)}>
-            <MenuIcon fontSize="inherit" />
+    <AppBar
+      position="static"
+      sx={{ backgroundColor: "transparent", boxShadow: "none" }}
+    >
+      <Toolbar>
+        <IconButton size="large" onClick={() => setShowMenu(!showMenu)}>
+          <MenuIcon fontSize="inherit" />
+        </IconButton>
+        <Box sx={{ flexGrow: 1 }}></Box>
+        <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+          <IconButton>
+            <NotificationsIcon sx={{ fontSize: 32 }} />
           </IconButton>
-          <Box sx={{ flexGrow: 1 }}></Box>
-          <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-            <IconButton>
-              <NotificationsIcon sx={{ fontSize: 32 }} />
-            </IconButton>
-            <Avatar sx={{ width: 32, height: 32 }} />
-          </Box>
-        </Toolbar>
-      </AppBar>
-    </Box>
+          <Avatar sx={{ width: 32, height: 32 }} />
+        </Box>
+      </Toolbar>
+    </AppBar>
   );
 }
