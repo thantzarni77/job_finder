@@ -13,7 +13,9 @@ use App\Http\Controllers\Api\EmployerController;
 use App\Http\Controllers\Api\SocialLoginController;
 use App\Http\Controllers\EmployerVerficationController;
 
-Route::post('/register',[AuthController::class,'register']);
+Route::post('/registerstepone',[AuthController::class,'registerStepOne']);
+Route::post('/registersteptwo/{id}',[AuthController::class,'registerStepTwo']);
+
 Route::post('/login',[AuthController::class,'login']);
 Route::post('/forgot-password',[NewPasswordController::class,'forgotPassword']);
 Route::post('/reset-password',[NewPasswordController::class,'resetPassword']);
@@ -39,6 +41,7 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
 
     Route::middleware("UserTypeMiddleware:seeker")->group(function(){
        Route::get('/seeker',[SeekerController::class,'index']);
+       Route::get('/seeker/{id}',[SeekerController::class,'getdata']);
        Route::post('/seeker',[SeekerController::class,'store']);
        Route::post('/seeker/{id}',[SeekerController::class,'update']);
        Route::delete('/seeker/{id}',[SeekerController::class,'destroy']);
@@ -47,6 +50,7 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
     Route::middleware("UserTypeMiddleware:employer")->group(function(){
 
         Route::get('/employer',[EmployerController::class,'index']);
+        Route::get('/employer/{id}',[EmployerController::class,'getdata']);
         Route::post('/employer',[EmployerController::class,'store']);
         Route::post('/employer/{id}',[EmployerController::class,'update']);
         Route::delete('/employer/{id}',[EmployerController::class,'destroy']);
