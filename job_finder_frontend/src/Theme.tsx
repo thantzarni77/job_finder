@@ -46,6 +46,7 @@ export default function Theme() {
             hover: "#5F6CAF3D",
           },
           text: {
+            primary: "#000000",
             secondary: "#33373B",
           },
           error: {

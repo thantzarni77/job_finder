@@ -88,4 +88,10 @@ class JobDetailController extends Controller
     {
         return response()->json($this->repo->jobType());
     }
+
+    //role api start
+    public function roles()
+    {
+        return $this->repo->jobRole();
+    }
 }

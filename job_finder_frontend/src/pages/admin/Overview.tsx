@@ -12,6 +12,7 @@ import { useState } from "react";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import SearchIcon from "@mui/icons-material/Search";
 import AdminSeekerCard from "../../components/admin/AdminSeekerCard";
+import AdminJobCard from "../../components/admin/AdminJobCard";
 
 const Overview = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -53,7 +54,7 @@ const Overview = () => {
         >
           <Box
             sx={{
-              backgroundColor: "#ffffff",
+              backgroundColor: "background.paper",
               width: "200px",
               p: 3,
               height: "fit-content",
@@ -72,7 +73,7 @@ const Overview = () => {
           </Box>
           <Box
             sx={{
-              backgroundColor: "#ffffff",
+              backgroundColor: "background.paper",
               width: "200px",
               p: 3,
               height: "fit-content",
@@ -91,7 +92,7 @@ const Overview = () => {
           </Box>
           <Box
             sx={{
-              backgroundColor: "#ffffff",
+              backgroundColor: "background.paper",
               width: "200px",
               p: 3,
               height: "fit-content",
@@ -127,7 +128,7 @@ const Overview = () => {
         >
           <Box
             sx={{
-              backgroundColor: "#ffffff",
+              backgroundColor: "background.paper",
               width: "200px",
               p: 3,
               height: "fit-content",
@@ -146,7 +147,7 @@ const Overview = () => {
           </Box>
           <Box
             sx={{
-              backgroundColor: "#ffffff",
+              backgroundColor: "background.paper",
               width: "200px",
               p: 3,
               height: "fit-content",
@@ -165,7 +166,7 @@ const Overview = () => {
           </Box>
           <Box
             sx={{
-              backgroundColor: "#ffffff",
+              backgroundColor: "background.paper",
               width: "200px",
               p: 3,
               height: "fit-content",
@@ -184,7 +185,7 @@ const Overview = () => {
           </Box>
           <Box
             sx={{
-              backgroundColor: "#ffffff",
+              backgroundColor: "background.paper",
               width: "200px",
               p: 3,
               height: "fit-content",
@@ -203,7 +204,7 @@ const Overview = () => {
           </Box>
           <Box
             sx={{
-              backgroundColor: "#ffffff",
+              backgroundColor: "background.paper",
               width: "200px",
               p: 3,
               height: "fit-content",
@@ -222,7 +223,7 @@ const Overview = () => {
           </Box>
           <Box
             sx={{
-              backgroundColor: "#ffffff",
+              backgroundColor: "background.paper",
               width: "200px",
               p: 3,
               height: "fit-content",
@@ -296,7 +297,7 @@ const Overview = () => {
               maxWidth: "250px",
               "& .MuiOutlinedInput-root": {
                 borderRadius: "8px",
-                backgroundColor: "#ffffff",
+                backgroundColor: "background.paper",
               },
               "& fieldset": {
                 borderColor: "primary.main",
@@ -312,7 +313,7 @@ const Overview = () => {
               borderColor: "primary.main",
               color: "primary.main",
               borderRadius: "8px",
-              bgcolor: "#ffffff",
+              bgcolor: "background.paper",
             }}
           >
             Filter
@@ -330,14 +331,22 @@ const Overview = () => {
                 flexWrap: "wrap",
               }}
             >
-              <AdminSeekerCard />
-              <AdminSeekerCard />
+              <AdminJobCard />
+              <AdminJobCard />
             </Box>
           )}
           {activeTab === 1 && (
-            <Typography>
-              User listing cards would be displayed here...
-            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 3,
+                flexWrap: "wrap",
+              }}
+            >
+              <AdminSeekerCard />
+              <AdminSeekerCard />
+            </Box>
           )}
         </Box>
       </Box>

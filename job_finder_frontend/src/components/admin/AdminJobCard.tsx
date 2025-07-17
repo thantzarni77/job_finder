@@ -11,7 +11,7 @@ const AdminJobCard = () => {
   return (
     <Box
       sx={{
-        backgroundColor: "#ffffff",
+        backgroundColor: "background.paper",
         p: 2,
         borderRadius: "15px",
         width: "280px",
@@ -72,7 +72,7 @@ const AdminJobCard = () => {
           <DeleteOutlineOutlinedIcon sx={{ color: "error.main" }} />
           <Typography
             variant="subtitle2"
-            sx={{ fontWeight: 300, color: "#000000" }}
+            sx={{ fontWeight: 300, color: "text.primary" }}
           >
             Delete
           </Typography>
@@ -91,7 +91,7 @@ const AdminJobCard = () => {
             />
             <Typography
               variant="subtitle2"
-              sx={{ fontWeight: 300, color: "#000000" }}
+              sx={{ fontWeight: 300, color: "text.primary" }}
             >
               Edit
             </Typography>
@@ -107,7 +107,7 @@ const AdminJobCard = () => {
             <RemoveRedEyeOutlinedIcon sx={{ color: "primary.main" }} />
             <Typography
               variant="subtitle2"
-              sx={{ fontWeight: 300, color: "#000000" }}
+              sx={{ fontWeight: 300, color: "text.primary" }}
             >
               View
             </Typography>

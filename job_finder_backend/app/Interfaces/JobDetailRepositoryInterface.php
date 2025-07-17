@@ -12,6 +12,7 @@ interface JobDetailRepositoryInterface
     public function update(int $id, array $data);
     public function delete(int $id): bool;
     public function jobType();
+    public function jobRole();
 }
 
 

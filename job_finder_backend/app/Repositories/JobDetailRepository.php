@@ -2,10 +2,11 @@
 
 namespace App\Repositories;
 
-use App\Models\Job_detail;
-use App\Interfaces\JobDetailRepositoryInterface;
+use App\Models\Role;
 use App\Models\Type;
+use App\Models\Job_detail;
 use Illuminate\Database\Eloquent\Collection;
+use App\Interfaces\JobDetailRepositoryInterface;
 
 class JobDetailRepository implements JobDetailRepositoryInterface
 {
@@ -48,5 +49,12 @@ class JobDetailRepository implements JobDetailRepositoryInterface
     {
         $data = Type::get(['id','name']);
         return response()->json(['status' => 'success', 'message' => 'Job type fetched successfully', 'data' => $data], 200);
+    }
+
+    //role
+    public function jobRole()
+    {
+        $data = Role::get(['id','name']);
+        return response()->json(['status' => 'success', 'message' => 'Job role fetched successfully', 'data' => $data], 200);
     }
 }

@@ -13,7 +13,6 @@ class Employer extends Model
         'company_phone',
         'company_email',
         'company_image',
-        'company_description',
         'company_type',
         'verification',
     ];

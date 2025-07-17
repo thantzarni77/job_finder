@@ -25,13 +25,15 @@ import PostAJob from "./pages/user/jobs/PostAJob";
 import AdminMainLayout from "./layouts/admin/AdminMainLayout";
 import Overview from "./pages/admin/Overview";
 import JobManagement from "./pages/admin/JobManagement";
-import UserManagement from "./pages/admin/UserManagement";
-import UserDetailManage from "./pages/admin/UserDetailManage";
 import JobDetailManage from "./pages/admin/JobDetailManage";
 import EditUser from "./pages/admin/EditUser";
 import EditJob from "./pages/admin/EditJob";
 import EmployerDetail from "./pages/admin/EmployerDetail";
 import EditEmployer from "./pages/admin/EditEmployer";
+import SeekerManagement from "./pages/admin/SeekerManagement";
+import SeekerDetailManage from "./pages/admin/SeekerDetailManage";
+import TalentProfile from "./pages/user/TalentProfile";
+import IsLoginnedMiddleware from "./protected_routes/IsLoginnedMiddleware";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -40,7 +42,11 @@ export const router = createBrowserRouter([
       {
         path: "/",
         index: true,
-        Component: Home,
+        element: (
+          <IsLoginnedMiddleware>
+            <Home />
+          </IsLoginnedMiddleware>
+        ),
       },
       {
         path: "/jobs",
@@ -67,6 +73,10 @@ export const router = createBrowserRouter([
         Component: Talent,
       },
       {
+        path: "/talent/:id/profile",
+        Component: TalentProfile,
+      },
+      {
         path: "/companies",
         Component: Companies,
       },
@@ -76,7 +86,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/profile/:id",
-        Component: Profile,
+        element: <Profile />,
       },
       {
         path: "/profile/:id/edit",
@@ -151,12 +161,12 @@ export const router = createBrowserRouter([
         Component: JobDetailManage,
       },
       {
-        path: "users/manage",
-        Component: UserManagement,
+        path: "seekers/manage",
+        Component: SeekerManagement,
       },
       {
-        path: "user/:id/manage",
-        Component: UserDetailManage,
+        path: "seeker/:id/manage",
+        Component: SeekerDetailManage,
       },
       {
         path: "user/:id/edit",

@@ -12,12 +12,12 @@ import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import FilterListIcon from "@mui/icons-material/FilterList";
 
 import JobFilter from "../../components/user/jobs/JobFilter";
-import TalentCard from "../../components/user/TalentCard";
 
 import { useState } from "react";
 import SearchBox from "../../components/user/SearchBox";
 import TalentFilterDrawer from "../../components/user/TalentFilterDrawer";
 import { useTalentFilterStore } from "../../store/Appstore";
+import SeekerCard from "../../components/seeker/SeekerCard";
 
 const jobs = [
   "full Time",
@@ -263,12 +263,12 @@ export default function Talent() {
                 flexWrap: "wrap",
               }}
             >
-              <TalentCard />
-              <TalentCard />
-              <TalentCard />
-              <TalentCard />
-              <TalentCard />
-              <TalentCard />
+              <SeekerCard />
+              <SeekerCard />
+              <SeekerCard />
+              <SeekerCard />
+              <SeekerCard />
+              <SeekerCard />
             </Box>
             {/* pagination */}
             <Box

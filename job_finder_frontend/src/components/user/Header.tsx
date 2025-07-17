@@ -24,6 +24,8 @@ import { useState, useRef, useEffect, useMemo, type RefObject } from "react";
 import { useNavigate } from "react-router";
 import { useThemeStore } from "../../store/Appstore";
 import { useUserStore } from "../../store/UserStore";
+import { useMutation } from "@tanstack/react-query";
+import { logoutUser } from "../../helper/authApiFunctions";
 
 function findRefForPath(
   pathname: string,
@@ -39,8 +41,9 @@ function findRefForPath(
 
 export default function Header() {
   const user = useUserStore((state) => state.user);
-  const login = useUserStore((state) => state.login);
-  const logout = useUserStore((state) => state.logout);
+  const setUserData = useUserStore((state) => state.setUserData);
+  const accessToken = localStorage.getItem("token");
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -80,6 +83,7 @@ export default function Header() {
         "/job/:id/apply": jobsRef,
         "/job/:id/apply/confirm": jobsRef,
         "/talents": talentRef,
+        "/talent/:id/profile": talentRef,
         "/companies": companiesRef,
         "/companies/:id": companiesRef,
         "/post/job": postJobRef,
@@ -111,6 +115,16 @@ export default function Header() {
       });
     }
   }, [location.pathname, pathRefMap]);
+
+  const logoutMutate = useMutation({
+    mutationFn: logoutUser,
+    onSuccess: ({ data }) => {
+      if (data.status == 200) {
+        setUserData(null);
+        localStorage.removeItem("token");
+      }
+    },
+  });
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -194,7 +208,7 @@ export default function Header() {
               )}
             </Box>
           </Box>
-          {user ? (
+          {user || accessToken ? (
             <Box>
               <IconButton
                 onClick={() => setShowDrawer(!showDrawer)}
@@ -254,7 +268,9 @@ export default function Header() {
                     Profile
                   </MenuItem>
 
-                  <MenuItem onClick={() => logout()}>Logout</MenuItem>
+                  <MenuItem onClick={() => logoutMutate.mutate()}>
+                    Logout
+                  </MenuItem>
                 </Menu>
               </Box>
             </Box>
@@ -266,7 +282,7 @@ export default function Header() {
                 borderRadius: "5px",
                 boxShadow: "none",
               }}
-              onClick={() => login()}
+              onClick={() => navigate("/login")}
             >
               <Typography fontWeight={600}>Login</Typography>
             </Button>

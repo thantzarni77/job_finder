@@ -21,7 +21,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 export default function EmployerDetail() {
   const navigate = useNavigate();
   return (
-    <Box p={3} bgcolor="#f9f9fb" height="100vh">
+    <Box sx={{ width: "100%", maxWidth: "1200px", mx: "auto" }}>
       <Box
         display="flex"
         justifyContent="space-between"

@@ -41,7 +41,7 @@ const JobManagement = () => {
         >
           <Box
             sx={{
-              backgroundColor: "#ffffff",
+              backgroundColor: "background.paper",
               width: "200px",
               p: 3,
               height: "fit-content",
@@ -60,7 +60,7 @@ const JobManagement = () => {
           </Box>
           <Box
             sx={{
-              backgroundColor: "#ffffff",
+              backgroundColor: "background.paper",
               width: "200px",
               p: 3,
               height: "fit-content",
@@ -79,7 +79,7 @@ const JobManagement = () => {
           </Box>
           <Box
             sx={{
-              backgroundColor: "#ffffff",
+              backgroundColor: "background.paper",
               width: "200px",
               p: 3,
               height: "fit-content",
@@ -120,7 +120,7 @@ const JobManagement = () => {
               maxWidth: "250px",
               "& .MuiOutlinedInput-root": {
                 borderRadius: "8px",
-                backgroundColor: "#ffffff",
+                backgroundColor: "background.paper",
               },
               "& fieldset": {
                 borderColor: "primary.main",
@@ -136,7 +136,7 @@ const JobManagement = () => {
               borderColor: "primary.main",
               color: "primary.main",
               borderRadius: "8px",
-              bgcolor: "#ffffff",
+              bgcolor: "background.paper",
             }}
           >
             Filter
