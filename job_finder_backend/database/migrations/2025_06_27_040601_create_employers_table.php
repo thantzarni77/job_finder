@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('company_email');
             $table->string('company_image');
             $table->string('company_type');
+            $table->string('password')->nullable();
             $table->enum('verification',['pending', 'verified', 'rejected'])->default('pending');
             $table->timestamps();
         });

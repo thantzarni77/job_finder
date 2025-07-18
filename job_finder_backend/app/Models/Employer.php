@@ -15,6 +15,7 @@ class Employer extends Model
         'company_image',
         'company_type',
         'verification',
+        'password'
     ];
 
     //verification status
