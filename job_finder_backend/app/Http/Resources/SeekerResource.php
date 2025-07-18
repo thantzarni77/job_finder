@@ -23,7 +23,7 @@ class SeekerResource extends JsonResource
             "role" => $this->role,
             "talent" => $this->talent,
             "social_media_link" => json_decode($this->social_media_link),
-            "seeker_image" => $this->seeker_image,
+            "image" => $this->image,
             "bio" => $this->bio,
             "user_id" => User::where('id', $this->user_id)->select('id','name')->first()
         ];
