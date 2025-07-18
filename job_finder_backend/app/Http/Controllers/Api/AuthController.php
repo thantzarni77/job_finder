@@ -252,22 +252,4 @@ class AuthController extends Controller
         ], 200);
     }
 
-    //get user
-    public function getUser(Request $request)
-    {
-        $user      = JWTAuth::user();
-        $loginUser = [
-            'user_id'    => $user->id,
-            'user_name'  => $user->name,
-            'user_email' => $user->email,
-            'user_type'  => $user->user_type,
-
-        ];
-
-        return response()->json([
-            'data' => $loginUser,
-        ]);
-
-    }
-
 }
