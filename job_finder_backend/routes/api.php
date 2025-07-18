@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\IndividualEmployerController;
 use App\Http\Controllers\Api\NewPasswordController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -54,6 +55,9 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
         Route::post('/employer',[EmployerController::class,'store']);
         Route::post('/employer/{id}',[EmployerController::class,'update']);
         Route::delete('/employer/{id}',[EmployerController::class,'destroy']);
+
+        Route::get('/indi_employer',[IndividualEmployerController::class,'index']);
+        Route::get('/indi_employer/{id}',[IndividualEmployerController::class,'getData']);
 
     });
 
