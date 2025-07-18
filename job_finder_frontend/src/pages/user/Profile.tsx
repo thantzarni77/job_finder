@@ -16,7 +16,7 @@ import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import { Facebook, Instagram } from "@mui/icons-material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import UserProjectImage from "../../assets/Rectangle 94.png";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { getSeekerProfile } from "../../helper/profileApiFunctions";
 import { useEffect } from "react";
@@ -26,6 +26,8 @@ export default function Profile() {
   const exampleLink = "https://github.com/thantzarni77/job_finder/tree/main";
   const navigate = useNavigate();
 
+  const { id } = useParams();
+
   const seekerProfile = useSeekerProfileStore((state) => state.seekerProfile);
   const setSeekerProfile = useSeekerProfileStore(
     (state) => state.setSeekerProfile,
@@ -33,12 +35,14 @@ export default function Profile() {
 
   const { data, isLoading, isSuccess } = useQuery({
     queryKey: ["seekerProfile"],
-    queryFn: getSeekerProfile,
+    queryFn: () => {
+      return getSeekerProfile(id);
+    },
   });
 
   useEffect(() => {
     if (data && isSuccess) {
-      setSeekerProfile(data.data.data[0]);
+      setSeekerProfile(data.data.data);
     }
   }, [data, isSuccess, setSeekerProfile]);
 
@@ -61,7 +65,7 @@ export default function Profile() {
                   sx={{ width: { xs: 50, md: 80 }, height: { xs: 50, md: 80 } }}
                 /> */}
                 <img
-                  src={`${import.meta.env.VITE_API_BASE_URL}/${seekerProfile.seeker_image}`}
+                  src={`${import.meta.env.VITE_API_BASE_URL}/${seekerProfile.image}`}
                   alt={"SeekerProfile"}
                   style={{
                     width: "80px",
@@ -150,9 +154,10 @@ export default function Profile() {
 
               <Box sx={{ mt: 4 }}>
                 <Typography variant="h6">Education</Typography>
-                {seekerProfile.education.map((single) => {
+                {seekerProfile.education.map((single, index) => {
                   return (
                     <Box
+                      key={index}
                       sx={{
                         display: "flex",
                         alignItems: "center",
@@ -175,9 +180,9 @@ export default function Profile() {
               <Box sx={{ mt: 4 }}>
                 <Typography variant="h6">Experience</Typography>
 
-                {seekerProfile.work_experience.map((single) => {
+                {seekerProfile.work_experience.map((single, index) => {
                   return (
-                    <>
+                    <Box key={index}>
                       <Box
                         sx={{
                           display: "flex",
@@ -199,7 +204,7 @@ export default function Profile() {
                           </Typography>
                         </Box>
                       </Box>
-                    </>
+                    </Box>
                   );
                 })}
               </Box>
@@ -237,9 +242,10 @@ export default function Profile() {
 
               <Box sx={{ mt: 4 }}>
                 <Typography variant="h6">Social Media</Typography>
-                {seekerProfile.social_media_link.map((single) => {
+                {seekerProfile.social_media_link.map((single, index) => {
                   return (
                     <Box
+                      key={index}
                       sx={{
                         display: "flex",
                         alignItems: "center",

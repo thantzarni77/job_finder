@@ -60,27 +60,28 @@ class AuthController extends Controller
         }
     }
 
-    public function registerStepTwo(Request $request,string $id){
-        
+    public function registerStepTwo(Request $request, string $id)
+    {
+
         try {
-            $userData = User::where("id", $id)->orderBy("id","desc")->first();
-    
+            $userData = User::where("id", $id)->orderBy("id", "desc")->first();
+
             if ($userData->user_type === "employer") {
                 $employerController = new EmployerController();
                 return $employerController->store($request, $userData->id);
             }
-    
+
             if ($userData->user_type === "seeker") {
                 $seekerController = new SeekerController();
                 return $seekerController->store($request, $userData->id);
             }
-    
+
             return $this->erorsResponse("User type is invalid", null, 404);
-    
+
         } catch (\Exception $e) {
             return $this->erorsResponse("User not found or unexpected error", null, 404);
         }
-                 
+
     }
 
     public function login(Request $request)
@@ -239,24 +240,6 @@ class AuthController extends Controller
                 'access_token' => $new_access_token,
             ],
         ], 200);
-    }
-
-    //get user
-    public function getUser(Request $request)
-    {
-        $user      = JWTAuth::user();
-        $loginUser = [
-            'user_id'    => $user->id,
-            'user_name'  => $user->name,
-            'user_email' => $user->email,
-            'user_type'  => $user->user_type,
-
-        ];
-
-        return response()->json([
-            'data' => $loginUser,
-        ]);
-
     }
 
 }

@@ -237,7 +237,7 @@ export default function Header() {
                 <IconButton
                   color="inherit"
                   ref={settingsRef}
-                  onClick={() => navigate("/settings/user/1")}
+                  onClick={() => navigate(`/settings/user/${user?.user_id}`)}
                 >
                   <SettingIcon />
                 </IconButton>

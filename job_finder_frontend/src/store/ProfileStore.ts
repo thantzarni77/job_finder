@@ -13,7 +13,7 @@ type SeekerProfile = {
   role: string;
   talent: string;
   social_media_link: string[];
-  seeker_image: string;
+  image: string;
   bio: string;
   user_id: UserID;
 };
@@ -32,7 +32,7 @@ export const useSeekerProfileStore = create<SeekerProfileState>((set) => ({
     role: "",
     talent: "",
     social_media_link: [],
-    seeker_image: "",
+    image: "",
     bio: "",
     user_id: {
       id: null,
