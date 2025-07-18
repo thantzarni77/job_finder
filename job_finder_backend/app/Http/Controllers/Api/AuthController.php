@@ -60,37 +60,38 @@ class AuthController extends Controller
         }
     }
 
-    public function registerStepTwo(Request $request,string $id){
-        
+    public function registerStepTwo(Request $request, string $id)
+    {
+
         try {
-            
+
             if ($request->has('role') && $request->role === 'individual') {
                 $individualEmployerController = new IndividualEmployerController();
                 return $individualEmployerController->store($request);
             }
-        
+
             $userData = User::where("id", $id)->first();
-        
-            if (!$userData) {
+
+            if (! $userData) {
                 return $this->erorsResponse("User not found", null, 404);
             }
-        
+
             if ($userData->user_type === "employer") {
                 $employerController = new EmployerController();
                 return $employerController->store($request, $userData->id);
             }
-        
+
             if ($userData->user_type === "seeker") {
                 $seekerController = new SeekerController();
                 return $seekerController->store($request, $userData->id);
             }
-        
+
             return $this->erorsResponse("User type is invalid", null, 404);
-        
+
         } catch (\Exception $e) {
             return $this->erorsResponse("Unexpected error occurred", null, 500);
         }
-                 
+
     }
 
     public function login(Request $request)

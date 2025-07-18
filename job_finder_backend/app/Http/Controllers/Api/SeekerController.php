@@ -36,10 +36,10 @@ class SeekerController extends Controller
         }
     }
 
-    public function store(Request $request, string $id)
+    public function store(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
+            "user_id"           => "required",
             "skills"            => "required",
             "education"         => "required",
             "work_experience"   => "required",
@@ -54,7 +54,7 @@ class SeekerController extends Controller
             return $this->erorsResponse("Validator fails", $validator->messages());
         }
 
-        $user_id                   = $id;
+        $user_id                   = $request->user_id;
         $seeker                    = new Seeker();
         $seeker->user_id           = $user_id;
         $seeker->skills            = json_encode($request->skills);

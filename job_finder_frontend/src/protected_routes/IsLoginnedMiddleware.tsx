@@ -13,7 +13,7 @@ const IsLoginnedMiddleware = ({ children }: { children: React.ReactNode }) => {
     return children;
   } else if (!user && accessToken) {
     axiosClient
-      .get("/user")
+      .get("/profile")
       .then(({ data }) => {
         setUserData(data.data);
         setToken(accessToken);

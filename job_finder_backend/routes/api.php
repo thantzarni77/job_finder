@@ -41,8 +41,6 @@ Route::get('types', [JobDetailController::class, 'types']);
 Route::get('roles', [JobDetailController::class, 'roles']);
 
 Route::group(["middleware" => "AuthMiddleware"], function () {
-
-    Route::get('/user', [AuthController::class, 'getUser']);
     Route::get('/profile', [AuthController::class, 'profile']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/refresh', [AuthController::class, 'refresh']);
