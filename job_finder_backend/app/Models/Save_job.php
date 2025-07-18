@@ -8,6 +8,6 @@ class Save_job extends Model
 {
     protected $fillable = [
         'seeker_id',
-        'post_job_id',
+        'job_id',
     ];
 }

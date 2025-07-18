@@ -14,15 +14,16 @@ return new class extends Migration
         Schema::create('job_details', function (Blueprint $table) {
             $table->id();
             $table->integer('post_job_id');
-            $table->longText('requirements');
-            $table->longText('description');
+            $table->longText('job_requirements');
+            $table->longText('job_description');
             $table->timestamp('deadline');
             $table->integer('vacancy');
             $table->string('note');
+            $table->string('benefits');
             $table->enum('gender',['male', 'female', 'both'])->default('both')->nullable();
             $table->integer('save_count')->default(0);
             $table->integer('apply_count')->default(0);
-            $table->longText('benefits');
+            $table->longText('job_benefits');
             $table->timestamps();
         });
     }

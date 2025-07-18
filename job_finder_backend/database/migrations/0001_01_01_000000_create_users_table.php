@@ -17,14 +17,12 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('phone')->nullable();
             $table->string('address')->nullable();
-            $table->string('password')->nullable();
-            $table->enum('user_type', ['seeker', 'employer'])->default('seeker');
-            $table->string('profile_picture')->nullable();
-            $table->string('refresh_token')->nullable();
+            $table->enum('user_type', ['admin', 'seeker','employer','super admin'])->default('seeker');
             $table->string('provider')->nullable();
             $table->string('provider_id')->nullable();
             $table->string('provider_token')->nullable();
-            $table->timestamp('email_verified_at')->nullable();            
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
             $table->rememberToken();
             $table->timestamps();
         });

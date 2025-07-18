@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('company_phone');
             $table->string('company_email');
             $table->string('company_image');
+            $table->longText('company_description');
             $table->string('company_type');
             $table->enum('verification',['pending', 'verified', 'rejected'])->default('pending');
             $table->timestamps();
