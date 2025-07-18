@@ -43,6 +43,7 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
     Route::middleware("UserTypeMiddleware:seeker")->group(function(){
        Route::get('/seeker',[SeekerController::class,'index']);
        Route::get('/seeker/{id}',[SeekerController::class,'getdata']);
+       Route::get('/seeker-data/{id}',[SeekerController::class,'getSeekerData']);
        Route::post('/seeker',[SeekerController::class,'store']);
        Route::post('/seeker/{id}',[SeekerController::class,'update']);
        Route::delete('/seeker/{id}',[SeekerController::class,'destroy']);
@@ -52,12 +53,15 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
 
         Route::get('/employer',[EmployerController::class,'index']);
         Route::get('/employer/{id}',[EmployerController::class,'getdata']);
+        Route::get('/employer-data/{id}',[EmployerController::class,'getEmployerData']);    
         Route::post('/employer',[EmployerController::class,'store']);
         Route::post('/employer/{id}',[EmployerController::class,'update']);
         Route::delete('/employer/{id}',[EmployerController::class,'destroy']);
 
         Route::get('/indi_employer',[IndividualEmployerController::class,'index']);
+        
         Route::get('/indi_employer/{id}',[IndividualEmployerController::class,'getData']);
+        Route::get('/indi_data_employer/{id}',[IndividualEmployerController::class,'getIndiEmployerData']);
 
     });
 

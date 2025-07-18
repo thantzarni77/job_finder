@@ -24,7 +24,6 @@ class AuthController extends Controller
             $validator = Validator::make($request->all(), [
                 "name"  => "required",
                 "email" => "required|email|unique:users",
-                "password"  => "required|min:6",
                 "phone" => "required",
                 "address"   => "required",
                 "user_type" => "nullable|in:seeker,employer",
@@ -34,43 +33,36 @@ class AuthController extends Controller
                 return $this->erorsResponse("Validator fails", $validator->messages());
             }
 
-            $refresh_token = Str::random(60);
-
             $user = User::create([
                 "name" => $request->name,
                 "email" => $request->email,
                 "phone" => $request->phone,
                 "address" => $request->address,
-                "password" => Hash::make($request->password),
-                'refresh_token' => hash('sha256', $refresh_token),
                 "user_type" => $request->user_type ?? "seeker"
             ]);
-
-            $token = JWTAuth::fromUser($user);
             
             return response()->json([
                 "message" => "Success created",
                 "data" => [
-                    "token"=> $token,
                     "id" => $user->id
                 ]
-            ],201)->cookie('refresh_token', $refresh_token, 60 * 24 * 7, null, null, true, true);
+            ],201);
 
         } catch (JWTException $e) {
-            return $this->erorsResponse("Register Failed", null, 500);
+            return $this->erorsResponse("Step One Failed", null, 500);
         }
     }
 
     public function registerStepTwo(Request $request,string $id){
         
         try {
+
+            $userData = User::where("id", $id)->first();
             
             if ($request->has('role') && $request->role === 'individual') {
                 $individualEmployerController = new IndividualEmployerController();
-                return $individualEmployerController->store($request);
+                return $individualEmployerController->store($request, $userData->id);
             }
-        
-            $userData = User::where("id", $id)->first();
         
             if (!$userData) {
                 return $this->erorsResponse("User not found", null, 404);
@@ -91,12 +83,13 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             return $this->erorsResponse("Unexpected error occurred", null, 500);
         }
-                 
+        
     }
+
 
     public function login(Request $request)
     {
-        $cred = $request->only("email", "password");
+        $cred = $request->only("email","password");
         $token = JWTAuth::attempt($cred);
 
         if (! $token) {

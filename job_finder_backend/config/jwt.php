@@ -100,8 +100,8 @@ return [
     | Notice: If you set this to null you should remove 'exp' element from 'required_claims' list.
     |
     */
-
-    'ttl' => env('JWT_TTL', 60),
+                                       // 1hour => 60 mins 
+    'ttl' => env('JWT_TTL', 40320),
 
     /*
     |--------------------------------------------------------------------------
@@ -119,7 +119,7 @@ return [
     | systems in place to revoke the token if necessary.
     |
     */
-
+                                                // 2 week 
     'refresh_ttl' => env('JWT_REFRESH_TTL', 20160),
 
     /*
