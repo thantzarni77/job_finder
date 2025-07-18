@@ -21,10 +21,12 @@ class User extends Authenticatable implements JWTSubject
     protected $fillable = [
         'name',
         'email',
-        'phone',
+        'phone',        
         'address',
         'password',
         'user_type',
+        'profile_picture',
+        'refresh_token',
         'provider',
         'provider_id',
         'provider_token',
@@ -72,4 +74,6 @@ class User extends Authenticatable implements JWTSubject
             'super admin' => 'super admin'
         ];
     }
+
+   
 }

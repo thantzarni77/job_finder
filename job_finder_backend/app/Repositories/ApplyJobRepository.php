@@ -3,8 +3,11 @@
 namespace App\Repositories;
 
 use App\Models\Apply_job;
+use App\Mail\ShortlistContactMail;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Validator;
 use App\Interfaces\ApplyJobRepositoryInterface;
+use Illuminate\Support\Facades\Mail;
 
 class ApplyJobRepository implements ApplyJobRepositoryInterface
 {
@@ -46,9 +49,47 @@ class ApplyJobRepository implements ApplyJobRepositoryInterface
         return response()->json(['status' => 'success', 'message' => 'Apply job successfully'], 201);
     }
 
-    public function addShportlist($id){
+    //add to shortlist
+    public function addShortlist($id){
         Apply_job::where('id', $id)->update(['shortlist' => true]);
         return response()->json(['status' => 'success', 'message' => 'Short List Addes successfully'], 201);
+    }
+
+    //employer view his create job data
+    public function employerPostedJobs(){
+        $data = Apply_job::where('employer_id', auth()->user()->id)->get();
+        return $data;
+        return response()->json(['status' => 'success', 'message' => 'You have successfully fetch your posted job postings.'], 200);
+    }
+
+    //seeeker view his applied jobs
+    public function seekerAppliedJobs(){
+        $data = Apply_job::where('seeker_id', auth()->user()->id)->get();
+        return $data;
+        return response()->json(['status' => 'success', 'message' => 'You have successfully fetch your applied job.'], 200);
+    }
+
+    //emoyer view his shortlisted jobs
+    public function employerShortlistJobs(){
+        $data = Apply_job::where('employer_id', auth()->user()->id )->where('shortlist', true)->get();
+        return $data;
+        return response()->json(['status' => 'success', 'message' => 'You have successfully fetch your shortlisted job postings.'], 200);
+    }
+
+    //mail send to seeker
+    public function sendMail($request){
+        $validate = Validator::make($request->all(), [
+            'seeker_id' => 'required',
+            'message' => 'required',
+        ]);
+
+        if ($validate->fails()) {
+            return response()->json(['status' => 'error', 'message' => $validate->errors()], 422);
+        }
+
+        Mail::to('zcoder71@gmail.com')->send(new ShortlistContactMail($validate));
+
+        return response()->json(['status' => 'success', 'message' => 'You have successfully send mail to seeker.'], 200);
     }
 
     //get apply data

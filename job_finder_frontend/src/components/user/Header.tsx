@@ -8,17 +8,35 @@ import {
   Avatar,
 } from "@mui/material";
 import {
-  ChatBubbleOutline as MessageIcon,
+  // ChatBubbleOutline as MessageIcon,
   SettingsOutlined as SettingIcon,
   NotificationsActiveOutlined as NotiIcon,
   Menu as MenuIcon,
+  LightMode as LightModeIcon,
+  DarkMode as DarkModeIcon,
 } from "@mui/icons-material";
-import { NavLink, useLocation } from "react-router";
+import { NavLink, useLocation, matchPath } from "react-router";
 import { useAppStore } from "../../store/Appstore";
 import { useState, useRef, useEffect, useMemo, type RefObject } from "react";
+import { useNavigate } from "react-router";
+import { useThemeStore } from "../../store/Appstore";
+
+function findRefForPath(
+  pathname: string,
+  pathMap: { [key: string]: RefObject<HTMLButtonElement | null> },
+): RefObject<HTMLButtonElement | null> | null {
+  for (const pattern in pathMap) {
+    if (matchPath({ path: pattern, end: true }, pathname)) {
+      return pathMap[pattern];
+    }
+  }
+  return null;
+}
 
 export default function Header() {
-  //sample role test
+  const mode = useThemeStore((state) => state.mode);
+  const setMode = useThemeStore((state) => state.setMode);
+  const navigate = useNavigate();
   const [userRole] = useState("");
 
   const showDrawer = useAppStore((state) => state.showDrawer);
@@ -27,12 +45,15 @@ export default function Header() {
   const [underlineStyle, setUnderlineStyle] = useState({});
   const location = useLocation();
 
-  //  ref for each nav button
+  // Refs for all navigation elements
   const homeRef = useRef<HTMLButtonElement>(null);
   const jobsRef = useRef<HTMLButtonElement>(null);
   const talentRef = useRef<HTMLButtonElement>(null);
   const companiesRef = useRef<HTMLButtonElement>(null);
   const postJobRef = useRef<HTMLButtonElement>(null);
+  const profileRef = useRef<HTMLButtonElement>(null);
+  const notificationsRef = useRef<HTMLButtonElement>(null);
+  const settingsRef = useRef<HTMLButtonElement>(null);
 
   // memo map to link paths to their refs
   const pathRefMap: { [key: string]: RefObject<HTMLButtonElement | null> } =
@@ -40,16 +61,23 @@ export default function Header() {
       () => ({
         "/": homeRef,
         "/jobs": jobsRef,
+        "/job/:id": jobsRef,
+        "/job/:id/apply": jobsRef,
+        "/job/:id/apply/confirm": jobsRef,
         "/talent": talentRef,
         "/companies": companiesRef,
+        "/companies/:id": companiesRef,
         "/post/job": postJobRef,
+        "/profile/:id": profileRef,
+        "/notifications/user/:id": notificationsRef,
+        "/settings/user/:id": settingsRef,
+        "/settings/user/:id/security": settingsRef,
       }),
       [],
     );
 
   useEffect(() => {
-    // get active ref  from  map using the current path
-    const activeTabRef = pathRefMap[location.pathname];
+    const activeTabRef = findRefForPath(location.pathname, pathRefMap);
 
     if (activeTabRef && activeTabRef.current) {
       setUnderlineStyle({
@@ -66,12 +94,18 @@ export default function Header() {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" sx={{ px: 5, boxShadow: "none" }}>
-        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Toolbar
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            position: "relative",
+          }}
+        >
           <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
             <IconButton
               onClick={() => setShowDrawer(!showDrawer)}
               color="inherit"
-              sx={{ display: { md: "none" } }}
+              sx={{ display: { md: "none" }, ml: -2, mr: 1 }}
             >
               <MenuIcon />
             </IconButton>
@@ -87,68 +121,48 @@ export default function Header() {
               sx={{
                 pl: 5,
                 display: { md: "flex", sm: "none", xs: "none" },
-                position: "relative",
               }}
             >
               <NavLink to="/">
                 <Button
-                  sx={{
-                    fontWeight: "700",
-                    textTransform: "none",
-                  }}
+                  sx={{ fontWeight: "700", textTransform: "none" }}
                   ref={homeRef}
                   color="inherit"
                 >
                   Home
                 </Button>
               </NavLink>
-
               <NavLink to="/jobs">
                 <Button
-                  sx={{
-                    fontWeight: "700",
-                    textTransform: "none",
-                  }}
+                  sx={{ fontWeight: "700", textTransform: "none" }}
                   ref={jobsRef}
                   color="inherit"
                 >
                   Jobs
                 </Button>
               </NavLink>
-
               <NavLink to="/talent">
                 <Button
-                  sx={{
-                    fontWeight: "700",
-                    textTransform: "none",
-                  }}
+                  sx={{ fontWeight: "700", textTransform: "none" }}
                   ref={talentRef}
                   color="inherit"
                 >
                   Talent
                 </Button>
               </NavLink>
-
               <NavLink to="/companies">
                 <Button
-                  sx={{
-                    fontWeight: "700",
-                    textTransform: "none",
-                  }}
+                  sx={{ fontWeight: "700", textTransform: "none" }}
                   ref={companiesRef}
                   color="inherit"
                 >
                   Companies
                 </Button>
               </NavLink>
-
-              {userRole == "employer" && (
+              {userRole === "employer" && (
                 <NavLink to="/post/job">
                   <Button
-                    sx={{
-                      fontWeight: "700",
-                      textTransform: "none",
-                    }}
+                    sx={{ fontWeight: "700", textTransform: "none" }}
                     ref={postJobRef}
                     color="inherit"
                   >
@@ -156,46 +170,50 @@ export default function Header() {
                   </Button>
                 </NavLink>
               )}
-
-              {/* The Sliding Underline*/}
-              <Box
-                sx={{
-                  position: "absolute",
-                  bottom: 0,
-                  height: "3px",
-                  backgroundColor: "white",
-                  borderRadius: "2px",
-                  transition: "left 0.2s ease-out, width 0.2s ease-out",
-                  ...underlineStyle,
-                }}
-              />
             </Box>
           </Box>
 
-          {/* left side of header  */}
+          {/* Right side of header */}
           <Box sx={{ display: "flex", gap: 1 }}>
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <IconButton color="inherit">
-                <MessageIcon />
-              </IconButton>
-              <Typography
-                sx={{
-                  display: { sm: "none", xs: "none", md: "none", lg: "inline" },
-                }}
-              >
-                In Box
-              </Typography>
-            </Box>
-            <IconButton color="inherit">
+            <IconButton
+              color="inherit"
+              onClick={() => setMode(mode === "light" ? "dark" : "light")}
+            >
+              {mode === "light" ? <LightModeIcon /> : <DarkModeIcon />}
+            </IconButton>
+            <IconButton
+              color="inherit"
+              ref={notificationsRef}
+              onClick={() => navigate("/notifications/user/1")}
+            >
               <NotiIcon sx={{ fontSize: 27 }} />
             </IconButton>
-            <IconButton color="inherit">
+
+            <IconButton
+              color="inherit"
+              ref={settingsRef}
+              onClick={() => navigate("/settings/user/1")}
+            >
               <SettingIcon />
             </IconButton>
-            <IconButton>
+            <IconButton onClick={() => navigate("/profile/1")} ref={profileRef}>
               <Avatar sx={{ width: 32, height: 32 }} />
             </IconButton>
           </Box>
+
+          {/* Sliding underline*/}
+          <Box
+            sx={{
+              position: "absolute",
+              bottom: 10,
+              height: "3px",
+              backgroundColor: "white",
+              borderRadius: "2px",
+              transition: "left 0.3s ease-in-out, width 0.3s ease-in-out",
+              ...underlineStyle,
+              display: { md: "block", sm: "none", xs: "none" },
+            }}
+          />
         </Toolbar>
       </AppBar>
     </Box>

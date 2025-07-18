@@ -8,16 +8,15 @@ class Job_detail extends Model
 {
     protected $fillable = [
         'post_job_id',
-        'job_requirements',
-        'job_description',
-        'dead_line',
+        'requirements',
+        'description',
+        'deadline',
         'vacancy',
         'note',
         'benefits',
         'gender',
         'save_count',
         'apply_count',
-        'job_benefits',
     ];
 
     public static function getGender() {
