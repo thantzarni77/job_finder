@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\IndividualEmployerController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\EmployerController;
 use App\Http\Controllers\Api\NewPasswordController;
@@ -76,6 +77,9 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
 
         //employer post job
         Route::apiResource('post-jobs', PostJobController::class);
+
+        Route::get('/indi_employer',[IndividualEmployerController::class,'index']);
+        Route::get('/indi_employer/{id}',[IndividualEmployerController::class,'getData']);
 
     });
 
