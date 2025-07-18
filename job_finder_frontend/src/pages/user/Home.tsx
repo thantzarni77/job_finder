@@ -14,9 +14,15 @@ import Meta from "../../assets/meta.png";
 import AyaBank from "../../assets/ayabank.jpeg";
 import Xiaomi from "../../assets/Xiaomi.png";
 import { useNavigate } from "react-router";
+import { getAllJobPosts } from "../../helper/postJob";
+import { useUserStore } from "../../store/UserStore";
 
 export default function Home() {
   const navigate = useNavigate();
+  const { data, isPending } = getAllJobPosts();
+
+  const user = useUserStore((state) => state.user);
+  console.log(user);
   return (
     <Box>
       <HomeCarousel />
@@ -77,9 +83,10 @@ export default function Home() {
         </Typography>
 
         <Box className="flex flex-wrap items-center gap-3 md:justify-center">
-          <JobCard />
-          <JobCard />
-          <JobCard />
+          {!isPending &&
+            data?.map((job) => {
+              return <JobCard key={job.id} job={job} />;
+            })}
         </Box>
         <Box sx={{ display: "flex", justifyContent: "center", mt: 5, mb: 10 }}>
           <Stack>

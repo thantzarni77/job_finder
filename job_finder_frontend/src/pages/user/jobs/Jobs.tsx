@@ -19,6 +19,8 @@ import SearchBox from "../../../components/user/SearchBox";
 import { useJobFilterStore } from "../../../store/Appstore";
 import JobFilterDrawer from "../../../components/user/JobFilterDrawer";
 
+import { getAllJobPosts } from "../../../helper/postJob";
+
 const jobs = [
   "full Time",
   "part Time",
@@ -29,6 +31,7 @@ const jobs = [
 ];
 
 const Jobs = () => {
+  const { data, isPending } = getAllJobPosts();
   const [sortBy, setSortBy] = useState<string>("recent");
   const [open, setOpen] = useState<boolean>(false);
 
@@ -42,6 +45,9 @@ const Jobs = () => {
   const handleChange = (event: SelectChangeEvent<string>) => {
     setSortBy(event.target.value);
   };
+  if (!isPending) {
+    console.log(data);
+  }
 
   // custom component for dropdown icon
   const CustomIcon = () => (
@@ -263,8 +269,10 @@ const Jobs = () => {
                 flexWrap: "wrap",
               }}
             >
-              <JobCard /> <JobCard /> <JobCard /> <JobCard /> <JobCard />
-              <JobCard /> <JobCard />
+              {!isPending &&
+                data?.map((job) => {
+                  return <JobCard key={job.id} job={job} />;
+                })}
             </Box>
             {/* pagination */}
             <Box

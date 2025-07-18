@@ -1,46 +1,52 @@
 import {
   Container,
   Box,
-  Avatar,
   IconButton,
   Typography,
-  Switch,
   OutlinedInput,
   InputLabel,
   Button,
   Autocomplete,
   TextField,
 } from "@mui/material";
-import CameraAltIcon from "@mui/icons-material/CameraAlt";
 
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { useNavigate } from "react-router";
-import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import type { SubmitHandler } from "react-hook-form";
 
-type Inputs = {
-  jobTitle: string;
-  position: string;
-  gender: string;
-  salary: string;
-  address: string;
-  workingType: string;
-  workingHourFrom: string;
-  workingHourTo: string;
-  responsibilities: string;
-  requirements: string;
-};
+import type { Job } from "../../../helper/postJob";
+import { useUserStore } from "../../../store/UserStore";
+import { postAJob } from "../../../helper/postJob";
+import { useEffect } from "react";
+
 export default function PostAJob() {
   const navigate = useNavigate();
+  const user = useUserStore((state) => state.user);
+  console.log(user);
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<Inputs>();
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    alert(JSON.stringify(data));
+    setValue,
+  } = useForm<Job>();
+  const onSubmit = (data: Job) => {
+    postAJobMutation.mutate(data);
   };
+  const postAJobMutation = useMutation({
+    mutationFn: postAJob,
+    onSuccess: () => navigate("/jobs"),
+    onError: (res) => console.log(res),
+  });
+
+  const categories = [
+    { id: 1, name: "Category one" },
+    { id: 2, name: "Category two" },
+  ];
+
+  useEffect(() => {
+    register("category_id", { required: true });
+  }, [register]);
 
   return (
     <>
@@ -83,6 +89,21 @@ export default function PostAJob() {
         >
           <Box sx={{ mt: 3, display: "flex", flexDirection: "column", gap: 2 }}>
             <Box>
+              <input
+                type="hidden"
+                value={user?.user_id}
+                {...register("employer_id", { required: true })}
+              />
+              {errors.employer_id && (
+                <Typography
+                  variant="caption"
+                  sx={{ display: "block" }}
+                  color="error"
+                >
+                  employer Field is required
+                </Typography>
+              )}
+
               <InputLabel htmlFor="title">Job Title</InputLabel>
               <OutlinedInput
                 type="text"
@@ -90,10 +111,10 @@ export default function PostAJob() {
                 placeholder="Please Enter Your Job Title"
                 size="small"
                 fullWidth
-                {...register("jobTitle", { required: true })}
-                error={!!errors.jobTitle}
+                {...register("job_title", { required: true })}
+                error={!!errors.job_title}
               />
-              {errors.jobTitle && (
+              {errors.job_title && (
                 <Typography
                   variant="caption"
                   sx={{ display: "block" }}
@@ -104,51 +125,107 @@ export default function PostAJob() {
               )}
             </Box>
             <Box>
-              <InputLabel htmlFor="position">Position</InputLabel>
+              <InputLabel htmlFor="job_code">Job Code</InputLabel>
               <OutlinedInput
-                type="text"
-                id="position"
-                placeholder="Please Enter Your Job Title"
-                size="small"
+                type="number"
+                id="job_code"
                 fullWidth
-                {...register("position", { required: true })}
-                error={!!errors.position}
+                size="small"
+                {...register("job_code", { required: true })}
+                error={!!errors.job_code}
               />
-              {errors.position && (
+              {errors.job_code && (
                 <Typography
                   variant="caption"
                   sx={{ display: "block" }}
                   color="error"
                 >
-                  Position Field is required
+                  Job Code Field is required
+                </Typography>
+              )}
+            </Box>
+            <Box>
+              <InputLabel htmlFor="category">Category</InputLabel>
+              <Autocomplete
+                options={categories}
+                getOptionLabel={(option) => option.name}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                onChange={(_, selectedOption) => {
+                  setValue("category_id", selectedOption?.id ?? null);
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    type="text"
+                    id="category_id"
+                    placeholder="Please Enter Category"
+                    size="small"
+                    fullWidth
+                  />
+                )}
+              />
+              {errors.category_id && (
+                <Typography
+                  variant="caption"
+                  sx={{ display: "block" }}
+                  color="error"
+                >
+                  Category Field is required
+                </Typography>
+              )}
+            </Box>
+            <Box>
+              <InputLabel htmlFor="position">Type</InputLabel>
+              <Autocomplete
+                options={["full-time", "part-time", "contract", "internship"]}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    type="text"
+                    id="type"
+                    placeholder="Please Enter Job Type"
+                    size="small"
+                    fullWidth
+                    {...register("type", { required: true })}
+                    error={!!errors.type}
+                  />
+                )}
+              />
+              {errors.role && (
+                <Typography
+                  variant="caption"
+                  sx={{ display: "block" }}
+                  color="error"
+                >
+                  Type Field is required
                 </Typography>
               )}
             </Box>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-              <InputLabel htmlFor="education">Gender</InputLabel>
+              <InputLabel htmlFor="education">Role</InputLabel>
               <Box>
                 <Autocomplete
-                  options={["gay"]}
+                  options={["junior", "mid", "senior"]}
                   renderInput={(params) => (
                     <TextField
                       {...params}
                       type="text"
-                      id="gender"
-                      placeholder="Please Enter Your Gender"
+                      id="role"
+                      placeholder="Please Enter Role"
                       size="small"
                       fullWidth
-                      {...register("gender", { required: true })}
-                      error={!!errors.gender}
+                      {...register("role", { required: true })}
+                      error={!!errors.role}
                     />
                   )}
                 />
-                {errors.gender && (
+                {errors.role && (
                   <Typography
                     variant="caption"
                     sx={{ display: "block" }}
                     color="error"
                   >
-                    Gender Field is required
+                    Role Field is required
                   </Typography>
                 )}
               </Box>
@@ -180,155 +257,23 @@ export default function PostAJob() {
             </Box>
 
             <Box>
-              <InputLabel htmlFor="address">Address</InputLabel>
+              <InputLabel htmlFor="address">Location</InputLabel>
               <OutlinedInput
                 type="text"
-                id="address"
+                id="location"
                 placeholder="Please Enter Your Address"
                 size="small"
                 fullWidth
-                {...register("address", { required: true })}
-                error={!!errors.address}
+                {...register("location", { required: true })}
+                error={!!errors.location}
               />
-              {errors.address && (
+              {errors.location && (
                 <Typography
                   variant="caption"
                   sx={{ display: "block" }}
                   color="error"
                 >
-                  Address Field is required
-                </Typography>
-              )}
-            </Box>
-
-            <Box>
-              <InputLabel htmlFor="workingType">Working Type</InputLabel>
-              <Autocomplete
-                options={[
-                  "Full-time",
-                  "Part-time",
-                  "Internship",
-                  "Contract",
-                  "Freelance",
-                ]}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    type="text"
-                    id="workingType"
-                    placeholder="Please Enter Your Working Type"
-                    size="small"
-                    fullWidth
-                    {...register("workingType", { required: true })}
-                    error={!!errors.workingType}
-                  />
-                )}
-              />
-              {errors.workingType && (
-                <Typography
-                  variant="caption"
-                  sx={{ display: "block" }}
-                  color="error"
-                >
-                  Working Type Field is required
-                </Typography>
-              )}
-            </Box>
-
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-              <InputLabel htmlFor="workingHour">
-                Working Hour (From - To)
-              </InputLabel>
-              <Box sx={{ display: "flex", gap: 1 }}>
-                <OutlinedInput
-                  type="time"
-                  id="workingHourFrom"
-                  size="small"
-                  fullWidth
-                  {...register("workingHourFrom", { required: true })}
-                  error={!!errors.workingHourFrom}
-                  sx={{ flex: 1 }}
-                />
-                {errors.workingHourFrom && (
-                  <Typography
-                    variant="caption"
-                    sx={{ display: "block" }}
-                    color="error"
-                  >
-                    This Field is required
-                  </Typography>
-                )}
-
-                <OutlinedInput
-                  type="time"
-                  id="workingHourTo"
-                  size="small"
-                  fullWidth
-                  {...register("workingHourTo", { required: true })}
-                  error={!!errors.workingHourTo}
-                  sx={{ flex: 1 }}
-                />
-                {errors.workingHourTo && (
-                  <Typography
-                    variant="caption"
-                    sx={{ display: "block" }}
-                    color="error"
-                  >
-                    This Field is required
-                  </Typography>
-                )}
-              </Box>
-            </Box>
-
-            <Box>
-              <InputLabel htmlFor="responsibilities">
-                Responsibilities
-              </InputLabel>
-              <OutlinedInput
-                sx={{
-                  height: 200,
-                  "& input::placeholder": {
-                    textAlign: "center",
-                  },
-                }}
-                fullWidth
-                id="responsibilities"
-                placeholder="Please Enter Responsibilities"
-                {...register("responsibilities", { required: true })}
-                error={!!errors.responsibilities}
-              />
-              {errors.responsibilities && (
-                <Typography
-                  variant="caption"
-                  sx={{ display: "block" }}
-                  color="error"
-                >
-                  Responsibilities Field is required
-                </Typography>
-              )}
-            </Box>
-            <Box>
-              <InputLabel htmlFor="requirements">Requirements</InputLabel>
-              <OutlinedInput
-                sx={{
-                  height: 200,
-                  "& input::placeholder": {
-                    textAlign: "center",
-                  },
-                }}
-                fullWidth
-                id="requirements"
-                placeholder="Please Enter Requirements"
-                {...register("requirements", { required: true })}
-                error={!!errors.requirements}
-              />
-              {errors.requirements && (
-                <Typography
-                  variant="caption"
-                  sx={{ display: "block" }}
-                  color="error"
-                >
-                  Requirements Field is required
+                  Location Field is required
                 </Typography>
               )}
             </Box>

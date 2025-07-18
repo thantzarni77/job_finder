@@ -55,7 +55,7 @@ export default function Header() {
   const mode = useThemeStore((state) => state.mode);
   const setMode = useThemeStore((state) => state.setMode);
   const navigate = useNavigate();
-  const [userRole] = useState("");
+  const userRole = user?.user_type;
 
   const showDrawer = useAppStore((state) => state.showDrawer);
   const setShowDrawer = useAppStore((state) => state.setShowDrawer);
