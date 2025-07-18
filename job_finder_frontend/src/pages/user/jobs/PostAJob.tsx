@@ -12,32 +12,61 @@ import {
 
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { useNavigate } from "react-router";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 
-import type { Job } from "../../../helper/postJob";
 import { useUserStore } from "../../../store/UserStore";
 import { postAJob } from "../../../helper/postJob";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import type { Job } from "../../../store/JobStore";
+import {
+  getAllRoles,
+  getAllTypes,
+} from "../../../helper/talentTypeAndRoleApiFunctions";
+
+type JobTypeAndRole = {
+  id: number;
+  name: string;
+};
 
 export default function PostAJob() {
   const navigate = useNavigate();
   const user = useUserStore((state) => state.user);
-  console.log(user);
+
+  const [jobTypes, setJobTypes] = useState<JobTypeAndRole[] | null>();
+  const [roles, setRoles] = useState<JobTypeAndRole[] | null>();
+
+  const queryClient = useQueryClient();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     setValue,
   } = useForm<Job>();
+
+  const typeQuery = useQuery({
+    queryKey: ["jobTypes"],
+    queryFn: getAllTypes,
+  });
+
+  const roleQuery = useQuery({
+    queryKey: ["jobRoles"],
+    queryFn: getAllRoles,
+  });
+
+  const postAJobMutation = useMutation({
+    mutationFn: postAJob,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["jobPosts"] });
+      navigate("/jobs");
+    },
+    onError: (res) => console.log(res),
+  });
+
   const onSubmit = (data: Job) => {
     postAJobMutation.mutate(data);
   };
-  const postAJobMutation = useMutation({
-    mutationFn: postAJob,
-    onSuccess: () => navigate("/jobs"),
-    onError: (res) => console.log(res),
-  });
 
   const categories = [
     { id: 1, name: "Category one" },
@@ -47,6 +76,18 @@ export default function PostAJob() {
   useEffect(() => {
     register("category_id", { required: true });
   }, [register]);
+
+  useEffect(() => {
+    if (typeQuery.data && typeQuery.isSuccess) {
+      setJobTypes(typeQuery.data.original.data);
+    }
+  }, [typeQuery.data, typeQuery.isSuccess, jobTypes]);
+
+  useEffect(() => {
+    if (roleQuery.data && roleQuery.isSuccess) {
+      setRoles(roleQuery.data.data.data);
+    }
+  }, [roleQuery.data, roleQuery.isSuccess, jobTypes]);
 
   return (
     <>
@@ -82,10 +123,13 @@ export default function PostAJob() {
         }}
         maxWidth="sm"
       >
-        <form
+        <Box
+          component="form"
           onSubmit={handleSubmit(onSubmit)}
           action=""
-          style={{ width: "100%" }}
+          sx={{
+            width: "100%",
+          }}
         >
           <Box sx={{ mt: 3, display: "flex", flexDirection: "column", gap: 2 }}>
             <Box>
@@ -100,12 +144,27 @@ export default function PostAJob() {
                   sx={{ display: "block" }}
                   color="error"
                 >
-                  employer Field is required
+                  Employer Field is required
                 </Typography>
               )}
 
-              <InputLabel htmlFor="title">Job Title</InputLabel>
+              <InputLabel htmlFor="title" sx={{ mb: 1 }}>
+                Job Title
+              </InputLabel>
               <OutlinedInput
+                sx={{
+                  mb: 1,
+
+                  "& .MuiOutlinedInput-input": {
+                    bgcolor: "background.paper",
+                    borderRadius: 2,
+                  },
+
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderWidth: "1px",
+                    borderColor: "primary.main",
+                  },
+                }}
                 type="text"
                 id="title"
                 placeholder="Please Enter Your Job Title"
@@ -125,8 +184,23 @@ export default function PostAJob() {
               )}
             </Box>
             <Box>
-              <InputLabel htmlFor="job_code">Job Code</InputLabel>
+              <InputLabel htmlFor="job_code" sx={{ mb: 1 }}>
+                Job Code
+              </InputLabel>
               <OutlinedInput
+                sx={{
+                  mb: 1,
+
+                  "& .MuiOutlinedInput-input": {
+                    bgcolor: "background.paper",
+                    borderRadius: 2,
+                  },
+
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderWidth: "1px",
+                    borderColor: "primary.main",
+                  },
+                }}
                 type="number"
                 id="job_code"
                 fullWidth
@@ -145,8 +219,26 @@ export default function PostAJob() {
               )}
             </Box>
             <Box>
-              <InputLabel htmlFor="category">Category</InputLabel>
+              <InputLabel htmlFor="category" sx={{ mb: 1 }}>
+                Category
+              </InputLabel>
               <Autocomplete
+                sx={{
+                  mb: 1,
+                  "& .MuiInputBase-root": {
+                    bgcolor: "background.paper",
+                    borderRadius: 2,
+                  },
+                  "& .MuiOutlinedInput-input": {
+                    bgcolor: "background.paper",
+                    borderRadius: 2,
+                  },
+
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderWidth: "1px",
+                    borderColor: "primary.main",
+                  },
+                }}
                 options={categories}
                 getOptionLabel={(option) => option.name}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -158,7 +250,7 @@ export default function PostAJob() {
                     {...params}
                     type="text"
                     id="category_id"
-                    placeholder="Please Enter Category"
+                    placeholder="Please Select Category"
                     size="small"
                     fullWidth
                   />
@@ -175,9 +267,27 @@ export default function PostAJob() {
               )}
             </Box>
             <Box>
-              <InputLabel htmlFor="position">Type</InputLabel>
+              <InputLabel htmlFor="position" sx={{ mb: 1 }}>
+                Type
+              </InputLabel>
               <Autocomplete
-                options={["full-time", "part-time", "contract", "internship"]}
+                sx={{
+                  mb: 1,
+                  "& .MuiInputBase-root": {
+                    bgcolor: "background.paper",
+                    borderRadius: 2,
+                  },
+                  "& .MuiOutlinedInput-input": {
+                    bgcolor: "background.paper",
+                    borderRadius: 2,
+                  },
+
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderWidth: "1px",
+                    borderColor: "primary.main",
+                  },
+                }}
+                options={jobTypes ? jobTypes?.map((single) => single.name) : []}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -191,7 +301,7 @@ export default function PostAJob() {
                   />
                 )}
               />
-              {errors.role && (
+              {errors.type && (
                 <Typography
                   variant="caption"
                   sx={{ display: "block" }}
@@ -205,7 +315,23 @@ export default function PostAJob() {
               <InputLabel htmlFor="education">Role</InputLabel>
               <Box>
                 <Autocomplete
-                  options={["junior", "mid", "senior"]}
+                  sx={{
+                    mb: 1,
+                    "& .MuiInputBase-root": {
+                      bgcolor: "background.paper",
+                      borderRadius: 2,
+                    },
+                    "& .MuiOutlinedInput-input": {
+                      bgcolor: "background.paper",
+                      borderRadius: 2,
+                    },
+
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderWidth: "1px",
+                      borderColor: "primary.main",
+                    },
+                  }}
+                  options={roles ? roles.map((single) => single.name) : []}
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -242,7 +368,19 @@ export default function PostAJob() {
                   fullWidth
                   {...register("salary", { required: true })}
                   error={!!errors.salary}
-                  sx={{ flex: 1 }}
+                  sx={{
+                    flex: 1,
+                    mb: 1,
+                    "& .MuiOutlinedInput-input": {
+                      bgcolor: "background.paper",
+                      borderRadius: 2,
+                    },
+
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderWidth: "1px",
+                      borderColor: "primary.main",
+                    },
+                  }}
                 />
                 {errors.salary && (
                   <Typography
@@ -257,8 +395,22 @@ export default function PostAJob() {
             </Box>
 
             <Box>
-              <InputLabel htmlFor="address">Location</InputLabel>
+              <InputLabel htmlFor="address" sx={{ mb: 1 }}>
+                Location
+              </InputLabel>
               <OutlinedInput
+                sx={{
+                  mb: 1,
+                  "& .MuiOutlinedInput-input": {
+                    bgcolor: "background.paper",
+                    borderRadius: 2,
+                  },
+
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderWidth: "1px",
+                    borderColor: "primary.main",
+                  },
+                }}
                 type="text"
                 id="location"
                 placeholder="Please Enter Your Address"
@@ -278,12 +430,24 @@ export default function PostAJob() {
               )}
             </Box>
           </Box>
-          <Box>
-            <Button type="submit" variant="contained" fullWidth sx={{ mt: 3 }}>
-              Post Now
-            </Button>
-          </Box>
-        </form>
+
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            sx={{
+              my: 3,
+              borderRadius: 2,
+              textTransform: "none",
+              boxShadow: "none",
+              ":hover": {
+                boxShadow: "none",
+              },
+            }}
+          >
+            Post Now
+          </Button>
+        </Box>
       </Container>
     </>
   );

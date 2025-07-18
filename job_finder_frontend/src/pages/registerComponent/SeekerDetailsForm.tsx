@@ -1,5 +1,6 @@
 import {
   Box,
+  Divider,
   FormControl,
   FormControlLabel,
   FormHelperText,
@@ -12,18 +13,20 @@ import {
   Typography,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import FileUploadIcon from "@mui/icons-material/FileUpload";
+import CustomFIleUpload from "../../components/custom_svg/CustomFIleUpload";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import {
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,
 } from "@mui/icons-material";
 import { useEffect, useRef, useState } from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import {
   getAllRoles,
   getAllTalents,
-} from "../../helper/talentAndRoleApiFunctions";
+} from "../../helper/talentTypeAndRoleApiFunctions";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -36,6 +39,18 @@ const VisuallyHiddenInput = styled("input")({
   whiteSpace: "nowrap",
   width: 1,
 });
+
+type SeekerFormValues = {
+  skills: { value: string }[];
+  education: { degree: string; year: string }[];
+  work_experience: { value: string }[];
+  role: string;
+  bio: string;
+  talent: string;
+  social_media_link: { value: string }[];
+  image: File;
+  seekerPassword: string;
+};
 
 type SingleTalent = {
   id: number;
@@ -50,8 +65,6 @@ type SingleRole = {
 };
 
 const SeekerDetailsFrom = () => {
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [showPassword, setShowPassword] = useState(false);
@@ -73,16 +86,43 @@ const SeekerDetailsFrom = () => {
     register,
     control,
     formState: { errors },
-  } = useFormContext();
+  } = useFormContext<SeekerFormValues>();
 
-  useEffect(() => {
-    //prevent memory leak
-    return () => {
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-      }
-    };
-  }, [previewUrl]);
+  const {
+    fields: skillFields,
+    append: skillAppend,
+    remove: skillRemove,
+  } = useFieldArray({
+    control,
+    name: "skills",
+  });
+
+  const {
+    fields: educationFields,
+    append: appendEducation,
+    remove: removeEducation,
+  } = useFieldArray({
+    control,
+    name: "education",
+  });
+
+  const {
+    fields: workExpFields,
+    append: workExpAppend,
+    remove: workExpRemove,
+  } = useFieldArray({
+    control,
+    name: "work_experience",
+  });
+
+  const {
+    fields: socialField,
+    append: socialAppend,
+    remove: socialRemove,
+  } = useFieldArray({
+    control,
+    name: "social_media_link",
+  });
 
   useEffect(() => {
     if (talentsQuery.data && talentsQuery.isSuccess) {
@@ -96,38 +136,6 @@ const SeekerDetailsFrom = () => {
     }
   }, [rolesQuery.data, rolesQuery.isSuccess]);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      const files = Array.from(event.target.files);
-      setSelectedFiles(files);
-
-      //create preview url for first file
-      const firstFile = files[0];
-      const newPreviewUrl = URL.createObjectURL(firstFile);
-
-      // clean up the old URL
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-      }
-      setPreviewUrl(newPreviewUrl);
-    }
-  };
-
-  const handleClear = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.stopPropagation();
-    setSelectedFiles([]);
-    setPreviewUrl(null);
-    //  reset the file input value  so the user can re-select the same file
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
-
-  const handleContainerClick = () => {
-    if (!previewUrl) {
-      fileInputRef.current?.click();
-    }
-  };
   return (
     <Box
       sx={{
@@ -142,82 +150,222 @@ const SeekerDetailsFrom = () => {
     >
       {/* skill */}
       <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-        <Typography component="label" htmlFor="skills" sx={{ fontWeight: 300 }}>
-          Skill
-        </Typography>
-        <OutlinedInput
-          {...register("skills", {
-            required: "Skill is required",
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Typography component="label" sx={{ fontWeight: 300 }}>
+            Skills
+          </Typography>
+          <IconButton
+            type="button" // Important: Prevents form submission
+            aria-label="add skill"
+            onClick={() => skillAppend({ value: "" })}
+          >
+            <AddCircleOutlineIcon />
+          </IconButton>
+        </Box>
+
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+          {/* Map over the fields array to render each input */}
+          {skillFields.map((field, index) => {
+            const skillError = errors.skills?.[index]?.value;
+
+            return (
+              <Box key={field.id}>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <OutlinedInput
+                    {...register(`skills.${index}.value`, {
+                      required: "Skill cannot be empty",
+                    })}
+                    placeholder="Enter skill"
+                    error={!!skillError}
+                    sx={{ width: { xs: "100%", sm: "200px" } }}
+                  />
+                  <IconButton
+                    type="button"
+                    aria-label="remove skill"
+                    onClick={() => skillRemove(index)}
+                    disabled={skillFields.length === 1}
+                  >
+                    <RemoveCircleOutlineIcon />
+                  </IconButton>
+                </Box>
+                {skillError && (
+                  <FormHelperText error sx={{ pl: "14px" }}>
+                    {skillError.message}
+                  </FormHelperText>
+                )}
+              </Box>
+            );
           })}
-          id="skills"
-          fullWidth
-          placeholder="Please enter your skills"
-          error={!!errors.skills}
-        />
-        {errors.skills && (
-          <FormHelperText error id="skills">
-            {errors.skills.message as string}
-          </FormHelperText>
-        )}
+        </Box>
       </Box>
+
+      <Divider flexItem />
+
       {/* education  */}
-      <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-        <Typography
-          component="label"
-          htmlFor="education"
-          sx={{ fontWeight: 300 }}
+      <Box sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
         >
-          Education
-        </Typography>
-        <OutlinedInput
-          {...register("education", {
-            required: "Education field is required",
-            maxLength: {
-              value: 100,
-              message: "Shouldn't be more than 100 words",
-            },
-          })}
-          id="education"
-          type="text"
-          fullWidth
-          placeholder="Please enter your email"
-          error={!!errors.education}
-        />
-        {errors.education && (
-          <FormHelperText error id="education">
-            {errors.education.message as string}
-          </FormHelperText>
-        )}
+          <Typography component="label" sx={{ fontWeight: 300 }}>
+            Education
+          </Typography>
+          <IconButton
+            type="button"
+            aria-label="add education"
+            onClick={() => appendEducation({ degree: "", year: "" })}
+          >
+            <AddCircleOutlineIcon />
+          </IconButton>
+        </Box>
+
+        {educationFields.map((field, index) => (
+          <Box
+            key={field.id}
+            sx={{
+              p: 2,
+              border: "1px solid",
+              borderColor: "divider",
+              borderRadius: 2,
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+              position: "relative",
+            }}
+          >
+            <IconButton
+              aria-label="remove education"
+              onClick={() => removeEducation(index)}
+              disabled={educationFields.length <= 1}
+              sx={{ position: "absolute", top: 8, right: 8 }}
+            >
+              <RemoveCircleOutlineIcon />
+            </IconButton>
+
+            {/* Input for the Degree */}
+            <Box>
+              <Typography
+                component="label"
+                htmlFor={`education.${index}.degree`}
+                sx={{ fontWeight: 300, fontSize: "0.9rem" }}
+              >
+                Degree / Certificate
+              </Typography>
+              <OutlinedInput
+                {...register(`education.${index}.degree`, {
+                  required: "Degree is required",
+                })}
+                id={`education.${index}.degree`}
+                fullWidth
+                placeholder="e.g., B.S. in Computer Science"
+                error={!!errors.education?.[index]?.degree}
+              />
+              {errors.education?.[index]?.degree && (
+                <FormHelperText error>
+                  {errors.education?.[index]?.degree?.message}
+                </FormHelperText>
+              )}
+            </Box>
+
+            {/* Input for the year */}
+            <Box>
+              <Typography
+                component="label"
+                htmlFor={`education.${index}.year`}
+                sx={{ fontWeight: 300, fontSize: "0.9rem" }}
+              >
+                Year
+              </Typography>
+              <OutlinedInput
+                {...register(`education.${index}.year`, {
+                  required: "Year is required",
+                })}
+                id={`education.${index}.year`}
+                fullWidth
+                placeholder="e.g., 2016-2023"
+                error={!!errors.education?.[index]?.year}
+              />
+              {errors.education?.[index]?.year && (
+                <FormHelperText error>
+                  {errors.education?.[index]?.year?.message}
+                </FormHelperText>
+              )}
+            </Box>
+          </Box>
+        ))}
       </Box>
-      {/* work exp  */}
+
+      <Divider flexItem />
+
+      {/* work exp */}
       <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-        <Typography
-          component="label"
-          htmlFor="work_experience"
-          sx={{ fontWeight: 300 }}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
         >
-          Work Expericence
-        </Typography>
-        <OutlinedInput
-          {...register("work_experience", {
-            required: "Work experience is required",
-            maxLength: {
-              value: 100,
-              message: "Shouldn't be more than 100 words",
-            },
+          <Typography component="label" sx={{ fontWeight: 300 }}>
+            Work experience
+          </Typography>
+          <IconButton
+            type="button" // Important: Prevents form submission
+            aria-label="add work exp"
+            onClick={() => workExpAppend({ value: "" })}
+          >
+            <AddCircleOutlineIcon />
+          </IconButton>
+        </Box>
+
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+          {/* Map over the fields array to render each input */}
+          {workExpFields.map((field, index) => {
+            const work_experience_errors =
+              errors.work_experience?.[index]?.value;
+
+            return (
+              <Box key={field.id}>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <OutlinedInput
+                    {...register(`work_experience.${index}.value`, {
+                      required: "Work experience cannot be empty",
+                    })}
+                    placeholder="Enter work experience"
+                    error={!!work_experience_errors}
+                    sx={{ width: { xs: "100%", sm: "200px" } }}
+                  />
+                  <IconButton
+                    type="button"
+                    aria-label="remove work exp"
+                    onClick={() => workExpRemove(index)}
+                    disabled={workExpFields.length === 1}
+                  >
+                    <RemoveCircleOutlineIcon />
+                  </IconButton>
+                </Box>
+                {work_experience_errors && (
+                  <FormHelperText error sx={{ pl: "14px" }}>
+                    {work_experience_errors.message}
+                  </FormHelperText>
+                )}
+              </Box>
+            );
           })}
-          id="work_experience"
-          type="text"
-          fullWidth
-          placeholder="Please enter your work experience"
-          error={!!errors.work_experience}
-        />
-        {errors.work_experience && (
-          <FormHelperText error id="work_experience">
-            {errors.work_experience.message as string}
-          </FormHelperText>
-        )}
+        </Box>
       </Box>
+
+      <Divider flexItem />
+
       {/* role */}
       <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
         <Typography component="label" htmlFor="role" sx={{ fontWeight: 300 }}>
@@ -259,6 +407,8 @@ const SeekerDetailsFrom = () => {
         />
       </Box>
 
+      <Divider flexItem />
+
       {/* bio */}
       <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
         <Typography component="label" htmlFor="bio" sx={{ fontWeight: 300 }}>
@@ -286,6 +436,8 @@ const SeekerDetailsFrom = () => {
         )}
       </Box>
 
+      <Divider flexItem />
+
       {/* talent */}
       <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
         <Typography component="label" sx={{ fontWeight: 300 }}>
@@ -294,7 +446,7 @@ const SeekerDetailsFrom = () => {
         <Controller
           name="talent"
           control={control}
-          defaultValue="Developer"
+          defaultValue=""
           rules={{ required: "You must select a talent" }}
           render={({ field, fieldState: { error } }) => (
             <FormControl error={!!error}>
@@ -327,140 +479,192 @@ const SeekerDetailsFrom = () => {
         />
       </Box>
 
+      <Divider flexItem />
+
       {/* social link */}
       <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-        <Typography
-          component="label"
-          htmlFor="social_media_link"
-          sx={{ fontWeight: 300 }}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
         >
-          Social Links
-        </Typography>
-        <OutlinedInput
-          {...register("social_media_link", {
-            required: "Bio is required",
-            maxLength: {
-              value: 100,
-              message: "Shouldn't be more than 100 words",
-            },
+          <Typography component="label" sx={{ fontWeight: 300 }}>
+            Social Media Links
+          </Typography>
+          <IconButton
+            type="button" // Important: Prevents form submission
+            aria-label="add social"
+            onClick={() => socialAppend({ value: "" })}
+          >
+            <AddCircleOutlineIcon />
+          </IconButton>
+        </Box>
+
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+          {/* Map over the fields array to render each input */}
+          {socialField.map((field, index) => {
+            const socialErrors = errors.social_media_link?.[index]?.value;
+
+            return (
+              <Box key={field.id}>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <OutlinedInput
+                    {...register(`social_media_link.${index}.value`)}
+                    placeholder="eg. www.facebook.com/seekerprofile"
+                    error={!!socialErrors}
+                    sx={{ width: "100%" }}
+                  />
+                  <IconButton
+                    type="button"
+                    aria-label="remove social"
+                    onClick={() => socialRemove(index)}
+                    disabled={socialField.length === 1}
+                  >
+                    <RemoveCircleOutlineIcon />
+                  </IconButton>
+                </Box>
+                {socialErrors && (
+                  <FormHelperText error sx={{ pl: "14px" }}>
+                    {socialErrors.message}
+                  </FormHelperText>
+                )}
+              </Box>
+            );
           })}
-          id="social_media_link"
-          type="text"
-          fullWidth
-          placeholder="Please enter your social links separated by ,"
-          error={!!errors.social_media_link}
-        />
-        {errors.social_media_link && (
-          <FormHelperText error id="social_media_link">
-            {errors.social_media_link.message as string}
-          </FormHelperText>
-        )}
+        </Box>
       </Box>
 
+      <Divider flexItem />
+
       {/* seeker profile  */}
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "8px",
-          width: "full",
-        }}
-      >
-        <Typography
-          component="label"
-          htmlFor="cv"
-          sx={{
-            fontWeight: 300,
-          }}
-        >
-          Upload your profile
-          <span style={{ color: "#ef4444" }}>*</span>
-        </Typography>
+      <Controller
+        name="image"
+        control={control}
+        rules={{ required: "Cover photo is required" }}
+        render={({ field: { onChange, value: selectedFile } }) => {
+          const previewUrl = selectedFile
+            ? URL.createObjectURL(selectedFile)
+            : null;
 
-        {/* Image Preview Section */}
-        <Box
-          onClick={handleContainerClick}
-          sx={{
-            width: "50%",
-            height: "220px",
-            border: "1px solid",
-            borderColor: "primary.main",
-            borderRadius: "13px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "background.paper",
-            cursor: previewUrl ? "default" : "pointer", // Change cursor based on state
-            transition: "background-color 0.2s ease",
-            position: "relative",
-            overflow: "hidden",
-            "&:hover": {
-              backgroundColor: previewUrl
-                ? "background.paper"
-                : "backgorund.default",
-            },
-          }}
-        >
-          <VisuallyHiddenInput
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={handleFileChange}
-          />
+          const handleContainerClick = () => {
+            if (!previewUrl) {
+              fileInputRef.current?.click();
+            }
+          };
 
-          {previewUrl ? (
-            // --- Preview State ---
-            <>
-              <img
-                src={previewUrl}
-                alt="Image preview"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
-              />
-              <IconButton
-                onClick={handleClear}
-                size="small"
+          const handleClear = (event: React.MouseEvent<HTMLButtonElement>) => {
+            event.stopPropagation();
+            onChange(null);
+            if (fileInputRef.current) {
+              fileInputRef.current.value = "";
+            }
+          };
+
+          return (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "8px",
+                width: "full",
+              }}
+            >
+              <Typography
+                component="label"
                 sx={{
-                  position: "absolute",
-                  top: 8,
-                  right: 8,
-                  backgroundColor: "rgba(255, 255, 255, 0.7)",
+                  fontWeight: 300,
+                }}
+              >
+                Upload your profile
+              </Typography>
+
+              {/* Image Preview Section */}
+              <Box
+                onClick={handleContainerClick}
+                sx={{
+                  width: "50%",
+                  height: { xs: "150px", md: "300px" },
+                  border: "1px dashed",
+                  borderRadius: "13px",
+                  borderColor: errors.image ? "error.main" : "primary.light",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: "background.paper",
+                  cursor: previewUrl ? "default" : "pointer",
+                  transition: "background-color 0.2s ease",
+                  position: "relative",
+                  overflow: "hidden",
                   "&:hover": {
-                    backgroundColor: "rgba(255, 255, 255, 0.9)",
+                    backgroundColor: previewUrl
+                      ? "background.paper"
+                      : "action.hover",
                   },
                 }}
               >
-                <CloseIcon fontSize="small" />
-              </IconButton>
-              {selectedFiles.length > 1 && (
-                <Box
-                  sx={{
-                    position: "absolute",
-                    bottom: 8,
-                    right: 8,
-                    backgroundColor: "rgba(0, 0, 0, 0.6)",
-                    color: "white",
-                    padding: "2px 8px",
-                    borderRadius: "12px",
-                    fontSize: "0.75rem",
-                  }}
-                >
-                  + {selectedFiles.length - 1} more
-                </Box>
+                <VisuallyHiddenInput
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) =>
+                    onChange(e.target.files ? e.target.files[0] : null)
+                  }
+                />
+
+                {previewUrl ? (
+                  <>
+                    <img
+                      src={previewUrl}
+                      alt="Image preview"
+                      onLoad={() => URL.revokeObjectURL(previewUrl)}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                    <IconButton
+                      onClick={handleClear}
+                      size="small"
+                      sx={{
+                        position: "absolute",
+                        top: 8,
+                        right: 8,
+                        backgroundColor: "rgba(255, 255, 255, 0.7)",
+                        "&:hover": {
+                          backgroundColor: "rgba(255, 255, 255, 0.9)",
+                        },
+                      }}
+                    >
+                      <CloseIcon fontSize="small" />
+                    </IconButton>
+                    {/* CHANGE 4: Removed the "+X more" badge */}
+                  </>
+                ) : (
+                  <Box
+                    sx={{
+                      textAlign: "center",
+                      color: "text.secondary",
+                    }}
+                  >
+                    <CustomFIleUpload />
+                  </Box>
+                )}
+              </Box>
+              {errors.image && (
+                <FormHelperText error sx={{ mt: 1 }}>
+                  {errors.image.message}
+                </FormHelperText>
               )}
-            </>
-          ) : (
-            // --- Initial State ---
-            <Box sx={{ textAlign: "center", color: "text.secondary" }}>
-              <FileUploadIcon />
             </Box>
-          )}
-        </Box>
-      </Box>
+          );
+        }}
+      />
+
+      <Divider flexItem />
+
       {/* password */}
       <Box
         sx={{

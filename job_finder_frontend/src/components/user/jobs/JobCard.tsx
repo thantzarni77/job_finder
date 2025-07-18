@@ -13,7 +13,7 @@ import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import { NavLink } from "react-router";
-import type { Job } from "../../../helper/postJob";
+import type { Job } from "../../../store/JobStore";
 
 const JobCard = ({ job }: { job: Job }) => {
   return (

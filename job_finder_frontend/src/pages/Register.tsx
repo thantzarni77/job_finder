@@ -41,13 +41,14 @@ type RegisterFormData = {
   phone?: string;
 
   // From SeekerDetailsForm.tsx
-  skills?: string;
-  education?: string;
-  work_experience?: string;
+  skills?: { value: string }[];
+  education?: { degree: string; year: string }[];
+  work_experience?: { value: string }[];
   role?: "junior" | "mid-level" | "senior";
   bio?: string;
   talent?: string;
-  social_media_link?: string;
+  social_media_link?: { value: string }[];
+  image: File;
   seekerPassword?: string;
 
   // From CompanyInfoForm
@@ -73,6 +74,12 @@ export default function Register() {
 
   const methods = useForm<RegisterFormData>({
     mode: "onBlur",
+    defaultValues: {
+      skills: [{ value: "" }],
+      work_experience: [{ value: "" }],
+      education: [{ degree: "", year: "" }],
+      social_media_link: [{ value: "" }],
+    },
   });
   const { handleSubmit, trigger, getValues, watch } = methods;
 
@@ -94,21 +101,69 @@ export default function Register() {
         bio,
         talent,
         social_media_link,
+        image,
         seekerPassword,
       } = data;
 
-      console.log("Seeker Details", {
-        skills,
-        education,
-        work_experience,
-        role,
-        bio,
-        talent,
-        social_media_link,
-        seekerPassword,
-      });
+      const seekerInfo = new FormData();
+
+      const skillsArray = skills?.map((single) => single.value).filter(Boolean);
+      if (skillsArray && skillsArray.length > 0) {
+        seekerInfo.append("skills", JSON.stringify(skillsArray));
+      }
+
+      const educationArray = education
+        ?.map((single) =>
+          single.degree && single.year
+            ? `${single.degree},${single.year}`
+            : null,
+        )
+        .filter(Boolean);
+      if (educationArray && educationArray.length > 0) {
+        seekerInfo.append("education", JSON.stringify(educationArray));
+      }
+
+      const worKExpArray = work_experience
+        ?.map((single) => single.value)
+        .filter(Boolean);
+      if (worKExpArray && worKExpArray.length > 0) {
+        seekerInfo.append("work_experience", JSON.stringify(worKExpArray));
+      }
+
+      const socialMediaArray = social_media_link
+        ?.map((single) => single.value)
+        .filter(Boolean);
+      if (socialMediaArray && socialMediaArray.length > 0) {
+        seekerInfo.append(
+          "social_media_link",
+          JSON.stringify(socialMediaArray),
+        );
+      }
+
+      // Check if the value exists before appending
+
+      if (role) {
+        seekerInfo.append("role", role);
+      }
+      if (bio) {
+        seekerInfo.append("bio", bio);
+      }
+      if (talent) {
+        seekerInfo.append("talent", talent);
+      }
+      if (image) {
+        seekerInfo.append("image", image);
+      }
+      if (seekerPassword) {
+        seekerInfo.append("seekerPassword", seekerPassword);
+      }
+
+      console.log("Seeker Details Payload:");
+      for (const [key, value] of seekerInfo.entries()) {
+        console.log(key, value);
+      }
     }
-    // console.log("FINAL FORM SUBMITTED:", data);
+
     setActiveStep((prev) => prev + 1);
   };
 

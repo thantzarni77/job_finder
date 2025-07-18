@@ -14,12 +14,14 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import JobFilter from "../../../components/user/jobs/JobFilter";
 import JobCard from "../../../components/user/jobs/JobCard";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SearchBox from "../../../components/user/SearchBox";
 import { useJobFilterStore } from "../../../store/Appstore";
 import JobFilterDrawer from "../../../components/user/JobFilterDrawer";
 
 import { getAllJobPosts } from "../../../helper/postJob";
+import { useQuery } from "@tanstack/react-query";
+import { useJobStore } from "../../../store/JobStore";
 
 const jobs = [
   "full Time",
@@ -31,9 +33,11 @@ const jobs = [
 ];
 
 const Jobs = () => {
-  const { data, isPending } = getAllJobPosts();
   const [sortBy, setSortBy] = useState<string>("recent");
   const [open, setOpen] = useState<boolean>(false);
+
+  const allJobs = useJobStore((state) => state.jobs);
+  const setJobs = useJobStore((state) => state.setJobs);
 
   const showJobFilterDrawer = useJobFilterStore(
     (state) => state.showJobFilterDrawer,
@@ -42,12 +46,20 @@ const Jobs = () => {
     (state) => state.setShowJobFilterDrawer,
   );
 
+  const allJobsQuery = useQuery({
+    queryKey: ["jobPosts"],
+    queryFn: getAllJobPosts,
+  });
+
   const handleChange = (event: SelectChangeEvent<string>) => {
     setSortBy(event.target.value);
   };
-  if (!isPending) {
-    console.log(data);
-  }
+
+  useEffect(() => {
+    if (allJobsQuery.data && allJobsQuery.isSuccess) {
+      setJobs(allJobsQuery.data);
+    }
+  }, [allJobsQuery.data, allJobsQuery.isSuccess, setJobs, allJobs]);
 
   // custom component for dropdown icon
   const CustomIcon = () => (
@@ -152,7 +164,7 @@ const Jobs = () => {
             }}
           >
             <Typography variant="caption" sx={{ color: "primary.light" }}>
-              500+ jobs are found
+              {allJobs.length}+ jobs are found
             </Typography>
             {/* filter box */}
             <Select
@@ -269,8 +281,9 @@ const Jobs = () => {
                 flexWrap: "wrap",
               }}
             >
-              {!isPending &&
-                data?.map((job) => {
+              {allJobsQuery.isFetching && <div>Loading...</div>}
+              {allJobsQuery.isSuccess &&
+                allJobs.map((job) => {
                   return <JobCard key={job.id} job={job} />;
                 })}
             </Box>
