@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   MenuItem,
   Pagination,
   Select,
@@ -8,12 +9,17 @@ import {
   type SelectChangeEvent,
 } from "@mui/material";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import FilterListIcon from "@mui/icons-material/FilterList";
 
 import JobFilter from "../../../components/user/jobs/JobFilter";
 import JobCard from "../../../components/user/jobs/JobCard";
 
 import { useState } from "react";
 import SearchBox from "../../../components/user/SearchBox";
+import { useJobFilterStore } from "../../../store/Appstore";
+import JobFilterDrawer from "../../../components/user/JobFilterDrawer";
+
+import { getAllJobPosts } from "../../../helper/postJob";
 
 const jobs = [
   "full Time",
@@ -25,12 +31,23 @@ const jobs = [
 ];
 
 const Jobs = () => {
+  const { data, isPending } = getAllJobPosts();
   const [sortBy, setSortBy] = useState<string>("recent");
   const [open, setOpen] = useState<boolean>(false);
+
+  const showJobFilterDrawer = useJobFilterStore(
+    (state) => state.showJobFilterDrawer,
+  );
+  const setShowJobFilterDrawer = useJobFilterStore(
+    (state) => state.setShowJobFilterDrawer,
+  );
 
   const handleChange = (event: SelectChangeEvent<string>) => {
     setSortBy(event.target.value);
   };
+  if (!isPending) {
+    console.log(data);
+  }
 
   // custom component for dropdown icon
   const CustomIcon = () => (
@@ -52,13 +69,53 @@ const Jobs = () => {
     <Box
       sx={{
         my: 3,
-        p: 4,
-        width: "95%",
+        p: { xs: 0, sm: 2, md: 2, lg: 4 },
+        width: { xs: "100", sm: "100%", md: "95%" },
         mx: "auto",
       }}
     >
-      {/* search input */}
-      <SearchBox searchType={"Jobs"} />
+      {/* search input && filter button*/}
+      <Box
+        sx={{
+          display: { xs: "block", sm: "flex" },
+          alignItems: "center",
+          width: "95%",
+          mx: "auto",
+        }}
+      >
+        <SearchBox searchType={"Jobs"} />
+        <Button
+          variant="contained"
+          onClick={() => setShowJobFilterDrawer(!showJobFilterDrawer)}
+          sx={{
+            mx: { xs: "auto", sm: "none" },
+            display: { xs: "block", md: "none" },
+            color: "primary.main",
+            boxShadow: "none",
+            p: "5px",
+            my: 2,
+            ":hover": {
+              boxShadow: "none",
+            },
+          }}
+        >
+          <Typography
+            sx={{
+              display: { xs: "none", sm: "inline" },
+              color: "white",
+              mx: 1,
+              textTransform: "none",
+              boxShadow: "none",
+              ":hover": {
+                boxShadow: "none",
+              },
+            }}
+          >
+            Filter
+          </Typography>
+          <FilterListIcon sx={{ color: "white" }} />
+        </Button>
+      </Box>
 
       {/* job posts and filter */}
       <Box
@@ -67,13 +124,15 @@ const Jobs = () => {
           my: 3,
           display: "flex",
           flexDirection: { xs: "column", md: "row" },
-          alignItems: "start",
+          alignItems: { xs: "center", md: "start" },
           width: "100%",
-          p: 2,
           gap: 6,
         }}
       >
-        <JobFilter filterType={"Job"} filterTypeArray={jobs} />
+        <Box sx={{ display: { xs: "none", md: "block" } }}>
+          <JobFilter filterType={"Job"} filterTypeArray={jobs} />
+        </Box>
+
         <Box
           sx={{
             display: "flex",
@@ -85,9 +144,9 @@ const Jobs = () => {
           {/* job posts section header */}
           <Box
             sx={{
-              width: "94%",
+              width: { xs: "82%", sm: "90%", md: "90%" },
               display: "flex",
-              alignItems: "start",
+              alignItems: { xs: "center", md: "start" },
               justifyContent: "space-between",
               mb: 2,
             }}
@@ -109,7 +168,7 @@ const Jobs = () => {
                 fontWeight: 400,
                 fontSize: "14px",
                 borderRadius: "5px",
-                bgcolor: "#ffffff",
+                bgcolor: "background.paper",
                 color: "primary.main",
 
                 // Crucially, hide the default input border
@@ -129,7 +188,7 @@ const Jobs = () => {
                   paper: {
                     sx: {
                       width: 155,
-                      bgcolor: "#ffffff",
+                      bgcolor: "background.paper",
                       borderRadius: "5px",
                       boxShadow: "none",
                       color: "primary.main",
@@ -146,7 +205,7 @@ const Jobs = () => {
                   fontWeight: 400,
                   margin: "4px",
                   borderLeft: "4px solid transparent",
-                  bgColor: "#ffffff",
+                  bgColor: "background.paper",
                   color: "primary.main",
                   fontSize: "14px",
                   // Style for the currently selected item in the list
@@ -169,7 +228,7 @@ const Jobs = () => {
                   borderRadius: "8px",
                   margin: "4px",
                   borderLeft: "4px solid transparent",
-                  bgColor: "#ffffff",
+                  bgColor: "background.paper",
                   color: "primary.main",
                   fontWeight: 400,
                   fontSize: "14px",
@@ -200,14 +259,20 @@ const Jobs = () => {
             <Box
               sx={{
                 display: "flex",
-                width: "100%",
-                justifyContent: "center",
+                width: { xs: "100%", sm: "90%", md: "100%" },
+                justifyContent: {
+                  xs: "center",
+                  sm: "center",
+                  md: "center",
+                },
                 gap: { xs: 2, md: 4 },
                 flexWrap: "wrap",
               }}
             >
-              <JobCard /> <JobCard /> <JobCard /> <JobCard /> <JobCard />
-              <JobCard /> <JobCard />
+              {!isPending &&
+                data?.map((job) => {
+                  return <JobCard key={job.id} job={job} />;
+                })}
             </Box>
             {/* pagination */}
             <Box
@@ -231,6 +296,7 @@ const Jobs = () => {
           </Box>
         </Box>
       </Box>
+      <JobFilterDrawer />
     </Box>
   );
 };
