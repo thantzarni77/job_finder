@@ -13,8 +13,9 @@ import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import { NavLink } from "react-router";
+import type { Job } from "../../../helper/postJob";
 
-const JobCard = () => {
+const JobCard = ({ job }: { job: Job }) => {
   return (
     <Box
       sx={{
@@ -70,7 +71,7 @@ const JobCard = () => {
                     ":hover": { cursor: "pointer", color: "primary.main" },
                   }}
                 >
-                  <NavLink to={"/job/JC-1111"}>Full Stack Developer</NavLink>
+                  <NavLink to={"/job/JC-1111"}>{job.job_title}</NavLink>
                 </Typography>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <VerifiedIcon
@@ -80,7 +81,7 @@ const JobCard = () => {
                     variant="body2"
                     sx={{ fontWeight: 400, fontSize: "14px" }}
                   >
-                    Verified
+                    {job.posting_status}
                   </Typography>
                 </Box>
               </Box>
@@ -118,7 +119,7 @@ const JobCard = () => {
                 variant="caption"
                 sx={{ color: "primary.light", width: "250px" }}
               >
-                N0.123, Yadanar St, Marchart Road, Yangon
+                {job.location}
               </Typography>
             </Box>
             <Box
@@ -131,7 +132,7 @@ const JobCard = () => {
             >
               <QueryBuilderIcon sx={{ color: "primary.light", fontSize: 22 }} />
               <Typography variant="caption" sx={{ color: "primary.light" }}>
-                posted on 1 day ago
+                posted on {job.created_at}
               </Typography>
             </Box>
           </Box>
@@ -188,7 +189,7 @@ const JobCard = () => {
             variant="body1"
             sx={{ fontWeight: "bold", color: "text.secondary" }}
           >
-            800000MMK
+            {job.salary}
           </Typography>
         </Box>
       </Paper>
