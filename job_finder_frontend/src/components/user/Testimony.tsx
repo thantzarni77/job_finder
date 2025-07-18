@@ -9,6 +9,7 @@ const Testimony = () => {
         p: 2,
         boxShadow: "none",
         borderRadius: "12px",
+        width: { xs: "325px", md: "375px" },
       }}
     >
       <Box
@@ -40,7 +41,7 @@ const Testimony = () => {
         </Box>
         <Typography
           variant="caption"
-          sx={{ color: "secondary.main", fontWeight: 400 }}
+          sx={{ color: "text.secondary", fontWeight: 400 }}
         >
           1 day ago
         </Typography>
@@ -48,7 +49,7 @@ const Testimony = () => {
       <Box>
         <Typography
           variant="body2"
-          sx={{ color: "secondary.main", fontWeight: 300 }}
+          sx={{ color: "text.secondary", fontWeight: 300 }}
         >
           Lorem ipsum dolor sit amet consectetur. Mauris rhoncus quam auctor
           vitae gravida ultricies platea mi diam. Dui id semper ut habitant

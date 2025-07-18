@@ -7,14 +7,14 @@ export default function HomeCarousel() {
       <Box
         sx={{
           position: "absolute",
-          top: { md: "40%", xs: "20%" },
+          top: { md: "40%", xs: "35%" },
           left: { md: "10%", xs: "5%" },
         }}
       >
         <div>
           <Typography
             variant="h5"
-            sx={{ fontWeight: 700, fontSize: { xs: 25, md: 36 } }}
+            sx={{ fontWeight: 700, fontSize: { xs: 16, sm: 25, md: 36 } }}
           >
             Get Hired Today
           </Typography>
@@ -22,7 +22,8 @@ export default function HomeCarousel() {
             variant="contained"
             sx={{
               boxShadow: "none",
-              width: { xs: "200px", md: "300px" },
+              width: { xs: "150px", sm: "200px", md: "250px" },
+              height: { xs: "30px", sm: "40px", md: "45px" },
               borderRadius: "8px",
               p: 1,
               my: 2,
@@ -34,8 +35,8 @@ export default function HomeCarousel() {
           >
             <Typography
               sx={{
-                typography: { xs: "subtitle2", md: "body1" },
-                fontWeight: 300,
+                fontSize: { xs: "12px", sm: "16px", md: "18px" },
+                fontWeight: 500,
               }}
             >
               Build Your Profile Now
@@ -43,30 +44,30 @@ export default function HomeCarousel() {
           </Button>
         </div>
       </Box>
-      <div className="carousel w-full">
-        <div id="item1" className="carousel-item w-full">
-          <img src={Rectangle106} className="w-full" />
+      <div className="carousel h-48 w-full sm:h-56 md:h-64 lg:h-96">
+        <div id="item1" className="carousel-item h-full w-full">
+          <img src={Rectangle106} className="h-full w-full object-cover" />
         </div>
-        <div id="item2" className="carousel-item w-full">
+        <div id="item2" className="carousel-item h-full w-full">
           <img
             src="https://img.daisyui.com/images/stock/photo-1609621838510-5ad474b7d25d.webp"
-            className="w-full"
+            className="h-full w-full object-cover"
           />
         </div>
-        <div id="item3" className="carousel-item w-full">
+        <div id="item3" className="carousel-item h-full w-full">
           <img
             src="https://img.daisyui.com/images/stock/photo-1414694762283-acccc27bca85.webp"
-            className="w-full"
+            className="h-full w-full object-cover"
           />
         </div>
-        <div id="item4" className="carousel-item w-full">
+        <div id="item4" className="carousel-item h-full w-full">
           <img
             src="https://img.daisyui.com/images/stock/photo-1665553365602-b2fb8e5d1707.webp"
-            className="w-full"
+            className="h-full w-full object-cover"
           />
         </div>
       </div>
-      <div className="flex w-full justify-center gap-2 py-2">
+      {/* <div className="flex w-full justify-center gap-2 py-2">
         <a href="#item1" className="btn btn-xs btn-accent btn-outline">
           1
         </a>
@@ -79,7 +80,7 @@ export default function HomeCarousel() {
         <a href="#item4" className="btn btn-xs btn-accent btn-outline">
           4
         </a>
-      </div>
+      </div> */}
     </div>
   );
 }

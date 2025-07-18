@@ -7,6 +7,7 @@ import {
   ListItemButton,
 } from "@mui/material";
 import { useAppStore } from "../../store/Appstore";
+import { Link } from "react-router";
 
 export default function AppDrawer() {
   const showDrawer = useAppStore((state) => state.showDrawer);
@@ -27,32 +28,66 @@ export default function AppDrawer() {
         </Typography>
         <List>
           <ListItem>
-            <ListItemButton sx={{ justifyContent: "center" }}>
-              <Typography>Home</Typography>
+            <ListItemButton>
+              <Link to="/">
+                <Typography>Home</Typography>
+              </Link>
+            </ListItemButton>
+          </ListItem>
+
+          <ListItem sx={{ display: { xs: "inline-flex", sm: "none" } }}>
+            <ListItemButton>
+              <Link to="/jobs">
+                <Typography>Jobs</Typography>
+              </Link>
+            </ListItemButton>
+          </ListItem>
+
+          <ListItem sx={{ display: { xs: "inline-flex", sm: "none" } }}>
+            <ListItemButton>
+              <Link to="/talents">
+                <Typography>Talents</Typography>
+              </Link>
+            </ListItemButton>
+          </ListItem>
+
+          <ListItem sx={{ display: { xs: "inline-flex", sm: "none" } }}>
+            <ListItemButton>
+              <Link to="/companies">
+                <Typography>Companies</Typography>
+              </Link>
+            </ListItemButton>
+          </ListItem>
+
+          <ListItem sx={{ display: { xs: "inline-flex", sm: "none" } }}>
+            <ListItemButton>
+              <Link to="/post/job">
+                <Typography>Post A Job</Typography>
+              </Link>
             </ListItemButton>
           </ListItem>
 
           <ListItem>
-            <ListItemButton sx={{ justifyContent: "center" }}>
-              <Typography>Jobs</Typography>
+            <ListItemButton>
+              <Link to="/profile/1">
+                <Typography>Profile</Typography>
+              </Link>
             </ListItemButton>
           </ListItem>
 
-          <ListItem>
-            <ListItemButton sx={{ justifyContent: "center" }}>
-              <Typography>Talent</Typography>
+          <ListItem sx={{ display: { xs: "inline-flex", sm: "none" } }}>
+            <ListItemButton>
+              <Link to="/notifications/user/1">
+                <Typography>Notifications</Typography>
+              </Link>
             </ListItemButton>
           </ListItem>
 
-          <ListItem>
-            <ListItemButton sx={{ justifyContent: "center" }}>
-              <Typography>Companies</Typography>
-            </ListItemButton>
-          </ListItem>
-
-          <ListItem>
-            <ListItemButton sx={{ justifyContent: "center" }}>
-              <Typography>Post A Job</Typography>
+          <ListItem sx={{ display: { xs: "inline-flex", sm: "none" } }}>
+            <ListItemButton>
+              <Link to="/settings/user/1">
+                <Typography>Settings</Typography>
+              </Link>
             </ListItemButton>
           </ListItem>
         </List>

@@ -18,7 +18,7 @@ const CompanyCard = () => {
         sx={{
           display: "flex",
           flexDirection: "column",
-          width: { xs: "330px", md: "380px" },
+          width: { xs: "325px", md: "375px" },
           borderRadius: "20px",
           boxShadow: "none",
           px: 3,
@@ -57,7 +57,7 @@ const CompanyCard = () => {
                   variant="body1"
                   sx={{
                     fontWeight: "700",
-                    color: "secondary.main",
+                    color: "text.secondary",
                     ":hover": { cursor: "pointer", color: "primary.main" },
                   }}
                 >
