@@ -17,12 +17,13 @@ import { Facebook, Instagram } from "@mui/icons-material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import UserProjectImage from "../../assets/Rectangle 94.png";
 import { useNavigate, useParams } from "react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getSeekerProfile } from "../../helper/profileApiFunctions";
 import { useEffect } from "react";
 import { useSeekerProfileStore } from "../../store/ProfileStore";
 
 export default function Profile() {
+  const queryClient = useQueryClient();
   const exampleLink = "https://github.com/thantzarni77/job_finder/tree/main";
   const navigate = useNavigate();
 
@@ -42,9 +43,10 @@ export default function Profile() {
 
   useEffect(() => {
     if (data && isSuccess) {
+      queryClient.invalidateQueries({ queryKey: ["seekerProfile"] });
       setSeekerProfile(data.data.data);
     }
-  }, [data, isSuccess, setSeekerProfile]);
+  }, [data, isSuccess, setSeekerProfile, queryClient]);
 
   return (
     <Container sx={{ py: 3, mb: 20 }} maxWidth="lg">
@@ -76,7 +78,7 @@ export default function Profile() {
                 />
                 <Box>
                   <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                    {seekerProfile.user_id.name}
+                    {/* {seekerProfile.user_id.name} */}
                   </Typography>
                   <Typography variant="body2" sx={{ opacity: 0.8 }}>
                     {seekerProfile.talent}
@@ -154,6 +156,7 @@ export default function Profile() {
 
               <Box sx={{ mt: 4 }}>
                 <Typography variant="h6">Education</Typography>
+
                 {seekerProfile.education.map((single, index) => {
                   return (
                     <Box
@@ -166,12 +169,17 @@ export default function Profile() {
                       }}
                     >
                       <SchoolIcon color="primary" />
-                      <Typography
-                        variant="body2"
-                        sx={{ color: "text.secondary" }}
-                      >
-                        {single}
-                      </Typography>
+                      <Box sx={{ display: "flex", flexDirection: "column" }}>
+                        <Typography
+                          variant="body2"
+                          sx={{ color: "text.secondary" }}
+                        >
+                          {single.degree}
+                        </Typography>
+                        <Typography variant="body2" color="primary">
+                          {single.year}
+                        </Typography>
+                      </Box>
                     </Box>
                   );
                 })}

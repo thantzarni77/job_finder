@@ -5,6 +5,7 @@ import {
   IconButton,
   OutlinedInput,
   styled,
+  TextField,
   Typography,
 } from "@mui/material";
 import {
@@ -310,7 +311,7 @@ const CompanyInfoForm = () => {
       />
 
       {/* Company Descripton */}
-      {/* <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
         <Typography
           component="label"
           htmlFor="companyDescription"
@@ -338,7 +339,7 @@ const CompanyInfoForm = () => {
             {errors.companyDescription.message as string}
           </FormHelperText>
         )}
-      </Box> */}
+      </Box>
 
       {/* company type */}
       <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>

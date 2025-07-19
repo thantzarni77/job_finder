@@ -4,6 +4,7 @@ import {
   MenuItem,
   Pagination,
   Select,
+  Skeleton,
   Stack,
   Typography,
   type SelectChangeEvent,
@@ -281,7 +282,40 @@ const Jobs = () => {
                 flexWrap: "wrap",
               }}
             >
-              {allJobsQuery.isFetching && <div>Loading...</div>}
+              {allJobsQuery.isFetching && (
+                <>
+                  <Skeleton
+                    variant="rounded"
+                    width={375}
+                    height={150}
+                    sx={{ borderRadius: "20px" }}
+                  />
+                  <Skeleton
+                    variant="rounded"
+                    width={375}
+                    height={150}
+                    sx={{ borderRadius: "20px" }}
+                  />
+                  <Skeleton
+                    variant="rounded"
+                    width={375}
+                    height={150}
+                    sx={{ borderRadius: "20px" }}
+                  />
+                  <Skeleton
+                    variant="rounded"
+                    width={375}
+                    height={150}
+                    sx={{ borderRadius: "20px" }}
+                  />
+                  <Skeleton
+                    variant="rounded"
+                    width={325}
+                    height={150}
+                    sx={{ borderRadius: "20px" }}
+                  />
+                </>
+              )}
               {allJobsQuery.isSuccess &&
                 allJobs.map((job) => {
                   return <JobCard key={job.id} job={job} />;

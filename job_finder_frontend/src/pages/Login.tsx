@@ -18,7 +18,7 @@ import { Link as MuiLink } from "@mui/material";
 import { Link as RouterLink, useNavigate } from "react-router";
 import BG_IMG from "../assets/login_signup_bg.jpg";
 import { useForm } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { loginUser } from "../helper/authApiFunctions";
 import { useUserStore } from "../store/UserStore";
 import { isAxiosError } from "axios";
@@ -39,6 +39,8 @@ export type LoginUserWithToken = {
 };
 
 export default function Login() {
+  const queryClient = useQueryClient();
+
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
@@ -58,6 +60,7 @@ export default function Login() {
     onSuccess: ({ data }: LoginUserWithToken) => {
       setUserData(data);
       setToken(data.token);
+      queryClient.invalidateQueries();
       navigate("/");
     },
     onError: (err) => {

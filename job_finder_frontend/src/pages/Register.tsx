@@ -16,7 +16,7 @@ import SeekerDetailsFrom from "./registerComponent/SeekerDetailsForm";
 import CompanyInfoForm from "./registerComponent/CompanyInfoForm";
 import ContactToAdminForm from "./registerComponent/ContactToAdminForm";
 import { FormProvider, useForm } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   registerStepOne,
   registerStepTwo,
@@ -68,6 +68,7 @@ type RegisterFormData = {
   companyEmail?: string;
   companyType?: string;
   companyProfile?: File;
+  companyDescription?: string;
   companyPassword?: string;
 
   // From ContactToAdminForm
@@ -80,6 +81,8 @@ type RegisterFormData = {
 
 export default function Register() {
   const navigate = useNavigate();
+
+  const queryClient = useQueryClient();
 
   const setToken = useUserStore((state) => state.setToken);
 
@@ -108,6 +111,7 @@ export default function Register() {
     onSuccess: (res) => {
       setToken(res.data.token);
       setActiveStep((prev) => prev + 1);
+      queryClient.invalidateQueries({ queryKey: ["seekerProfile"] });
       setTimeout(() => {
         navigate("/");
       }, 4000);
@@ -159,61 +163,64 @@ export default function Register() {
 
       const seekerInfo = new FormData();
 
-      const skillsArray = skills?.map((single) => single.value).filter(Boolean);
-      if (skillsArray && skillsArray.length > 0) {
-        seekerInfo.append("skills", JSON.stringify(skillsArray));
-      }
+      // --- CORRECTED ARRAY HANDLING ---
 
-      const educationArray = education
-        ?.map((single) =>
-          single.degree && single.year
-            ? `${single.degree},${single.year}`
-            : null,
-        )
-        .filter(Boolean);
-      if (educationArray && educationArray.length > 0) {
-        seekerInfo.append("education", JSON.stringify(educationArray));
-      }
-
-      const worKExpArray = work_experience
+      // Handle skills array
+      const skillsValues = skills
         ?.map((single) => single.value)
         .filter(Boolean);
-      if (worKExpArray && worKExpArray.length > 0) {
-        seekerInfo.append("work_experience", JSON.stringify(worKExpArray));
+      if (skillsValues && skillsValues.length > 0) {
+        skillsValues.forEach((skill) => seekerInfo.append("skills[]", skill));
       }
 
-      const socialMediaArray = social_media_link
+      // Handle education array of objects
+      if (education && education.length > 0) {
+        education.forEach((edu, index) => {
+          // Only append if both degree and year exist for that entry
+          if (edu.degree && edu.year) {
+            seekerInfo.append(`education[${index}][degree]`, edu.degree);
+            seekerInfo.append(`education[${index}][year]`, edu.year);
+          }
+        });
+      }
+
+      // Handle work experience array
+      const workExpValues = work_experience
         ?.map((single) => single.value)
         .filter(Boolean);
-      if (socialMediaArray && socialMediaArray.length > 0) {
-        seekerInfo.append(
-          "social_media_link",
-          JSON.stringify(socialMediaArray),
+      if (workExpValues && workExpValues.length > 0) {
+        workExpValues.forEach((exp) =>
+          seekerInfo.append("work_experience[]", exp),
         );
       }
 
-      // Check if the value exists before appending
-
-      if (role) {
-        seekerInfo.append("role", role);
-      }
-      if (bio) {
-        seekerInfo.append("bio", bio);
-      }
-      if (talent) {
-        seekerInfo.append("talent", talent);
-      }
-      if (image) {
-        seekerInfo.append("image", image);
-      }
-      if (seekerPassword) {
-        seekerInfo.append("password", seekerPassword);
+      // Handle social media links array
+      const socialMediaValues = social_media_link
+        ?.map((single) => single.value)
+        .filter(Boolean);
+      if (socialMediaValues && socialMediaValues.length > 0) {
+        socialMediaValues.forEach((link) =>
+          seekerInfo.append("social_media_link[]", link),
+        );
       }
 
+      // --- Other fields remain the same ---
+      if (role) seekerInfo.append("role", role);
+      if (bio) seekerInfo.append("bio", bio);
+      if (talent) seekerInfo.append("talent", talent);
+      if (image) seekerInfo.append("image", image);
+      if (seekerPassword) seekerInfo.append("password", seekerPassword);
+
+      // This mutation will now send the data in a server-friendly format
       registerStepTwoMutation.mutate({
         userID: firstUserID,
         userData: seekerInfo,
       });
+
+      // You can use this to debug and see the final FormData structure
+      // console.log("Seeker Details Payload:");
+      // for (const [key, value] of seekerInfo.entries()) {
+      // console.log(seekerInfo.getAll("skills[]"));
     }
 
     //company register
@@ -225,6 +232,7 @@ export default function Register() {
         companyAddress,
         companyPhone,
         companyEmail,
+        companyDescription,
         companyType,
         companyProfile,
         companyPassword,
@@ -237,6 +245,8 @@ export default function Register() {
       if (companyPhone) companyFormData.append("company_phone", companyPhone);
       if (companyEmail) companyFormData.append("company_email", companyEmail);
       if (companyType) companyFormData.append("company_type", companyType);
+      if (companyDescription)
+        companyFormData.append("company_description", companyDescription);
       companyFormData.append("verification", "pending");
       if (companyProfile)
         companyFormData.append("company_image", companyProfile);
