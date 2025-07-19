@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->integer('seeker_id');
             $table->string('title');
-            $table->string('image');
+            $table->string('image')->nullable();
             $table->longText('description');
-            $table->string('link');
+            $table->string('link')->nullable();
             $table->timestamps();
         });
     }
