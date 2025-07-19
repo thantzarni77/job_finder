@@ -1,115 +1,561 @@
 import {
   Box,
-  Container,
   Button,
+  Step,
+  StepLabel,
+  Stepper,
   Typography,
-  OutlinedInput,
-  IconButton,
-  Avatar,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
-import {
-  Facebook as FacebookIcon,
-  Google as GoogleIcon,
-  LinkedIn as LinkedInIcon,
-  MailOutline as MailOutlineIcon,
-  Visibility as VisibilityIcon,
-  VisibilityOff as VisibilityOffIcon,
-} from "@mui/icons-material";
+import BG_IMG from "../assets/login_signup_bg.jpg";
 import { useState } from "react";
+import UserDetailsForm from "./registerComponent/UserDetailsForm";
+import PasswordInputFields from "./registerComponent/PasswordInputFields";
+import SeekerDetailsFrom from "./registerComponent/SeekerDetailsForm";
+import CompanyInfoForm from "./registerComponent/CompanyInfoForm";
+import ContactToAdminForm from "./registerComponent/ContactToAdminForm";
+import { FormProvider, useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+import {
+  registerStepOne,
+  registerStepTwo,
+} from "../helper/registerHelperFunctions";
+import { useNavigate } from "react-router";
+import { useUserStore } from "../store/UserStore";
+import { useRegisterStore } from "../store/RegisterStore";
+import { isAxiosError } from "axios";
 
-import { Link } from "react-router";
+const STEP_LABELS = {
+  YOUR_DETAILS_AND_ROLE: "Your Details & Role",
+  SEEKER_PROFILE_AND_PASS: "Seeker Details & Password",
+  CHOOSE_EMPLOYER_TYPE: "Choose Employer Type",
+  COMPANY_INFO_AND_PASS: "Company Info & Password",
+  ADMIN_CONTACT: "Contact Administrator",
+  CREATE_PASSWORD: "Create Your Password",
+};
+
+type ChoiceButtonsProps = {
+  onSelectPrimary: () => void;
+  onSelectSecondary: () => void;
+  primaryText: string;
+  secondaryText: string;
+};
+
+type RegisterFormData = {
+  // From UserDetailsForm
+  name: string;
+  email: string;
+  userType: "seeker" | "employer";
+  phone?: string;
+  address?: string;
+
+  // From SeekerDetailsForm.tsx
+  skills?: { value: string }[];
+  education?: { degree: string; year: string }[];
+  work_experience?: { value: string }[];
+  role?: "junior" | "mid-level" | "senior";
+  bio?: string;
+  talent?: string;
+  social_media_link?: { value: string }[];
+  image: File;
+  seekerPassword?: string;
+
+  // From CompanyInfoForm
+  companyName?: string;
+  companyAddress?: string;
+  companyPhone?: string;
+  companyEmail?: string;
+  companyType?: string;
+  companyProfile?: File;
+  companyPassword?: string;
+
+  // From ContactToAdminForm
+  title?: string;
+  message?: string;
+
+  // From PasswordInputFields
+  password?: string;
+};
+
 export default function Register() {
+  const navigate = useNavigate();
+
+  const setToken = useUserStore((state) => state.setToken);
+
+  //register state logic
+  const firstUserID = useRegisterStore((state) => state.firstUserID);
+  const setFirstUserID = useRegisterStore((state) => state.setFirstUserID);
+  const setRegisterErrors = useRegisterStore(
+    (state) => state.setRegisterErrors,
+  );
+
+  const registerStepOneMutation = useMutation({
+    mutationFn: registerStepOne,
+    onSuccess: (data) => {
+      setFirstUserID(data.data.id);
+      setActiveStep((prev) => prev + 1);
+    },
+    onError: (err) => {
+      if (isAxiosError(err)) {
+        setRegisterErrors(err.response?.data.data);
+      }
+    },
+  });
+
+  const registerStepTwoMutation = useMutation({
+    mutationFn: registerStepTwo,
+    onSuccess: (res) => {
+      setToken(res.data.token);
+      setActiveStep((prev) => prev + 1);
+      setTimeout(() => {
+        navigate("/");
+      }, 4000);
+    },
+    onError: (err) => {
+      if (isAxiosError(err)) {
+        setRegisterErrors(err.response?.data.data);
+      }
+    },
+  });
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const methods = useForm<RegisterFormData>({
+    mode: "all",
+    defaultValues: {
+      skills: [{ value: "" }],
+      work_experience: [{ value: "" }],
+      education: [{ degree: "", year: "" }],
+      social_media_link: [{ value: "" }],
+    },
+  });
+
+  const { handleSubmit, trigger, getValues, watch } = methods;
+
+  const userType = watch("userType");
+  const phoneField = watch("phone");
+
+  const [employerType, setEmployerType] = useState("");
+  const [activeStep, setActiveStep] = useState(0);
+  const [steps, setSteps] = useState([STEP_LABELS.YOUR_DETAILS_AND_ROLE]);
   const [showPassword, setShowPassword] = useState(false);
+
+  const onFinalSubmit = (data: RegisterFormData) => {
+    //seeker register
+    if (userType == "seeker") {
+      const {
+        skills,
+        education,
+        work_experience,
+        role,
+        bio,
+        talent,
+        social_media_link,
+        image,
+        seekerPassword,
+      } = data;
+
+      const seekerInfo = new FormData();
+
+      const skillsArray = skills?.map((single) => single.value).filter(Boolean);
+      if (skillsArray && skillsArray.length > 0) {
+        seekerInfo.append("skills", JSON.stringify(skillsArray));
+      }
+
+      const educationArray = education
+        ?.map((single) =>
+          single.degree && single.year
+            ? `${single.degree},${single.year}`
+            : null,
+        )
+        .filter(Boolean);
+      if (educationArray && educationArray.length > 0) {
+        seekerInfo.append("education", JSON.stringify(educationArray));
+      }
+
+      const worKExpArray = work_experience
+        ?.map((single) => single.value)
+        .filter(Boolean);
+      if (worKExpArray && worKExpArray.length > 0) {
+        seekerInfo.append("work_experience", JSON.stringify(worKExpArray));
+      }
+
+      const socialMediaArray = social_media_link
+        ?.map((single) => single.value)
+        .filter(Boolean);
+      if (socialMediaArray && socialMediaArray.length > 0) {
+        seekerInfo.append(
+          "social_media_link",
+          JSON.stringify(socialMediaArray),
+        );
+      }
+
+      // Check if the value exists before appending
+
+      if (role) {
+        seekerInfo.append("role", role);
+      }
+      if (bio) {
+        seekerInfo.append("bio", bio);
+      }
+      if (talent) {
+        seekerInfo.append("talent", talent);
+      }
+      if (image) {
+        seekerInfo.append("image", image);
+      }
+      if (seekerPassword) {
+        seekerInfo.append("password", seekerPassword);
+      }
+
+      registerStepTwoMutation.mutate({
+        userID: firstUserID,
+        userData: seekerInfo,
+      });
+    }
+
+    //company register
+    if (employerType == "company") {
+      console.log(data);
+
+      const {
+        companyName,
+        companyAddress,
+        companyPhone,
+        companyEmail,
+        companyType,
+        companyProfile,
+        companyPassword,
+      } = data;
+
+      const companyFormData = new FormData();
+      if (companyName) companyFormData.append("company_name", companyName);
+      if (companyAddress)
+        companyFormData.append("company_address", companyAddress);
+      if (companyPhone) companyFormData.append("company_phone", companyPhone);
+      if (companyEmail) companyFormData.append("company_email", companyEmail);
+      if (companyType) companyFormData.append("company_type", companyType);
+      companyFormData.append("verification", "pending");
+      if (companyProfile)
+        companyFormData.append("company_image", companyProfile);
+      if (companyPassword) companyFormData.append("password", companyPassword);
+
+      registerStepTwoMutation.mutate({
+        userID: firstUserID,
+        userData: companyFormData,
+      });
+    }
+  };
+
+  const handleNext = async () => {
+    const currentStepLabel = steps[activeStep];
+
+    const fieldsPerStep: { [key: string]: (keyof RegisterFormData)[] } = {
+      [STEP_LABELS.YOUR_DETAILS_AND_ROLE]: phoneField
+        ? ["name", "email", "phone", "userType"]
+        : ["name", "email", "userType"],
+      [STEP_LABELS.SEEKER_PROFILE_AND_PASS]: [
+        "skills",
+        "education",
+        "work_experience",
+        "role",
+        "bio",
+        "talent",
+        "social_media_link",
+        "seekerPassword",
+      ],
+      [STEP_LABELS.COMPANY_INFO_AND_PASS]: [
+        "companyName",
+        "companyAddress",
+        "companyPhone",
+        "companyEmail",
+        "companyType",
+        "companyProfile",
+        "companyPassword",
+      ],
+      [STEP_LABELS.ADMIN_CONTACT]: ["title", "message"],
+      [STEP_LABELS.CREATE_PASSWORD]: ["password"],
+    };
+
+    const fieldsToValidate = fieldsPerStep[currentStepLabel];
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    const isValid = fieldsToValidate ? await trigger(fieldsToValidate) : true;
+
+    if (!isValid) {
+      return;
+    }
+
+    //Only define the next steps when advancing from the *first* step.
+    if (currentStepLabel === STEP_LABELS.YOUR_DETAILS_AND_ROLE) {
+      const { userType } = getValues();
+      if (userType === "seeker") {
+        setSteps([
+          STEP_LABELS.YOUR_DETAILS_AND_ROLE,
+          STEP_LABELS.SEEKER_PROFILE_AND_PASS,
+        ]);
+      } else if (userType === "employer") {
+        setSteps([
+          STEP_LABELS.YOUR_DETAILS_AND_ROLE,
+          STEP_LABELS.CHOOSE_EMPLOYER_TYPE,
+        ]);
+      }
+    }
+
+    //register first setep
+    if (currentStepLabel === STEP_LABELS.YOUR_DETAILS_AND_ROLE) {
+      const { name, email, phone, address, userType } = getValues();
+      const userData = new FormData();
+      userData.append("name", name);
+      userData.append("email", email);
+      if (phone) {
+        userData.append("phone", phone);
+      }
+
+      if (address) {
+        userData.append("address", address);
+      }
+
+      userData.append("user_type", userType);
+      registerStepOneMutation.mutate(userData);
+    } else if (
+      employerType == "individual" &&
+      currentStepLabel === STEP_LABELS.ADMIN_CONTACT
+    ) {
+      const { title, message } = getValues();
+      console.log("API CALL (Admin Contact): Posting message...", {
+        title,
+        message,
+      });
+    } else {
+      setActiveStep((prev) => prev + 1);
+    }
+  };
+
+  // const handleBack = () => {
+  //   setActiveStep((prev) => prev - 1);
+  // };
+
+  const handleSelectIndividual = () => {
+    setEmployerType("individual");
+    setSteps([
+      STEP_LABELS.YOUR_DETAILS_AND_ROLE,
+      STEP_LABELS.CHOOSE_EMPLOYER_TYPE,
+      STEP_LABELS.ADMIN_CONTACT,
+      STEP_LABELS.CREATE_PASSWORD,
+    ]);
+    setActiveStep((prev) => prev + 1);
+  };
+
+  const handleSelectCompany = () => {
+    setEmployerType("company");
+    setSteps([
+      STEP_LABELS.YOUR_DETAILS_AND_ROLE,
+      STEP_LABELS.CHOOSE_EMPLOYER_TYPE,
+      STEP_LABELS.COMPANY_INFO_AND_PASS,
+    ]);
+    setActiveStep((prev) => prev + 1);
+  };
+
+  const ChoiceButtons = ({
+    onSelectPrimary,
+    onSelectSecondary,
+    primaryText,
+    secondaryText,
+  }: ChoiceButtonsProps) => (
+    <Box
+      sx={{
+        mt: 3,
+        display: "flex",
+        gap: 2,
+        width: "100%",
+
+        flexDirection: { xs: "column", sm: "row" },
+      }}
+    >
+      <Button
+        variant="contained"
+        onClick={onSelectPrimary}
+        sx={{
+          flexGrow: 1,
+          borderRadius: 3,
+          boxShadow: "none",
+          textTransform: "none",
+          ":hover": {
+            boxShadow: "none",
+          },
+        }}
+      >
+        {primaryText}
+      </Button>
+      <Button
+        variant="contained"
+        onClick={onSelectSecondary}
+        sx={{
+          flexGrow: 1,
+          borderRadius: 3,
+          boxShadow: "none",
+          textTransform: "none",
+          ":hover": {
+            boxShadow: "none",
+          },
+        }}
+      >
+        {secondaryText}
+      </Button>
+    </Box>
+  );
+
+  //render contents
+  const getStepContent = (stepIndex: number) => {
+    const currentStepLabel = steps[stepIndex];
+    switch (currentStepLabel) {
+      case STEP_LABELS.YOUR_DETAILS_AND_ROLE:
+        return <UserDetailsForm />;
+      case STEP_LABELS.SEEKER_PROFILE_AND_PASS:
+        return <SeekerDetailsFrom />;
+      case STEP_LABELS.CHOOSE_EMPLOYER_TYPE:
+        return (
+          <ChoiceButtons
+            onSelectPrimary={handleSelectIndividual}
+            onSelectSecondary={handleSelectCompany}
+            primaryText="Individual"
+            secondaryText="Company"
+          />
+        );
+      case STEP_LABELS.COMPANY_INFO_AND_PASS:
+        return <CompanyInfoForm />;
+      case STEP_LABELS.ADMIN_CONTACT:
+        return <ContactToAdminForm />;
+      case STEP_LABELS.CREATE_PASSWORD:
+        return (
+          <PasswordInputFields
+            showPassword={showPassword}
+            onToggleVisibility={() => setShowPassword(!showPassword)}
+          />
+        );
+      default:
+        return <Typography>Unknown step</Typography>;
+    }
+  };
+
+  const isLastStep = activeStep === steps.length - 1 && steps.length > 1;
+
   return (
     <Box
       sx={{
-        height: "100vh",
+        backgroundImage: `url(${BG_IMG})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+        minHeight: "100vh",
         alignItems: "center",
-        justifyContent: "center",
+        flexDirection: "column",
         display: "flex",
+        py: 4,
+        px: { xs: 2, sm: 3 },
       }}
     >
-      <Container
-        maxWidth="sm"
-        sx={{
-          border: "1px solid rgba(0, 0, 0, 0.1)",
-          borderRadius: 3,
-          boxShadow: 3,
-          py: 3,
-        }}
+      <Typography
+        sx={{ fontWeight: 700, fontSize: { xs: "25px", md: "28px" } }}
       >
-        <Typography variant="h4" sx={{ textAlign: "center", fontWeight: 700 }}>
-          Register
-        </Typography>
+        LOGO
+      </Typography>
+      <Typography
+        variant="h6"
+        sx={{ mb: 2, fontWeight: 600, textAlign: "center" }}
+      >
+        Register an account here
+      </Typography>
 
-        <form
-          style={{
+      <FormProvider {...methods}>
+        <Box
+          component="form"
+          noValidate
+          onSubmit={handleSubmit(onFinalSubmit)}
+          sx={{
+            width: { xs: "100%", sm: "90%", md: "700px" },
             display: "flex",
             flexDirection: "column",
-            gap: "20px",
-            marginTop: "10px",
+            alignItems: "center",
+            bgcolor: "background.paper",
+            p: 2,
+            borderRadius: "12px",
           }}
         >
-          <OutlinedInput
-            fullWidth
-            type="name"
-            placeholder="UserName"
-            endAdornment={
-              <IconButton>
-                <Avatar sx={{ width: 25, height: 25 }} />
-              </IconButton>
-            }
-          />
-          <OutlinedInput
-            fullWidth
-            type="email"
-            placeholder="E-mail"
-            endAdornment={
-              <IconButton>
-                <MailOutlineIcon />
-              </IconButton>
-            }
-          />
-          <OutlinedInput
-            fullWidth
-            type={showPassword ? "text" : "password"}
-            placeholder="Password"
-            endAdornment={
-              <IconButton onClick={() => setShowPassword(!showPassword)}>
-                {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
-              </IconButton>
-            }
-          />
-          <Button variant="contained">Register</Button>
-        </form>
+          <Stepper
+            activeStep={activeStep}
+            orientation={isMobile ? "vertical" : "horizontal"}
+            alternativeLabel={!isMobile}
+            sx={{ width: "100%", pl: isMobile ? 2 : 0 }}
+          >
+            {steps.map((label) => (
+              <Step key={label}>
+                <StepLabel>{label}</StepLabel>
+              </Step>
+            ))}
+          </Stepper>
 
-        <Link to="/login">
-          <Typography variant="body2" color="primary" sx={{ mt: 2 }}>
-            Already Have Account?Login.
-          </Typography>
-        </Link>
+          {activeStep === steps.length ? (
+            <Box sx={{ textAlign: "center", mt: 4 }}>
+              <Typography sx={{ mt: 2, mb: 1 }}>
+                Account Registering Process Finished !!
+              </Typography>
+              <Typography sx={{ mt: 2, mb: 1 }}>
+                Redirecting to home page.....
+              </Typography>
+            </Box>
+          ) : (
+            <>
+              {getStepContent(activeStep)}
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  pt: 2,
+                  mt: 2,
+                  width: "100%",
+                }}
+              >
+                {/* <Button
+                  color="inherit"
+                  disabled={activeStep === 0}
+                  onClick={handleBack}
+                  sx={{ mr: 1, borderRadius: 2 }}
+                >
+                  Back
+                </Button> */}
+                <Box sx={{ flex: "1 1 auto" }} />
 
-        <Typography
-          variant="subtitle2"
-          sx={{ opacity: 0.5, textAlign: "center", my: 2 }}
-        >
-          or sign in with
-        </Typography>
-
-        <Box sx={{ mt: 2, display: "flex", justifyContent: "space-around" }}>
-          <Button variant="outlined">
-            <GoogleIcon />
-          </Button>
-
-          <Button variant="outlined">
-            <FacebookIcon />
-          </Button>
-
-          <Button variant="outlined">
-            <LinkedInIcon />
-          </Button>
+                {![STEP_LABELS.CHOOSE_EMPLOYER_TYPE].includes(
+                  steps[activeStep],
+                ) && (
+                  <Button
+                    loading={
+                      registerStepOneMutation.isPending ||
+                      registerStepTwoMutation.isPending
+                    }
+                    variant="contained"
+                    type={isLastStep ? "submit" : "button"}
+                    onClick={isLastStep ? undefined : handleNext}
+                    sx={{
+                      textTransform: "none",
+                      borderRadius: 2,
+                      boxShadow: "none",
+                      ":hover": {
+                        boxShadow: "none",
+                      },
+                    }}
+                  >
+                    {isLastStep ? "Finish" : "Next"}
+                  </Button>
+                )}
+              </Box>
+            </>
+          )}
         </Box>
-      </Container>
+      </FormProvider>
     </Box>
   );
 }
