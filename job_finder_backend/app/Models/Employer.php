@@ -14,6 +14,7 @@ class Employer extends Model
         'company_email',
         'company_image',
         'company_type',
+        'company_description',
         'verification',
         'password'
     ];
