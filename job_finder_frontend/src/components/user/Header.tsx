@@ -268,7 +268,9 @@ export default function Header() {
                     },
                   }}
                 >
-                  <MenuItem onClick={() => navigate("/profile/1")}>
+                  <MenuItem
+                    onClick={() => navigate(`/profile/${user?.user_id}`)}
+                  >
                     Profile
                   </MenuItem>
 
