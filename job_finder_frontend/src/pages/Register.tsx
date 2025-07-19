@@ -9,6 +9,7 @@ import {
   useTheme,
 } from "@mui/material";
 import BG_IMG from "../assets/login_signup_bg.jpg";
+import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import { useState } from "react";
 import UserDetailsForm from "./registerComponent/UserDetailsForm";
 import PasswordInputFields from "./registerComponent/PasswordInputFields";
@@ -18,6 +19,7 @@ import ContactToAdminForm from "./registerComponent/ContactToAdminForm";
 import { FormProvider, useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
+  individual,
   registerStepOne,
   registerStepTwo,
 } from "../helper/registerHelperFunctions";
@@ -123,6 +125,23 @@ export default function Register() {
     },
   });
 
+  const individualMutation = useMutation({
+    mutationFn: individual,
+    onSuccess: (res) => {
+      setToken(res.data.token);
+      setActiveStep((prev) => prev + 1);
+      queryClient.invalidateQueries({ queryKey: ["seekerProfile"] });
+      setTimeout(() => {
+        navigate("/");
+      }, 4000);
+    },
+    onError: (err) => {
+      if (isAxiosError(err)) {
+        setRegisterErrors(err.response?.data.data);
+      }
+    },
+  });
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -163,9 +182,6 @@ export default function Register() {
 
       const seekerInfo = new FormData();
 
-      // --- CORRECTED ARRAY HANDLING ---
-
-      // Handle skills array
       const skillsValues = skills
         ?.map((single) => single.value)
         .filter(Boolean);
@@ -173,10 +189,8 @@ export default function Register() {
         skillsValues.forEach((skill) => seekerInfo.append("skills[]", skill));
       }
 
-      // Handle education array of objects
       if (education && education.length > 0) {
         education.forEach((edu, index) => {
-          // Only append if both degree and year exist for that entry
           if (edu.degree && edu.year) {
             seekerInfo.append(`education[${index}][degree]`, edu.degree);
             seekerInfo.append(`education[${index}][year]`, edu.year);
@@ -184,7 +198,6 @@ export default function Register() {
         });
       }
 
-      // Handle work experience array
       const workExpValues = work_experience
         ?.map((single) => single.value)
         .filter(Boolean);
@@ -194,7 +207,6 @@ export default function Register() {
         );
       }
 
-      // Handle social media links array
       const socialMediaValues = social_media_link
         ?.map((single) => single.value)
         .filter(Boolean);
@@ -204,23 +216,16 @@ export default function Register() {
         );
       }
 
-      // --- Other fields remain the same ---
       if (role) seekerInfo.append("role", role);
       if (bio) seekerInfo.append("bio", bio);
       if (talent) seekerInfo.append("talent", talent);
       if (image) seekerInfo.append("image", image);
       if (seekerPassword) seekerInfo.append("password", seekerPassword);
 
-      // This mutation will now send the data in a server-friendly format
       registerStepTwoMutation.mutate({
         userID: firstUserID,
         userData: seekerInfo,
       });
-
-      // You can use this to debug and see the final FormData structure
-      // console.log("Seeker Details Payload:");
-      // for (const [key, value] of seekerInfo.entries()) {
-      // console.log(seekerInfo.getAll("skills[]"));
     }
 
     //company register
@@ -255,6 +260,21 @@ export default function Register() {
       registerStepTwoMutation.mutate({
         userID: firstUserID,
         userData: companyFormData,
+      });
+    }
+
+    //individual register
+    if (employerType == "individual") {
+      const { title, message, password } = data;
+
+      const individualFormData = new FormData();
+      if (title) individualFormData.append("title", title);
+      if (message) individualFormData.append("message", message);
+      if (password) individualFormData.append("password", password);
+
+      individualMutation.mutate({
+        userID: firstUserID,
+        userData: individualFormData,
       });
     }
   };
@@ -329,23 +349,10 @@ export default function Register() {
 
       userData.append("user_type", userType);
       registerStepOneMutation.mutate(userData);
-    } else if (
-      employerType == "individual" &&
-      currentStepLabel === STEP_LABELS.ADMIN_CONTACT
-    ) {
-      const { title, message } = getValues();
-      console.log("API CALL (Admin Contact): Posting message...", {
-        title,
-        message,
-      });
     } else {
       setActiveStep((prev) => prev + 1);
     }
   };
-
-  // const handleBack = () => {
-  //   setActiveStep((prev) => prev - 1);
-  // };
 
   const handleSelectIndividual = () => {
     setEmployerType("individual");
@@ -509,6 +516,7 @@ export default function Register() {
 
           {activeStep === steps.length ? (
             <Box sx={{ textAlign: "center", mt: 4 }}>
+              <TaskAltIcon sx={{ fontSize: "60px", color: "success.main" }} />
               <Typography sx={{ mt: 2, mb: 1 }}>
                 Account Registering Process Finished !!
               </Typography>
@@ -544,7 +552,8 @@ export default function Register() {
                   <Button
                     loading={
                       registerStepOneMutation.isPending ||
-                      registerStepTwoMutation.isPending
+                      registerStepTwoMutation.isPending ||
+                      individualMutation.isPending
                     }
                     variant="contained"
                     type={isLastStep ? "submit" : "button"}

@@ -26,6 +26,7 @@ import { useThemeStore } from "../../store/Appstore";
 import { useUserStore } from "../../store/UserStore";
 import { useMutation } from "@tanstack/react-query";
 import { logoutUser } from "../../helper/authApiFunctions";
+import { useSeekerProfileStore } from "../../store/ProfileStore";
 
 function findRefForPath(
   pathname: string,
@@ -41,6 +42,7 @@ function findRefForPath(
 
 export default function Header() {
   const user = useUserStore((state) => state.user);
+  const seekerProfile = useSeekerProfileStore((state) => state.seekerProfile);
   const setUserData = useUserStore((state) => state.setUserData);
   const accessToken = localStorage.getItem("token");
 
@@ -254,7 +256,21 @@ export default function Header() {
                   aria-expanded={open ? "true" : undefined}
                   onClick={handleClick}
                 >
-                  <Avatar sx={{ width: 32, height: 32 }} />
+                  {user?.user_type == "seeker" && (
+                    <img
+                      src={`${import.meta.env.VITE_API_BASE_URL}/${seekerProfile.image}`}
+                      alt={"SeekerProfile"}
+                      style={{
+                        width: "32px",
+                        height: "32px",
+                        borderRadius: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  )}
+                  {!seekerProfile.image && (
+                    <Avatar sx={{ width: 32, height: 32 }} />
+                  )}
                 </Button>
                 <Menu
                   id="basic-menu"

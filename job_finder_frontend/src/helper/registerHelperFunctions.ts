@@ -18,3 +18,23 @@ export const registerStepTwo = async ({
   );
   return response;
 };
+
+export const individual = async ({
+  userID,
+  userData,
+}: {
+  userID: number | null;
+  userData: FormData;
+}) => {
+  const response = await axiosClient.post(
+    `/registersteptwo/${userID}`,
+    userData,
+    {
+      params: {
+        detail: "individual",
+      },
+    },
+  );
+
+  return response;
+};
