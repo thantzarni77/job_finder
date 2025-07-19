@@ -45,32 +45,14 @@ class SeekerController extends Controller
         try {
             $data = Seeker::where("user_id", $id)->get();
 
-            $newData = Seeker::where("user_id", $id)->first();
-
-            $parsed_data = [
-                "id"                => $newData['id'],
-                "skills"            => json_decode($newData['skills']),
-                "education"         => json_decode($newData['education']),
-                "work_experience"   => json_decode($newData['work_experience']),
-                "role"              => $newData['role'],
-                "talent"            => $newData['talent'],
-                "social_media_link" => json_decode($newData['social_media_link']),
-                "image"             => $newData['image'],
-                "bio"               => $newData['bio'],
-                "created_at"        => $newData['created_at'],
-                "updated_at"        => $newData['updated_at'],
-            ];
-
             if ($data->isEmpty()) {
                 return response()->json([
                     "message" => "Seeker data not found.",
                 ], 404);
             }
 
-            return response()->json([
-                "message" => "Success",
-                "data"    => $parsed_data,
-            ], 200);
+            return SeekerResource::collection($data);
+
         } catch (\Exception $e) {
             return response()->json([
                 "message" => "An error occurred.",
