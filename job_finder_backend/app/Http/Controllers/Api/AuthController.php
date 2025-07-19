@@ -80,7 +80,7 @@ class AuthController extends Controller
                 if ($isInIndividualEmployer) {
                     return $this->erorsResponse("User already registered as an individual employer", null, 409);
                 }
-
+                
                 $employerController = new EmployerController();
                 return $employerController->store($request, $userData->id);
             }
