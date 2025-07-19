@@ -1,10 +1,10 @@
 import {
+  Alert,
   Box,
   FormHelperText,
   IconButton,
   OutlinedInput,
   styled,
-  TextField,
   Typography,
 } from "@mui/material";
 import {
@@ -12,9 +12,10 @@ import {
   VisibilityOff as VisibilityOffIcon,
 } from "@mui/icons-material";
 import CloseIcon from "@mui/icons-material/Close";
-import FileUploadIcon from "@mui/icons-material/FileUpload";
-import { useFormContext } from "react-hook-form";
-import React, { useEffect, useRef, useState } from "react";
+import CustomFIleUpload from "../../components/custom_svg/CustomFIleUpload";
+import { Controller, useFormContext } from "react-hook-form";
+import React, { useRef, useState } from "react";
+import { useRegisterStore } from "../../store/RegisterStore";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -29,57 +30,18 @@ const VisuallyHiddenInput = styled("input")({
 });
 
 const CompanyInfoForm = () => {
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const registerErrors = useRegisterStore((state) => state.errors);
+  const removeErrMessage = useRegisterStore(
+    (state) => state.removeRegisterErrors,
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [showPassword, setShowPassword] = useState(false);
   const {
     register,
+    control,
     formState: { errors },
   } = useFormContext();
-
-  useEffect(() => {
-    //prevent memory leak
-    return () => {
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-      }
-    };
-  }, [previewUrl]);
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      const files = Array.from(event.target.files);
-      setSelectedFiles(files);
-
-      //create preview url for first file
-      const firstFile = files[0];
-      const newPreviewUrl = URL.createObjectURL(firstFile);
-
-      // clean up the old URL
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-      }
-      setPreviewUrl(newPreviewUrl);
-    }
-  };
-
-  const handleClear = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.stopPropagation();
-    setSelectedFiles([]);
-    setPreviewUrl(null);
-    //  reset the file input value  so the user can re-select the same file
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
-
-  const handleContainerClick = () => {
-    if (!previewUrl) {
-      fileInputRef.current?.click();
-    }
-  };
 
   return (
     <Box
@@ -154,13 +116,6 @@ const CompanyInfoForm = () => {
       {/* company phone */}
       <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
         <Typography
-          {...register("companyPhone", {
-            required: "Company phone is required",
-            maxLength: {
-              value: 12,
-              message: "Invalid Phone Number",
-            },
-          })}
           component="label"
           htmlFor="companyPhone"
           sx={{ fontWeight: 300 }}
@@ -168,10 +123,17 @@ const CompanyInfoForm = () => {
           Company Phone
         </Typography>
         <OutlinedInput
+          {...register("companyPhone", {
+            required: "Company phone is required",
+            maxLength: {
+              value: 12,
+              message: "Invalid Phone Number",
+            },
+          })}
           id="companyPhone"
           type="text"
           fullWidth
-          placeholder="Please enter your company phone no"
+          placeholder="Please enter your company phone number"
           error={!!errors.companyPhone}
         />
         {errors.companyPhone && (
@@ -208,115 +170,147 @@ const CompanyInfoForm = () => {
             {errors.companyEmail.message as string}
           </FormHelperText>
         )}
+        {registerErrors && registerErrors.company_email && (
+          <Alert
+            sx={{ borderRadius: 3 }}
+            variant="outlined"
+            severity="error"
+            onClose={() => {
+              removeErrMessage();
+            }}
+          >
+            {registerErrors.company_email}
+          </Alert>
+        )}
       </Box>
 
-      {/* seeker profile  */}
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "8px",
-          width: "full",
-        }}
-      >
-        <Typography
-          component="label"
-          htmlFor="cv"
-          sx={{
-            fontWeight: 300,
-          }}
-        >
-          Upload Company Profile
-          <span style={{ color: "#ef4444" }}>*</span>
-        </Typography>
+      {/* company profile  */}
+      <Controller
+        name="companyProfile"
+        control={control}
+        rules={{ required: "Company profile is required" }}
+        render={({ field: { onChange, value: selectedFile } }) => {
+          const previewUrl = selectedFile
+            ? URL.createObjectURL(selectedFile)
+            : null;
 
-        {/* company image */}
-        <Box
-          onClick={handleContainerClick}
-          sx={{
-            width: "100%",
-            height: "220px",
-            border: "1px solid",
-            borderColor: "primary.main",
-            borderRadius: "13px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "background.paper",
-            cursor: previewUrl ? "default" : "pointer", // Change cursor based on state
-            transition: "background-color 0.2s ease",
-            position: "relative",
-            overflow: "hidden",
-            "&:hover": {
-              backgroundColor: previewUrl
-                ? "background.paper"
-                : "backgorund.default",
-            },
-          }}
-        >
-          <VisuallyHiddenInput
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={handleFileChange}
-          />
+          const handleContainerClick = () => {
+            if (!previewUrl) {
+              fileInputRef.current?.click();
+            }
+          };
 
-          {previewUrl ? (
-            // --- Preview State ---
-            <>
-              <img
-                src={previewUrl}
-                alt="Image preview"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
-              />
-              <IconButton
-                onClick={handleClear}
-                size="small"
+          const handleClear = (event: React.MouseEvent<HTMLButtonElement>) => {
+            event.stopPropagation();
+            onChange(null);
+            if (fileInputRef.current) {
+              fileInputRef.current.value = "";
+            }
+          };
+
+          return (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "8px",
+                width: "full",
+              }}
+            >
+              <Typography
+                component="label"
                 sx={{
-                  position: "absolute",
-                  top: 8,
-                  right: 8,
-                  backgroundColor: "rgba(255, 255, 255, 0.7)",
+                  fontWeight: 300,
+                }}
+              >
+                Upload Company Image
+              </Typography>
+
+              {/* Image Preview Section */}
+              <Box
+                onClick={handleContainerClick}
+                sx={{
+                  width: "50%",
+                  height: { xs: "150px", md: "300px" },
+                  border: "1px dashed",
+                  borderRadius: "13px",
+                  borderColor: errors.image ? "error.main" : "primary.light",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: "background.paper",
+                  cursor: previewUrl ? "default" : "pointer",
+                  transition: "background-color 0.2s ease",
+                  position: "relative",
+                  overflow: "hidden",
                   "&:hover": {
-                    backgroundColor: "rgba(255, 255, 255, 0.9)",
+                    backgroundColor: previewUrl
+                      ? "background.paper"
+                      : "action.hover",
                   },
                 }}
               >
-                <CloseIcon fontSize="small" />
-              </IconButton>
-              {selectedFiles.length > 1 && (
-                <Box
-                  sx={{
-                    position: "absolute",
-                    bottom: 8,
-                    right: 8,
-                    backgroundColor: "rgba(0, 0, 0, 0.6)",
-                    color: "white",
-                    padding: "2px 8px",
-                    borderRadius: "12px",
-                    fontSize: "0.75rem",
-                  }}
-                >
-                  + {selectedFiles.length - 1} more
-                </Box>
+                <VisuallyHiddenInput
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) =>
+                    onChange(e.target.files ? e.target.files[0] : null)
+                  }
+                />
+
+                {previewUrl ? (
+                  <>
+                    <img
+                      src={previewUrl}
+                      alt="Image preview"
+                      onLoad={() => URL.revokeObjectURL(previewUrl)}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                    <IconButton
+                      onClick={handleClear}
+                      size="small"
+                      sx={{
+                        position: "absolute",
+                        top: 8,
+                        right: 8,
+                        backgroundColor: "rgba(255, 255, 255, 0.7)",
+                        "&:hover": {
+                          backgroundColor: "rgba(255, 255, 255, 0.9)",
+                        },
+                      }}
+                    >
+                      <CloseIcon fontSize="small" />
+                    </IconButton>
+                    {/* CHANGE 4: Removed the "+X more" badge */}
+                  </>
+                ) : (
+                  <Box
+                    sx={{
+                      textAlign: "center",
+                      color: "text.secondary",
+                    }}
+                  >
+                    <CustomFIleUpload />
+                  </Box>
+                )}
+              </Box>
+              {errors.companyProfile && (
+                <FormHelperText error sx={{ mt: 1 }}>
+                  {errors.companyProfile.message as string}
+                </FormHelperText>
               )}
-            </>
-          ) : (
-            // --- Initial State ---
-            <Box sx={{ textAlign: "center", color: "text.secondary" }}>
-              <FileUploadIcon />
             </Box>
-          )}
-        </Box>
-      </Box>
+          );
+        }}
+      />
 
       {/* Company Descripton */}
-      <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+      {/* <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
         <Typography
           component="label"
           htmlFor="companyDescription"
@@ -344,7 +338,7 @@ const CompanyInfoForm = () => {
             {errors.companyDescription.message as string}
           </FormHelperText>
         )}
-      </Box>
+      </Box> */}
 
       {/* company type */}
       <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
@@ -366,7 +360,7 @@ const CompanyInfoForm = () => {
           id="companyType"
           type="text"
           fullWidth
-          placeholder="Please enter your company type"
+          placeholder="eg. IT, Media, Sporting, "
           error={!!errors.companyType}
         />
         {errors.companyType && (

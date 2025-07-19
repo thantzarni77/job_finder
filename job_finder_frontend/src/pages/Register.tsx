@@ -16,6 +16,15 @@ import SeekerDetailsFrom from "./registerComponent/SeekerDetailsForm";
 import CompanyInfoForm from "./registerComponent/CompanyInfoForm";
 import ContactToAdminForm from "./registerComponent/ContactToAdminForm";
 import { FormProvider, useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+import {
+  registerStepOne,
+  registerStepTwo,
+} from "../helper/registerHelperFunctions";
+import { useNavigate } from "react-router";
+import { useUserStore } from "../store/UserStore";
+import { useRegisterStore } from "../store/RegisterStore";
+import { isAxiosError } from "axios";
 
 const STEP_LABELS = {
   YOUR_DETAILS_AND_ROLE: "Your Details & Role",
@@ -39,6 +48,7 @@ type RegisterFormData = {
   email: string;
   userType: "seeker" | "employer";
   phone?: string;
+  address?: string;
 
   // From SeekerDetailsForm.tsx
   skills?: { value: string }[];
@@ -56,8 +66,8 @@ type RegisterFormData = {
   companyAddress?: string;
   companyPhone?: string;
   companyEmail?: string;
-  companyDescription?: string;
   companyType?: string;
+  companyProfile?: File;
   companyPassword?: string;
 
   // From ContactToAdminForm
@@ -69,11 +79,51 @@ type RegisterFormData = {
 };
 
 export default function Register() {
+  const navigate = useNavigate();
+
+  const setToken = useUserStore((state) => state.setToken);
+
+  //register state logic
+  const firstUserID = useRegisterStore((state) => state.firstUserID);
+  const setFirstUserID = useRegisterStore((state) => state.setFirstUserID);
+  const setRegisterErrors = useRegisterStore(
+    (state) => state.setRegisterErrors,
+  );
+
+  const registerStepOneMutation = useMutation({
+    mutationFn: registerStepOne,
+    onSuccess: (data) => {
+      setFirstUserID(data.data.id);
+      setActiveStep((prev) => prev + 1);
+    },
+    onError: (err) => {
+      if (isAxiosError(err)) {
+        setRegisterErrors(err.response?.data.data);
+      }
+    },
+  });
+
+  const registerStepTwoMutation = useMutation({
+    mutationFn: registerStepTwo,
+    onSuccess: (res) => {
+      setToken(res.data.token);
+      setActiveStep((prev) => prev + 1);
+      setTimeout(() => {
+        navigate("/");
+      }, 4000);
+    },
+    onError: (err) => {
+      if (isAxiosError(err)) {
+        setRegisterErrors(err.response?.data.data);
+      }
+    },
+  });
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const methods = useForm<RegisterFormData>({
-    mode: "onBlur",
+    mode: "all",
     defaultValues: {
       skills: [{ value: "" }],
       work_experience: [{ value: "" }],
@@ -81,6 +131,7 @@ export default function Register() {
       social_media_link: [{ value: "" }],
     },
   });
+
   const { handleSubmit, trigger, getValues, watch } = methods;
 
   const userType = watch("userType");
@@ -92,6 +143,7 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
 
   const onFinalSubmit = (data: RegisterFormData) => {
+    //seeker register
     if (userType == "seeker") {
       const {
         skills,
@@ -155,16 +207,46 @@ export default function Register() {
         seekerInfo.append("image", image);
       }
       if (seekerPassword) {
-        seekerInfo.append("seekerPassword", seekerPassword);
+        seekerInfo.append("password", seekerPassword);
       }
 
-      console.log("Seeker Details Payload:");
-      for (const [key, value] of seekerInfo.entries()) {
-        console.log(key, value);
-      }
+      registerStepTwoMutation.mutate({
+        userID: firstUserID,
+        userData: seekerInfo,
+      });
     }
 
-    setActiveStep((prev) => prev + 1);
+    //company register
+    if (employerType == "company") {
+      console.log(data);
+
+      const {
+        companyName,
+        companyAddress,
+        companyPhone,
+        companyEmail,
+        companyType,
+        companyProfile,
+        companyPassword,
+      } = data;
+
+      const companyFormData = new FormData();
+      if (companyName) companyFormData.append("company_name", companyName);
+      if (companyAddress)
+        companyFormData.append("company_address", companyAddress);
+      if (companyPhone) companyFormData.append("company_phone", companyPhone);
+      if (companyEmail) companyFormData.append("company_email", companyEmail);
+      if (companyType) companyFormData.append("company_type", companyType);
+      companyFormData.append("verification", "pending");
+      if (companyProfile)
+        companyFormData.append("company_image", companyProfile);
+      if (companyPassword) companyFormData.append("password", companyPassword);
+
+      registerStepTwoMutation.mutate({
+        userID: firstUserID,
+        userData: companyFormData,
+      });
+    }
   };
 
   const handleNext = async () => {
@@ -189,8 +271,8 @@ export default function Register() {
         "companyAddress",
         "companyPhone",
         "companyEmail",
-        "companyDescription",
         "companyType",
+        "companyProfile",
         "companyPassword",
       ],
       [STEP_LABELS.ADMIN_CONTACT]: ["title", "message"],
@@ -221,19 +303,23 @@ export default function Register() {
       }
     }
 
-    // API Calls can remain here
+    //register first setep
     if (currentStepLabel === STEP_LABELS.YOUR_DETAILS_AND_ROLE) {
-      const { name, email, phone, userType } = getValues();
-      //api call here
-      console.log("API CALL: Registering initial details...", {
-        name,
-        email,
-        phone,
-        userType,
-      });
-    }
+      const { name, email, phone, address, userType } = getValues();
+      const userData = new FormData();
+      userData.append("name", name);
+      userData.append("email", email);
+      if (phone) {
+        userData.append("phone", phone);
+      }
 
-    if (
+      if (address) {
+        userData.append("address", address);
+      }
+
+      userData.append("user_type", userType);
+      registerStepOneMutation.mutate(userData);
+    } else if (
       employerType == "individual" &&
       currentStepLabel === STEP_LABELS.ADMIN_CONTACT
     ) {
@@ -242,21 +328,14 @@ export default function Register() {
         title,
         message,
       });
+    } else {
+      setActiveStep((prev) => prev + 1);
     }
-
-    // 4. Advance to the next step
-    setActiveStep((prev) => prev + 1);
   };
 
-  const handleBack = () => {
-    setActiveStep((prev) => prev - 1);
-  };
-
-  const handleReset = () => {
-    setActiveStep(0);
-    setSteps([STEP_LABELS.YOUR_DETAILS_AND_ROLE]);
-    methods.reset();
-  };
+  // const handleBack = () => {
+  //   setActiveStep((prev) => prev - 1);
+  // };
 
   const handleSelectIndividual = () => {
     setEmployerType("individual");
@@ -421,9 +500,11 @@ export default function Register() {
           {activeStep === steps.length ? (
             <Box sx={{ textAlign: "center", mt: 4 }}>
               <Typography sx={{ mt: 2, mb: 1 }}>
-                All steps completed - you&apos;re finished!
+                Account Registering Process Finished !!
               </Typography>
-              <Button onClick={handleReset}>Start Over</Button>
+              <Typography sx={{ mt: 2, mb: 1 }}>
+                Redirecting to home page.....
+              </Typography>
             </Box>
           ) : (
             <>
@@ -437,24 +518,35 @@ export default function Register() {
                   width: "100%",
                 }}
               >
-                <Button
+                {/* <Button
                   color="inherit"
                   disabled={activeStep === 0}
                   onClick={handleBack}
                   sx={{ mr: 1, borderRadius: 2 }}
                 >
                   Back
-                </Button>
+                </Button> */}
                 <Box sx={{ flex: "1 1 auto" }} />
 
                 {![STEP_LABELS.CHOOSE_EMPLOYER_TYPE].includes(
                   steps[activeStep],
                 ) && (
                   <Button
+                    loading={
+                      registerStepOneMutation.isPending ||
+                      registerStepTwoMutation.isPending
+                    }
                     variant="contained"
                     type={isLastStep ? "submit" : "button"}
                     onClick={isLastStep ? undefined : handleNext}
-                    sx={{ borderRadius: 2 }}
+                    sx={{
+                      textTransform: "none",
+                      borderRadius: 2,
+                      boxShadow: "none",
+                      ":hover": {
+                        boxShadow: "none",
+                      },
+                    }}
                   >
                     {isLastStep ? "Finish" : "Next"}
                   </Button>

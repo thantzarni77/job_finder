@@ -4,8 +4,10 @@ import {
   OutlinedInput,
   Typography,
   Button,
+  Alert,
 } from "@mui/material";
 import { useFormContext } from "react-hook-form";
+import { useRegisterStore } from "../../store/RegisterStore";
 
 const UserDetailsForm = () => {
   const {
@@ -14,6 +16,11 @@ const UserDetailsForm = () => {
     setValue,
     watch,
   } = useFormContext();
+
+  const registerErrors = useRegisterStore((state) => state.errors);
+  const removeErrMessage = useRegisterStore(
+    (state) => state.removeRegisterErrors,
+  );
 
   //to update button style
   const userType = watch("userType");
@@ -73,6 +80,18 @@ const UserDetailsForm = () => {
             {errors.email.message as string}
           </FormHelperText>
         )}
+        {registerErrors && registerErrors.email && (
+          <Alert
+            sx={{ borderRadius: 3 }}
+            variant="outlined"
+            severity="error"
+            onClose={() => {
+              removeErrMessage();
+            }}
+          >
+            {registerErrors.email}
+          </Alert>
+        )}
       </Box>
 
       {/* Phone Number Field */}
@@ -90,6 +109,41 @@ const UserDetailsForm = () => {
         {errors.phone && (
           <FormHelperText error>
             {errors.phone.message as string}
+          </FormHelperText>
+        )}
+        {registerErrors && registerErrors.phone && (
+          <Alert
+            sx={{ borderRadius: 3 }}
+            variant="outlined"
+            severity="error"
+            onClose={() => {
+              removeErrMessage();
+            }}
+          >
+            {registerErrors.phone}
+          </Alert>
+        )}
+      </Box>
+
+      {/* Address Field */}
+      <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+        <Typography
+          component="label"
+          htmlFor="address"
+          sx={{ fontWeight: 300 }}
+        >
+          Your Address <span style={{ color: "#888" }}>(Optional)</span>
+        </Typography>
+        <OutlinedInput
+          {...register("address")}
+          id="address"
+          type="text"
+          placeholder="Enter your address"
+          error={!!errors.address}
+        />
+        {errors.address && (
+          <FormHelperText error>
+            {errors.address.message as string}
           </FormHelperText>
         )}
       </Box>
