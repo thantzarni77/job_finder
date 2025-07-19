@@ -71,6 +71,7 @@ class EmployerController extends Controller
                 "company_email" => "required|email|unique:employers",
                 "company_type" => "required",
                 "verification" => "required",
+                "company_description" => "required",
                 "company_image" => "required",
                 "password" => "required|min:8"
             ]);
@@ -89,6 +90,7 @@ class EmployerController extends Controller
             $employer->company_email = $request['company_email'];
             $employer->company_type = $request['company_type'];
             $employer->verification = $request['verification'];
+            $employer->company_description = $request["company_description"];
     
             if(file_exists($request['company_image'])){
                 $file = $request['company_image'];
@@ -126,7 +128,8 @@ class EmployerController extends Controller
             "company_email" => "required|email",
             "company_type" => "required",
             "verification" => "required",
-            "company_image" => "required"
+            "company_image" => "required",
+            "company_description" => "required",
         ]);
 
         if($validator->fails()){
@@ -144,6 +147,7 @@ class EmployerController extends Controller
         $employer->company_email = $request['company_email'];
         $employer->company_type = $request['company_type'];
         $employer->verification = $request['verification'];
+        $employer->company_description = $request["company_description"];
 
         if($request->hasFile('company_image')){
             $path = $employer->company_image;

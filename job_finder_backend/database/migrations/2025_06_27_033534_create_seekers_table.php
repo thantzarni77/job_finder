@@ -17,8 +17,8 @@ return new class extends Migration
             $table->json('skills');
             $table->json('education');
             $table->json('work_experience');
-            $table->enum('role', ['junior', 'mid-level', 'senior'])->default('junior')->nullable();
-            $table->enum('talent', ['Developer', 'Designer', 'Marketer', 'Writer', 'Manager', 'Coordinator', 'Architect', 'Analyst', 'Other'])->default('Other')->nullable();
+            $table->string("role");
+            $table->enum('talent',['Developer', 'Designer', 'Marketer', 'Writer','Manager','Coordinator','Architect', 'Analyst','Other'])->default('Other')->nullable();
             $table->json('social_media_link')->nullable();
             $table->string('image');
             $table->string('password')->nullable();
