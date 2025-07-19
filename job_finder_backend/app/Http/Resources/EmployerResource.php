@@ -22,10 +22,9 @@ class EmployerResource extends JsonResource
             "company_phone" => $this->company_phone ,
             "company_email" => $this->company_email ,
             "company_image" => $this->company_image ,
-            "company_description" => $this->company_description ,
             "company_type" => $this->company_type ,
             "verification" => $this->verification ,
-            "user_id" => User::where('id', $this->user_id)->select('id','name')->first()
+            "user_id" => User::where('id', $this->user_id)->select('id','name','phone','address')->first()
         ];
     }
 }

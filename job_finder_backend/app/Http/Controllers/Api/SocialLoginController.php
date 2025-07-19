@@ -32,24 +32,24 @@ class SocialLoginController extends Controller
                 $name = $payload['name'] ?? null;
 
                 $refresh_token = Str::random(60);
-                
+
                 $user = User::UpdateOrCreate(['provider_id' => $googleId], [
                     "name" => $name,
                     "provider" => $provider,
                     "provider_id" => $googleId,
                     "provider_token" => $idToken,
                     "profile_picture" => $payload['picture'] ?? null,
-                    "email" => $email
+                "email" => $email
                 ]);
 
                 $token = JWTAuth::fromUser($user);
                 return $this->SuccessAuthResponse("Login successfully",$user,$token)->cookie('refresh_token', $refresh_token, 60 * 24 * 7, null, null, true, true);
-                
+
             }
 
         }catch(JWTException $e){
             return $this->erorsResponse("Unauthenticated",null,401);
         }
-        
+
     }
 }
