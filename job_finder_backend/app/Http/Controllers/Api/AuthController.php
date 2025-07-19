@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Controllers\Api;
 
+use App\Models\Employer;
+use App\Models\IndividualEmployer;
 use App\Models\Seeker;
 use App\Models\User;
 use Illuminate\Support\Str;
@@ -53,38 +55,48 @@ class AuthController extends Controller
         }
     }
 
-    public function registerStepTwo(Request $request,string $id){
-        
+    public function registerStepTwo(Request $request, string $id)
+    {
         try {
-
             $userData = User::where("id", $id)->first();
-            
-            if ($request->has('role') && $request->role === 'individual') {
-                $individualEmployerController = new IndividualEmployerController();
-                return $individualEmployerController->store($request, $userData->id);
-            }
-        
+
             if (!$userData) {
                 return $this->erorsResponse("User not found", null, 404);
             }
-        
+
+            $isInEmployer = Employer::where('user_id', $userData->id)->exists();
+            $isInIndividualEmployer = IndividualEmployer::where('user_id', $userData->id)->exists();
+
+            if ($request->has('detail') && $request->detail === 'individual') {
+                if ($isInEmployer) {
+                    return $this->erorsResponse("User already registered as an employer", null, 409);
+                }
+
+                $individualEmployerController = new IndividualEmployerController();
+                return $individualEmployerController->store($request, $userData->id);
+            }
+
             if ($userData->user_type === "employer") {
+                if ($isInIndividualEmployer) {
+                    return $this->erorsResponse("User already registered as an individual employer", null, 409);
+                }
+
                 $employerController = new EmployerController();
                 return $employerController->store($request, $userData->id);
             }
-        
+
             if ($userData->user_type === "seeker") {
                 $seekerController = new SeekerController();
                 return $seekerController->store($request, $userData->id);
             }
-        
-            return $this->erorsResponse("User type is invalid", null, 404);
-        
+
+            return $this->erorsResponse("User type is invalid", null, 400);
+
         } catch (\Exception $e) {
-            return $this->erorsResponse("Unexpected error occurred", null, 500);
+            return $this->erorsResponse("Unexpected error occurred", $e->getMessage(), 500);
         }
-        
     }
+
 
 
     public function login(Request $request)
