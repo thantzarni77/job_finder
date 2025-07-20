@@ -2,19 +2,19 @@ import React from "react";
 import { useUserStore } from "../store/UserStore";
 import { Navigate } from "react-router";
 import axiosClient from "../helper/axiosClient";
-import { useSeekerProfileStore } from "../store/ProfileStore";
+import { useProfileStore } from "../store/ProfileStore";
 
 const IsLoginnedMiddleware = ({ children }: { children: React.ReactNode }) => {
   const user = useUserStore((state) => state.user);
   const setUserData = useUserStore((state) => state.setUserData);
   const setToken = useUserStore((state) => state.setToken);
 
-  const setSeekerProfile = useSeekerProfileStore(
-    (state) => state.setSeekerProfile,
+  const setSeekerProfile = useProfileStore((state) => state.setSeekerProfile);
+  const setEmployerProfile = useProfileStore(
+    (state) => state.setEmployerProfile,
   );
-  const accessToken = localStorage.getItem("token");
 
-  console.log(user?.user_type);
+  const accessToken = localStorage.getItem("token");
 
   if (user) {
     return children;
@@ -32,6 +32,16 @@ const IsLoginnedMiddleware = ({ children }: { children: React.ReactNode }) => {
             .get(`/seeker-data/${user.user_id}`)
             .then((res) => {
               setSeekerProfile(res.data.data[0]);
+            })
+            .then(() => {
+              return children;
+            });
+        }
+        if (user.user_type == "employer") {
+          axiosClient
+            .get(`/employer-data/${user.user_id}`)
+            .then((res) => {
+              setEmployerProfile(res.data.data[0]);
             })
             .then(() => {
               return children;

@@ -17,42 +17,35 @@ import { Facebook, Instagram } from "@mui/icons-material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import UserProjectImage from "../../assets/Rectangle 94.png";
 import { useNavigate, useParams } from "react-router";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getSeekerProfile } from "../../helper/profileApiFunctions";
 import { useEffect } from "react";
-import { useSeekerProfileStore } from "../../store/ProfileStore";
+import { useProfileStore } from "../../store/ProfileStore";
 import FullScreenLoader from "../../components/FullScreenLoader";
 
 export default function Profile() {
-  const queryClient = useQueryClient();
   const exampleLink = "https://github.com/thantzarni77/job_finder/tree/main";
   const navigate = useNavigate();
 
   const { id } = useParams();
+  const user_id = Number(id);
 
-  const seekerProfile = useSeekerProfileStore((state) => state.seekerProfile);
-  const setSeekerProfile = useSeekerProfileStore(
-    (state) => state.setSeekerProfile,
-  );
+  const seekerProfile = useProfileStore((state) => state.seekerProfile);
+  const setSeekerProfile = useProfileStore((state) => state.setSeekerProfile);
 
   const seekerProfileQuery = useQuery({
-    queryKey: ["seekerProfile"],
+    enabled: !seekerProfile,
+    queryKey: ["seekerProfile", user_id],
     queryFn: () => {
-      return getSeekerProfile(id);
+      return getSeekerProfile(user_id);
     },
   });
 
   useEffect(() => {
     if (seekerProfileQuery.data && seekerProfileQuery.isSuccess) {
-      queryClient.invalidateQueries({ queryKey: ["seekerProfile"] });
       setSeekerProfile(seekerProfileQuery.data.data.data[0]);
     }
-  }, [
-    seekerProfileQuery.data,
-    seekerProfileQuery.isSuccess,
-    setSeekerProfile,
-    queryClient,
-  ]);
+  }, [seekerProfileQuery.data, seekerProfileQuery.isSuccess, setSeekerProfile]);
 
   return (
     <Container sx={{ py: 3, mb: 20 }} maxWidth="lg">
@@ -80,7 +73,7 @@ export default function Profile() {
             />
             <Box>
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                {/* {seekerProfile.user_id.name} */}
+                {seekerProfile.user_id.name}
               </Typography>
               <Typography variant="body2" sx={{ opacity: 0.8 }}>
                 {seekerProfile.talent}
@@ -190,33 +183,56 @@ export default function Profile() {
           <Box sx={{ mt: 4 }}>
             <Typography variant="h6">Experience</Typography>
 
-            {seekerProfile.work_experience.map((single, index) => {
-              return (
-                <Box key={index}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1,
-                      my: 1,
-                    }}
-                  >
-                    <WorkIcon color="primary" />
-                    <Box sx={{ display: "flex", flexDirection: "column" }}>
-                      <Typography
-                        variant="body2"
-                        sx={{ color: "text.secondary" }}
-                      >
-                        {single}
-                      </Typography>
-                      <Typography variant="body2" color="primary">
-                        2018 - 2022
-                      </Typography>
+            {seekerProfile.work_experience &&
+              seekerProfile.work_experience.map((single, index) => {
+                return (
+                  <Box key={index}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                        my: 1,
+                      }}
+                    >
+                      <WorkIcon color="primary" />
+                      <Box sx={{ display: "flex", flexDirection: "column" }}>
+                        <Typography
+                          variant="body2"
+                          sx={{ color: "text.secondary" }}
+                        >
+                          {single}
+                        </Typography>
+                        <Typography variant="body2" color="primary">
+                          2018 - 2022
+                        </Typography>
+                      </Box>
                     </Box>
                   </Box>
+                );
+              })}
+            {!seekerProfile.work_experience && (
+              <Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                    my: 1,
+                  }}
+                >
+                  <WorkIcon color="primary" />
+                  <Box sx={{ display: "flex", flexDirection: "column" }}>
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      No Exp...
+                    </Typography>
+                  </Box>
                 </Box>
-              );
-            })}
+              </Box>
+            )}
           </Box>
 
           <Box sx={{ mt: 4 }}>
