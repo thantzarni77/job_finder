@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Contact;
 use App\Models\IndividualEmployer;
 use App\Models\User;
 use App\Traits\HttpResponseTrait;
@@ -17,7 +18,7 @@ class IndividualEmployerController extends Controller
     use HttpResponseTrait;
 
     public function index(){
-        $individualemployer = IndividualEmployer::all();
+        $individualemployer = Contact::all();
         return response()->json([
             "statusCode" => "200",
             "message" => "passes",
@@ -27,7 +28,7 @@ class IndividualEmployerController extends Controller
 
     public function getdata(string $id){
         try{
-            $data = IndividualEmployer::findOrFail($id);
+            $data = Contact::findOrFail($id);
             return response()->json([
                 "data" => $data
             ]);
@@ -40,7 +41,7 @@ class IndividualEmployerController extends Controller
 
     public function getIndiEmployerData(string $id){
         try {
-            $data = IndividualEmployer::where("user_id", $id)->get();
+            $data = Contact::where("user_id", $id)->get();
     
             if ($data->isEmpty()) {
                 return response()->json([
@@ -75,7 +76,7 @@ class IndividualEmployerController extends Controller
         
             $refresh_token = Str::random(60);
             $user_id = $id;
-            $individualemployer = new IndividualEmployer();
+            $individualemployer = new Contact();
             $individualemployer->title = $request->title;
             $individualemployer->message = $request->message;
             $individualemployer->user_id = $user_id;
