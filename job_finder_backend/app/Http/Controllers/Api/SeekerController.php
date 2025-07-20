@@ -64,10 +64,12 @@ class SeekerController extends Controller
     public function store(Request $request, string $id)
     {
 
+    public function store(Request $request,string $id){
+        
         $validator = Validator::make($request->all(), [
             "skills"            => "required",
             "education"         => "required",
-            "work_experience"   => "required",
+            "work_experience"   => "nullable",
             "role"              => "required",
             "bio"               => "required",
             "talent"            => "required",
@@ -117,10 +119,12 @@ class SeekerController extends Controller
     public function update(Request $request, string $id)
     {
 
+    public function update(Request $request,string $id){
+     
         $validator = Validator::make($request->all(), [
             "skills"            => "required",
             "education"         => "required",
-            "work_experience"   => "required",
+            "work_experience"   => "nullable",
             "role"              => "required",
             "bio"               => "required",
             "talent"            => "required",

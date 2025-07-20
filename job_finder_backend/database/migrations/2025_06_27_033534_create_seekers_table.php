@@ -16,7 +16,7 @@ return new class extends Migration
             $table->integer('user_id');
             $table->json('skills');
             $table->json('education');
-            $table->json('work_experience');
+            $table->json('work_experience')->nullable();
             $table->string("role");
             $table->enum('talent',['Developer', 'Designer', 'Marketer', 'Writer','Manager','Coordinator','Architect', 'Analyst','Other'])->default('Other')->nullable();
             $table->json('social_media_link')->nullable();
