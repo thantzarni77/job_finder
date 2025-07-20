@@ -1,7 +1,7 @@
 import { Avatar, Box, Button, Paper, Typography } from "@mui/material";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import { NavLink } from "react-router";
-import CustomApplicantBlack from "../custom_svg/CustomApplicantBlack";
+import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import ApartmentIcon from "@mui/icons-material/Apartment";
 
 const EmployerCard = () => {
@@ -14,9 +14,10 @@ const EmployerCard = () => {
       <Paper
         elevation={1}
         sx={{
+          mx: { xs: "none", sm: "auto", md: "auto", lg: "none" },
           display: "flex",
           flexDirection: "column",
-          width: "380px",
+          width: { xs: "100%", sm: "90%", md: "90%", lg: "380px" },
           borderRadius: "20px",
           boxShadow: "none",
           px: 3,
@@ -58,13 +59,13 @@ const EmployerCard = () => {
                   variant="body1"
                   sx={{
                     fontWeight: "700",
-                    color: "secondary.main",
+                    color: "text.secondary",
                     ":hover": { cursor: "pointer", color: "primary.main" },
                   }}
                 >
                   <NavLink to={"#"}>KBZ Bank</NavLink>
                 </Typography>
-                <Typography variant="caption" sx={{ color: "secondary.main" }}>
+                <Typography variant="caption" sx={{ color: "text.secondary" }}>
                   Bank
                 </Typography>
               </Box>
@@ -99,7 +100,7 @@ const EmployerCard = () => {
                 gap: 1,
               }}
             >
-              <CustomApplicantBlack />
+              <GroupsOutlinedIcon />
               <Typography variant="caption" sx={{ color: "primary.light" }}>
                 5,000 employees on site
               </Typography>
@@ -132,8 +133,19 @@ const EmployerCard = () => {
           sagittis enim orci ut est. Mattis varius malesuada bibendum pulvinar
           arcu.
         </Typography>
-        <Button variant="outlined" sx={{ my: 2, p: 1, borderRadius: "10px" }}>
-          Follow
+        <Button
+          variant="contained"
+          sx={{
+            my: 2,
+            p: 1,
+            borderRadius: "10px",
+            boxShadow: "none",
+            ":hover": {
+              boxShadow: "none",
+            },
+          }}
+        >
+          Search Jobs
         </Button>
       </Paper>
     </Box>
