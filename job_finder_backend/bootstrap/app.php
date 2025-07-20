@@ -1,8 +1,9 @@
 <?php
 
-use App\Http\Middleware\AuthMiddleware;
-use App\Http\Middleware\UserTypeMiddleware;
 use Illuminate\Foundation\Application;
+use App\Http\Middleware\AuthMiddleware;
+use Illuminate\Http\Middleware\HandleCors;
+use App\Http\Middleware\UserTypeMiddleware;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 
@@ -16,9 +17,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             "AuthMiddleware" => AuthMiddleware::class,
-            "UserTypeMiddleware" => UserTypeMiddleware::class
+            "UserTypeMiddleware" => UserTypeMiddleware::class,
+             
         ]);
     })
+   
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();

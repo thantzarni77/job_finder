@@ -6,18 +6,18 @@ const Password = () => {
   const navigate = useNavigate();
   return (
     <Container
-      onClick={() => navigate("/settings/user/1/security")}
+      onClick={() => navigate("/settings/user/1/security/changePassword")}
       sx={{
         display: "flex",
         alignItems: "flex-start",
         width: "100%",
         height: "fit-content",
-        bgcolor: "#ffffff",
+        bgcolor: "background.paper",
         borderRadius: "20px",
         my: 2,
         p: 2,
         ":hover": {
-          bgcolor: "#eeeeee",
+          bgcolor: "background.hover",
           cursor: "pointer",
         },
       }}
@@ -28,13 +28,13 @@ const Password = () => {
       <Box>
         <Typography
           variant="body1"
-          sx={{ fontWeight: 600, color: "secondary.main" }}
+          sx={{ fontWeight: 600, color: "text.secondary" }}
         >
           Password
         </Typography>
         <Typography
           variant="subtitle2"
-          sx={{ fontWeight: 400, color: "secondary.main" }}
+          sx={{ fontWeight: 400, color: "text.secondary" }}
         >
           Manage your password
         </Typography>
