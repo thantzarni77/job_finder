@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use App\Http\Controllers\Api\SeekerController;
+use App\Models\Contact;
 
 class AuthController extends Controller
 {
@@ -65,7 +66,7 @@ class AuthController extends Controller
             }
 
             $isInEmployer = Employer::where('user_id', $userData->id)->exists();
-            $isInIndividualEmployer = IndividualEmployer::where('user_id', $userData->id)->exists();
+            $isInIndividualEmployer = Contact::where('user_id', $userData->id)->exists();
 
             if ($request->has('detail') && $request->detail === 'individual') {
                 if ($isInEmployer) {

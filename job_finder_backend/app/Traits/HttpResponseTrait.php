@@ -30,6 +30,8 @@ trait HttpResponseTrait
                 'user_id' => $data->id,
                 'user_name' => $data->name,
                 'user_email' => $data->email,                
+                'user_phone' => $data->phone,                
+                'user_address' => $data->address,                
                 'user_type' => $data->user_type,
             ]
         ],$statuscode);
