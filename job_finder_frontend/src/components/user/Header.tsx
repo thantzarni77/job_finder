@@ -182,17 +182,17 @@ export default function Header() {
                   Jobs
                 </Button>
               </NavLink>
-              {userRole === "employer" && (
-                <NavLink to="/talents">
-                  <Button
-                    sx={{ fontWeight: "700", textTransform: "none" }}
-                    ref={talentRef}
-                    color="inherit"
-                  >
-                    Talents
-                  </Button>
-                </NavLink>
-              )}
+
+              <NavLink to="/talents">
+                <Button
+                  sx={{ fontWeight: "700", textTransform: "none" }}
+                  ref={talentRef}
+                  color="inherit"
+                >
+                  Talents
+                </Button>
+              </NavLink>
+
               {userRole == "seeker" && (
                 <NavLink to="/companies">
                   <Button

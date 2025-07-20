@@ -68,9 +68,11 @@ export default function EmployerProfile() {
               }}
             />
             <Box>
-              <Typography sx={{ fontWeight: 600 }}>KBZ Bank</Typography>
+              <Typography sx={{ fontWeight: 600 }}>
+                {employerData.company_name}
+              </Typography>
               <Typography variant="body2" sx={{ color: "primary.light" }}>
-                Banking
+                {employerData.company_type}
               </Typography>
             </Box>
           </Box>
