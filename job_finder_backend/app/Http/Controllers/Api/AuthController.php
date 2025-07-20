@@ -3,8 +3,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\SeekerController;
 use App\Http\Controllers\Controller;
+use App\Models\Contact;
 use App\Models\Employer;
-use App\Models\IndividualEmployer;
 use App\Models\User;
 use App\Traits\HttpResponseTrait;
 use Illuminate\Http\Request;
@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Tymon\JWTAuth\Exceptions\JWTException;
-use App\Models\Contact;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
@@ -62,7 +61,7 @@ class AuthController extends Controller
                 return $this->erorsResponse("User not found", null, 404);
             }
 
-            $isInEmployer = Employer::where('user_id', $userData->id)->exists();
+            $isInEmployer           = Employer::where('user_id', $userData->id)->exists();
             $isInIndividualEmployer = Contact::where('user_id', $userData->id)->exists();
 
             if ($request->has('detail') && $request->detail === 'individual') {

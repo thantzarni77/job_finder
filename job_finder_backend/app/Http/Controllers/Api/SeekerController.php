@@ -64,8 +64,6 @@ class SeekerController extends Controller
     public function store(Request $request, string $id)
     {
 
-    public function store(Request $request,string $id){
-        
         $validator = Validator::make($request->all(), [
             "skills"            => "required",
             "education"         => "required",
@@ -113,14 +111,11 @@ class SeekerController extends Controller
         $seeker->save();
 
         return $this->successResponseSeeker("Success created", $seeker, $token, 201)->cookie('refresh_token', $refresh_token, 60 * 24 * 7, null, null, true, true);
-
     }
 
     public function update(Request $request, string $id)
     {
 
-    public function update(Request $request,string $id){
-     
         $validator = Validator::make($request->all(), [
             "skills"            => "required",
             "education"         => "required",
