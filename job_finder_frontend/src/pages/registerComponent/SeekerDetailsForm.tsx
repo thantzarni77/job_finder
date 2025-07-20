@@ -43,7 +43,7 @@ const VisuallyHiddenInput = styled("input")({
 type SeekerFormValues = {
   skills: { value: string }[];
   education: { degree: string; year: string }[];
-  work_experience: { value: string }[];
+  work_experience: { workPos: string; year: string }[];
   role: string;
   bio: string;
   talent: string;
@@ -258,7 +258,7 @@ const SeekerDetailsFrom = () => {
                 htmlFor={`education.${index}.degree`}
                 sx={{ fontWeight: 300, fontSize: "0.9rem" }}
               >
-                Degree / Certificate
+                Degree / Certificate / Highschool
               </Typography>
               <OutlinedInput
                 {...register(`education.${index}.degree`, {
@@ -266,7 +266,7 @@ const SeekerDetailsFrom = () => {
                 })}
                 id={`education.${index}.degree`}
                 fullWidth
-                placeholder="e.g., B.S. in Computer Science"
+                placeholder="e.g., B.S. in Computer Science (or) CS50 (or) Highschool graduate"
                 error={!!errors.education?.[index]?.degree}
               />
               {errors.education?.[index]?.degree && (
@@ -291,7 +291,7 @@ const SeekerDetailsFrom = () => {
                 })}
                 id={`education.${index}.year`}
                 fullWidth
-                placeholder="e.g., 2016-2023"
+                placeholder="e.g, 2016-2023"
                 error={!!errors.education?.[index]?.year}
               />
               {errors.education?.[index]?.year && (
@@ -307,7 +307,7 @@ const SeekerDetailsFrom = () => {
       <Divider flexItem />
 
       {/* work exp */}
-      <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
         <Box
           sx={{
             display: "flex",
@@ -316,52 +316,87 @@ const SeekerDetailsFrom = () => {
           }}
         >
           <Typography component="label" sx={{ fontWeight: 300 }}>
-            Work experience
+            Work Experience
           </Typography>
           <IconButton
-            type="button" // Important: Prevents form submission
-            aria-label="add work exp"
-            onClick={() => workExpAppend({ value: "" })}
+            type="button"
+            aria-label="add education"
+            onClick={() => workExpAppend({ workPos: "", year: "" })}
           >
             <AddCircleOutlineIcon />
           </IconButton>
         </Box>
 
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
-          {/* Map over the fields array to render each input */}
-          {workExpFields.map((field, index) => {
-            const work_experience_errors =
-              errors.work_experience?.[index]?.value;
+        {workExpFields.map((field, index) => (
+          <Box
+            key={field.id}
+            sx={{
+              p: 2,
+              border: "1px solid",
+              borderColor: "divider",
+              borderRadius: 2,
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+              position: "relative",
+            }}
+          >
+            <IconButton
+              aria-label="remove education"
+              onClick={() => workExpRemove(index)}
+              disabled={workExpFields.length <= 1}
+              sx={{ position: "absolute", top: 8, right: 8 }}
+            >
+              <RemoveCircleOutlineIcon />
+            </IconButton>
 
-            return (
-              <Box key={field.id}>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <OutlinedInput
-                    {...register(`work_experience.${index}.value`, {
-                      required: "Work experience cannot be empty",
-                    })}
-                    placeholder="Enter work experience"
-                    error={!!work_experience_errors}
-                    sx={{ width: { xs: "100%", sm: "200px" } }}
-                  />
-                  <IconButton
-                    type="button"
-                    aria-label="remove work exp"
-                    onClick={() => workExpRemove(index)}
-                    disabled={workExpFields.length === 1}
-                  >
-                    <RemoveCircleOutlineIcon />
-                  </IconButton>
-                </Box>
-                {work_experience_errors && (
-                  <FormHelperText error sx={{ pl: "14px" }}>
-                    {work_experience_errors.message}
-                  </FormHelperText>
-                )}
-              </Box>
-            );
-          })}
-        </Box>
+            {/* Input for the Degree */}
+            <Box>
+              <Typography
+                component="label"
+                htmlFor={`work_experience.${index}.workPos`}
+                sx={{ fontWeight: 300, fontSize: "0.9rem" }}
+              >
+                Work Position
+              </Typography>
+              <OutlinedInput
+                {...register(`work_experience.${index}.workPos`)}
+                id={`work_experience.${index}.workPos`}
+                fullWidth
+                placeholder="e.g., Junior Develpoer"
+                error={!!errors.work_experience?.[index]?.workPos}
+              />
+              {errors.work_experience?.[index]?.workPos && (
+                <FormHelperText error>
+                  {errors.work_experience?.[index]?.workPos?.message}
+                </FormHelperText>
+              )}
+            </Box>
+
+            {/* Input for the year */}
+            <Box>
+              <Typography
+                component="label"
+                htmlFor={`work_experience.${index}.year`}
+                sx={{ fontWeight: 300, fontSize: "0.9rem" }}
+              >
+                Work Period
+              </Typography>
+              <OutlinedInput
+                {...register(`work_experience.${index}.year`)}
+                id={`work_experience.${index}.year`}
+                fullWidth
+                placeholder="e.g., 2016-2023"
+                error={!!errors.work_experience?.[index]?.year}
+              />
+              {errors.work_experience?.[index]?.year && (
+                <FormHelperText error>
+                  {errors.work_experience?.[index]?.year?.message}
+                </FormHelperText>
+              )}
+            </Box>
+          </Box>
+        ))}
       </Box>
 
       <Divider flexItem />

@@ -34,6 +34,7 @@ import SeekerManagement from "./pages/admin/SeekerManagement";
 import SeekerDetailManage from "./pages/admin/SeekerDetailManage";
 import TalentProfile from "./pages/user/TalentProfile";
 import IsLoginnedMiddleware from "./protected_routes/IsLoginnedMiddleware";
+import EmployerProfile from "./pages/employer/EmployerProfile";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -87,6 +88,10 @@ export const router = createBrowserRouter([
       {
         path: "/profile/:id",
         element: <Profile />,
+      },
+      {
+        path: "/employer-profile/:id",
+        element: <EmployerProfile />,
       },
       {
         path: "/profile/:id/edit",

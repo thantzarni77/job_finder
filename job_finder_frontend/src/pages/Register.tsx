@@ -55,7 +55,7 @@ type RegisterFormData = {
   // From SeekerDetailsForm.tsx
   skills?: { value: string }[];
   education?: { degree: string; year: string }[];
-  work_experience?: { value: string }[];
+  work_experience?: { workPos: string; year: string }[];
   role?: "junior" | "mid-level" | "senior";
   bio?: string;
   talent?: string;
@@ -149,7 +149,7 @@ export default function Register() {
     mode: "all",
     defaultValues: {
       skills: [{ value: "" }],
-      work_experience: [{ value: "" }],
+      work_experience: [{ workPos: "", year: "" }],
       education: [{ degree: "", year: "" }],
       social_media_link: [{ value: "" }],
     },
@@ -166,7 +166,7 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
 
   const onFinalSubmit = (data: RegisterFormData) => {
-    //seeker register
+    // //seeker register
     if (userType == "seeker") {
       const {
         skills,
@@ -198,13 +198,16 @@ export default function Register() {
         });
       }
 
-      const workExpValues = work_experience
-        ?.map((single) => single.value)
-        .filter(Boolean);
-      if (workExpValues && workExpValues.length > 0) {
-        workExpValues.forEach((exp) =>
-          seekerInfo.append("work_experience[]", exp),
-        );
+      if (work_experience && work_experience.length > 0) {
+        work_experience.forEach((work, index) => {
+          if (work.workPos && work.year) {
+            seekerInfo.append(
+              `work_experience[${index}][workPos]`,
+              work.workPos,
+            );
+            seekerInfo.append(`work_experience[${index}][year]`, work.year);
+          }
+        });
       }
 
       const socialMediaValues = social_media_link
