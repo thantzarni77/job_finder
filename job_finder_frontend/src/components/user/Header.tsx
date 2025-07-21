@@ -207,7 +207,10 @@ export default function Header() {
               {userRole === "employer" && (
                 <Button
                   onClick={() => navigate("/post/job")}
-                  disabled={employerProfile.verification == "pending"}
+                  disabled={
+                    employerProfile.verification == "pending" ||
+                    employerProfile.verification == "rejected"
+                  }
                   sx={{
                     fontWeight: "700",
                     textTransform: "none",

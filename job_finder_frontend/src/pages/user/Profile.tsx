@@ -22,6 +22,7 @@ import { getSeekerProfile } from "../../helper/profileApiFunctions";
 import { useEffect } from "react";
 import { useProfileStore } from "../../store/ProfileStore";
 import FullScreenLoader from "../../components/FullScreenLoader";
+import { useUserStore } from "../../store/UserStore";
 
 export default function Profile() {
   const exampleLink = "https://github.com/thantzarni77/job_finder/tree/main";
@@ -30,6 +31,7 @@ export default function Profile() {
   const { id } = useParams();
   const user_id = Number(id);
 
+  const userData = useUserStore((state) => state.user);
   const seekerProfile = useProfileStore((state) => state.seekerProfile);
   const setSeekerProfile = useProfileStore((state) => state.setSeekerProfile);
 
@@ -227,7 +229,7 @@ export default function Profile() {
                       variant="body2"
                       sx={{ color: "text.secondary" }}
                     >
-                      No Exp...
+                      No Exp
                     </Typography>
                   </Box>
                 </Box>
@@ -248,13 +250,15 @@ export default function Profile() {
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <PhoneInTalkIcon color="primary" />
                 <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                  +09-123456789
+                  {seekerProfile.user_id.phone
+                    ? seekerProfile.user_id.phone
+                    : "No Data"}
                 </Typography>
               </Box>
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <EmailOutlinedIcon color="primary" />
                 <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                  abc@gmail.com
+                  {userData?.user_email}
                 </Typography>
               </Box>
             </Box>
@@ -290,7 +294,9 @@ export default function Profile() {
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
               <LocationOnIcon color="primary" />
               <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                123 Main Street, City, Country
+                {seekerProfile.user_id.address
+                  ? seekerProfile.user_id.address
+                  : "No Data"}
               </Typography>
             </Box>
           </Box>

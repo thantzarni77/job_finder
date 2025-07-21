@@ -85,7 +85,10 @@ export default function AppDrawer() {
           {user?.user_type == "employer" && (
             <ListItem sx={{ display: { xs: "inline-flex", sm: "none" } }}>
               <ListItemButton
-                disabled={employerProfile.verification == "pending"}
+                disabled={
+                  employerProfile.verification == "pending" ||
+                  employerProfile.verification == "rejected"
+                }
               >
                 <Link to="/post/job">
                   <Typography>Post A Job</Typography>
