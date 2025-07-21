@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Database\Seeders\RoleSeeder;
 use Database\Seeders\TypeSeeder;
+use Database\Seeders\GenderSeeder;
 use Database\Seeders\TalentSeeder;
 
 class DatabaseSeeder extends Seeder
@@ -23,7 +24,8 @@ class DatabaseSeeder extends Seeder
             // AuthSeeder::class,
             TypeSeeder::class,
             TalentSeeder::class,
-            RoleSeeder::class
+            RoleSeeder::class,
+            GenderSeeder::class
 
         ]);
     }

@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\PostJob;
 use Illuminate\Database\Eloquent\Model;
 
-class Job_detail extends Model
+class JobDetail extends Model
 {
     protected $fillable = [
         'post_job_id',
@@ -19,11 +20,8 @@ class Job_detail extends Model
         'apply_count',
     ];
 
-    public static function getGender() {
-        return [
-            'male' => 'male',
-            'female' => 'female',
-            'both' => 'both'
-        ];
+    public function postJob()
+    {
+        return $this->belongsTo(PostJob::class);
     }
 }
