@@ -1,15 +1,53 @@
 import { create } from "zustand";
 import type { PaletteMode } from "@mui/material";
 
-type AppStore = {
+type AppDrawerStore = {
   showDrawer: boolean;
   setShowDrawer: (value: boolean) => void;
 };
 
-export const useAppStore = create<AppStore>((set) => ({
+export const useAppStore = create<AppDrawerStore>((set) => ({
   showDrawer: false,
   setShowDrawer: (userValue) => {
     set({ showDrawer: userValue });
+  },
+}));
+
+type JobFilterDrawerStore = {
+  showJobFilterDrawer: boolean;
+  setShowJobFilterDrawer: (value: boolean) => void;
+};
+
+export const useJobFilterStore = create<JobFilterDrawerStore>((set) => ({
+  showJobFilterDrawer: false,
+  setShowJobFilterDrawer: (userValue) => {
+    set({ showJobFilterDrawer: userValue });
+  },
+}));
+
+type CompanyFilterDrawerStore = {
+  showCompanyFilterDrawer: boolean;
+  setShowCompanyFilterDrawer: (value: boolean) => void;
+};
+
+export const useCompanyFilterStore = create<CompanyFilterDrawerStore>(
+  (set) => ({
+    showCompanyFilterDrawer: false,
+    setShowCompanyFilterDrawer: (userValue) => {
+      set({ showCompanyFilterDrawer: userValue });
+    },
+  }),
+);
+
+type TalentFilterDrawerStore = {
+  showTalentFilterDrawer: boolean;
+  setShowTalentFilterDrawer: (value: boolean) => void;
+};
+
+export const useTalentFilterStore = create<TalentFilterDrawerStore>((set) => ({
+  showTalentFilterDrawer: false,
+  setShowTalentFilterDrawer: (userValue) => {
+    set({ showTalentFilterDrawer: userValue });
   },
 }));
 
