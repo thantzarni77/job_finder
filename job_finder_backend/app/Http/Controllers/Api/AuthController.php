@@ -66,22 +66,22 @@ class AuthController extends Controller
                 return $this->erorsResponse("This user is already registered as a seeker and cannot register as an employer", null, 403);
             }
 
-            if ($request->has('detail') && $request->detail === 'individual') {
-                $isInEmployer = Employer::where('user_id', $userData->id)->exists();
-                if ($isInEmployer) {
-                    return $this->erorsResponse("User already registered as an employer", null, 409);
-                }
+            $isInEmployer = Employer::where('user_id', $userData->id)->exists();
+            if ($isInEmployer) {
+                return $this->erorsResponse("User already registered as an employer", null, 409);
+            }
 
+            $isInIndividualEmployer = Contact::where('user_id', $userData->id)->exists();
+            if ($isInIndividualEmployer) {
+                return $this->erorsResponse("User already registered as an individual employer", null, 409);
+            }
+
+            if ($request->has('detail') && $request->detail === 'individual') {
                 $individualEmployerController = new IndividualEmployerController();
                 return $individualEmployerController->store($request, $userData->id);
             }
 
             if ($userData->user_type === "employer") {
-                $isInIndividualEmployer = Contact::where('user_id', $userData->id)->exists();
-                if ($isInIndividualEmployer) {
-                    return $this->erorsResponse("User already registered as an individual employer", null, 409);
-                }
-
                 $employerController = new EmployerController();
                 return $employerController->store($request, $userData->id);
             }
