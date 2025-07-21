@@ -15,8 +15,7 @@ class Seeker extends Model implements JWTSubject
         'talent',
         'social_media_link',
         'image',
-        'bio',
-        'password'
+        'bio'
     ];
 
     public function getJWTIdentifier()
