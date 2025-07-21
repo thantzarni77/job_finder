@@ -61,10 +61,13 @@ class AuthController extends Controller
                 return $this->erorsResponse("User not found", null, 404);
             }
 
-            $isInEmployer           = Employer::where('user_id', $userData->id)->exists();
-            $isInIndividualEmployer = Contact::where('user_id', $userData->id)->exists();
+            $isInSeeker = Seeker::where('user_id', $userData->id)->exists();
+            if ($isInSeeker) {
+                return $this->erorsResponse("This user is already registered as a seeker and cannot register as an employer", null, 403);
+            }
 
             if ($request->has('detail') && $request->detail === 'individual') {
+                $isInEmployer = Employer::where('user_id', $userData->id)->exists();
                 if ($isInEmployer) {
                     return $this->erorsResponse("User already registered as an employer", null, 409);
                 }
@@ -74,6 +77,7 @@ class AuthController extends Controller
             }
 
             if ($userData->user_type === "employer") {
+                $isInIndividualEmployer = Contact::where('user_id', $userData->id)->exists();
                 if ($isInIndividualEmployer) {
                     return $this->erorsResponse("User already registered as an individual employer", null, 409);
                 }
@@ -87,7 +91,7 @@ class AuthController extends Controller
                 return $seekerController->store($request, $userData->id);
             }
 
-            return $this->erorsResponse("User type is invalid", null, 400);
+            return $this->erorsResponse("Invalid user type", null, 400);
 
         } catch (\Exception $e) {
             return $this->erorsResponse("Unexpected error occurred", $e->getMessage(), 500);
