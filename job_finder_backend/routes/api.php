@@ -1,23 +1,28 @@
 <?php
 
-use App\Http\Controllers\Api\IndividualEmployerController;
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\EmployerController;
-use App\Http\Controllers\Api\NewPasswordController;
-use App\Http\Controllers\Api\SeekerController;
-use App\Http\Controllers\Api\SocialLoginController;
-use App\Http\Controllers\ApplyJobController;
-use App\Http\Controllers\EmployerVerficationController;
-use App\Http\Controllers\JobCategoryController;
-use App\Http\Controllers\JobDetailController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TalentController;
 use App\Http\Controllers\PostJobController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SaveJobController;
-use App\Http\Controllers\TalentController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\ApplyJobController;
+use App\Http\Controllers\JobDetailController;
+use App\Http\Controllers\Api\SeekerController;
+use App\Http\Controllers\ContactFormController;
+use App\Http\Controllers\JobCategoryController;
+use App\Http\Controllers\Api\EmployerController;
+use App\Http\Controllers\Api\NewPasswordController;
+use App\Http\Controllers\Api\SocialLoginController;
+use App\Http\Controllers\EmployerVerficationController;
+use App\Http\Controllers\Api\IndividualEmployerController;
 
 Route::post('/registerstepone', [AuthController::class, 'registerStepOne']);
 Route::post('/registersteptwo/{id}', [AuthController::class, 'registerStepTwo']);
+
+Route::get('/mail',ContactFormController::class,'getAllMail');
+Route::post('/mail',ContactFormController::class,'storeMail');
+Route::delete('/mail/{id}',ContactFormController::class,'destroyMail');
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/forgot-password', [NewPasswordController::class, 'forgotPassword']);
@@ -77,7 +82,7 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
 
         Route::get('/employer',[EmployerController::class,'index']);
         Route::get('/employer/{id}',[EmployerController::class,'getdata']);
-        Route::get('/employer-data/{id}',[EmployerController::class,'getEmployerData']);    
+        Route::get('/employer-data/{id}',[EmployerController::class,'getEmployerData']);
         Route::post('/employer',[EmployerController::class,'store']);
         Route::post('/employer/{id}',[EmployerController::class,'update']);
         Route::delete('/employer/{id}',[EmployerController::class,'destroy']);
