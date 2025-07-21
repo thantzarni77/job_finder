@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   MenuItem,
   Pagination,
   Select,
@@ -8,12 +9,15 @@ import {
   type SelectChangeEvent,
 } from "@mui/material";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import FilterListIcon from "@mui/icons-material/FilterList";
 
 import JobFilter from "../../../components/user/jobs/JobFilter";
 
 import { useState } from "react";
 import SearchBox from "../../../components/user/SearchBox";
 import CompanyCard from "../../../components/employer/CompanyCard";
+import CompanyFilterDrawer from "../../../components/user/CompanyFilterDrawer";
+import { useCompanyFilterStore } from "../../../store/Appstore";
 
 const companyType = [
   "public",
@@ -24,6 +28,13 @@ const companyType = [
 ];
 
 const Companies = () => {
+  const showCompanyFilterDrawer = useCompanyFilterStore(
+    (state) => state.showCompanyFilterDrawer,
+  );
+  const setShowCompanyFilterDrawer = useCompanyFilterStore(
+    (state) => state.setShowCompanyFilterDrawer,
+  );
+
   const [sortBy, setSortBy] = useState<string>("recent");
   const [open, setOpen] = useState<boolean>(false);
 
@@ -51,28 +62,69 @@ const Companies = () => {
     <Box
       sx={{
         my: 3,
-        p: 4,
-        width: "95%",
+        p: { xs: 0, sm: 2, md: 2, lg: 4 },
+        width: { xs: "100", sm: "100%", md: "95%" },
         mx: "auto",
       }}
     >
-      {/* search input */}
-      <SearchBox searchType={"Company"} />
+      {/* search input && filter button*/}
+      <Box
+        sx={{
+          display: { xs: "block", sm: "flex" },
+          alignItems: "center",
+          width: "95%",
+          mx: "auto",
+        }}
+      >
+        <SearchBox searchType={"Company"} />
+        <Button
+          variant="contained"
+          onClick={() => setShowCompanyFilterDrawer(!showCompanyFilterDrawer)}
+          sx={{
+            mx: { xs: "auto", sm: "none" },
+            display: { xs: "block", md: "none" },
+            color: "primary.main",
+            boxShadow: "none",
+            p: "5px",
+            my: 2,
+            ":hover": {
+              boxShadow: "none",
+            },
+          }}
+        >
+          <Typography
+            sx={{
+              display: { xs: "none", sm: "inline" },
+              color: "white",
+              mx: 1,
+              textTransform: "none",
+              boxShadow: "none",
+              ":hover": {
+                boxShadow: "none",
+              },
+            }}
+          >
+            Filter
+          </Typography>
+          <FilterListIcon sx={{ color: "white" }} />
+        </Button>
+      </Box>
 
-      {/* job posts and filter */}
+      {/* companies and filter */}
       <Box
         sx={{
           textAlign: "center",
           my: 3,
           display: "flex",
           flexDirection: { xs: "column", md: "row" },
-          alignItems: "start",
+          alignItems: { xs: "center", md: "start" },
           width: "100%",
-          p: 2,
           gap: 6,
         }}
       >
-        <JobFilter filterType={"Company"} filterTypeArray={companyType} />
+        <Box sx={{ display: { xs: "none", md: "block" } }}>
+          <JobFilter filterType={"Company"} filterTypeArray={companyType} />
+        </Box>
         <Box
           sx={{
             display: "flex",
@@ -81,12 +133,12 @@ const Companies = () => {
             width: "100%",
           }}
         >
-          {/* job posts section header */}
+          {/* companies section header */}
           <Box
             sx={{
-              width: "94%",
+              width: { xs: "82%", sm: "90%", md: "90%" },
               display: "flex",
-              alignItems: "start",
+              alignItems: { xs: "center", md: "start" },
               justifyContent: "space-between",
               mb: 2,
             }}
@@ -108,7 +160,7 @@ const Companies = () => {
                 fontWeight: 400,
                 fontSize: "14px",
                 borderRadius: "5px",
-                bgcolor: "#ffffff",
+                bgcolor: "background.paper",
                 color: "primary.main",
 
                 // Crucially, hide the default input border
@@ -128,7 +180,7 @@ const Companies = () => {
                   paper: {
                     sx: {
                       width: 155,
-                      bgcolor: "#ffffff",
+                      bgcolor: "background.paper",
                       borderRadius: "5px",
                       boxShadow: "none",
                       color: "primary.main",
@@ -145,7 +197,7 @@ const Companies = () => {
                   fontWeight: 400,
                   margin: "4px",
                   borderLeft: "4px solid transparent",
-                  bgColor: "#ffffff",
+                  bgColor: "background.paper",
                   color: "primary.main",
                   fontSize: "14px",
                   // Style for the currently selected item in the list
@@ -168,7 +220,7 @@ const Companies = () => {
                   borderRadius: "8px",
                   margin: "4px",
                   borderLeft: "4px solid transparent",
-                  bgColor: "#ffffff",
+                  bgColor: "background.paper",
                   color: "primary.main",
                   fontWeight: 400,
                   fontSize: "14px",
@@ -187,7 +239,7 @@ const Companies = () => {
               </MenuItem>
             </Select>
           </Box>
-          {/* jobs */}
+          {/* companies */}
           <Box
             sx={{
               display: "flex",
@@ -199,8 +251,12 @@ const Companies = () => {
             <Box
               sx={{
                 display: "flex",
-                width: "100%",
-                justifyContent: "center",
+                width: { xs: "100%", sm: "92%", md: "100%" },
+                justifyContent: {
+                  xs: "center",
+                  sm: "center",
+                  md: "center",
+                },
                 gap: { xs: 2, md: 4 },
                 flexWrap: "wrap",
               }}
@@ -235,6 +291,7 @@ const Companies = () => {
           </Box>
         </Box>
       </Box>
+      <CompanyFilterDrawer />
     </Box>
   );
 };

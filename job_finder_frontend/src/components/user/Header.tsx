@@ -6,6 +6,8 @@ import {
   Button,
   IconButton,
   Avatar,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import {
   // ChatBubbleOutline as MessageIcon,
@@ -15,11 +17,16 @@ import {
   LightMode as LightModeIcon,
   DarkMode as DarkModeIcon,
 } from "@mui/icons-material";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { NavLink, useLocation, matchPath } from "react-router";
 import { useAppStore } from "../../store/Appstore";
 import { useState, useRef, useEffect, useMemo, type RefObject } from "react";
 import { useNavigate } from "react-router";
 import { useThemeStore } from "../../store/Appstore";
+import { useUserStore } from "../../store/UserStore";
+import { useMutation } from "@tanstack/react-query";
+import { logoutUser } from "../../helper/authApiFunctions";
+import { useProfileStore } from "../../store/ProfileStore";
 
 function findRefForPath(
   pathname: string,
@@ -34,10 +41,25 @@ function findRefForPath(
 }
 
 export default function Header() {
+  const user = useUserStore((state) => state.user);
+  const seekerProfile = useProfileStore((state) => state.seekerProfile);
+  const employerProfile = useProfileStore((state) => state.employerProfile);
+  const setUserData = useUserStore((state) => state.setUserData);
+  const removeToken = useUserStore((state) => state.removeToken);
+  const accessToken = localStorage.getItem("token");
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   const mode = useThemeStore((state) => state.mode);
   const setMode = useThemeStore((state) => state.setMode);
   const navigate = useNavigate();
-  const [userRole] = useState("");
+  const userRole = user?.user_type;
 
   const showDrawer = useAppStore((state) => state.showDrawer);
   const setShowDrawer = useAppStore((state) => state.setShowDrawer);
@@ -64,14 +86,22 @@ export default function Header() {
         "/job/:id": jobsRef,
         "/job/:id/apply": jobsRef,
         "/job/:id/apply/confirm": jobsRef,
-        "/talent": talentRef,
+        "/talents": talentRef,
+        "/talent/:id/profile": talentRef,
         "/companies": companiesRef,
         "/companies/:id": companiesRef,
         "/post/job": postJobRef,
         "/profile/:id": profileRef,
+        "/employer-profile/:id": profileRef,
+        "/project/add": profileRef,
         "/notifications/user/:id": notificationsRef,
         "/settings/user/:id": settingsRef,
+        "/settings/user/:id/bookmarks": settingsRef,
+        "/settings/user/:id/bookmarks/savedJobs": settingsRef,
+        "/settings/user/:id/bookmarks/following": settingsRef,
         "/settings/user/:id/security": settingsRef,
+        "/settings/user/:id/security/changeEmail": settingsRef,
+        "/settings/user/:id/security/changePassword": settingsRef,
       }),
       [],
     );
@@ -91,36 +121,47 @@ export default function Header() {
     }
   }, [location.pathname, pathRefMap]);
 
+  const logoutMutate = useMutation({
+    mutationFn: logoutUser,
+    onSuccess: ({ data }) => {
+      if (data.status == 200) {
+        setUserData(null);
+        removeToken();
+      }
+    },
+  });
+
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" sx={{ px: 5, boxShadow: "none" }}>
+      <AppBar
+        position="static"
+        sx={{ px: { xs: 2, md: 5 }, boxShadow: "none" }}
+      >
         <Toolbar
           sx={{
             display: "flex",
             justifyContent: "space-between",
-            position: "relative",
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
-            <IconButton
-              onClick={() => setShowDrawer(!showDrawer)}
-              color="inherit"
-              sx={{ display: { md: "none" }, ml: -2, mr: 1 }}
-            >
-              <MenuIcon />
-            </IconButton>
-
             <Typography
+              onClick={() => navigate("/")}
               component="h1"
-              sx={{ fontSize: "36px", fontWeight: "700" }}
+              sx={{
+                fontSize: { xs: "24px", sm: "30px", md: "36px" },
+                fontWeight: "700",
+                cursor: "pointer",
+                flexShrink: 0,
+              }}
             >
               LOGO
             </Typography>
 
+            {/* Desktop Navigation */}
             <Box
               sx={{
                 pl: 5,
-                display: { md: "flex", sm: "none", xs: "none" },
+                display: { md: "flex", sm: "flex", xs: "none" },
               }}
             >
               <NavLink to="/">
@@ -141,65 +182,145 @@ export default function Header() {
                   Jobs
                 </Button>
               </NavLink>
-              <NavLink to="/talent">
+
+              <NavLink to="/talents">
                 <Button
                   sx={{ fontWeight: "700", textTransform: "none" }}
                   ref={talentRef}
                   color="inherit"
                 >
-                  Talent
+                  Talents
                 </Button>
               </NavLink>
-              <NavLink to="/companies">
-                <Button
-                  sx={{ fontWeight: "700", textTransform: "none" }}
-                  ref={companiesRef}
-                  color="inherit"
-                >
-                  Companies
-                </Button>
-              </NavLink>
-              {userRole === "employer" && (
-                <NavLink to="/post/job">
+
+              {userRole == "seeker" && (
+                <NavLink to="/companies">
                   <Button
                     sx={{ fontWeight: "700", textTransform: "none" }}
-                    ref={postJobRef}
+                    ref={companiesRef}
                     color="inherit"
                   >
-                    Post A Job
+                    Companies
                   </Button>
                 </NavLink>
               )}
+              {userRole === "employer" && (
+                <Button
+                  onClick={() => navigate("/post/job")}
+                  disabled={employerProfile.verification == "pending"}
+                  sx={{
+                    fontWeight: "700",
+                    textTransform: "none",
+                  }}
+                  ref={postJobRef}
+                  color="inherit"
+                >
+                  Post A Job
+                </Button>
+              )}
             </Box>
           </Box>
+          {user || accessToken ? (
+            <Box>
+              <IconButton
+                onClick={() => setShowDrawer(!showDrawer)}
+                color="inherit"
+                sx={{ display: { md: "none" }, ml: -2, mr: 1 }}
+              >
+                <MenuIcon />
+              </IconButton>
+              <Box
+                sx={{ gap: 1, display: { md: "flex", sm: "none", xs: "none" } }}
+              >
+                <IconButton
+                  color="inherit"
+                  onClick={() => setMode(mode === "light" ? "dark" : "light")}
+                >
+                  {mode === "light" ? <LightModeIcon /> : <DarkModeIcon />}
+                </IconButton>
+                <IconButton
+                  color="inherit"
+                  ref={notificationsRef}
+                  onClick={() => navigate("/notifications/user/1")}
+                >
+                  <NotiIcon sx={{ fontSize: 27 }} />
+                </IconButton>
 
-          {/* Right side of header */}
-          <Box sx={{ display: "flex", gap: 1 }}>
-            <IconButton
-              color="inherit"
-              onClick={() => setMode(mode === "light" ? "dark" : "light")}
-            >
-              {mode === "light" ? <LightModeIcon /> : <DarkModeIcon />}
-            </IconButton>
-            <IconButton
-              color="inherit"
-              ref={notificationsRef}
-              onClick={() => navigate("/notifications/user/1")}
-            >
-              <NotiIcon sx={{ fontSize: 27 }} />
-            </IconButton>
+                <IconButton
+                  color="inherit"
+                  ref={settingsRef}
+                  onClick={() => navigate(`/settings/user/${user?.user_id}`)}
+                >
+                  <SettingIcon />
+                </IconButton>
+                <Button
+                  ref={profileRef}
+                  endIcon={<ArrowDropDownIcon sx={{ color: "white" }} />}
+                  id="basic-button"
+                  aria-controls={open ? "basic-menu" : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open ? "true" : undefined}
+                  onClick={handleClick}
+                >
+                  <img
+                    src={`${import.meta.env.VITE_API_BASE_URL}/${user?.user_type == "seeker" ? seekerProfile.image : employerProfile.company_image}`}
+                    alt={"SeekerProfile"}
+                    style={{
+                      width: "32px",
+                      height: "32px",
+                      borderRadius: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
 
-            <IconButton
-              color="inherit"
-              ref={settingsRef}
-              onClick={() => navigate("/settings/user/1")}
+                  {!seekerProfile.image && !employerProfile.company_image && (
+                    <Avatar sx={{ width: 32, height: 32 }} />
+                  )}
+                </Button>
+                <Menu
+                  id="basic-menu"
+                  anchorEl={anchorEl}
+                  open={open}
+                  onClose={handleClose}
+                  onClick={handleClose}
+                  slotProps={{
+                    list: {
+                      "aria-labelledby": "basic-button",
+                    },
+                  }}
+                >
+                  <MenuItem
+                    onClick={() => {
+                      if (user?.user_type == "seeker") {
+                        navigate(`/profile/${user?.user_id}`);
+                      }
+                      if (user?.user_type == "employer") {
+                        navigate(`/employer-profile/${user?.user_id}`);
+                      }
+                    }}
+                  >
+                    Profile
+                  </MenuItem>
+
+                  <MenuItem onClick={() => logoutMutate.mutate()}>
+                    Logout
+                  </MenuItem>
+                </Menu>
+              </Box>
+            </Box>
+          ) : (
+            <Button
+              sx={{
+                color: "#ffffff",
+                textTransform: "none",
+                borderRadius: "5px",
+                boxShadow: "none",
+              }}
+              onClick={() => navigate("/login")}
             >
-              <SettingIcon />
-            </IconButton>
-            <IconButton onClick={() => navigate("/profile/1")} ref={profileRef}>
-              <Avatar sx={{ width: 32, height: 32 }} />
-            </IconButton>
-          </Box>
+              <Typography fontWeight={600}>Login</Typography>
+            </Button>
+          )}
 
           {/* Sliding underline*/}
           <Box
