@@ -8,6 +8,8 @@ use App\Models\JobDetail;
 use Google\Service\ShoppingContent\Resource\Pos;
 
 // use Google\Service\Blogger\Post;
+use Illuminate\Http\Request;
+
 
 class PostJobRepository implements PostJobRepositoryInterface
 {
@@ -97,4 +99,7 @@ class PostJobRepository implements PostJobRepositoryInterface
         $this->postJob->findOrFail($id)->delete();
         return response()->json(['status' => 'success', 'message' => 'Job deleted successfully'], 200);
     }
+
 }
+
+?>

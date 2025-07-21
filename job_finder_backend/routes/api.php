@@ -16,6 +16,9 @@ use App\Http\Controllers\SaveJobController;
 use App\Http\Controllers\TalentController;
 use Illuminate\Support\Facades\Route;
 
+// post-jobs filter 
+Route::get('post-jobs/filter',[PostJobController::class,'filter']);
+
 Route::post('/registerstepone', [AuthController::class, 'registerStepOne']);
 Route::post('/registersteptwo/{id}', [AuthController::class, 'registerStepTwo']);
 
@@ -79,6 +82,7 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
     });
 
     //employer post job
+
 
     Route::middleware("UserTypeMiddleware:employer")->group(function () {
 

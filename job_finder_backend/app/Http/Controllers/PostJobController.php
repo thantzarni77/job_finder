@@ -6,9 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Postjob\CreateRequest;
 use App\Http\Requests\Postjob\UpdateRequest;
 use App\Interfaces\PostJobRepositoryInterface;
+use App\Helpers\Filters;
 use Illuminate\Http\Request;
-use App\Services\PostJobService;
 use Illuminate\Validation\Rule;
+use App\Services\PostJobService;
+
+use App\Http\Requests\JobFilterRequest;
+use App\Models\PostJob;
 
 class PostJobController extends Controller
 {
@@ -52,4 +56,12 @@ class PostJobController extends Controller
     {
         return $this->postJobRepository->delete($id);
     }
+
+    public function filter(JobFilterRequest $request){
+        $filter = new Filters($request->validated());
+        $jobs = PostJob::filter($filter)->get();
+        return response()->json(['success' => true, 'data' => $jobs]);
+    }
 }
+
+?>
