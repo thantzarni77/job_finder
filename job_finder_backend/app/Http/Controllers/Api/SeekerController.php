@@ -64,53 +64,59 @@ class SeekerController extends Controller
     public function store(Request $request, string $id)
     {
 
-        $validator = Validator::make($request->all(), [
-            "skills"            => "required",
-            "education"         => "required",
-            "work_experience"   => "nullable",
-            "role"              => "required",
-            "bio"               => "required",
-            "talent"            => "required",
-            "social_media_link" => "nullable",
-            "password"          => "required|min:8",
-            "image"             => "required",
-
-        ]);
-
-        if ($validator->fails()) {
-            return $this->erorsResponse("Validator fails", $validator->messages());
+    public function store(Request $request,string $id){
+        
+        try{
+            $validator = Validator::make($request->all(),[
+                "skills" => "required",
+                "education" => "required",
+                "work_experience" => "nullable",
+                "role" => "required",
+                "bio" => "required",
+                "talent" => "required",
+                "social_media_link" => "nullable",
+                "password" => "required|min:8",
+                "image" => "required"
+                
+            ]);
+    
+            if($validator->fails()){
+                return $this->erorsResponse("Validator fails",$validator->messages());
+            }
+    
+            $refresh_token = Str::random(60);
+            
+            $user_id = $id;
+            $seeker = new Seeker();
+            $seeker->user_id = $user_id;
+            $seeker->skills = json_encode($request->skills);  
+            $seeker->education = json_encode($request['education']);
+            $seeker->work_experience = json_encode($request['work_experience']);
+            $seeker->role = $request['role'];
+            $seeker->talent = $request['talent'];
+            $seeker->social_media_link = json_encode($request['social_media_link']);
+            $seeker->bio = $request['bio'];
+           
+            if(file_exists($request['image'])){
+                $file = $request['image'];
+                $fname = $file->getClientOriginalName();
+                $imagenewname = uniqid($user_id).$user_id.$fname;
+                $file->move(public_path('assets/img/seekers/'),$imagenewname);
+                $filepath = 'assets/img/seekers/'.$imagenewname;
+                $seeker->image = $filepath;
+            } 
+    
+            $user = User::UpdateOrCreate(['id' => $user_id], [
+                "password" => Hash::make($request->password)
+            ]);
+    
+            $token = JWTAuth::fromUser($user);
+            $seeker->save();
+    
+            return $this->successResponseSeeker("Success created",$seeker,$token,201)->cookie('refresh_token', $refresh_token, 60 * 24 * 7, null, null, true, true);
+        }catch(\Exception $e){
+            return response()->json(["message"=>"Data not found"],404);
         }
-
-        $refresh_token = Str::random(60);
-
-        $user_id                   = $id;
-        $seeker                    = new Seeker();
-        $seeker->user_id           = $user_id;
-        $seeker->skills            = json_encode($request->skills);
-        $seeker->education         = json_encode($request['education']);
-        $seeker->work_experience   = json_encode($request['work_experience']);
-        $seeker->role              = $request['role'];
-        $seeker->talent            = $request['talent'];
-        $seeker->social_media_link = json_encode($request['social_media_link']);
-        $seeker->bio               = $request['bio'];
-
-        if (file_exists($request['image'])) {
-            $file         = $request['image'];
-            $fname        = $file->getClientOriginalName();
-            $imagenewname = uniqid($user_id) . $user_id . $fname;
-            $file->move(public_path('assets/img/seekers/'), $imagenewname);
-            $filepath      = 'assets/img/seekers/' . $imagenewname;
-            $seeker->image = $filepath;
-        }
-
-        $user = User::UpdateOrCreate(['id' => $user_id], [
-            "password" => Hash::make($request->password),
-        ]);
-
-        $token = JWTAuth::fromUser($user);
-        $seeker->save();
-
-        return $this->successResponseSeeker("Success created", $seeker, $token, 201)->cookie('refresh_token', $refresh_token, 60 * 24 * 7, null, null, true, true);
     }
 
     public function update(Request $request, string $id)
