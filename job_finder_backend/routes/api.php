@@ -67,6 +67,9 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
 
     });
 
+    //employer post job
+        Route::apiResource('post-jobs', PostJobController::class);
+
     Route::middleware("UserTypeMiddleware:employer")->group(function () {
 
         Route::get('/employer', [EmployerController::class, 'index']);
@@ -74,16 +77,7 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
         Route::post('/employer', [EmployerController::class, 'store']);
         Route::post('/employer/{id}', [EmployerController::class, 'update']);
         Route::delete('/employer/{id}', [EmployerController::class, 'destroy']);
-
-        Route::get('/employer',[EmployerController::class,'index']);
-        Route::get('/employer/{id}',[EmployerController::class,'getdata']);
         Route::get('/employer-data/{id}',[EmployerController::class,'getEmployerData']);    
-        Route::post('/employer',[EmployerController::class,'store']);
-        Route::post('/employer/{id}',[EmployerController::class,'update']);
-        Route::delete('/employer/{id}',[EmployerController::class,'destroy']);
-
-        //employer post job
-        Route::apiResource('post-jobs', PostJobController::class);
 
         Route::get('/indi_employer',[IndividualEmployerController::class,'index']);
         Route::get('/indi_employer/{id}',[IndividualEmployerController::class,'getData']);
