@@ -26,7 +26,7 @@ import { useThemeStore } from "../../store/Appstore";
 import { useUserStore } from "../../store/UserStore";
 import { useMutation } from "@tanstack/react-query";
 import { logoutUser } from "../../helper/authApiFunctions";
-import { useSeekerProfileStore } from "../../store/ProfileStore";
+import { useProfileStore } from "../../store/ProfileStore";
 
 function findRefForPath(
   pathname: string,
@@ -42,8 +42,10 @@ function findRefForPath(
 
 export default function Header() {
   const user = useUserStore((state) => state.user);
-  const seekerProfile = useSeekerProfileStore((state) => state.seekerProfile);
+  const seekerProfile = useProfileStore((state) => state.seekerProfile);
+  const employerProfile = useProfileStore((state) => state.employerProfile);
   const setUserData = useUserStore((state) => state.setUserData);
+  const removeToken = useUserStore((state) => state.removeToken);
   const accessToken = localStorage.getItem("token");
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -90,6 +92,7 @@ export default function Header() {
         "/companies/:id": companiesRef,
         "/post/job": postJobRef,
         "/profile/:id": profileRef,
+        "/employer-profile/:id": profileRef,
         "/project/add": profileRef,
         "/notifications/user/:id": notificationsRef,
         "/settings/user/:id": settingsRef,
@@ -123,7 +126,7 @@ export default function Header() {
     onSuccess: ({ data }) => {
       if (data.status == 200) {
         setUserData(null);
-        localStorage.removeItem("token");
+        removeToken();
       }
     },
   });
@@ -179,17 +182,17 @@ export default function Header() {
                   Jobs
                 </Button>
               </NavLink>
-              {userRole === "employer" && (
-                <NavLink to="/talents">
-                  <Button
-                    sx={{ fontWeight: "700", textTransform: "none" }}
-                    ref={talentRef}
-                    color="inherit"
-                  >
-                    Talents
-                  </Button>
-                </NavLink>
-              )}
+
+              <NavLink to="/talents">
+                <Button
+                  sx={{ fontWeight: "700", textTransform: "none" }}
+                  ref={talentRef}
+                  color="inherit"
+                >
+                  Talents
+                </Button>
+              </NavLink>
+
               {userRole == "seeker" && (
                 <NavLink to="/companies">
                   <Button
@@ -202,15 +205,21 @@ export default function Header() {
                 </NavLink>
               )}
               {userRole === "employer" && (
-                <NavLink to="/post/job">
-                  <Button
-                    sx={{ fontWeight: "700", textTransform: "none" }}
-                    ref={postJobRef}
-                    color="inherit"
-                  >
-                    Post A Job
-                  </Button>
-                </NavLink>
+                <Button
+                  onClick={() => navigate("/post/job")}
+                  disabled={
+                    employerProfile.verification == "pending" ||
+                    employerProfile.verification == "rejected"
+                  }
+                  sx={{
+                    fontWeight: "700",
+                    textTransform: "none",
+                  }}
+                  ref={postJobRef}
+                  color="inherit"
+                >
+                  Post A Job
+                </Button>
               )}
             </Box>
           </Box>
@@ -256,19 +265,18 @@ export default function Header() {
                   aria-expanded={open ? "true" : undefined}
                   onClick={handleClick}
                 >
-                  {user?.user_type == "seeker" && (
-                    <img
-                      src={`${import.meta.env.VITE_API_BASE_URL}/${seekerProfile.image}`}
-                      alt={"SeekerProfile"}
-                      style={{
-                        width: "32px",
-                        height: "32px",
-                        borderRadius: "100%",
-                        objectFit: "cover",
-                      }}
-                    />
-                  )}
-                  {!seekerProfile.image && (
+                  <img
+                    src={`${import.meta.env.VITE_API_BASE_URL}/${user?.user_type == "seeker" ? seekerProfile.image : employerProfile.company_image}`}
+                    alt={"SeekerProfile"}
+                    style={{
+                      width: "32px",
+                      height: "32px",
+                      borderRadius: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+
+                  {!seekerProfile.image && !employerProfile.company_image && (
                     <Avatar sx={{ width: 32, height: 32 }} />
                   )}
                 </Button>
@@ -285,7 +293,14 @@ export default function Header() {
                   }}
                 >
                   <MenuItem
-                    onClick={() => navigate(`/profile/${user?.user_id}`)}
+                    onClick={() => {
+                      if (user?.user_type == "seeker") {
+                        navigate(`/profile/${user?.user_id}`);
+                      }
+                      if (user?.user_type == "employer") {
+                        navigate(`/employer-profile/${user?.user_id}`);
+                      }
+                    }}
                   >
                     Profile
                   </MenuItem>

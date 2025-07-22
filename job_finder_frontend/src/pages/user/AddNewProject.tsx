@@ -293,9 +293,9 @@ export default function AddNewProject() {
                 {...register("description", {
                   required: "Project description is required",
                   maxLength: {
-                    value: 200,
+                    value: 100,
                     message:
-                      "Project description shouldn't be more than 200 words",
+                      "Project description shouldn't be more than 100 words",
                   },
                 })}
                 fullWidth

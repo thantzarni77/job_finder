@@ -1,0 +1,61 @@
+<?php
+
+
+namespace App\Helpers;
+
+use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Builder;
+
+
+class Filters
+{
+    protected Builder $builder;
+    protected  array $filter_data;
+
+
+    public function __construct($filter_data){
+
+        $this->filter_data = $filter_data;
+    }
+
+    public function filter(Builder $builder) : Builder {
+
+        $this->builder = $builder;
+        foreach($this->filter_data as $key => $value){
+            if(method_exists($this,$key)){
+                $this->$key($value);
+            }
+        }
+
+        return $this->builder;
+    }
+
+    public function type(array $type) : Builder {
+
+        return $this->builder->whereIn('type', $type);
+    }
+    
+
+    public function role(array $role) : Builder {
+
+        return $this->builder->whereIn('role',$role);
+    }
+
+
+    public function salary(array $salary) : Builder {
+
+        [$min,$max] = $salary ;
+
+        if($min !== null ){
+            $this->builder->where('salary' , '>=' , $min);
+        }
+
+        if($max !== null ){
+            $this->builder->where('salary' , '<=' , $max);
+        }
+
+        return $this->builder;
+    }
+}
+
+?>

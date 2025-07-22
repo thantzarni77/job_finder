@@ -11,6 +11,7 @@ type UserStore = {
   user: null | LoginUser;
   token: null | string;
   setToken: (token: string) => void;
+  removeToken: () => void;
   setUserData: (loginData: LoginUser | null) => void;
   logout: () => void;
 };
@@ -27,6 +28,10 @@ export const useUserStore = create<UserStore & UserError>((set) => ({
   setToken: (tokenFromServer: string) => {
     set({ token: tokenFromServer });
     localStorage.setItem("token", tokenFromServer);
+  },
+  removeToken: () => {
+    set({ token: null });
+    localStorage.removeItem("token");
   },
   setUserData: (loginData) => {
     set({ user: loginData });

@@ -1,20 +1,20 @@
 <?php
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Api\SeekerController;
-use App\Http\Controllers\Controller;
-use App\Models\Employer;
-use App\Models\IndividualEmployer;
 use App\Models\User;
-use App\Traits\HttpResponseTrait;
+use App\Models\Seeker;
+use App\Models\Contact;
+use App\Models\Employer;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Traits\HttpResponseTrait;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Tymon\JWTAuth\Exceptions\JWTException;
-use App\Models\Contact;
-use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Http\Controllers\Api\SeekerController;
 
 class AuthController extends Controller
 {
@@ -62,23 +62,27 @@ class AuthController extends Controller
                 return $this->erorsResponse("User not found", null, 404);
             }
 
+            $isInSeeker = Seeker::where('user_id', $userData->id)->exists();
+            if ($isInSeeker) {
+                return $this->erorsResponse("This user is already registered as a seeker and cannot register as an employer", null, 403);
+            }
+
             $isInEmployer = Employer::where('user_id', $userData->id)->exists();
+            if ($isInEmployer) {
+                return $this->erorsResponse("User already registered as an employer", null, 409);
+            }
+
             $isInIndividualEmployer = Contact::where('user_id', $userData->id)->exists();
+            if ($isInIndividualEmployer) {
+                return $this->erorsResponse("User already registered as an individual employer", null, 409);
+            }
 
             if ($request->has('detail') && $request->detail === 'individual') {
-                if ($isInEmployer) {
-                    return $this->erorsResponse("User already registered as an employer", null, 409);
-                }
-
                 $individualEmployerController = new IndividualEmployerController();
                 return $individualEmployerController->store($request, $userData->id);
             }
 
             if ($userData->user_type === "employer") {
-                if ($isInIndividualEmployer) {
-                    return $this->erorsResponse("User already registered as an individual employer", null, 409);
-                }
-
                 $employerController = new EmployerController();
                 return $employerController->store($request, $userData->id);
             }
@@ -88,7 +92,7 @@ class AuthController extends Controller
                 return $seekerController->store($request, $userData->id);
             }
 
-            return $this->erorsResponse("User type is invalid", null, 400);
+            return $this->erorsResponse("Invalid user type", null, 400);
 
         } catch (\Exception $e) {
             return $this->erorsResponse("Unexpected error occurred", $e->getMessage(), 500);
