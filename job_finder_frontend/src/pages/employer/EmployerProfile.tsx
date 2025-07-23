@@ -21,7 +21,7 @@ export default function EmployerProfile() {
   );
 
   const employerProfileQuery = useQuery({
-    enabled: !employerData,
+    enabled: !employerData.id,
     queryKey: ["employerProfile", user_id],
     queryFn: () => {
       return getEmployerProfile(user_id);
@@ -30,8 +30,6 @@ export default function EmployerProfile() {
 
   useEffect(() => {
     if (employerProfileQuery.data && employerProfileQuery.isSuccess) {
-      console.log("fetched");
-
       setEmployerProfile(employerProfileQuery.data.data.data[0]);
     }
   }, [

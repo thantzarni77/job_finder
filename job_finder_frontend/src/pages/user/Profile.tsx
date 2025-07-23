@@ -12,6 +12,7 @@ import SchoolIcon from "@mui/icons-material/School";
 import AddIcon from "@mui/icons-material/Add";
 import WorkIcon from "@mui/icons-material/Work";
 import PhoneInTalkIcon from "@mui/icons-material/PhoneInTalk";
+import EngineeringOutlinedIcon from "@mui/icons-material/EngineeringOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import { Facebook, Instagram } from "@mui/icons-material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
@@ -36,7 +37,7 @@ export default function Profile() {
   const setSeekerProfile = useProfileStore((state) => state.setSeekerProfile);
 
   const seekerProfileQuery = useQuery({
-    enabled: !seekerProfile,
+    enabled: !seekerProfile.id,
     queryKey: ["seekerProfile", user_id],
     queryFn: () => {
       return getSeekerProfile(user_id);
@@ -175,6 +176,34 @@ export default function Profile() {
                     </Typography>
                     <Typography variant="body2" color="primary">
                       {single.year}
+                    </Typography>
+                  </Box>
+                </Box>
+              );
+            })}
+          </Box>
+
+          <Box sx={{ mt: 4 }}>
+            <Typography variant="h6">Skills</Typography>
+
+            {seekerProfile.skills.map((single, index) => {
+              return (
+                <Box
+                  key={index}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                    mt: 1,
+                  }}
+                >
+                  <EngineeringOutlinedIcon color="primary" />
+                  <Box sx={{ display: "flex", flexDirection: "column" }}>
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      {single}
                     </Typography>
                   </Box>
                 </Box>

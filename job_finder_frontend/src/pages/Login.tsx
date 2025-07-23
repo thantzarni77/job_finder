@@ -13,20 +13,15 @@ import {
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,
 } from "@mui/icons-material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link as MuiLink } from "@mui/material";
 import { Link as RouterLink, useNavigate } from "react-router";
 import BG_IMG from "../assets/login_signup_bg.jpg";
 import { useForm } from "react-hook-form";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { loginUser } from "../helper/authApiFunctions";
 import { useUserStore } from "../store/UserStore";
 import { isAxiosError } from "axios";
-import {
-  getEmployerProfile,
-  getSeekerProfile,
-} from "../helper/profileApiFunctions";
-import { useProfileStore } from "../store/ProfileStore";
 
 export type LoginData = {
   email: string;
@@ -47,17 +42,12 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
-  const userData = useUserStore((state) => state.user);
   const setUserData = useUserStore((state) => state.setUserData);
   const setToken = useUserStore((state) => state.setToken);
   const errMessage = useUserStore((state) => state.errMessage);
   const setErrMessage = useUserStore((state) => state.setErrMessage);
   const removeErrMessage = useUserStore((state) => state.removeErrMessage);
 
-  const setSeekerProfile = useProfileStore((state) => state.setSeekerProfile);
-  const setEmployerProfile = useProfileStore(
-    (state) => state.setEmployerProfile,
-  );
   const {
     register,
     handleSubmit,
@@ -77,38 +67,6 @@ export default function Login() {
       }
     },
   });
-
-  const employerProfileQuery = useQuery({
-    enabled: userData?.user_type == "employer",
-    queryKey: ["employerProfile", userData?.user_id],
-    queryFn: () => {
-      return getEmployerProfile(userData?.user_id);
-    },
-  });
-
-  useEffect(() => {
-    if (employerProfileQuery.data && employerProfileQuery.isSuccess) {
-      setEmployerProfile(employerProfileQuery.data.data.data[0]);
-    }
-  }, [
-    employerProfileQuery.data,
-    employerProfileQuery.isSuccess,
-    setEmployerProfile,
-  ]);
-
-  const seekerProfileQuery = useQuery({
-    enabled: userData?.user_type == "seeker",
-    queryKey: ["seekerProfile", userData?.user_id],
-    queryFn: () => {
-      return getSeekerProfile(userData?.user_id);
-    },
-  });
-
-  useEffect(() => {
-    if (seekerProfileQuery.data && seekerProfileQuery.isSuccess) {
-      setSeekerProfile(seekerProfileQuery.data.data.data[0]);
-    }
-  }, [seekerProfileQuery.data, seekerProfileQuery.isSuccess, setSeekerProfile]);
 
   const loginHandler = (payload: LoginData) => {
     loginMutation.mutate(payload);

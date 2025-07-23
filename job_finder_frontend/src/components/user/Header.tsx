@@ -8,6 +8,7 @@ import {
   Avatar,
   Menu,
   MenuItem,
+  Skeleton,
 } from "@mui/material";
 import {
   // ChatBubbleOutline as MessageIcon,
@@ -40,7 +41,7 @@ function findRefForPath(
   return null;
 }
 
-export default function Header() {
+export default function Header({ isLoading }: { isLoading: boolean }) {
   const user = useUserStore((state) => state.user);
   const seekerProfile = useProfileStore((state) => state.seekerProfile);
   const employerProfile = useProfileStore((state) => state.employerProfile);
@@ -265,20 +266,30 @@ export default function Header() {
                   aria-expanded={open ? "true" : undefined}
                   onClick={handleClick}
                 >
-                  <img
-                    src={`${import.meta.env.VITE_API_BASE_URL}/${user?.user_type == "seeker" ? seekerProfile.image : employerProfile.company_image}`}
-                    alt={"SeekerProfile"}
-                    style={{
-                      width: "32px",
-                      height: "32px",
-                      borderRadius: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-
-                  {!seekerProfile.image && !employerProfile.company_image && (
-                    <Avatar sx={{ width: 32, height: 32 }} />
+                  {isLoading ? (
+                    <Skeleton
+                      variant="rounded"
+                      width={"32px"}
+                      height={"32px"}
+                    />
+                  ) : (
+                    <img
+                      src={`${import.meta.env.VITE_API_BASE_URL}/${user?.user_type == "seeker" ? seekerProfile.image : employerProfile.company_image}`}
+                      alt={"SeekerProfile"}
+                      style={{
+                        width: "32px",
+                        height: "32px",
+                        borderRadius: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
                   )}
+
+                  {!isLoading &&
+                    !seekerProfile.image &&
+                    !employerProfile.company_image && (
+                      <Avatar sx={{ width: 32, height: 32 }} />
+                    )}
                 </Button>
                 <Menu
                   id="basic-menu"
