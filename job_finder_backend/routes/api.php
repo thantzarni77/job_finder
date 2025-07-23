@@ -1,24 +1,28 @@
 <?php
 
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\EmployerController;
 use App\Http\Controllers\Api\IndividualEmployerController;
-use App\Http\Controllers\Api\NewPasswordController;
-use App\Http\Controllers\Api\SeekerController;
-use App\Http\Controllers\Api\SocialLoginController;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\ApplyJobController;
-use App\Http\Controllers\EmployerVerficationController;
-use App\Http\Controllers\JobCategoryController;
 use App\Http\Controllers\JobDetailController;
+use App\Http\Controllers\Api\SeekerController;
+use App\Http\Controllers\ContactFormController;
+use App\Http\Controllers\JobCategoryController;
+use App\Http\Controllers\Api\EmployerController;
+
+use App\Http\Controllers\Api\NewPasswordController;
+use App\Http\Controllers\Api\SocialLoginController;
+use App\Http\Controllers\EmployerVerficationController;
+
 use App\Http\Controllers\PostJobController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SaveJobController;
 use App\Http\Controllers\TalentController;
 use Illuminate\Support\Facades\Route;
 
+
+
 Route::post('/registerstepone', [AuthController::class, 'registerStepOne']);
 Route::post('/registersteptwo/{id}', [AuthController::class, 'registerStepTwo']);
-
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/forgot-password', [NewPasswordController::class, 'forgotPassword']);
@@ -55,15 +59,15 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
 
     Route::middleware("UserTypeMiddleware:admin")->group(function () {});
 
-
-    //job post
+     //job post
     Route::prefix('post-jobs')->group(function () {
-        Route::get('/', [PostJobController::class, 'index']);
+        Route::get('/', [PostJobController::class, 'index'])->withoutMiddleware('AuthMiddleware');
         Route::post('/', [PostJobController::class, 'store']);
         Route::get('/{id}', [PostJobController::class, 'show']);
         Route::post('/{id}', [PostJobController::class, 'update']);
         Route::delete('/{id}', [PostJobController::class, 'destroy']);
     });
+  
 
     Route::middleware("UserTypeMiddleware:admin")->group(function () {
 
@@ -80,6 +84,7 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
 
     //employer post job
 
+
     Route::middleware("UserTypeMiddleware:employer")->group(function () {
 
         Route::get('/employer', [EmployerController::class, 'index']);
@@ -87,11 +92,16 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
         Route::post('/employer', [EmployerController::class, 'store']);
         Route::post('/employer/{id}', [EmployerController::class, 'update']);
         Route::delete('/employer/{id}', [EmployerController::class, 'destroy']);
-        Route::get('/employer-data/{id}', [EmployerController::class, 'getEmployerData']);
 
-        Route::get('/indi_employer', [IndividualEmployerController::class, 'index']);
-        Route::get('/indi_employer/{id}', [IndividualEmployerController::class, 'getData']);
-        Route::get('/indi_data_employer/{id}', [IndividualEmployerController::class, 'getIndiEmployerData']);
+        Route::get('/employer',[EmployerController::class,'index']);
+        Route::get('/employer/{id}',[EmployerController::class,'getdata']);
+        Route::get('/employer-data/{id}',[EmployerController::class,'getEmployerData']);
+        Route::post('/employer',[EmployerController::class,'store']);
+        Route::post('/employer/{id}',[EmployerController::class,'update']);
+        Route::delete('/employer/{id}',[EmployerController::class,'destroy']);
+
+        //employer post job
+        Route::apiResource('post-jobs', PostJobController::class);
 
         Route::get('/indi_employer', [IndividualEmployerController::class, 'index']);
         Route::get('/indi_employer/{id}', [IndividualEmployerController::class, 'getData']);
@@ -126,8 +136,7 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
         Route::delete('/{id}', [SaveJobController::class, 'destroy']);
     });
 
-    //job category route
-    Route::apiResource('job-categories', JobCategoryController::class);
+  
     //job detail route
     Route::apiResource('job-details', JobDetailController::class);
 
@@ -137,3 +146,5 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
     //job category route
     Route::apiResource('job-categories', JobCategoryController::class);
 });
+  //job category route
+    Route::apiResource('job-categories', JobCategoryController::class);

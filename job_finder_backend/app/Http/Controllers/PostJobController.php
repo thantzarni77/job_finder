@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PostJob;
+use App\Helpers\Filters;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\JobFilterRequest;
 use App\Http\Requests\Postjob\CreateRequest;
 use App\Http\Requests\Postjob\UpdateRequest;
 use App\Interfaces\PostJobRepositoryInterface;
-use Illuminate\Http\Request;
-use App\Services\PostJobService;
-use Illuminate\Validation\Rule;
+
 
 class PostJobController extends Controller
 {
@@ -19,9 +21,9 @@ class PostJobController extends Controller
         $this->postJobRepository = $postJobRepository;
     }
 
-    public function index()
+    public function index(Request $request,JobFilterRequest $jobFilterRequest)
     {
-        return $this->postJobRepository->index();
+        return $this->postJobRepository->index($request, $jobFilterRequest);
     }
 
     public function store(CreateRequest $request)
@@ -52,4 +54,7 @@ class PostJobController extends Controller
     {
         return $this->postJobRepository->delete($id);
     }
+
 }
+
+?>

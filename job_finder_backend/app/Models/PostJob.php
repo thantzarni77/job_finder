@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Models\JobDetail;
+use App\Helpers\Filters;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class PostJob extends Model
 {
@@ -26,4 +28,16 @@ class PostJob extends Model
     {
         return $this->hasOne(JobDetail::class, 'post_job_id', 'id');
     }
+
+    public function category(){
+        return $this->belongsTo(Category::class);
+    }
+
+    public function scopeFilter(Builder $builder , Filters $filter){
+        return $filter->filter($builder);
+    }
+
+
 }
+
+?>

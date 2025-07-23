@@ -1,19 +1,20 @@
 <?php
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Api\SeekerController;
-use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Models\Seeker;
 use App\Models\Contact;
 use App\Models\Employer;
-use App\Models\User;
-use App\Traits\HttpResponseTrait;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Traits\HttpResponseTrait;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Tymon\JWTAuth\Exceptions\JWTException;
-use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Http\Controllers\Api\SeekerController;
 
 class AuthController extends Controller
 {

@@ -22,16 +22,21 @@ import JobFilterDrawer from "../../../components/user/JobFilterDrawer";
 
 import { getAllJobPosts } from "../../../helper/postJob";
 import { useQuery } from "@tanstack/react-query";
-import { useJobStore } from "../../../store/JobStore";
+import {
+  useJobRoleFilter,
+  useJobStore,
+  useJobTypeFilter,
+  useJobCategoryFilter,
+} from "../../../store/JobStore";
 
-const jobs = [
-  "full Time",
-  "part Time",
-  "intership",
-  "volunteer",
-  "freelancer",
-  "work from home",
-];
+const jobType = {
+  "Full Time": "full-time",
+  "Part Time": "part-time",
+  Internship: "internship",
+  volunteer: "volunteer",
+  Freelancer: "freelancer",
+  Remote: "remote",
+};
 
 const Jobs = () => {
   const [sortBy, setSortBy] = useState<string>("recent");
@@ -47,9 +52,19 @@ const Jobs = () => {
     (state) => state.setShowJobFilterDrawer,
   );
 
+  const { selectedJobRole } = useJobRoleFilter();
+  const { selectedJobType } = useJobTypeFilter();
+  const { selectedJobCategory } = useJobCategoryFilter();
+
   const allJobsQuery = useQuery({
-    queryKey: ["jobPosts"],
-    queryFn: getAllJobPosts,
+    queryKey: [
+      "jobPosts",
+      selectedJobRole,
+      selectedJobType,
+      selectedJobCategory,
+    ],
+    queryFn: () =>
+      getAllJobPosts(selectedJobRole, selectedJobType, selectedJobCategory),
   });
 
   const handleChange = (event: SelectChangeEvent<string>) => {
@@ -60,7 +75,14 @@ const Jobs = () => {
     if (allJobsQuery.data && allJobsQuery.isSuccess) {
       setJobs(allJobsQuery.data);
     }
-  }, [allJobsQuery.data, allJobsQuery.isSuccess, setJobs, allJobs]);
+  }, [
+    allJobsQuery.data,
+    allJobsQuery.isSuccess,
+    setJobs,
+    allJobs,
+    selectedJobRole,
+    selectedJobType,
+  ]);
 
   // custom component for dropdown icon
   const CustomIcon = () => (
@@ -143,7 +165,7 @@ const Jobs = () => {
         }}
       >
         <Box sx={{ display: { xs: "none", md: "block" } }}>
-          <JobFilter filterType={"Job"} filterTypeArray={jobs} />
+          <JobFilter filterType={"Job"} filterTypeArray={jobType} />
         </Box>
 
         <Box

@@ -13,6 +13,7 @@ import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import { NavLink } from "react-router";
+import { format } from "date-fns";
 import type { Job } from "../../../store/JobStore";
 
 const JobCard = ({ job }: { job: Job }) => {
@@ -132,7 +133,7 @@ const JobCard = ({ job }: { job: Job }) => {
             >
               <QueryBuilderIcon sx={{ color: "primary.light", fontSize: 22 }} />
               <Typography variant="caption" sx={{ color: "primary.light" }}>
-                posted on {job.created_at}
+                posted on {format(new Date(job.created_at), "PPpp")}
               </Typography>
             </Box>
           </Box>
@@ -147,7 +148,7 @@ const JobCard = ({ job }: { job: Job }) => {
               width: "fit-content",
               height: "28px",
             }}
-            label="Chip Filled"
+            label={job.type}
           />
           <Chip
             sx={{
@@ -157,7 +158,7 @@ const JobCard = ({ job }: { job: Job }) => {
               width: "fit-content",
               height: "28px",
             }}
-            label="Chip Filled"
+            label={job.role}
           />
           <Chip
             sx={{
@@ -167,7 +168,7 @@ const JobCard = ({ job }: { job: Job }) => {
               width: "fit-content",
               height: "28px",
             }}
-            label="Chip Filled"
+            label={job.category?.name}
           />
         </Box>
         <Divider flexItem />

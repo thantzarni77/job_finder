@@ -13,29 +13,102 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import CloseIcon from "@mui/icons-material/Close";
 import CustomCheckboxOutline from "../../custom_svg/CustomCheckboxOutline";
 import CustomCheckbox from "../../custom_svg/CustomCheckbox";
-import { useState } from "react";
+import { useState, type ChangeEvent } from "react";
+import { useJobTypeFilter } from "../../../store/JobStore";
+import { useJobRoleFilter } from "../../../store/JobStore";
+import { useJobCategoryFilter } from "../../../store/JobStore";
+import { getCategories } from "../../../helper/postJob";
+import { useQuery } from "@tanstack/react-query";
 
 // Helper function to format the numbers with commas
 function formatValueLabel(value: number): string {
   return value.toLocaleString();
 }
+type jobTypes = {
+  "Full Time": string;
+  "Part Time": string;
+  Internship: string;
+  volunteer: string;
+  Freelancer: string;
+  Remote: string;
+};
+type categoryType = {
+  id: number;
+  name: string;
+  created_at: Date;
+  updated_at: Date;
+};
 
 type Props = {
   filterType: string;
-  filterTypeArray: string[];
+  filterTypeArray: jobTypes;
+};
+
+const roles = {
+  Senior: "senior",
+  "Mid-Level": "mid-level",
+  Junior: "junior",
 };
 
 const JobFilter = ({ filterType, filterTypeArray }: Props) => {
   // State to hold the slider's value range [min, max]
-  const [value, setValue] = useState<number[]>([120000, 200000]);
+  const [value, setValue] = useState<number[]>([180000, 500000]);
 
   // Define the min and max for the entire slider range
-  const MIN_SALARY = 100000;
+  const MIN_SALARY = 180000;
   const MAX_SALARY = 500000;
 
   // Handler for when the slider value changes
   const handleChange = (event: Event, newValue: number | number[]) => {
     setValue(newValue as number[]);
+    console.log(newValue);
+  };
+
+  // getting job categories
+
+  const { data: categories, isPending } = useQuery({
+    queryKey: ["job-categories"],
+    queryFn: getCategories,
+  });
+  !isPending && console.log(categories);
+  const { selectedJobType, setSelectedJobType } = useJobTypeFilter();
+  const { selectedJobRole, setSelectedJobRole } = useJobRoleFilter();
+  const { selectedJobCategory, setSelectedJobCategory } =
+    useJobCategoryFilter();
+
+  // checkBoxHandleChange = collect checked value then pass to zustand global state
+  const checkBoxHandleChange = (
+    event: ChangeEvent<HTMLInputElement>,
+    checked: boolean,
+  ) => {
+    if (event.target.name === "type") {
+      const value = event?.target.value;
+      const updated = checked
+        ? [...selectedJobType, value]
+        : selectedJobType.filter((val) => val !== value);
+
+      setSelectedJobType(updated);
+      return;
+    }
+
+    if (event.target.name === "role") {
+      const value = event?.target.value;
+      const updated = checked
+        ? [...selectedJobRole, value]
+        : selectedJobRole.filter((val) => val !== value);
+
+      setSelectedJobRole(updated);
+      return;
+    }
+
+    if (event.target.name === "category") {
+      const value = event.target.value;
+      const updated = checked
+        ? [...selectedJobCategory, value]
+        : selectedJobCategory.filter((val) => val !== value);
+      setSelectedJobCategory(updated);
+      return;
+    }
   };
 
   return (
@@ -106,18 +179,21 @@ const JobFilter = ({ filterType, filterTypeArray }: Props) => {
               flexDirection: "column",
             }}
           >
-            {filterTypeArray.map((type) => (
+            {Object.entries(filterTypeArray).map(([key, value]) => (
               <FormControlLabel
                 control={
                   <Checkbox
-                    defaultChecked
+                    checked={selectedJobType.includes(value)}
                     disableRipple
                     icon={<CustomCheckboxOutline />}
                     checkedIcon={<CustomCheckbox />}
-                    name={type}
+                    name={"type"}
+                    value={value}
+                    onChange={checkBoxHandleChange}
+                    key={key}
                   />
                 }
-                label={type}
+                label={key}
                 sx={{
                   "& .MuiFormControlLabel-label": {
                     color: "text.secondary",
@@ -165,61 +241,30 @@ const JobFilter = ({ filterType, filterTypeArray }: Props) => {
                 flexDirection: { xs: "row", md: "column" },
               }}
             >
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    defaultChecked
-                    disableRipple
-                    icon={<CustomCheckboxOutline />}
-                    checkedIcon={<CustomCheckbox />}
-                    name={"senior"}
-                  />
-                }
-                label={"Senior"}
-                sx={{
-                  "& .MuiFormControlLabel-label": {
-                    color: "text.secondary",
-                    fontSize: 16,
-                    fontWeight: 400,
-                  },
-                }}
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    disableRipple
-                    icon={<CustomCheckboxOutline />}
-                    checkedIcon={<CustomCheckbox />}
-                    name={"mid"}
-                  />
-                }
-                label={"Mid"}
-                sx={{
-                  "& .MuiFormControlLabel-label": {
-                    color: "text.secondary",
-                    fontSize: 16,
-                    fontWeight: 400,
-                  },
-                }}
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    disableRipple
-                    icon={<CustomCheckboxOutline />}
-                    checkedIcon={<CustomCheckbox />}
-                    name={"junior"}
-                  />
-                }
-                label={"Junior"}
-                sx={{
-                  "& .MuiFormControlLabel-label": {
-                    color: "text.secondary",
-                    fontSize: 16,
-                    fontWeight: 400,
-                  },
-                }}
-              />
+              {Object.entries(roles).map(([key, value]) => (
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      disableRipple
+                      checked={selectedJobRole.includes(value)}
+                      icon={<CustomCheckboxOutline />}
+                      checkedIcon={<CustomCheckbox />}
+                      name={"role"}
+                      value={value}
+                      key={key}
+                      onChange={checkBoxHandleChange}
+                    />
+                  }
+                  label={key}
+                  sx={{
+                    "& .MuiFormControlLabel-label": {
+                      color: "text.secondary",
+                      fontSize: 16,
+                      fontWeight: 400,
+                    },
+                  }}
+                />
+              ))}
             </FormGroup>
           </Box>
         </Box>
@@ -325,61 +370,32 @@ const JobFilter = ({ filterType, filterTypeArray }: Props) => {
               Job Categories
             </Typography>
             <FormGroup>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    defaultChecked
-                    disableRipple
-                    icon={<CustomCheckboxOutline />}
-                    checkedIcon={<CustomCheckbox />}
-                    name={"accounting&Finance"}
-                  />
-                }
-                label={"Accounting & Finance"}
-                sx={{
-                  "& .MuiFormControlLabel-label": {
-                    color: "text.secondary",
-                    fontSize: 16,
-                    fontWeight: 400,
-                  },
-                }}
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    disableRipple
-                    icon={<CustomCheckboxOutline />}
-                    checkedIcon={<CustomCheckbox />}
-                    name={"administration"}
-                  />
-                }
-                label={"Administration"}
-                sx={{
-                  "& .MuiFormControlLabel-label": {
-                    color: "text.secondary",
-                    fontSize: 16,
-                    fontWeight: 400,
-                  },
-                }}
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    disableRipple
-                    icon={<CustomCheckboxOutline />}
-                    checkedIcon={<CustomCheckbox />}
-                    name={"advertising"}
-                  />
-                }
-                label={"Advertising"}
-                sx={{
-                  "& .MuiFormControlLabel-label": {
-                    color: "text.secondary",
-                    fontSize: 16,
-                    fontWeight: 400,
-                  },
-                }}
-              />
+              {!isPending &&
+                categories.map((cate: categoryType) => {
+                  return (
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          disableRipple
+                          icon={<CustomCheckboxOutline />}
+                          checkedIcon={<CustomCheckbox />}
+                          name={"category"}
+                          key={cate.id}
+                          value={cate.name}
+                          onChange={checkBoxHandleChange}
+                        />
+                      }
+                      label={cate.name}
+                      sx={{
+                        "& .MuiFormControlLabel-label": {
+                          color: "text.secondary",
+                          fontSize: 16,
+                          fontWeight: 400,
+                        },
+                      }}
+                    />
+                  );
+                })}
             </FormGroup>
           </Box>
         </Box>
