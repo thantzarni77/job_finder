@@ -45,7 +45,7 @@ class PostJobRepository implements PostJobRepositoryInterface
             'post_job_id' => $PostJob->id,
             'requirements' => $data['requirements'],
             'description' => $data['description'],
-            'dead_line' => $data['deadline'],//YYYY-MM-DD format
+            'dead_line' => $data['deadline'],//YYYY-MM-DD format 2025-06-27
             'vacancy' => $data['vacancy'],
             'note' => $data['note'],
             'benefits' => $data['benefits'],

@@ -25,7 +25,7 @@ class SaveJobRepository implements SaveJobRepositoryInterface
 
     //view save job
     public function view(){
-        $data = Save_job::where('seeker_id',8)->get();
+        $data = Save_job::where('seeker_id',auth()->user()->id)->get();
         return response()->json(['status' => 'success', 'message' => 'Seeker Save job fetched successfully', 'data' => $data], 200);
     }
 
