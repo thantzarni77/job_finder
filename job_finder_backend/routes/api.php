@@ -16,8 +16,7 @@ use App\Http\Controllers\SaveJobController;
 use App\Http\Controllers\TalentController;
 use Illuminate\Support\Facades\Route;
 
-// post-jobs filter 
-Route::get('post-jobs/filter',[PostJobController::class,'filter']);
+
 
 Route::post('/registerstepone', [AuthController::class, 'registerStepOne']);
 Route::post('/registersteptwo/{id}', [AuthController::class, 'registerStepTwo']);
@@ -58,15 +57,15 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
 
     Route::middleware("UserTypeMiddleware:admin")->group(function () {});
 
-
-    //job post
+     //job post
     Route::prefix('post-jobs')->group(function () {
-        Route::get('/', [PostJobController::class, 'index']);
+        Route::get('/', [PostJobController::class, 'index'])->withoutMiddleware('AuthMiddleware');
         Route::post('/', [PostJobController::class, 'store']);
         Route::get('/{id}', [PostJobController::class, 'show']);
         Route::post('/{id}', [PostJobController::class, 'update']);
         Route::delete('/{id}', [PostJobController::class, 'destroy']);
     });
+  
 
     Route::middleware("UserTypeMiddleware:admin")->group(function () {
 
@@ -130,8 +129,7 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
         Route::delete('/{id}', [SaveJobController::class, 'destroy']);
     });
 
-    //job category route
-    Route::apiResource('job-categories', JobCategoryController::class);
+  
     //job detail route
     Route::apiResource('job-details', JobDetailController::class);
 
@@ -141,3 +139,5 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
     //job category route
     Route::apiResource('job-categories', JobCategoryController::class);
 });
+  //job category route
+    Route::apiResource('job-categories', JobCategoryController::class);

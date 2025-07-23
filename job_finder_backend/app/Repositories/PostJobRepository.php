@@ -3,12 +3,13 @@
 namespace App\Repositories;
 
 use App\Models\PostJob;
-use App\Interfaces\PostJobRepositoryInterface;
+use App\Helpers\Filters;
 use App\Models\JobDetail;
-use Google\Service\ShoppingContent\Resource\Pos;
-
 // use Google\Service\Blogger\Post;
 use Illuminate\Http\Request;
+use App\Http\Requests\JobFilterRequest;
+use App\Interfaces\PostJobRepositoryInterface;
+
 
 
 class PostJobRepository implements PostJobRepositoryInterface
@@ -21,16 +22,35 @@ class PostJobRepository implements PostJobRepositoryInterface
         $this->postJob = $postJob;
     }
 
-    public function index()
-    {
-        $request = request();
-        if ($request->has('job_code')) {
-            $data = $this->postJob->with('jobDetail')->where('job_code', 'like', '%' . $request->job_code . '%')->first();
-            return response()->json(['status' => 'success', 'message' => 'Job fetched successfully', 'data' => $data], 200);
+    public function index(Request $request , JobFilterRequest $jobFilterRequest){
+  
+        if ($request->filled('job_code')) {
+            $job = $this->postJob
+                        ->with(['jobDetail', 'category'])
+                        ->where('job_code', 'like', '%' . $request->job_code . '%')
+                        ->first();
+    
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Job fetched successfully job code ',
+                'data' => $job
+            ], 200);
         }
-        $data = $this->postJob->with('jobDetail')->get();
-        return response()->json(['status' => 'success', 'message' => 'Job fetched successfully', 'data' => $data], 200);
+        $filter = new Filters($jobFilterRequest->validated());
+    
+        $jobs = $this->postJob
+                     ->with(['jobDetail', 'category'])
+                     ->filter($filter)
+                     ->get();
+    
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Jobs fetched successfully filter',
+            'data' => $jobs
+        ], 200);
+        
     }
+
 
     public function store(array $data)
     {

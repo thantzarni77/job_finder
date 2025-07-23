@@ -22,12 +22,12 @@ class JobFilterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'type' => 'sometimes',
+            'type' => 'sometimes|array',
             'role'=>'sometimes|array',
             'salary' => 'sometimes|array|size:2',
             'salary.0'=> 'nullable|numeric',
             'salary.1' => 'nullable|numeric',
-            'category' => 'sometimes|string',
+            'category' => 'sometimes|array',
         ];
     }
 }

@@ -56,6 +56,12 @@ class Filters
 
         return $this->builder;
     }
+
+    public function category(array $category) : Builder {
+        return $this->builder->whereHas('category', function($q) use ($category) {
+            $q->whereIn('name',$category);
+        });
+    }
 }
 
 ?>

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
 use App\Models\Role;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -20,13 +21,14 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        $this->call([
-            // AuthSeeder::class,
-            TypeSeeder::class,
-            TalentSeeder::class,
-            RoleSeeder::class,
-            GenderSeeder::class
+        // $this->call([
+        //     // AuthSeeder::class,
+        //     TypeSeeder::class,
+        //     TalentSeeder::class,
+        //     RoleSeeder::class,
+        //     GenderSeeder::class
 
-        ]);
+        // ]);
+        Category::factory(10)->create();
     }
 }
