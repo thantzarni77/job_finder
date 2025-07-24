@@ -70,7 +70,7 @@ const JobFilter = ({ filterType, filterTypeArray }: Props) => {
     queryKey: ["job-categories"],
     queryFn: getCategories,
   });
-  !isPending && console.log(categories);
+  // !isPending && console.log(categories);
   const { selectedJobType, setSelectedJobType } = useJobTypeFilter();
   const { selectedJobRole, setSelectedJobRole } = useJobRoleFilter();
   const { selectedJobCategory, setSelectedJobCategory } =

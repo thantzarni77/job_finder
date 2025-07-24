@@ -17,10 +17,12 @@ return new class extends Migration
             $table->integer('category_id');
             $table->string('job_title');
             $table->string('salary')->default('Nego');
-            $table->enum('role',['junior', 'mid-level', 'senior'])->default('junior')->nullable();
-            $table->enum('posting_status',['pending', 'rejected', 'approved'])->default('pending')->nullable();
+            // $table->enum('role', ['junior', 'mid-level', 'senior'])->default('junior')->nullable();
+            $table->string("role");
+            $table->enum('posting_status', ['pending', 'rejected', 'approved'])->default('pending')->nullable();
             $table->string('location');
-            $table->enum('type',['full-time', 'part-time', 'contract','internship','freelance','volunteer','hybrid','project-based','remote','other'])->default('full-time')->nullable();
+            // $table->enum('type', ['full-time', 'part-time', 'contract', 'internship', 'freelance', 'volunteer', 'hybrid', 'project-based', 'remote', 'other'])->default('full-time')->nullable();
+            $table->string("type");
             $table->integer('view_count')->default(0);
             $table->string('job_code');
             $table->timestamps();

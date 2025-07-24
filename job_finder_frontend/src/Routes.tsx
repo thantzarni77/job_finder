@@ -33,8 +33,9 @@ import EditEmployer from "./pages/admin/EditEmployer";
 import SeekerManagement from "./pages/admin/SeekerManagement";
 import SeekerDetailManage from "./pages/admin/SeekerDetailManage";
 import TalentProfile from "./pages/user/TalentProfile";
-import IsLoginnedMiddleware from "./protected_routes/IsLoginnedMiddleware";
 import EmployerProfile from "./pages/employer/EmployerProfile";
+import IsLoginnedMiddleware from "./protected_routes/IsLoginnedMiddleware";
+
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -63,7 +64,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/post/job",
-        Component: PostAJob,
+        element: <PostAJob />,
       },
       {
         path: "/job/:id/apply/confirm",
@@ -139,10 +140,6 @@ export const router = createBrowserRouter([
         path: "/settings/user/:id/security/changePassword",
         Component: ChangePassword,
       },
-      // {
-      //   path: "/post/job",
-      //   Component: PostAJob,
-      // },
     ],
   },
   {

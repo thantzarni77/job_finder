@@ -14,3 +14,8 @@ export const getAllTypes = async () => {
   const { data } = await axiosClient.get("/types");
   return data;
 };
+
+export const getAllCategories = async () => {
+  const { data } = await axiosClient.get("/job-categories");
+  return data;
+};

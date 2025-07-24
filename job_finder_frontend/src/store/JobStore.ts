@@ -1,16 +1,21 @@
 import { create } from "zustand";
 
 export type Job = {
-  id: number;
   employer_id: number;
   category_id: number | null;
   job_title: string;
-  job_code: string;
   location: string;
   salary: string;
   posting_status: string;
   role: string;
   type: string;
+  requirements: string;
+  description: string;
+  deadline: Date;
+  vacancy: string;
+  note: string;
+  benefits: string;
+  gender: string;
   view_count: number;
   created_at: string;
   updated_at: string;

@@ -1,16 +1,13 @@
 <?php
-
 namespace App\Repositories;
 
-use App\Models\PostJob;
 use App\Helpers\Filters;
-use App\Models\JobDetail;
-// use Google\Service\Blogger\Post;
-use Illuminate\Http\Request;
 use App\Http\Requests\JobFilterRequest;
 use App\Interfaces\PostJobRepositoryInterface;
-
-
+// use Google\Service\Blogger\Post;
+use App\Models\JobDetail;
+use App\Models\PostJob;
+use Illuminate\Http\Request;
 
 class PostJobRepository implements PostJobRepositoryInterface
 {
@@ -22,50 +19,51 @@ class PostJobRepository implements PostJobRepositoryInterface
         $this->postJob = $postJob;
     }
 
-    public function index(Request $request , JobFilterRequest $jobFilterRequest){
-  
+    public function index(Request $request, JobFilterRequest $jobFilterRequest)
+    {
+
         if ($request->filled('job_code')) {
             $job = $this->postJob
-                        ->with(['jobDetail', 'category'])
-                        ->where('job_code', 'like', '%' . $request->job_code . '%')
-                        ->first();
-    
+                ->with(['jobDetail', 'category'])
+                ->where('job_code', 'like', '%' . $request->job_code . '%')
+                ->first();
+
             return response()->json([
-                'status' => 'success',
+                'status'  => 'success',
                 'message' => 'Job fetched successfully job code ',
-                'data' => $job
+                'data'    => $job,
             ], 200);
         }
         $filter = new Filters($jobFilterRequest->validated());
-    
-        $jobs = $this->postJob
-                     ->with(['jobDetail', 'category'])
-                     ->filter($filter)
-                     ->get();
-    
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Jobs fetched successfully filter',
-            'data' => $jobs
-        ], 200);
-        
-    }
 
+        $jobs = $this->postJob
+            ->with(['jobDetail', 'category'])
+            ->filter($filter)
+            ->get();
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Jobs fetched successfully filter',
+            'data'    => $jobs,
+        ], 200);
+
+    }
 
     public function store(array $data)
     {
         // dd($data['requirements']);
         //generate Job Code
-        $jobCode = "JF-" . rand(0000, 9999) . now()->format('ymd');
-        $data['job_code'] = $jobCode;
+        $jobCode                = "JF-" . rand(0000, 9999) . now()->format('ymd');
+        $data['job_code']       = $jobCode;
         $data['posting_status'] = 'pending';
         $this->postJob->create($data);
 
         $PostJob = $this->postJob->where('job_code', $jobCode)->first();
 
         JobDetail::create([
-            'post_job_id' => $PostJob->id,
+            'post_job_id'  => $PostJob->id,
             'requirements' => $data['requirements'],
+<<<<<<< HEAD
             'description' => $data['description'],
             'dead_line' => $data['deadline'],//YYYY-MM-DD format 2025-06-27
             'vacancy' => $data['vacancy'],
@@ -74,11 +72,21 @@ class PostJobRepository implements PostJobRepositoryInterface
             'gender' => $data['gender'],
             'save_count' => 0,
             'apply_count' => 0
+=======
+            'description'  => $data['description'],
+            'dead_line'    => $data['deadline'], //YYYY-MM-DD format
+            'vacancy'      => $data['vacancy'],
+            'note'         => $data['note'],
+            'benefits'     => $data['benefits'],
+            'gender'       => $data['gender'],
+            'save_count'   => 0,
+            'apply_count'  => 0,
+>>>>>>> 43cf4c93a8cdfcb70794ebee03c20923e4a08ea0
         ]);
 
         $PostJob->save();
         $resData = [
-            $data = $this->postJob->with('jobDetail')->where('job_code', $jobCode)->first()
+            $data = $this->postJob->with('jobDetail')->where('job_code', $jobCode)->first(),
         ];
         return response()->json(['status' => 'success', 'message' => 'Job created successfully', 'data' => $resData], 201);
     }
@@ -98,17 +106,17 @@ class PostJobRepository implements PostJobRepositoryInterface
         $jobDetail = JobDetail::where('post_job_id', $job->id)->first();
         $jobDetail->update([
             'requirements' => $data['requirements'],
-            'description' => $data['description'],
-            'dead_line' => $data['deadline'],//YYYY-MM-DD format
-            'vacancy' => $data['vacancy'],
-            'note' => $data['note'],
-            'benefits' => $data['benefits'],
-            'gender' => $data['gender'],
+            'description'  => $data['description'],
+            'dead_line'    => $data['deadline'], //YYYY-MM-DD format
+            'vacancy'      => $data['vacancy'],
+            'note'         => $data['note'],
+            'benefits'     => $data['benefits'],
+            'gender'       => $data['gender'],
         ]);
 
         $job->save();
         $resData = [
-            $data = $this->postJob->with('jobDetail')->where('job_code', $job->job_code)->first()
+            $data = $this->postJob->with('jobDetail')->where('job_code', $job->job_code)->first(),
         ];
         return response()->json(['status' => 'success', 'message' => 'Job updated successfully', 'data' => $resData], 200);
     }
@@ -121,5 +129,3 @@ class PostJobRepository implements PostJobRepositoryInterface
     }
 
 }
-
-?>

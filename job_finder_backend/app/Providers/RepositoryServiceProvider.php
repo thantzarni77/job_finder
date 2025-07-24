@@ -1,27 +1,29 @@
 <?php
 namespace App\Providers;
 
-use App\Repositories\AuthRepository;
-use App\Repositories\TalentRepository;
-use App\Repositories\PostJobRepository;
-use App\Repositories\ProjectRepository;
-use App\Repositories\SaveJobRepository;
-use Illuminate\Support\ServiceProvider;
-use App\Interfaces\ContactFormInterface;
-use App\Repositories\ApplyJobRepository;
-use App\Repositories\CategoryRepository;
-use App\Repositories\JobDetailRepository;
+use App\Interfaces\ApplyJobRepositoryInterface;
 use App\Interfaces\AuthRepositoryInterface;
-use App\Repositories\ContactFormRepository;
-use App\Interfaces\TalentRepositoryInterface;
+use App\Interfaces\CategoryRepositoryInterface;
+use App\Interfaces\ContactFormInterface;
+use App\Interfaces\EmployerVerificationInterface;
+use App\Interfaces\JobDetailRepositoryInterface;
 use App\Interfaces\PostJobRepositoryInterface;
 use App\Interfaces\ProjectRepositoryInterface;
 use App\Interfaces\SaveJobRepositoryInterface;
-use App\Interfaces\ApplyJobRepositoryInterface;
-use App\Interfaces\CategoryRepositoryInterface;
-use App\Interfaces\JobDetailRepositoryInterface;
-use App\Interfaces\EmployerVerificationInterface;
+use App\Interfaces\TalentRepositoryInterface;
+use App\Interfaces\UserRepositoryInterface;
+use App\Repositories\ApplyJobRepository;
+use App\Repositories\AuthRepository;
+use App\Repositories\CategoryRepository;
+use App\Repositories\ContactFormRepository;
 use App\Repositories\EmployerVerficationRepository;
+use App\Repositories\JobDetailRepository;
+use App\Repositories\PostJobRepository;
+use App\Repositories\ProjectRepository;
+use App\Repositories\SaveJobRepository;
+use App\Repositories\TalentRepository;
+use App\Repositories\UserRepository;
+use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -39,7 +41,8 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(EmployerVerificationInterface::class, EmployerVerficationRepository::class);
         $this->app->bind(PostJobRepositoryInterface::class, PostJobRepository::class);
         $this->app->bind(TalentRepositoryInterface::class, TalentRepository::class);
-        $this->app->bind(ContactFormInterface::class,ContactFormRepository::class);
+        $this->app->bind(ContactFormInterface::class, ContactFormRepository::class);
+        $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
     }
 
     /**

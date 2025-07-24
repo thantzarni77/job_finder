@@ -5,6 +5,17 @@ export const getSeekerProfile = async (userID: number | undefined) => {
   return data;
 };
 
+export const updateSeekerProfile = async ({
+  seekerID,
+  seekerData,
+}: {
+  seekerID: number | null;
+  seekerData: FormData;
+}) => {
+  const data = await axiosClient.post(`/seeker/${seekerID}`, seekerData);
+  return data;
+};
+
 export const getEmployerProfile = async (userID: number | undefined) => {
   const data = await axiosClient.get(`/employer-data/${userID}`);
   return data;

@@ -1,12 +1,13 @@
 import { create } from "zustand";
 
-type EduRecord = Record<string, string>;
-
 type SeekerProfile = {
   id: number | null;
   skills: string[];
-  education: EduRecord[];
-  work_experience: string[];
+  education: { degree: string; year: string }[];
+  work_experience: {
+    workPos: string;
+    year: string;
+  }[];
   role: string;
   talent: string;
   social_media_link: string[];
@@ -52,8 +53,8 @@ export const useProfileStore = create<
   seekerProfile: {
     id: null,
     skills: [],
-    education: [],
-    work_experience: [],
+    education: [{ degree: "", year: "" }],
+    work_experience: [{ workPos: "", year: "" }],
     role: "",
     talent: "",
     social_media_link: [],

@@ -56,7 +56,7 @@ type RegisterFormData = {
   skills?: { value: string }[];
   education?: { degree: string; year: string }[];
   work_experience?: { workPos: string; year: string }[];
-  role?: "junior" | "mid-level" | "senior";
+  role?: string;
   bio?: string;
   talent?: string;
   social_media_link?: { value: string }[];
