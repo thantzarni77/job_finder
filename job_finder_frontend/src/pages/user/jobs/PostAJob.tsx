@@ -496,7 +496,6 @@ export default function PostAJob() {
                             textField: {
                               onBlur: field.onBlur,
                               error: !!error,
-                              fullWidth: true,
                             },
                           }}
                           sx={{

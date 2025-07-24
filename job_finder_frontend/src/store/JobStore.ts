@@ -1,7 +1,6 @@
 import { create } from "zustand";
 
 export type Job = {
-  id: number;
   employer_id: number;
   category_id: number | null;
   job_title: string;

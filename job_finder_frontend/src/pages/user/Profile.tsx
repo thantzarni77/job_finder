@@ -98,7 +98,7 @@ export default function Profile() {
                 width: { xs: "20px", sm: " 150px", md: "150px" },
                 height: "30px",
               }}
-              onClick={() => navigate(`/profile/1/edit`)}
+              onClick={() => navigate(`/profile/${user_id}/edit`)}
             >
               <EditIcon sx={{ fontSize: "20px" }} />
               <Typography
@@ -149,6 +149,13 @@ export default function Profile() {
             <Typography variant="h6">About Me</Typography>
             <Typography variant="body2" sx={{ mt: 1, opacity: 0.7 }}>
               {seekerProfile.bio}
+            </Typography>
+          </Box>
+
+          <Box sx={{ mt: 4 }}>
+            <Typography variant="h6">Role</Typography>
+            <Typography variant="body2" sx={{ mt: 1, opacity: 0.7 }}>
+              {seekerProfile.role}
             </Typography>
           </Box>
 
@@ -232,10 +239,10 @@ export default function Profile() {
                           variant="body2"
                           sx={{ color: "text.secondary" }}
                         >
-                          {single}
+                          {single.workPos}
                         </Typography>
                         <Typography variant="body2" color="primary">
-                          2018 - 2022
+                          {single.year}
                         </Typography>
                       </Box>
                     </Box>

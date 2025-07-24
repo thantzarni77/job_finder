@@ -93,6 +93,7 @@ export default function Header({ isLoading }: { isLoading: boolean }) {
         "/companies/:id": companiesRef,
         "/post/job": postJobRef,
         "/profile/:id": profileRef,
+        "/profile/:id/edit": profileRef,
         "/employer-profile/:id": profileRef,
         "/project/add": profileRef,
         "/notifications/user/:id": notificationsRef,
