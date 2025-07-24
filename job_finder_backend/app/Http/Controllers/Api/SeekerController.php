@@ -128,7 +128,6 @@ class SeekerController extends Controller
             "bio"               => "required",
             "talent"            => "required",
             "social_media_link" => "nullable",
-            "image"             => "required",
         ]);
 
         if ($validator->fails()) {
