@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use App\Models\PostJob;
 use Illuminate\Database\Eloquent\Model;
 
@@ -19,6 +20,15 @@ class JobDetail extends Model
         'save_count',
         'apply_count',
     ];
+
+    public function toArray()
+    {
+        $attributes = parent::toArray();
+        if (array_key_exists('deadline', $attributes)) {
+            $attributes['deadline'] = Carbon::parse($attributes['deadline'])->toDateString();
+        }
+        return $attributes;
+    }
 
     public function postJob()
     {

@@ -63,16 +63,6 @@ class PostJobRepository implements PostJobRepositoryInterface
         JobDetail::create([
             'post_job_id'  => $PostJob->id,
             'requirements' => $data['requirements'],
-<<<<<<< HEAD
-            'description' => $data['description'],
-            'dead_line' => $data['deadline'],//YYYY-MM-DD format 2025-06-27
-            'vacancy' => $data['vacancy'],
-            'note' => $data['note'],
-            'benefits' => $data['benefits'],
-            'gender' => $data['gender'],
-            'save_count' => 0,
-            'apply_count' => 0
-=======
             'description'  => $data['description'],
             'dead_line'    => $data['deadline'], //YYYY-MM-DD format
             'vacancy'      => $data['vacancy'],
@@ -81,7 +71,6 @@ class PostJobRepository implements PostJobRepositoryInterface
             'gender'       => $data['gender'],
             'save_count'   => 0,
             'apply_count'  => 0,
->>>>>>> 43cf4c93a8cdfcb70794ebee03c20923e4a08ea0
         ]);
 
         $PostJob->save();

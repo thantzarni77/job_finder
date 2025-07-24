@@ -26,6 +26,16 @@ Route::post('/reset-password', [NewPasswordController::class, 'resetPassword']);
 
 Route::post('/admin/employerVerification/{id}', [EmployerVerficationController::class, 'updateStatus']);
 
+//job post
+    Route::prefix('post-jobs')->group(function () {
+        Route::get('/', [PostJobController::class, 'index'])->withoutMiddleware('AuthMiddleware');
+        Route::post('/', [PostJobController::class, 'store']);
+        Route::get('/{id}', [PostJobController::class, 'show']);
+        Route::post('/{id}', [PostJobController::class, 'update']);
+        Route::delete('/{id}', [PostJobController::class, 'destroy']);
+    });
+
+
 //talent module
 Route::prefix('talent')->group(function () {
     //save job list
@@ -56,18 +66,6 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
 
     Route::middleware("UserTypeMiddleware:admin")->group(function () {});
 
-    //job post
-    Route::prefix('post-jobs')->group(function () {
-        Route::get('/', [PostJobController::class, 'index'])->withoutMiddleware('AuthMiddleware');
-        Route::post('/', [PostJobController::class, 'store']);
-        Route::get('/{id}', [PostJobController::class, 'show']);
-        Route::post('/{id}', [PostJobController::class, 'update']);
-        Route::delete('/{id}', [PostJobController::class, 'destroy']);
-    });
-<<<<<<< HEAD
-
-=======
->>>>>>> 43cf4c93a8cdfcb70794ebee03c20923e4a08ea0
 
     Route::middleware("UserTypeMiddleware:admin")->group(function () {
 
@@ -135,14 +133,6 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
         Route::delete('/{id}', [SaveJobController::class, 'destroy']);
     });
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 43cf4c93a8cdfcb70794ebee03c20923e4a08ea0
-    //job detail route
-    Route::apiResource('job-details', JobDetailController::class);
-
-    //seeker show his experience project route
     Route::apiResource('project', ProjectController::class);
 
     //job category route
