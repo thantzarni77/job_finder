@@ -112,7 +112,7 @@ class SeekerController extends Controller
     
             return $this->successResponseSeeker("Success created",$seeker,$token,201)->cookie('refresh_token', $refresh_token, 60 * 24 * 7, null, null, true, true);
         }catch(\Exception $e){
-            return response()->json(["message"=>"Data not found"],404);
+            return response()->json(["message"=>"Not found"],404);
         }
 
     }

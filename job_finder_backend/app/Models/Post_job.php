@@ -17,7 +17,8 @@ class Post_job extends Model
         'location',
         'type',
         'view_count',
-        'job_code',];
+        'job_code'
+    ];
 
         public static function getJobRole() {
             return [
