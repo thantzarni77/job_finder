@@ -67,7 +67,7 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
         Route::post('/{id}', [PostJobController::class, 'update']);
         Route::delete('/{id}', [PostJobController::class, 'destroy']);
     });
-  
+
 
     Route::middleware("UserTypeMiddleware:admin")->group(function () {
 
@@ -136,7 +136,7 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
         Route::delete('/{id}', [SaveJobController::class, 'destroy']);
     });
 
-  
+
     //job detail route
     Route::apiResource('job-details', JobDetailController::class);
 

@@ -3,6 +3,8 @@
 namespace App\Repositories;
 
 use App\Models\Project;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\Contracts\Providers\Auth;
 use Illuminate\Database\Eloquent\Collection;
 use App\Interfaces\ProjectRepositoryInterface;
 
@@ -14,7 +16,7 @@ class ProjectRepository implements ProjectRepositoryInterface
     //index
     public function index()
     {
-        $data = Project::where('seeker_id', 7)->get();
+        $data = Project::where('seeker_id', JWTAuth::user())->get();
         return response()->json(['status' => 'success', 'message' => 'Projects fetched successfully', 'data' => $data], 200);
     }
     //store project
@@ -37,6 +39,6 @@ class ProjectRepository implements ProjectRepositoryInterface
         $project = Project::findOrFail($id);
         $data['seeker_id'] = $project->seeker_id;
         $project->update($data);
-        return response()->json(['status' => 'success', 'message' => 'Project updated successfully', 'data' => $project], 200);
+        return response()->json(['status' => 'success', 'message' => 'Project updated successfully', 'data' => $project], 201);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Save_job;
+use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Interfaces\SaveJobRepositoryInterface;
 
 class SaveJobRepository implements SaveJobRepositoryInterface
@@ -25,7 +26,7 @@ class SaveJobRepository implements SaveJobRepositoryInterface
 
     //view save job
     public function view(){
-        $data = Save_job::where('seeker_id',auth()->user()->id)->get();
+        $data = Save_job::where('seeker_id',JWTAuth::user())->get();
         return response()->json(['status' => 'success', 'message' => 'Seeker Save job fetched successfully', 'data' => $data], 200);
     }
 
