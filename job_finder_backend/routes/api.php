@@ -27,14 +27,13 @@ Route::post('/reset-password', [NewPasswordController::class, 'resetPassword']);
 Route::post('/admin/employerVerification/{id}', [EmployerVerficationController::class, 'updateStatus']);
 
 //job post
-    Route::prefix('post-jobs')->group(function () {
-        Route::get('/', [PostJobController::class, 'index'])->withoutMiddleware('AuthMiddleware');
-        Route::post('/', [PostJobController::class, 'store']);
-        Route::get('/{id}', [PostJobController::class, 'show']);
-        Route::post('/{id}', [PostJobController::class, 'update']);
-        Route::delete('/{id}', [PostJobController::class, 'destroy']);
-    });
-
+Route::prefix('post-jobs')->group(function () {
+    Route::get('/', [PostJobController::class, 'index'])->withoutMiddleware('AuthMiddleware');
+    Route::post('/', [PostJobController::class, 'store']);
+    Route::get('/{id}', [PostJobController::class, 'show']);
+    Route::post('/{id}', [PostJobController::class, 'update']);
+    Route::delete('/{id}', [PostJobController::class, 'destroy']);
+});
 
 //talent module
 Route::prefix('talent')->group(function () {
@@ -66,7 +65,6 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
 
     Route::middleware("UserTypeMiddleware:admin")->group(function () {});
 
-
     Route::middleware("UserTypeMiddleware:admin")->group(function () {
 
     });
@@ -96,9 +94,6 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
         Route::post('/employer', [EmployerController::class, 'store']);
         Route::post('/employer/{id}', [EmployerController::class, 'update']);
         Route::delete('/employer/{id}', [EmployerController::class, 'destroy']);
-
-        //employer post job
-        Route::apiResource('post-jobs', PostJobController::class);
 
         Route::get('/indi_employer', [IndividualEmployerController::class, 'index']);
         Route::get('/indi_employer/{id}', [IndividualEmployerController::class, 'getData']);
@@ -134,9 +129,7 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
     });
 
     Route::apiResource('project', ProjectController::class);
-
-    //job category route
-    Route::apiResource('job-categories', JobCategoryController::class);
 });
+
 //job category route
 Route::apiResource('job-categories', JobCategoryController::class);

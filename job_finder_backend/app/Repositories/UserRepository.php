@@ -2,6 +2,7 @@
 namespace App\Repositories;
 
 use App\Interfaces\UserRepositoryInterface;
+use App\Models\User;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -14,6 +15,8 @@ class UserRepository implements UserRepositoryInterface
             'phone'   => "nullable",
             'address' => "nullable",
         ]);
+
+        $updatedUser = User::where('id', $id)->update($validatedData);
 
         return response()->json([
             "message" => "User Updated Successfully",
