@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
-class Seeker extends Model
+use Tymon\JWTAuth\Contracts\JWTSubject;
+class Seeker extends Model implements JWTSubject
 {
     protected $fillable = [  
         'user_id',
@@ -14,9 +14,19 @@ class Seeker extends Model
         'role',
         'talent',
         'social_media_link',
-        'seeker_image',
+        'image',
         'bio'
     ];
+
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
 
     public static function getRole() {
         return [

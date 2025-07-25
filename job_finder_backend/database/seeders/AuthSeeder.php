@@ -14,12 +14,12 @@ class AuthSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
-            "name"      => "admin",
-            "email"     => "admin@gmail.com",
-            "password"  => Hash::make("admin1234"),
-            "user_type" => "admin"
-        ]);
+        // User::create([
+        //     "name"      => "admin",
+        //     "email"     => "admin@gmail.com",
+        //     "password"  => Hash::make("admin1234"),
+        //     "user_type" => "admin"
+        // ]);
     
     }
 }

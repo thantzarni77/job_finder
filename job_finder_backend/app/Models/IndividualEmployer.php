@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Contact extends Model
+class IndividualEmployer extends Model
 {
-    protected $table = "contacts";
+    protected $table = "individual_employers";
+
     protected $fillable = [
         "user_id",
         "title",
-        "message",
+        "message"
     ];
 
     public function user(){

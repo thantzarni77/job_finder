@@ -2,6 +2,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\User;
+use App\Models\Seeker;
+use App\Models\Contact;
+use App\Models\Employer;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Traits\HttpResponseTrait;
@@ -11,61 +14,101 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use App\Http\Controllers\Api\SeekerController;
 
 class AuthController extends Controller
 {
     use HttpResponseTrait;
-    public function register(Request $request)
+    public function registerStepOne(Request $request)
     {
 
         try {
             $validator = Validator::make($request->all(), [
                 "name"      => "required",
                 "email"     => "required|email|unique:users",
-                "password"  => "required|min:6",
-                "user_type" => "nullable|in:admin,seeker,employer,super admin",
+                "user_type" => "nullable|in:seeker,employer",
             ]);
 
             if ($validator->fails()) {
                 return $this->erorsResponse("Validator fails", $validator->messages());
             }
 
-            $refresh_token = Str::random(60);
+            $user = User::create([
+                "name"      => $request->name,
+                "email"     => $request->email,
+                "phone"     => $request->phone,
+                "address"   => $request->address,
+                "user_type" => $request->user_type ?? "seeker",
+            ]);
 
-            //user account checking and creation
-            if ($request->user_type === "admin") {
-                //can not create admin account if user_type is seeker and employer
-                return response()->json(['error' => 'Admin account can not be created'], 400);
-            } else {
-                $user = User::create([
-                    "name" => $request->name,
-                    "email" => $request->email,
-                    "password" => Hash::make($request->password),
-                    'refresh_token' => hash('sha256', $refresh_token),
-                    "user_type" => $request->user_type ?? "seeker"
-                ]);
-            }
-
-            $token = JWTAuth::fromUser($user);
-
-            return $this->successAuthResponse("Register Success", $user, $token, 201)->cookie('refresh_token', $refresh_token, 60 * 24 * 7, null, null, true, true);
+            return response()->json([
+                "message" => "Success created",
+                "data"    => [
+                    "id" => $user->id,
+                ],
+            ], 201);
 
         } catch (JWTException $e) {
-            return $this->erorsResponse("Register Failed", null, 500);
+            return $this->erorsResponse("Step One Failed", null, 500);
         }
+    }
 
+    public function registerStepTwo(Request $request, string $id)
+    {
+        try {
+            $userData = User::where("id", $id)->first();
+
+            if (! $userData) {
+                return $this->erorsResponse("User not found", null, 404);
+            }
+
+            $isInSeeker = Seeker::where('user_id', $userData->id)->exists();
+            if ($isInSeeker) {
+                return $this->erorsResponse("This user is already registered as a seeker and cannot register as an employer", null, 403);
+            }
+
+            $isInEmployer = Employer::where('user_id', $userData->id)->exists();
+            if ($isInEmployer) {
+                return $this->erorsResponse("User already registered as an employer", null, 409);
+            }
+
+            $isInIndividualEmployer = Contact::where('user_id', $userData->id)->exists();
+            if ($isInIndividualEmployer) {
+                return $this->erorsResponse("User already registered as an individual employer", null, 409);
+            }
+
+            if ($request->has('detail') && $request->detail === 'individual') {
+                $individualEmployerController = new IndividualEmployerController();
+                return $individualEmployerController->store($request, $userData->id);
+            }
+
+            if ($userData->user_type === "employer") {
+                $employerController = new EmployerController();
+                return $employerController->store($request, $userData->id);
+            }
+
+            if ($userData->user_type === "seeker") {
+                $seekerController = new SeekerController();
+                return $seekerController->store($request, $userData->id);
+            }
+
+            return $this->erorsResponse("Invalid user type", null, 400);
+
+        } catch (\Exception $e) {
+            return $this->erorsResponse("Unexpected error occurred", $e->getMessage(), 500);
+        }
     }
 
     public function login(Request $request)
     {
-        $cred = $request->only("email", "password");
+        $cred  = $request->only("email", "password");
         $token = JWTAuth::attempt($cred);
 
         if (! $token) {
             return $this->erorsResponse("Invalid Email or Password", null, 401);
         }
 
-        $user = JWTAuth::user();
+        $user          = JWTAuth::user();
         $refresh_token = Str::random(60);
         $user->update([
             'refresh_token' => hash('sha256', $refresh_token),
@@ -114,47 +157,47 @@ class AuthController extends Controller
         if (Auth::user()->user_type === "super admin") {
             //check validation
             $validated = Validator::make($request->all(), [
-                "name" => "required",
-                "email" => "required|email|unique:users",
+                "name"     => "required",
+                "email"    => "required|email|unique:users",
                 "password" => "required|min:6",
             ]);
             //if validation fails cancel the request
             if ($validated->fails()) {
                 return $this->erorsResponse("Validator fails", $validated->messages());
-            };
+            }
 
             $refresh_token = Str::random(60);
 
             $user = User::create([
-                "name" => $request->name,
-                "email" => $request->email,
-                "password" => Hash::make($request->password),
+                "name"          => $request->name,
+                "email"         => $request->email,
+                "password"      => Hash::make($request->password),
                 "refresh_token" => hash('sha256', $refresh_token),
-                "user_type" => "admin"
+                "user_type"     => "admin",
             ]);
 
             $token = JWTAuth::fromUser($user);
 
             return response()->json([
                 'statusCode' => 200,
-                'message' => 'Admin account created successfully',
-                'data' => [
-                    'data' => $user,
+                'message'    => 'Admin account created successfully',
+                'data'       => [
+                    'data'  => $user,
                     'token' => $token,
-                ]
+                ],
             ]);
         } else {
             //if user is not super admin cancel the request
             return response()->json([
                 'statusCode' => 403,
-                'message' => 'You are not authorized to create admin account',
+                'message'    => 'You are not authorized to create admin account',
             ]);
         }
     }
 
     public function updateMail(Request $request)
     {
-        try{
+        try {
             // Validate the new email
             $validator = Validator::make($request->all(), [
                 'email' => 'required',
@@ -163,7 +206,7 @@ class AuthController extends Controller
             if ($validator->fails()) {
                 return response()->json([
                     'message' => 'Invalid email.',
-                    'errors' => $validator->errors()
+                    'errors'  => $validator->errors(),
                 ], 422);
             }
 
@@ -175,26 +218,25 @@ class AuthController extends Controller
             $user->save();
 
             return response()->json([
-                'status' => 'success',
+                'status'  => 'success',
                 'message' => 'Email updated successfully.',
-                'data' => $user
+                'data'    => $user,
             ]);
 
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 'message' => 'An error occurred while updating the email.',
-                'error' => $e->getMessage()
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
 
-
     public function refresh(Request $request)
     {
 
-        $refresh_token = $request->cookie('refresh_token');
+        $refresh_token        = $request->cookie('refresh_token');
         $hashed_refresh_token = hash('sha256', $refresh_token);
-        $user = User::where('refresh_token', $hashed_refresh_token)->first();
+        $user                 = User::where('refresh_token', $hashed_refresh_token)->first();
 
         if (! $user) {
             return $this->erorsResponse("Unauthenticated", null, 401);
@@ -208,8 +250,8 @@ class AuthController extends Controller
 
         return response()->json([
             'statusCode' => 200,
-            'message' => 'Access token refreshed successfully',
-            'data' => [
+            'message'    => 'Access token refreshed successfully',
+            'data'       => [
                 'access_token' => $new_access_token,
             ],
         ], 200);
