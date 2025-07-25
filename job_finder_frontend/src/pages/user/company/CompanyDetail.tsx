@@ -171,9 +171,9 @@ export default function CompanyDetail() {
                 width: "100%",
               }}
             >
+              {/* <JobCard />
               <JobCard />
-              <JobCard />
-              <JobCard />
+              <JobCard /> */}
             </Box>
 
             <Stack sx={{ mt: 4, alignItems: "center" }}>

@@ -8,6 +8,7 @@ import {
   Avatar,
   Menu,
   MenuItem,
+  Skeleton,
 } from "@mui/material";
 import {
   // ChatBubbleOutline as MessageIcon,
@@ -24,6 +25,9 @@ import { useState, useRef, useEffect, useMemo, type RefObject } from "react";
 import { useNavigate } from "react-router";
 import { useThemeStore } from "../../store/Appstore";
 import { useUserStore } from "../../store/UserStore";
+import { useMutation } from "@tanstack/react-query";
+import { logoutUser } from "../../helper/authApiFunctions";
+import { useProfileStore } from "../../store/ProfileStore";
 
 function findRefForPath(
   pathname: string,
@@ -37,10 +41,14 @@ function findRefForPath(
   return null;
 }
 
-export default function Header() {
+export default function Header({ isLoading }: { isLoading: boolean }) {
   const user = useUserStore((state) => state.user);
-  const login = useUserStore((state) => state.login);
-  const logout = useUserStore((state) => state.logout);
+  const seekerProfile = useProfileStore((state) => state.seekerProfile);
+  const employerProfile = useProfileStore((state) => state.employerProfile);
+  const setUserData = useUserStore((state) => state.setUserData);
+  const removeToken = useUserStore((state) => state.removeToken);
+  const accessToken = localStorage.getItem("token");
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -52,7 +60,7 @@ export default function Header() {
   const mode = useThemeStore((state) => state.mode);
   const setMode = useThemeStore((state) => state.setMode);
   const navigate = useNavigate();
-  const [userRole] = useState("");
+  const userRole = user?.user_type;
 
   const showDrawer = useAppStore((state) => state.showDrawer);
   const setShowDrawer = useAppStore((state) => state.setShowDrawer);
@@ -85,6 +93,8 @@ export default function Header() {
         "/companies/:id": companiesRef,
         "/post/job": postJobRef,
         "/profile/:id": profileRef,
+        "/profile/:id/edit": profileRef,
+        "/employer-profile/:id": profileRef,
         "/project/add": profileRef,
         "/notifications/user/:id": notificationsRef,
         "/settings/user/:id": settingsRef,
@@ -112,6 +122,16 @@ export default function Header() {
       });
     }
   }, [location.pathname, pathRefMap]);
+
+  const logoutMutate = useMutation({
+    mutationFn: logoutUser,
+    onSuccess: ({ data }) => {
+      if (data.status == 200) {
+        setUserData(null);
+        removeToken();
+      }
+    },
+  });
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -164,6 +184,7 @@ export default function Header() {
                   Jobs
                 </Button>
               </NavLink>
+
               <NavLink to="/talents">
                 <Button
                   sx={{ fontWeight: "700", textTransform: "none" }}
@@ -173,29 +194,38 @@ export default function Header() {
                   Talents
                 </Button>
               </NavLink>
-              <NavLink to="/companies">
-                <Button
-                  sx={{ fontWeight: "700", textTransform: "none" }}
-                  ref={companiesRef}
-                  color="inherit"
-                >
-                  Companies
-                </Button>
-              </NavLink>
-              {userRole === "employer" && (
-                <NavLink to="/post/job">
+
+              {userRole == "seeker" && (
+                <NavLink to="/companies">
                   <Button
                     sx={{ fontWeight: "700", textTransform: "none" }}
-                    ref={postJobRef}
+                    ref={companiesRef}
                     color="inherit"
                   >
-                    Post A Job
+                    Companies
                   </Button>
                 </NavLink>
               )}
+              {userRole === "employer" && (
+                <Button
+                  onClick={() => navigate("/post/job")}
+                  disabled={
+                    employerProfile.verification == "pending" ||
+                    employerProfile.verification == "rejected"
+                  }
+                  sx={{
+                    fontWeight: "700",
+                    textTransform: "none",
+                  }}
+                  ref={postJobRef}
+                  color="inherit"
+                >
+                  Post A Job
+                </Button>
+              )}
             </Box>
           </Box>
-          {user ? (
+          {user || accessToken ? (
             <Box>
               <IconButton
                 onClick={() => setShowDrawer(!showDrawer)}
@@ -224,7 +254,7 @@ export default function Header() {
                 <IconButton
                   color="inherit"
                   ref={settingsRef}
-                  onClick={() => navigate("/settings/user/1")}
+                  onClick={() => navigate(`/settings/user/${user?.user_id}`)}
                 >
                   <SettingIcon />
                 </IconButton>
@@ -237,7 +267,30 @@ export default function Header() {
                   aria-expanded={open ? "true" : undefined}
                   onClick={handleClick}
                 >
-                  <Avatar sx={{ width: 32, height: 32 }} />
+                  {isLoading ? (
+                    <Skeleton
+                      variant="rounded"
+                      width={"32px"}
+                      height={"32px"}
+                    />
+                  ) : (
+                    <img
+                      src={`${import.meta.env.VITE_API_BASE_URL}/${user?.user_type == "seeker" ? seekerProfile.image : employerProfile.company_image}`}
+                      alt={"SeekerProfile"}
+                      style={{
+                        width: "32px",
+                        height: "32px",
+                        borderRadius: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  )}
+
+                  {!isLoading &&
+                    !seekerProfile.image &&
+                    !employerProfile.company_image && (
+                      <Avatar sx={{ width: 32, height: 32 }} />
+                    )}
                 </Button>
                 <Menu
                   id="basic-menu"
@@ -251,11 +304,22 @@ export default function Header() {
                     },
                   }}
                 >
-                  <MenuItem onClick={() => navigate("/profile/1")}>
+                  <MenuItem
+                    onClick={() => {
+                      if (user?.user_type == "seeker") {
+                        navigate(`/profile/${user?.user_id}`);
+                      }
+                      if (user?.user_type == "employer") {
+                        navigate(`/employer-profile/${user?.user_id}`);
+                      }
+                    }}
+                  >
                     Profile
                   </MenuItem>
 
-                  <MenuItem onClick={() => logout()}>Logout</MenuItem>
+                  <MenuItem onClick={() => logoutMutate.mutate()}>
+                    Logout
+                  </MenuItem>
                 </Menu>
               </Box>
             </Box>
@@ -267,7 +331,7 @@ export default function Header() {
                 borderRadius: "5px",
                 boxShadow: "none",
               }}
-              onClick={() => login()}
+              onClick={() => navigate("/login")}
             >
               <Typography fontWeight={600}>Login</Typography>
             </Button>

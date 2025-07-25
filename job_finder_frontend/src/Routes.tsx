@@ -33,6 +33,10 @@ import EditEmployer from "./pages/admin/EditEmployer";
 import SeekerManagement from "./pages/admin/SeekerManagement";
 import SeekerDetailManage from "./pages/admin/SeekerDetailManage";
 import TalentProfile from "./pages/user/TalentProfile";
+import EmployerProfile from "./pages/employer/EmployerProfile";
+import IsLoginnedMiddleware from "./protected_routes/IsLoginnedMiddleware";
+import SetUserDataMiddleware from "./protected_routes/SetUserDataMiddleware";
+
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -41,15 +45,27 @@ export const router = createBrowserRouter([
       {
         path: "/",
         index: true,
-        Component: Home,
+        element: (
+          <IsLoginnedMiddleware>
+            <Home />
+          </IsLoginnedMiddleware>
+        ),
       },
       {
         path: "/jobs",
-        Component: Jobs,
+        element: (
+          <SetUserDataMiddleware>
+            <Jobs />
+          </SetUserDataMiddleware>
+        ),
       },
       {
         path: "/job/:id",
-        Component: JobDetail,
+        element: (
+          <SetUserDataMiddleware>
+            <JobDetail />
+          </SetUserDataMiddleware>
+        ),
       },
       {
         path: "/job/:id/apply",
@@ -57,7 +73,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/post/job",
-        Component: PostAJob,
+        element: <PostAJob />,
       },
       {
         path: "/job/:id/apply/confirm",
@@ -81,7 +97,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "/profile/:id",
-        Component: Profile,
+        element: <Profile />,
+      },
+      {
+        path: "/employer-profile/:id",
+        element: <EmployerProfile />,
       },
       {
         path: "/profile/:id/edit",
@@ -129,10 +149,6 @@ export const router = createBrowserRouter([
         path: "/settings/user/:id/security/changePassword",
         Component: ChangePassword,
       },
-      // {
-      //   path: "/post/job",
-      //   Component: PostAJob,
-      // },
     ],
   },
   {

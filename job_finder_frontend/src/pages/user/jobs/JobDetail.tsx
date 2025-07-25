@@ -4,13 +4,64 @@ import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
-import JobCard from "../../../components/user/jobs/JobCard";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import EmployerCard from "../../../components/employer/EmployerCard";
+import { useQuery } from "@tanstack/react-query";
+import { getSingleJob } from "../../../helper/postJob";
+import { useEffect } from "react";
+import { useJobDetailStore } from "../../../store/JobStore";
+import { useSingleEmployerStore } from "../../../store/EmployerStore";
+import { getSingleEmployerData } from "../../../helper/employerApiFunctions";
+import FullScreenLoader from "../../../components/FullScreenLoader";
 
 const JobDetail = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  const jobDetails = useJobDetailStore((state) => state.jobDetails);
+  const setJobDetails = useJobDetailStore((state) => state.setJobDetails);
+
+  const employerData = useSingleEmployerStore((state) => state.singleEmployer);
+  const setSingleEmployer = useSingleEmployerStore(
+    (state) => state.setSingleEmployer,
+  );
+
+  const jobDetailQuery = useQuery({
+    queryKey: ["jobDetail", id],
+    queryFn: () => {
+      return getSingleJob(id);
+    },
+  });
+
+  useEffect(() => {
+    if (jobDetailQuery.data && jobDetailQuery.isSuccess) {
+      setJobDetails(jobDetailQuery.data.data);
+    }
+  }, [jobDetailQuery.data, jobDetailQuery.isSuccess, setJobDetails]);
+
+  const employerDataQuery = useQuery({
+    enabled: jobDetails?.employer_id != 0,
+    queryKey: ["employerDetail", jobDetails?.employer_id],
+    queryFn: () => {
+      return getSingleEmployerData(jobDetails?.employer_id);
+    },
+  });
+
+  useEffect(() => {
+    if (employerDataQuery.data && employerDataQuery.isSuccess) {
+      setSingleEmployer(employerDataQuery.data.data[0]);
+    }
+  }, [employerDataQuery.data, employerDataQuery.isSuccess, setSingleEmployer]);
+
+  if (jobDetailQuery.isPending) {
+    return (
+      <FullScreenLoader
+        open={jobDetailQuery.isPending}
+        message="Getting data..."
+      />
+    );
+  }
   return (
     <Box sx={{ width: "90%", mx: "auto" }}>
       {/* Job title & back button */}
@@ -67,7 +118,9 @@ const JobDetail = () => {
           }}
         >
           <VerifiedIcon sx={{ color: "success.main" }} />
-          <Typography variant="caption">Verified</Typography>
+          <Typography variant="caption">
+            {jobDetails?.posting_status == "approved" && "Verified"}
+          </Typography>
         </Box>
 
         {/* bookmark icon */}
@@ -116,7 +169,9 @@ const JobDetail = () => {
           }}
         >
           <GroupsOutlinedIcon />
-          <Typography variant="caption">24 applicants</Typography>
+          <Typography variant="caption">
+            {jobDetails?.job_detail.apply_count} applicants
+          </Typography>
         </Box>
 
         {/* deadline icon */}
@@ -134,7 +189,9 @@ const JobDetail = () => {
           }}
         >
           <QueryBuilderIcon sx={{ fontSize: "20px" }} />
-          <Typography variant="caption">Deadline 21 Jul 2025</Typography>
+          <Typography variant="caption">
+            Deadline {jobDetails?.job_detail.deadline}
+          </Typography>
         </Box>
       </Box>
 
@@ -170,7 +227,7 @@ const JobDetail = () => {
               variant="subtitle2"
               sx={{ fontWeight: 400, color: "text.secondary" }}
             >
-              Full Stack Developer
+              {jobDetails?.job_title}
             </Typography>
           </Box>
 
@@ -189,7 +246,7 @@ const JobDetail = () => {
               variant="subtitle2"
               sx={{ fontWeight: 400, color: "text.secondary" }}
             >
-              Senior
+              {jobDetails?.role}
             </Typography>
           </Box>
 
@@ -208,7 +265,7 @@ const JobDetail = () => {
               variant="subtitle2"
               sx={{ fontWeight: 400, color: "text.secondary" }}
             >
-              All
+              {jobDetails?.job_detail.gender}
             </Typography>
           </Box>
 
@@ -227,7 +284,7 @@ const JobDetail = () => {
               variant="subtitle2"
               sx={{ fontWeight: 400, color: "text.secondary" }}
             >
-              500000MMK
+              {jobDetails?.salary}
             </Typography>
           </Box>
 
@@ -246,7 +303,7 @@ const JobDetail = () => {
               variant="subtitle2"
               sx={{ fontWeight: 400, color: "text.secondary" }}
             >
-              No.123, Yadanar St, Marchart Road, Yangon
+              {jobDetails?.location}
             </Typography>
           </Box>
 
@@ -265,11 +322,11 @@ const JobDetail = () => {
               variant="subtitle2"
               sx={{ fontWeight: 400, color: "text.secondary" }}
             >
-              Full time
+              {jobDetails?.type}
             </Typography>
           </Box>
 
-          <Box
+          {/* <Box
             sx={{
               display: "flex",
               flexDirection: "column",
@@ -286,7 +343,7 @@ const JobDetail = () => {
             >
               9:00 am to 5:00 pm
             </Typography>
-          </Box>
+          </Box> */}
 
           <Box
             sx={{
@@ -297,7 +354,7 @@ const JobDetail = () => {
             }}
           >
             <Typography variant="body1" sx={{ fontWeight: 600 }}>
-              Responsibilities
+              Descriptions
             </Typography>
             <Typography
               variant="subtitle2"
@@ -307,17 +364,7 @@ const JobDetail = () => {
                 width: { xs: "100%", md: "100%", lg: "70%" },
               }}
             >
-              Lorem ipsum dolor sit amet consectetur. Nec quis nec sagittis
-              ultrices egestas nunc urna cursus at. Lectus varius a libero
-              pulvinar et cursus mi pharetra. Dictum urna tortor amet lectus
-              dolor. Tellus at aenean dignissim in commodo dolor leo. Pulvinar
-              eget et eu accumsan odio sed. Cum volutpat sit ac rhoncus porta.
-              Sagittis morbi malesuada feugiat arcu cras aliquam lacus. Id
-              bibendum bibendum diam pretium auctor vitae odio. Ac et cum eget
-              risus. Magnis odio facilisi morbi mattis sed faucibus. Feugiat
-              nunc ultrices vulputate lectus urna diam nec. Volutpat ipsum
-              aliquet ut sit augue id in. In lacus neque sit eget arcu quis ut
-              ornare augue. Aliquet non malesuada lobortis euismod duis aliquam.
+              {jobDetails?.job_detail.description}
             </Typography>
           </Box>
 
@@ -340,22 +387,12 @@ const JobDetail = () => {
                 width: { xs: "100%", md: "100%", lg: "70%" },
               }}
             >
-              Lorem ipsum dolor sit amet consectetur. Nec quis nec sagittis
-              ultrices egestas nunc urna cursus at. Lectus varius a libero
-              pulvinar et cursus mi pharetra. Dictum urna tortor amet lectus
-              dolor. Tellus at aenean dignissim in commodo dolor leo. Pulvinar
-              eget et eu accumsan odio sed. Cum volutpat sit ac rhoncus porta.
-              Sagittis morbi malesuada feugiat arcu cras aliquam lacus. Id
-              bibendum bibendum diam pretium auctor vitae odio. Ac et cum eget
-              risus. Magnis odio facilisi morbi mattis sed faucibus. Feugiat
-              nunc ultrices vulputate lectus urna diam nec. Volutpat ipsum
-              aliquet ut sit augue id in. In lacus neque sit eget arcu quis ut
-              ornare augue. Aliquet non malesuada lobortis euismod duis aliquam.
+              {jobDetails?.job_detail.requirements}
             </Typography>
           </Box>
 
           <Button
-            onClick={() => navigate("/job/JC-1111/apply")}
+            onClick={() => navigate(`/job/${id}/apply`)}
             variant="contained"
             sx={{
               width: { xs: "100%", md: "100%", lg: "73%" },
@@ -375,7 +412,7 @@ const JobDetail = () => {
 
         {/* employer card */}
         <Box sx={{ mt: { xs: 4, md: 4, lg: 0 } }}>
-          <EmployerCard />
+          <EmployerCard employerData={employerData} />
         </Box>
       </Box>
 
@@ -404,9 +441,9 @@ const JobDetail = () => {
             gap: 6,
           }}
         >
+          {/* <JobCard />
           <JobCard />
-          <JobCard />
-          <JobCard />
+          <JobCard /> */}
         </Box>
       </Box>
     </Box>

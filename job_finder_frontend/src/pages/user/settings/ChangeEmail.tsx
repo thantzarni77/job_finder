@@ -1,9 +1,65 @@
-import { Box, Button, IconButton, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  FormHelperText,
+  IconButton,
+  TextField,
+  Typography,
+} from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
+import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useUserStore } from "../../../store/UserStore";
+import { useForm } from "react-hook-form";
+import { getUserProfile } from "../../../helper/profileApiFunctions";
+
+type ChangeEmailForm = {
+  currentEmail: string;
+  newEmail: string;
+  confirmNewEmail: string;
+};
 
 const ChangeEmail = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  const user = useUserStore((state) => state.user);
+  const setUserData = useUserStore((state) => state.setUserData);
+
+  // const [email, setEmail] = useState<string | null>(null);
+
+  const profileQuery = useQuery({
+    enabled: !user?.user_id,
+    queryKey: ["userProfile", id],
+    queryFn: getUserProfile,
+  });
+
+  useEffect(() => {
+    if (profileQuery.data && profileQuery.isSuccess) {
+      setUserData(profileQuery.data.data);
+    }
+  }, [profileQuery.data, profileQuery.isSuccess, setUserData]);
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<ChangeEmailForm>({
+    mode: "onBlur",
+  });
+
+  const changeEmailHandler = (data: ChangeEmailForm) => {
+    console.log(data);
+  };
+
+  useEffect(() => {
+    if (user?.user_email) {
+      setValue("currentEmail", user.user_email);
+    }
+  }, [setValue, user?.user_email]);
+
   return (
     <Box sx={{ width: "90%", mx: "auto", p: 2, mt: 5, mb: 15 }}>
       {/* Form Title & back button */}
@@ -33,7 +89,10 @@ const ChangeEmail = () => {
       </Box>
 
       {/* application form */}
+
       <Box
+        component={"form"}
+        onSubmit={handleSubmit(changeEmailHandler)}
         sx={{
           width: { xs: "100%", md: "60%", lg: "40%" },
           display: "flex",
@@ -65,10 +124,18 @@ const ChangeEmail = () => {
             <span style={{ color: "#ef4444" }}>*</span>
           </Typography>
           <TextField
+            {...register("currentEmail", {
+              required: true,
+              pattern: {
+                value: /^\S+@\S+\.\S+$/,
+                message: "Please enter a valid email",
+              },
+            })}
             id="currentEmail"
             variant="outlined"
             fullWidth
             placeholder="Please enter your current email"
+            error={!!errors.currentEmail}
             sx={{
               // root of the OutlinedInput
               "& .MuiOutlinedInput-root": {
@@ -93,6 +160,9 @@ const ChangeEmail = () => {
               },
             }}
           />
+          {errors.currentEmail && (
+            <FormHelperText error>{errors.currentEmail.message}</FormHelperText>
+          )}
         </Box>
         <Box
           sx={{
@@ -113,10 +183,18 @@ const ChangeEmail = () => {
             <span style={{ color: "#ef4444" }}>*</span>
           </Typography>
           <TextField
+            {...register("newEmail", {
+              required: "New Email is required",
+              pattern: {
+                value: /^\S+@\S+\.\S+$/,
+                message: "Please enter a valid email",
+              },
+            })}
             id="newEmail"
             variant="outlined"
             fullWidth
             placeholder="Please enter your new email"
+            error={!!errors.newEmail}
             sx={{
               // root of the OutlinedInput
               "& .MuiOutlinedInput-root": {
@@ -141,6 +219,9 @@ const ChangeEmail = () => {
               },
             }}
           />
+          {errors.newEmail && (
+            <FormHelperText error>{errors.newEmail.message}</FormHelperText>
+          )}
           <Typography
             variant="caption"
             sx={{ fontWeight: 400, color: "primary.light" }}
@@ -167,10 +248,18 @@ const ChangeEmail = () => {
             <span style={{ color: "#ef4444" }}>*</span> {/* Red asterisk */}
           </Typography>
           <TextField
+            {...register("confirmNewEmail", {
+              required: "Confirmation Email is required",
+              pattern: {
+                value: /^\S+@\S+\.\S+$/,
+                message: "Please enter a valid email",
+              },
+            })}
             id="confirmNewEmail"
             variant="outlined"
             fullWidth
             placeholder="Please confirm your new email"
+            error={!!errors.confirmNewEmail}
             sx={{
               // root of the OutlinedInput
               "& .MuiOutlinedInput-root": {
@@ -195,10 +284,15 @@ const ChangeEmail = () => {
               },
             }}
           />
+          {errors.confirmNewEmail && (
+            <FormHelperText error>
+              {errors.confirmNewEmail.message}
+            </FormHelperText>
+          )}
         </Box>
 
         <Button
-          onClick={() => navigate("/settings/user/1/security")}
+          type="submit"
           variant="contained"
           sx={{
             width: "100%",

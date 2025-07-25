@@ -1,12 +1,13 @@
 import { Box, Container, Typography } from "@mui/material";
 import MailOutlineOutlinedIcon from "@mui/icons-material/MailOutlineOutlined";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 const Email = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   return (
     <Container
-      onClick={() => navigate("/settings/user/1/security/changeEmail")}
+      onClick={() => navigate(`/settings/user/${id}/security/changeEmail`)}
       sx={{
         display: "flex",
         alignItems: "flex-start",

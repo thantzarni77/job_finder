@@ -1,9 +1,35 @@
-import { Box, Button, IconButton, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  FormHelperText,
+  IconButton,
+  TextField,
+  Typography,
+} from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { useNavigate } from "react-router";
+import { useForm } from "react-hook-form";
+
+type ChangePasswordForm = {
+  currentPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
+};
 
 const ChangePassword = () => {
   const navigate = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ChangePasswordForm>({
+    mode: "onBlur",
+  });
+
+  const changePasswordHandler = (data: ChangePasswordForm) => {
+    console.log(data);
+  };
   return (
     <Box sx={{ width: "90%", mx: "auto", p: 2, mt: 5, mb: 10 }}>
       {/* Form Title & back button */}
@@ -34,6 +60,8 @@ const ChangePassword = () => {
 
       {/* application form */}
       <Box
+        component="form"
+        onSubmit={handleSubmit(changePasswordHandler)}
         sx={{
           width: { xs: "100%", md: "60%", lg: "40%" },
           display: "flex",
@@ -65,10 +93,32 @@ const ChangePassword = () => {
             <span style={{ color: "#ef4444" }}>*</span>
           </Typography>
           <TextField
+            {...register("currentPassword", {
+              required: "Current password is required.",
+              minLength: {
+                value: 8,
+                message: "Password must be at least 8 characters long.",
+              },
+              validate: {
+                hasNumber: (value) =>
+                  /[0-9]/.test(value) ||
+                  "Password must contain at least one number",
+                hasUpperCase: (value) =>
+                  /[A-Z]/.test(value) ||
+                  "Password must contain at least one uppercase letter.",
+                hasLowerCase: (value) =>
+                  /[a-z]/.test(value) ||
+                  "Password must contain at least one lowercase letter.",
+                hasSpecialChar: (value) =>
+                  /[!@#$%^&*(),.?":{}|<>]/.test(value) ||
+                  "Password must contain at least one special character.",
+              },
+            })}
             id="currentPassword"
             variant="outlined"
             fullWidth
             placeholder="Please enter your current password"
+            error={!!errors.currentPassword}
             sx={{
               // root of the OutlinedInput
               "& .MuiOutlinedInput-root": {
@@ -93,6 +143,11 @@ const ChangePassword = () => {
               },
             }}
           />
+          {errors.currentPassword && (
+            <FormHelperText error>
+              {errors.currentPassword.message}
+            </FormHelperText>
+          )}
         </Box>
         <Box
           sx={{
@@ -113,10 +168,32 @@ const ChangePassword = () => {
             <span style={{ color: "#ef4444" }}>*</span>
           </Typography>
           <TextField
+            {...register("newPassword", {
+              required: "New password is required.",
+              minLength: {
+                value: 8,
+                message: "Password must be at least 8 characters long.",
+              },
+              validate: {
+                hasNumber: (value) =>
+                  /[0-9]/.test(value) ||
+                  "Password must contain at least one number",
+                hasUpperCase: (value) =>
+                  /[A-Z]/.test(value) ||
+                  "Password must contain at least one uppercase letter.",
+                hasLowerCase: (value) =>
+                  /[a-z]/.test(value) ||
+                  "Password must contain at least one lowercase letter.",
+                hasSpecialChar: (value) =>
+                  /[!@#$%^&*(),.?":{}|<>]/.test(value) ||
+                  "Password must contain at least one special character.",
+              },
+            })}
             id="newPassword"
             variant="outlined"
             fullWidth
             placeholder="Please enter your new password"
+            error={!!errors.newPassword}
             sx={{
               // root of the OutlinedInput
               "& .MuiOutlinedInput-root": {
@@ -141,6 +218,9 @@ const ChangePassword = () => {
               },
             }}
           />
+          {errors.newPassword && (
+            <FormHelperText error>{errors.newPassword.message}</FormHelperText>
+          )}
           <Typography
             variant="caption"
             sx={{ fontWeight: 400, color: "primary.light" }}
@@ -167,10 +247,32 @@ const ChangePassword = () => {
             <span style={{ color: "#ef4444" }}>*</span> {/* Red asterisk */}
           </Typography>
           <TextField
+            {...register("confirmNewPassword", {
+              required: "Confirmation password is required.",
+              minLength: {
+                value: 8,
+                message: "Password must be at least 8 characters long.",
+              },
+              validate: {
+                hasNumber: (value) =>
+                  /[0-9]/.test(value) ||
+                  "Password must contain at least one number",
+                hasUpperCase: (value) =>
+                  /[A-Z]/.test(value) ||
+                  "Password must contain at least one uppercase letter.",
+                hasLowerCase: (value) =>
+                  /[a-z]/.test(value) ||
+                  "Password must contain at least one lowercase letter.",
+                hasSpecialChar: (value) =>
+                  /[!@#$%^&*(),.?":{}|<>]/.test(value) ||
+                  "Password must contain at least one special character.",
+              },
+            })}
             id="confirmNewPassword"
             variant="outlined"
             fullWidth
             placeholder="Please confirm your new password"
+            error={!!errors.confirmNewPassword}
             sx={{
               // root of the OutlinedInput
               "& .MuiOutlinedInput-root": {
@@ -195,10 +297,15 @@ const ChangePassword = () => {
               },
             }}
           />
+          {errors.confirmNewPassword && (
+            <FormHelperText error>
+              {errors.confirmNewPassword.message}
+            </FormHelperText>
+          )}
         </Box>
 
         <Button
-          onClick={() => navigate("/settings/user/1/security")}
+          type="submit"
           variant="contained"
           sx={{
             width: "100%",

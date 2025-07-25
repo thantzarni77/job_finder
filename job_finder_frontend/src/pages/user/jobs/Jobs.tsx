@@ -4,6 +4,7 @@ import {
   MenuItem,
   Pagination,
   Select,
+  Skeleton,
   Stack,
   Typography,
   type SelectChangeEvent,
@@ -14,23 +15,35 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import JobFilter from "../../../components/user/jobs/JobFilter";
 import JobCard from "../../../components/user/jobs/JobCard";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SearchBox from "../../../components/user/SearchBox";
 import { useJobFilterStore } from "../../../store/Appstore";
 import JobFilterDrawer from "../../../components/user/JobFilterDrawer";
 
-const jobs = [
-  "full Time",
-  "part Time",
-  "intership",
-  "volunteer",
-  "freelancer",
-  "work from home",
-];
+import { getAllJobPosts } from "../../../helper/postJob";
+import { useQuery } from "@tanstack/react-query";
+import {
+  useJobRoleFilter,
+  useJobStore,
+  useJobTypeFilter,
+  useJobCategoryFilter,
+} from "../../../store/JobStore";
+
+const jobType = {
+  "Full Time": "full-time",
+  "Part Time": "part-time",
+  Internship: "internship",
+  volunteer: "volunteer",
+  Freelancer: "freelancer",
+  Remote: "remote",
+};
 
 const Jobs = () => {
   const [sortBy, setSortBy] = useState<string>("recent");
   const [open, setOpen] = useState<boolean>(false);
+
+  const allJobs = useJobStore((state) => state.jobs);
+  const setJobs = useJobStore((state) => state.setJobs);
 
   const showJobFilterDrawer = useJobFilterStore(
     (state) => state.showJobFilterDrawer,
@@ -39,9 +52,38 @@ const Jobs = () => {
     (state) => state.setShowJobFilterDrawer,
   );
 
+  const { selectedJobRole } = useJobRoleFilter();
+  const { selectedJobType } = useJobTypeFilter();
+  const { selectedJobCategory } = useJobCategoryFilter();
+
+  const allJobsQuery = useQuery({
+    queryKey: [
+      "jobPosts",
+      selectedJobRole,
+      selectedJobType,
+      selectedJobCategory,
+    ],
+    queryFn: () =>
+      getAllJobPosts(selectedJobRole, selectedJobType, selectedJobCategory),
+  });
+
   const handleChange = (event: SelectChangeEvent<string>) => {
     setSortBy(event.target.value);
   };
+
+  useEffect(() => {
+    if (allJobsQuery.data && allJobsQuery.isSuccess) {
+      setJobs(allJobsQuery.data);
+      console.log(allJobs);
+    }
+  }, [
+    allJobsQuery.data,
+    allJobsQuery.isSuccess,
+    setJobs,
+    allJobs,
+    selectedJobRole,
+    selectedJobType,
+  ]);
 
   // custom component for dropdown icon
   const CustomIcon = () => (
@@ -124,7 +166,7 @@ const Jobs = () => {
         }}
       >
         <Box sx={{ display: { xs: "none", md: "block" } }}>
-          <JobFilter filterType={"Job"} filterTypeArray={jobs} />
+          <JobFilter filterType={"Job"} filterTypeArray={jobType} />
         </Box>
 
         <Box
@@ -146,7 +188,7 @@ const Jobs = () => {
             }}
           >
             <Typography variant="caption" sx={{ color: "primary.light" }}>
-              500+ jobs are found
+              {allJobs.length}+ jobs are found
             </Typography>
             {/* filter box */}
             <Select
@@ -263,8 +305,46 @@ const Jobs = () => {
                 flexWrap: "wrap",
               }}
             >
-              <JobCard /> <JobCard /> <JobCard /> <JobCard /> <JobCard />
-              <JobCard /> <JobCard />
+              {allJobsQuery.isFetching && (
+                <>
+                  <Skeleton
+                    variant="rounded"
+                    width={375}
+                    height={150}
+                    sx={{ borderRadius: "20px" }}
+                  />
+                  <Skeleton
+                    variant="rounded"
+                    width={375}
+                    height={150}
+                    sx={{ borderRadius: "20px" }}
+                  />
+                  <Skeleton
+                    variant="rounded"
+                    width={375}
+                    height={150}
+                    sx={{ borderRadius: "20px" }}
+                  />
+                  <Skeleton
+                    variant="rounded"
+                    width={375}
+                    height={150}
+                    sx={{ borderRadius: "20px" }}
+                  />
+                  <Skeleton
+                    variant="rounded"
+                    width={325}
+                    height={150}
+                    sx={{ borderRadius: "20px" }}
+                  />
+                </>
+              )}
+              {allJobsQuery.isSuccess &&
+                allJobs.map((job) => {
+                  if (job.posting_status == "approved") {
+                    return <JobCard key={job.id} job={job} />;
+                  }
+                })}
             </Box>
             {/* pagination */}
             <Box

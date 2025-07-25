@@ -1,46 +1,145 @@
 import {
   Container,
   Box,
-  Avatar,
   IconButton,
   Typography,
-  Switch,
   OutlinedInput,
   InputLabel,
   Button,
   Autocomplete,
   TextField,
+  FormHelperText,
 } from "@mui/material";
-import CameraAltIcon from "@mui/icons-material/CameraAlt";
 
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { useNavigate } from "react-router";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import type { SubmitHandler } from "react-hook-form";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Controller, useForm } from "react-hook-form";
 
-type Inputs = {
-  jobTitle: string;
-  position: string;
-  gender: string;
-  salary: string;
-  address: string;
-  workingType: string;
-  workingHourFrom: string;
-  workingHourTo: string;
-  responsibilities: string;
-  requirements: string;
+import { useUserStore } from "../../../store/UserStore";
+import { postAJob } from "../../../helper/postJob";
+import { useEffect, useState } from "react";
+import type { Job } from "../../../store/JobStore";
+import {
+  getAllCategories,
+  getAllRoles,
+  getAllTypes,
+} from "../../../helper/talentTypeAndRoleApiFunctions";
+import { DatePicker } from "@mui/x-date-pickers";
+import { format } from "date-fns";
+
+type JobTypeAndRole = {
+  id: number;
+  name: string;
 };
+
+type Category = {
+  id: number;
+  name: string;
+  created_at: string;
+  updated_at: string;
+};
+
+const genders = ["Male", "Female", "Both"];
+
 export default function PostAJob() {
   const navigate = useNavigate();
+  const user = useUserStore((state) => state.user);
+
+  const [jobTypes, setJobTypes] = useState<JobTypeAndRole[] | null>();
+  const [roles, setRoles] = useState<JobTypeAndRole[] | null>();
+  const [categories, setCategories] = useState<Category[] | null>();
+
+  const queryClient = useQueryClient();
+
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
-  } = useForm<Inputs>();
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    alert(JSON.stringify(data));
+  } = useForm<Job>({
+    mode: "onBlur",
+  });
+
+  const typeQuery = useQuery({
+    queryKey: ["jobTypes"],
+    queryFn: getAllTypes,
+  });
+
+  const roleQuery = useQuery({
+    queryKey: ["jobRoles"],
+    queryFn: getAllRoles,
+  });
+
+  const categoryQuery = useQuery({
+    queryKey: ["jobCategories"],
+    queryFn: getAllCategories,
+  });
+
+  const postAJobMutation = useMutation({
+    mutationFn: postAJob,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["jobPosts"] });
+      navigate("/jobs");
+    },
+    onError: (res) => console.log(res),
+  });
+
+  const onSubmit = (data: Job) => {
+    const {
+      employer_id,
+      job_title,
+      salary,
+      location,
+      vacancy,
+      requirements,
+      description,
+      benefits,
+      note,
+      category_id,
+      gender,
+      type,
+      role,
+      deadline,
+    } = data;
+
+    const postJobData = new FormData();
+
+    postJobData.append("employer_id", employer_id.toString());
+    postJobData.append(" job_title", job_title);
+    postJobData.append("salary", salary);
+    postJobData.append("location", location);
+    postJobData.append("vacancy", vacancy);
+    postJobData.append("requirements", requirements);
+    postJobData.append("description", description);
+    postJobData.append("benefits", benefits);
+    postJobData.append("note", note);
+    if (category_id) postJobData.append("category_id", category_id.toString());
+    postJobData.append("gender", gender);
+    postJobData.append("type", type);
+    postJobData.append("role", role);
+    postJobData.append("deadline", format(deadline, "yyyy-MM-dd"));
+
+    postAJobMutation.mutate(postJobData);
   };
+
+  useEffect(() => {
+    if (typeQuery.data && typeQuery.isSuccess) {
+      setJobTypes(typeQuery.data.original.data);
+    }
+  }, [typeQuery.data, typeQuery.isSuccess]);
+
+  useEffect(() => {
+    if (roleQuery.data && roleQuery.isSuccess) {
+      setRoles(roleQuery.data.data.data);
+    }
+  }, [roleQuery.data, roleQuery.isSuccess]);
+
+  useEffect(() => {
+    if (categoryQuery.data && categoryQuery.isSuccess) {
+      setCategories(categoryQuery.data.data);
+    }
+  }, [categoryQuery.data, categoryQuery.isSuccess]);
 
   return (
     <>
@@ -76,24 +175,58 @@ export default function PostAJob() {
         }}
         maxWidth="sm"
       >
-        <form
+        <Box
+          component="form"
           onSubmit={handleSubmit(onSubmit)}
           action=""
-          style={{ width: "100%" }}
+          sx={{
+            width: "100%",
+          }}
         >
           <Box sx={{ mt: 3, display: "flex", flexDirection: "column", gap: 2 }}>
+            {/* job title  */}
             <Box>
-              <InputLabel htmlFor="title">Job Title</InputLabel>
+              <input
+                type="hidden"
+                value={user?.user_id}
+                {...register("employer_id", { required: true })}
+              />
+              {errors.employer_id && (
+                <Typography
+                  variant="caption"
+                  sx={{ display: "block" }}
+                  color="error"
+                >
+                  Employer Field is required
+                </Typography>
+              )}
+
+              <InputLabel htmlFor="title" sx={{ mb: 1 }}>
+                Job Title
+              </InputLabel>
               <OutlinedInput
+                sx={{
+                  mb: 1,
+
+                  "& .MuiOutlinedInput-input": {
+                    bgcolor: "background.paper",
+                    borderRadius: 2,
+                  },
+
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderWidth: "1px",
+                    borderColor: "primary.main",
+                  },
+                }}
                 type="text"
                 id="title"
                 placeholder="Please Enter Your Job Title"
                 size="small"
                 fullWidth
-                {...register("jobTitle", { required: true })}
-                error={!!errors.jobTitle}
+                {...register("job_title", { required: true })}
+                error={!!errors.job_title}
               />
-              {errors.jobTitle && (
+              {errors.job_title && (
                 <Typography
                   variant="caption"
                   sx={{ display: "block" }}
@@ -103,57 +236,204 @@ export default function PostAJob() {
                 </Typography>
               )}
             </Box>
+
+            {/* category  */}
             <Box>
-              <InputLabel htmlFor="position">Position</InputLabel>
-              <OutlinedInput
-                type="text"
-                id="position"
-                placeholder="Please Enter Your Job Title"
-                size="small"
-                fullWidth
-                {...register("position", { required: true })}
-                error={!!errors.position}
+              <InputLabel htmlFor="category_id" sx={{ mb: 1 }}>
+                Category
+              </InputLabel>
+              <Controller
+                name="category_id"
+                control={control}
+                rules={{ required: "Choose a category" }}
+                render={({
+                  field: { onChange, value },
+                  fieldState: { error },
+                }) => (
+                  <Autocomplete
+                    options={categories || []}
+                    getOptionLabel={(option) => option.name || ""}
+                    value={
+                      categories?.find((single) => single.id == value) || null
+                    }
+                    onChange={(_, newValue) => {
+                      onChange(newValue ? newValue.id : null);
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        placeholder="Please Select A Category"
+                        size="small"
+                        error={!!error}
+                      />
+                    )}
+                    sx={{
+                      mb: 1,
+                      "& .MuiInputBase-root": {
+                        bgcolor: "background.paper",
+                        borderRadius: 2,
+                      },
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        borderWidth: "1px",
+                        borderColor: "primary.main",
+                      },
+                    }}
+                  />
+                )}
               />
-              {errors.position && (
+              {errors.category_id && (
                 <Typography
                   variant="caption"
                   sx={{ display: "block" }}
                   color="error"
                 >
-                  Position Field is required
+                  {errors.category_id.message}
                 </Typography>
               )}
             </Box>
+
+            {/* gender  */}
+            <Box>
+              <InputLabel htmlFor="gender" sx={{ mb: 1 }}>
+                Gender
+              </InputLabel>
+              <Autocomplete
+                sx={{
+                  mb: 1,
+                  "& .MuiInputBase-root": {
+                    bgcolor: "background.paper",
+                    borderRadius: 2,
+                  },
+                  "& .MuiOutlinedInput-input": {
+                    bgcolor: "background.paper",
+                    borderRadius: 2,
+                  },
+
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderWidth: "1px",
+                    borderColor: "primary.main",
+                  },
+                }}
+                options={genders}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    type="text"
+                    id="gender"
+                    placeholder="Please Choose a gender"
+                    size="small"
+                    fullWidth
+                    {...register("gender", { required: true })}
+                    error={!!errors.gender}
+                  />
+                )}
+              />
+              {errors.gender && (
+                <Typography
+                  variant="caption"
+                  sx={{ display: "block" }}
+                  color="error"
+                >
+                  Gender is required
+                </Typography>
+              )}
+            </Box>
+
+            {/* job type  */}
+            <Box>
+              <InputLabel htmlFor="position" sx={{ mb: 1 }}>
+                Job Type
+              </InputLabel>
+              <Autocomplete
+                sx={{
+                  mb: 1,
+                  "& .MuiInputBase-root": {
+                    bgcolor: "background.paper",
+                    borderRadius: 2,
+                  },
+                  "& .MuiOutlinedInput-input": {
+                    bgcolor: "background.paper",
+                    borderRadius: 2,
+                  },
+
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderWidth: "1px",
+                    borderColor: "primary.main",
+                  },
+                }}
+                options={jobTypes ? jobTypes?.map((single) => single.name) : []}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    type="text"
+                    id="type"
+                    placeholder="Please Enter Job Type"
+                    size="small"
+                    fullWidth
+                    {...register("type", { required: true })}
+                    error={!!errors.type}
+                  />
+                )}
+              />
+              {errors.type && (
+                <Typography
+                  variant="caption"
+                  sx={{ display: "block" }}
+                  color="error"
+                >
+                  Job Type is required
+                </Typography>
+              )}
+            </Box>
+
+            {/* roles  */}
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-              <InputLabel htmlFor="education">Gender</InputLabel>
+              <InputLabel htmlFor="education">Role</InputLabel>
               <Box>
                 <Autocomplete
-                  options={["gay"]}
+                  sx={{
+                    mb: 1,
+                    "& .MuiInputBase-root": {
+                      bgcolor: "background.paper",
+                      borderRadius: 2,
+                    },
+                    "& .MuiOutlinedInput-input": {
+                      bgcolor: "background.paper",
+                      borderRadius: 2,
+                    },
+
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderWidth: "1px",
+                      borderColor: "primary.main",
+                    },
+                  }}
+                  options={roles ? roles.map((single) => single.name) : []}
                   renderInput={(params) => (
                     <TextField
                       {...params}
                       type="text"
-                      id="gender"
-                      placeholder="Please Enter Your Gender"
+                      id="role"
+                      placeholder="Please Enter Role"
                       size="small"
                       fullWidth
-                      {...register("gender", { required: true })}
-                      error={!!errors.gender}
+                      {...register("role", { required: true })}
+                      error={!!errors.role}
                     />
                   )}
                 />
-                {errors.gender && (
+                {errors.role && (
                   <Typography
                     variant="caption"
                     sx={{ display: "block" }}
                     color="error"
                   >
-                    Gender Field is required
+                    Choose a role
                   </Typography>
                 )}
               </Box>
             </Box>
 
+            {/* salary  */}
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
               <InputLabel htmlFor="salary">Salary</InputLabel>
               <Box>
@@ -165,7 +445,19 @@ export default function PostAJob() {
                   fullWidth
                   {...register("salary", { required: true })}
                   error={!!errors.salary}
-                  sx={{ flex: 1 }}
+                  sx={{
+                    flex: 1,
+                    mb: 1,
+                    "& .MuiOutlinedInput-input": {
+                      bgcolor: "background.paper",
+                      borderRadius: 2,
+                    },
+
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      borderWidth: "1px",
+                      borderColor: "primary.main",
+                    },
+                  }}
                 />
                 {errors.salary && (
                   <Typography
@@ -179,146 +471,146 @@ export default function PostAJob() {
               </Box>
             </Box>
 
+            {/* location  */}
             <Box>
-              <InputLabel htmlFor="address">Address</InputLabel>
+              <InputLabel htmlFor="address" sx={{ mb: 1 }}>
+                Location
+              </InputLabel>
               <OutlinedInput
+                sx={{
+                  mb: 1,
+                  "& .MuiOutlinedInput-input": {
+                    bgcolor: "background.paper",
+                    borderRadius: 2,
+                  },
+
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderWidth: "1px",
+                    borderColor: "primary.main",
+                  },
+                }}
                 type="text"
-                id="address"
-                placeholder="Please Enter Your Address"
+                id="location"
+                placeholder="Please Enter Your Location"
                 size="small"
                 fullWidth
-                {...register("address", { required: true })}
-                error={!!errors.address}
+                {...register("location", { required: true })}
+                error={!!errors.location}
               />
-              {errors.address && (
+              {errors.location && (
                 <Typography
                   variant="caption"
                   sx={{ display: "block" }}
                   color="error"
                 >
-                  Address Field is required
+                  Location Field is required
                 </Typography>
               )}
             </Box>
 
+            {/* deadline  */}
             <Box>
-              <InputLabel htmlFor="workingType">Working Type</InputLabel>
-              <Autocomplete
-                options={[
-                  "Full-time",
-                  "Part-time",
-                  "Internship",
-                  "Contract",
-                  "Freelance",
-                ]}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    type="text"
-                    id="workingType"
-                    placeholder="Please Enter Your Working Type"
-                    size="small"
-                    fullWidth
-                    {...register("workingType", { required: true })}
-                    error={!!errors.workingType}
-                  />
-                )}
-              />
-              {errors.workingType && (
-                <Typography
-                  variant="caption"
-                  sx={{ display: "block" }}
-                  color="error"
-                >
-                  Working Type Field is required
-                </Typography>
-              )}
-            </Box>
-
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-              <InputLabel htmlFor="workingHour">
-                Working Hour (From - To)
+              <InputLabel htmlFor="deadline" sx={{ mb: 1 }}>
+                Application Deadline
               </InputLabel>
-              <Box sx={{ display: "flex", gap: 1 }}>
-                <OutlinedInput
-                  type="time"
-                  id="workingHourFrom"
-                  size="small"
-                  fullWidth
-                  {...register("workingHourFrom", { required: true })}
-                  error={!!errors.workingHourFrom}
-                  sx={{ flex: 1 }}
-                />
-                {errors.workingHourFrom && (
-                  <Typography
-                    variant="caption"
-                    sx={{ display: "block" }}
-                    color="error"
-                  >
-                    This Field is required
-                  </Typography>
-                )}
-
-                <OutlinedInput
-                  type="time"
-                  id="workingHourTo"
-                  size="small"
-                  fullWidth
-                  {...register("workingHourTo", { required: true })}
-                  error={!!errors.workingHourTo}
-                  sx={{ flex: 1 }}
-                />
-                {errors.workingHourTo && (
-                  <Typography
-                    variant="caption"
-                    sx={{ display: "block" }}
-                    color="error"
-                  >
-                    This Field is required
-                  </Typography>
-                )}
-              </Box>
+              <Controller
+                name="deadline"
+                control={control}
+                rules={{ required: "Deadline is required." }}
+                render={({ field, fieldState: { error } }) => {
+                  return (
+                    <>
+                      <Box display="flex" flexDirection="column">
+                        <DatePicker
+                          value={field.value ? new Date(field.value) : null}
+                          onChange={field.onChange}
+                          minDate={new Date(Date.now())}
+                          slotProps={{
+                            textField: {
+                              onBlur: field.onBlur,
+                              error: !!error,
+                            },
+                          }}
+                          sx={{
+                            bgcolor: "background.paper",
+                            borderRadius: 2,
+                            borderColor: "primary.main",
+                          }}
+                        />
+                        {errors.deadline && (
+                          <FormHelperText error>
+                            {errors.deadline.message}
+                          </FormHelperText>
+                        )}
+                      </Box>
+                    </>
+                  );
+                }}
+              />
             </Box>
 
+            {/* vacancy  */}
             <Box>
-              <InputLabel htmlFor="responsibilities">
-                Responsibilities
+              <InputLabel htmlFor="job_code" sx={{ mb: 1 }}>
+                Vacancy
               </InputLabel>
               <OutlinedInput
                 sx={{
-                  height: 200,
-                  "& input::placeholder": {
-                    textAlign: "center",
+                  mb: 1,
+
+                  "& .MuiOutlinedInput-input": {
+                    bgcolor: "background.paper",
+                    borderRadius: 2,
+                  },
+
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderWidth: "1px",
+                    borderColor: "primary.main",
                   },
                 }}
+                type="number"
+                id="vacancy"
                 fullWidth
-                id="responsibilities"
-                placeholder="Please Enter Responsibilities"
-                {...register("responsibilities", { required: true })}
-                error={!!errors.responsibilities}
+                size="small"
+                placeholder="Select vacancy"
+                {...register("vacancy", { required: true })}
+                error={!!errors.vacancy}
               />
-              {errors.responsibilities && (
+              {errors.vacancy && (
                 <Typography
                   variant="caption"
                   sx={{ display: "block" }}
                   color="error"
                 >
-                  Responsibilities Field is required
+                  Vacancy is required
                 </Typography>
               )}
             </Box>
+
+            {/* requirements  */}
             <Box>
-              <InputLabel htmlFor="requirements">Requirements</InputLabel>
-              <OutlinedInput
+              <InputLabel htmlFor="requirements" sx={{ mb: 1 }}>
+                Requirements
+              </InputLabel>
+              <TextField
                 sx={{
-                  height: 200,
-                  "& input::placeholder": {
-                    textAlign: "center",
+                  mb: 1,
+                  "& .MuiOutlinedInput-root": {
+                    bgcolor: "background.paper",
+                    borderRadius: 2,
+                  },
+
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderWidth: "1px",
+                    borderColor: "primary.main",
                   },
                 }}
-                fullWidth
+                type="text"
                 id="requirements"
-                placeholder="Please Enter Requirements"
+                placeholder="Please Enter Your Requirements"
+                fullWidth
+                multiline
+                minRows={4}
                 {...register("requirements", { required: true })}
                 error={!!errors.requirements}
               />
@@ -332,13 +624,138 @@ export default function PostAJob() {
                 </Typography>
               )}
             </Box>
+
+            {/* decriptions  */}
+            <Box>
+              <InputLabel htmlFor="description" sx={{ mb: 1 }}>
+                Descriptions
+              </InputLabel>
+              <TextField
+                sx={{
+                  mb: 1,
+                  "& .MuiOutlinedInput-root": {
+                    bgcolor: "background.paper",
+                    borderRadius: 2,
+                  },
+
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderWidth: "1px",
+                    borderColor: "primary.main",
+                  },
+                }}
+                type="text"
+                id="description"
+                placeholder="Please Enter Your Descriptions"
+                fullWidth
+                multiline
+                minRows={4}
+                {...register("description", { required: true })}
+                error={!!errors.description}
+              />
+              {errors.description && (
+                <Typography
+                  variant="caption"
+                  sx={{ display: "block" }}
+                  color="error"
+                >
+                  Descriptions Field is required
+                </Typography>
+              )}
+            </Box>
+
+            {/* benefits  */}
+            <Box>
+              <InputLabel htmlFor="decriptions" sx={{ mb: 1 }}>
+                Benefits
+              </InputLabel>
+              <TextField
+                sx={{
+                  mb: 1,
+                  "& .MuiOutlinedInput-root": {
+                    bgcolor: "background.paper",
+                    borderRadius: 2,
+                  },
+
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderWidth: "1px",
+                    borderColor: "primary.main",
+                  },
+                }}
+                type="text"
+                id="decriptions"
+                placeholder="Please Enter Benefits"
+                fullWidth
+                multiline
+                minRows={4}
+                {...register("benefits", { required: true })}
+                error={!!errors.benefits}
+              />
+              {errors.benefits && (
+                <Typography
+                  variant="caption"
+                  sx={{ display: "block" }}
+                  color="error"
+                >
+                  Benefits is required
+                </Typography>
+              )}
+            </Box>
+
+            {/* note  */}
+            <Box>
+              <InputLabel htmlFor="note" sx={{ mb: 1 }}>
+                Note
+              </InputLabel>
+              <OutlinedInput
+                sx={{
+                  mb: 1,
+                  "& .MuiOutlinedInput-input": {
+                    bgcolor: "background.paper",
+                    borderRadius: 2,
+                  },
+
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderWidth: "1px",
+                    borderColor: "primary.main",
+                  },
+                }}
+                type="text"
+                id="note"
+                placeholder="Please Enter Your Notes"
+                size="small"
+                fullWidth
+                {...register("note", { required: true })}
+                error={!!errors.note}
+              />
+              {errors.note && (
+                <Typography
+                  variant="caption"
+                  sx={{ display: "block" }}
+                  color="error"
+                >
+                  Note Field is required
+                </Typography>
+              )}
+            </Box>
           </Box>
-          <Box>
-            <Button type="submit" variant="contained" fullWidth sx={{ mt: 3 }}>
-              Post Now
-            </Button>
-          </Box>
-        </form>
+
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            sx={{
+              my: 3,
+              borderRadius: 2,
+              textTransform: "none",
+              boxShadow: "none",
+              ":hover": {
+                boxShadow: "none",
+              },
+            }}
+          >
+            Post Now
+          </Button>
+        </Box>
       </Container>
     </>
   );

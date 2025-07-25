@@ -1,12 +1,14 @@
 import { Box, Container, Typography } from "@mui/material";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import CustomKey from "../../../components/custom_svg/CustomKey";
 
 const Password = () => {
   const navigate = useNavigate();
+
+  const { id } = useParams();
   return (
     <Container
-      onClick={() => navigate("/settings/user/1/security/changePassword")}
+      onClick={() => navigate(`/settings/user/${id}/security/changePassword`)}
       sx={{
         display: "flex",
         alignItems: "flex-start",

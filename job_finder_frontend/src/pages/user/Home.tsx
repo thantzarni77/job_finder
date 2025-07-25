@@ -7,7 +7,6 @@ import {
   Pagination,
   Container,
 } from "@mui/material";
-import JobCard from "../../components/user/jobs/JobCard";
 import Kpay from "../../assets/kpay.png";
 import WaveMoney from "../../assets/wavemoney.png";
 import Meta from "../../assets/meta.png";
@@ -17,6 +16,7 @@ import { useNavigate } from "react-router";
 
 export default function Home() {
   const navigate = useNavigate();
+
   return (
     <Box>
       <HomeCarousel />
@@ -31,6 +31,7 @@ export default function Home() {
         >
           Find Your Dream Job Or Top Talent - All In One Place
         </Typography>
+
         <Box sx={{ display: "flex", justifyContent: "center", gap: 4, mb: 5 }}>
           <Button
             onClick={() => navigate("/jobs")}
@@ -76,9 +77,10 @@ export default function Home() {
         </Typography>
 
         <Box className="flex flex-wrap items-center gap-3 md:justify-center">
-          <JobCard />
-          <JobCard />
-          <JobCard />
+          {/* {!isPending &&
+            data?.map((job) => {
+              return <JobCard key={job.id} job={job} />;
+            })} */}
         </Box>
         <Box sx={{ display: "flex", justifyContent: "center", mt: 5, mb: 10 }}>
           <Stack>
