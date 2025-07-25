@@ -60,6 +60,7 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
     Route::delete('/removeuser', [AuthController::class, 'removeUser']);
     Route::post('/admin-account-creation', [AuthController::class, 'adminAccountCreation']);
     Route::post('/auth/{provider}/call-back', [SocialLoginController::class, 'socialLogin']);
+    Route::get('/employer-data/{id}', [EmployerController::class, 'getEmployerData']);
 
     Route::middleware("UserTypeMiddleware:superadmin")->group(function () {});
 
@@ -90,7 +91,6 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
 
         Route::get('/employer', [EmployerController::class, 'index']);
         Route::get('/employer/{id}', [EmployerController::class, 'getdata']);
-        Route::get('/employer-data/{id}', [EmployerController::class, 'getEmployerData']);
         Route::post('/employer', [EmployerController::class, 'store']);
         Route::post('/employer/{id}', [EmployerController::class, 'update']);
         Route::delete('/employer/{id}', [EmployerController::class, 'destroy']);
