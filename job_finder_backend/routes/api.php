@@ -12,6 +12,7 @@ use App\Http\Controllers\JobCategoryController;
 use App\Http\Controllers\JobDetailController;
 use App\Http\Controllers\PostJobController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SaveJobController;
 use App\Http\Controllers\TalentController;
 use App\Http\Controllers\UserController;
@@ -137,3 +138,4 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
 
 //job category route
 Route::apiResource('job-categories', JobCategoryController::class);
+Route::get('/roles',[RoleController::class , 'index']);

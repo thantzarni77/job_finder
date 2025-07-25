@@ -42,21 +42,22 @@ class Filters
     }
 
 
-    public function salary(array $salary) : Builder {
+    public function salary(array $salary)  {
 
         $min = $salary['min'];
         $max = $salary['max'];
         
 
-        if($min !== null ){
-            $this->builder->where('salary' , '>=' , $min);
+        if(!$min){
+            $this->builder->whereRaw('CAST(salary AS UNSIGNED) <= ?' , [$max]);
         }
 
-        if($max !== null ){
-            $this->builder->where('salary' , '<=' , $max);
+        if(!$max){
+            $this->builder->whereRaw('CAST(salary AS UNSIGNED) >= ?' , [$min]);
         }
 
         return $this->builder;
+        
     }
 
     public function category(array $category) : Builder {

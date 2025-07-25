@@ -12,25 +12,21 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 
 import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
+
 import FilterListIcon from "@mui/icons-material/FilterList";
 import CloseIcon from "@mui/icons-material/Close";
 import CustomCheckboxOutline from "../../custom_svg/CustomCheckboxOutline";
 import CustomCheckbox from "../../custom_svg/CustomCheckbox";
-import { useState, type ChangeEvent } from "react";
+import { type ChangeEvent } from "react";
 import { useJobSalaryFilter, useJobTypeFilter } from "../../../store/JobStore";
 import { useJobRoleFilter } from "../../../store/JobStore";
 import { useJobCategoryFilter } from "../../../store/JobStore";
 import { getCategories } from "../../../helper/postJob";
 import { useQuery } from "@tanstack/react-query";
 
-type jobTypes = {
-  "Full Time": string;
-  "Part Time": string;
-  Internship: string;
-  volunteer: string;
-  Freelancer: string;
-  Remote: string;
+type JobTypes = {
+  id: number;
+  name: string;
 };
 type categoryType = {
   id: number;
@@ -39,31 +35,30 @@ type categoryType = {
   updated_at: Date;
 };
 
-type Props = {
-  filterType: string;
-  filterTypeArray: jobTypes;
+type roleType = {
+  id: number;
+  name: string;
 };
 
-const roles = {
-  Senior: "senior",
-  "Mid-Level": "mid-level",
-  Junior: "junior",
+type Props = {
+  filterType: string;
+  jobTypes: JobTypes[];
+  roles: roleType[];
 };
 
 const salary = {
   "Below 500000": { min: 0, max: 500000 },
-  "Above 500000": { min: 500000, max: 1000000 },
-  "Above 1000000": { min: 1000000, max: null },
+  "Above 500000": { min: 500000, max: 0 },
+  "Above 1000000": { min: 1000000, max: 0 },
 };
 
-const JobFilter = ({ filterType, filterTypeArray }: Props) => {
+const JobFilter = ({ filterType, jobTypes, roles }: Props) => {
   // getting job categories
 
   const { data: categories, isPending } = useQuery({
     queryKey: ["job-categories"],
     queryFn: getCategories,
   });
-  // !isPending && console.log(categories);
 
   const { selectedJobType, setSelectedJobType } = useJobTypeFilter();
   const { selectedJobRole, setSelectedJobRole } = useJobRoleFilter();
@@ -111,8 +106,19 @@ const JobFilter = ({ filterType, filterTypeArray }: Props) => {
       const value = JSON.parse(event.target.value);
       setSelectedSalary(value);
 
-      console.log(value);
+      console.log(selectedSalary);
     }
+  };
+
+  const clearSalaryRadio = () => {
+    setSelectedSalary(null);
+  };
+
+  const clearAllFilter = () => {
+    setSelectedJobType([]);
+    setSelectedJobCategory([]);
+    setSelectedJobRole([]);
+    setSelectedSalary(null);
   };
 
   return (
@@ -161,6 +167,7 @@ const JobFilter = ({ filterType, filterTypeArray }: Props) => {
               fontWeight: "400",
               fontSize: "12px",
             }}
+            onClick={clearAllFilter}
           >
             clear all
           </Button>
@@ -183,31 +190,33 @@ const JobFilter = ({ filterType, filterTypeArray }: Props) => {
               flexDirection: "column",
             }}
           >
-            {Object.entries(filterTypeArray).map(([key, value]) => (
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={selectedJobType.includes(value)}
-                    disableRipple
-                    icon={<CustomCheckboxOutline />}
-                    checkedIcon={<CustomCheckbox />}
-                    name={"type"}
-                    value={value}
-                    onChange={checkBoxHandleChange}
-                    key={key}
-                  />
-                }
-                label={key}
-                sx={{
-                  "& .MuiFormControlLabel-label": {
-                    color: "text.secondary",
-                    fontSize: 16,
-                    fontWeight: 400,
-                    textTransform: "capitalize",
-                  },
-                }}
-              />
-            ))}
+            {Object.entries(jobTypes).map(([key, value]) => {
+              return (
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={selectedJobType?.includes(value.name)}
+                      disableRipple
+                      icon={<CustomCheckboxOutline />}
+                      checkedIcon={<CustomCheckbox />}
+                      name={"type"}
+                      value={value.name}
+                      onChange={checkBoxHandleChange}
+                      key={key}
+                    />
+                  }
+                  label={value.name}
+                  sx={{
+                    "& .MuiFormControlLabel-label": {
+                      color: "text.secondary",
+                      fontSize: 16,
+                      fontWeight: 400,
+                      textTransform: "capitalize",
+                    },
+                  }}
+                />
+              );
+            })}
           </FormGroup>
         </Box>
       </Paper>
@@ -250,16 +259,16 @@ const JobFilter = ({ filterType, filterTypeArray }: Props) => {
                   control={
                     <Checkbox
                       disableRipple
-                      checked={selectedJobRole.includes(value)}
+                      checked={selectedJobRole?.includes(value.name)}
                       icon={<CustomCheckboxOutline />}
                       checkedIcon={<CustomCheckbox />}
                       name={"role"}
-                      value={value}
+                      value={value.name}
                       key={key}
                       onChange={checkBoxHandleChange}
                     />
                   }
-                  label={key}
+                  label={value.name}
                   sx={{
                     "& .MuiFormControlLabel-label": {
                       color: "text.secondary",
@@ -294,22 +303,30 @@ const JobFilter = ({ filterType, filterTypeArray }: Props) => {
           }}
         >
           <Box>
-            <Typography
-              variant="h6"
-              fontWeight="700"
-              sx={{ mb: 1, textAlign: "left" }}
-            >
-              Salary
-            </Typography>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+              <Typography
+                variant="h6"
+                fontWeight="700"
+                sx={{ mb: 1, textAlign: "left" }}
+              >
+                Salary
+              </Typography>
+              <Button size="small" color="error" onClick={clearSalaryRadio}>
+                X Clear
+              </Button>
+            </Box>
+
             <FormControl>
               <RadioGroup
                 aria-labelledby="demo-radio-buttons-group-label"
                 name="radio-buttons-group"
                 onChange={radioHandleChange}
+                // value={selectedSalary}
               >
                 {Object.entries(salary).map(([key, value]) => {
                   return (
                     <FormControlLabel
+                      // checked={selectedSalary === value}
                       value={JSON.stringify(value)}
                       control={<Radio />}
                       label={key}
@@ -362,6 +379,7 @@ const JobFilter = ({ filterType, filterTypeArray }: Props) => {
                           disableRipple
                           icon={<CustomCheckboxOutline />}
                           checkedIcon={<CustomCheckbox />}
+                          checked={selectedJobCategory?.includes(cate.name)}
                           name={"category"}
                           key={cate.id}
                           value={cate.name}
