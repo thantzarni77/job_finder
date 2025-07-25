@@ -27,16 +27,9 @@ import {
   useJobStore,
   useJobTypeFilter,
   useJobCategoryFilter,
+  useJobSalaryFilter,
 } from "../../../store/JobStore";
-
-const jobType = {
-  "Full Time": "full-time",
-  "Part Time": "part-time",
-  Internship: "internship",
-  volunteer: "volunteer",
-  Freelancer: "freelancer",
-  Remote: "remote",
-};
+import { getJobTypes, getRoles } from "../../../helper/postJob";
 
 const Jobs = () => {
   const [sortBy, setSortBy] = useState<string>("recent");
@@ -55,6 +48,7 @@ const Jobs = () => {
   const { selectedJobRole } = useJobRoleFilter();
   const { selectedJobType } = useJobTypeFilter();
   const { selectedJobCategory } = useJobCategoryFilter();
+  const { selectedSalary } = useJobSalaryFilter();
 
   const allJobsQuery = useQuery({
     queryKey: [
@@ -62,9 +56,25 @@ const Jobs = () => {
       selectedJobRole,
       selectedJobType,
       selectedJobCategory,
+      selectedSalary,
     ],
     queryFn: () =>
-      getAllJobPosts(selectedJobRole, selectedJobType, selectedJobCategory),
+      getAllJobPosts(
+        selectedJobRole,
+        selectedJobType,
+        selectedJobCategory,
+        selectedSalary,
+      ),
+  });
+
+  const { data: jobTypes, isPending: isJobTypesPending } = useQuery({
+    queryKey: ["jobTypes"],
+    queryFn: getJobTypes,
+  });
+
+  const { data: roles, isPending: isRolesPending } = useQuery({
+    queryKey: ["roles"],
+    queryFn: getRoles,
   });
 
   const handleChange = (event: SelectChangeEvent<string>) => {
@@ -164,9 +174,11 @@ const Jobs = () => {
           gap: 6,
         }}
       >
-        <Box sx={{ display: { xs: "none", md: "block" } }}>
-          <JobFilter filterType={"Job"} filterTypeArray={jobType} />
-        </Box>
+        {!isJobTypesPending && !isRolesPending && (
+          <Box sx={{ display: { xs: "none", md: "block" } }}>
+            <JobFilter filterType={"Job"} jobTypes={jobTypes} roles={roles} />
+          </Box>
+        )}
 
         <Box
           sx={{
@@ -367,7 +379,9 @@ const Jobs = () => {
           </Box>
         </Box>
       </Box>
-      <JobFilterDrawer />
+      {!isJobTypesPending && !isRolesPending && (
+        <JobFilterDrawer jobTypes={jobTypes} roles={roles} />
+      )}
     </Box>
   );
 };

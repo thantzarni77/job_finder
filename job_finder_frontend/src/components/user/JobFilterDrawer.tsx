@@ -2,16 +2,23 @@ import { Drawer } from "@mui/material";
 import { useJobFilterStore } from "../../store/Appstore";
 import JobFilter from "./jobs/JobFilter";
 
-const jobs = [
-  "full Time",
-  "part Time",
-  "intership",
-  "volunteer",
-  "freelancer",
-  "work from home",
-];
+type JobTypes = {
+  id: number;
+  name: string;
+};
 
-export default function JobFilterDrawer() {
+type RoleType = {
+  id: number;
+  name: string;
+};
+
+export default function JobFilterDrawer({
+  jobTypes,
+  roles,
+}: {
+  jobTypes: JobTypes[];
+  roles: RoleType[];
+}) {
   const showJobFilterDrawer = useJobFilterStore(
     (state) => state.showJobFilterDrawer,
   );
@@ -24,7 +31,7 @@ export default function JobFilterDrawer() {
       open={showJobFilterDrawer}
       onClose={() => setShowJobFilterDrawer(false)}
     >
-      <JobFilter filterType={"Job"} filterTypeArray={jobs} />
+      <JobFilter filterType={"Job"} jobTypes={jobTypes} roles={roles} />
     </Drawer>
   );
 }
