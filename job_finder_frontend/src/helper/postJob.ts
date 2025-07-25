@@ -1,4 +1,3 @@
-import type { Job } from "../store/JobStore";
 import axiosClient from "./axiosClient";
 
 export const getAllJobPosts = async (
@@ -17,7 +16,7 @@ export const getAllJobPosts = async (
   return data.data;
 };
 
-export const postAJob = async (data: Job) => {
+export const postAJob = async (data: FormData) => {
   const res = await axiosClient.post("/post-jobs", data);
   return res.data;
 };

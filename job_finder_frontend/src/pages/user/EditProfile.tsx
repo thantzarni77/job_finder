@@ -32,6 +32,7 @@ import {
   getAllRoles,
   getAllTalents,
 } from "../../helper/talentTypeAndRoleApiFunctions";
+import { updateUser } from "../../helper/userApiFunctions";
 
 type Inputs = {
   name: string;
@@ -123,6 +124,7 @@ export default function EditProfile() {
     setValue,
     formState: { errors },
   } = useForm<Inputs>({
+    mode: "onBlur",
     defaultValues: {
       skills: [{ value: "" }],
       education: [{ degree: "", year: "" }],
@@ -156,7 +158,7 @@ export default function EditProfile() {
       setValue("name", seekerProfile.user_id.name || "");
       setValue("email", userData?.user_email || "");
       setValue("phone", seekerProfile.user_id.phone || "");
-      // setValue("address", userProfile|| "");
+      setValue("address", seekerProfile.user_id.address || "");
       setValue("role", seekerProfile.role || "");
       setValue("talent", seekerProfile.talent || "");
       setValue("bio", seekerProfile.bio || "");
@@ -206,7 +208,13 @@ export default function EditProfile() {
     }
   }, [seekerProfile, userData, setValue]);
 
-  const userUpdateMutation = useMutation({});
+  const userUpdateMutation = useMutation({
+    mutationFn: updateUser,
+    onSuccess: () => {},
+    onError: (err) => {
+      console.log(err);
+    },
+  });
 
   const seekerUpdateMutation = useMutation({
     mutationFn: updateSeekerProfile,
@@ -298,6 +306,10 @@ export default function EditProfile() {
     seekerUpdateMutation.mutate({
       seekerID: seekerProfile.id,
       seekerData: seekerInfo,
+    });
+    userUpdateMutation.mutate({
+      userID: userData?.user_id,
+      userFormData: userInfo,
     });
   };
 
