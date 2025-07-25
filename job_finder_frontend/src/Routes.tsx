@@ -35,6 +35,7 @@ import SeekerDetailManage from "./pages/admin/SeekerDetailManage";
 import TalentProfile from "./pages/user/TalentProfile";
 import EmployerProfile from "./pages/employer/EmployerProfile";
 import IsLoginnedMiddleware from "./protected_routes/IsLoginnedMiddleware";
+import SetUserDataMiddleware from "./protected_routes/SetUserDataMiddleware";
 
 export const router = createBrowserRouter([
   {
@@ -52,11 +53,19 @@ export const router = createBrowserRouter([
       },
       {
         path: "/jobs",
-        Component: Jobs,
+        element: (
+          <SetUserDataMiddleware>
+            <Jobs />
+          </SetUserDataMiddleware>
+        ),
       },
       {
         path: "/job/:id",
-        Component: JobDetail,
+        element: (
+          <SetUserDataMiddleware>
+            <JobDetail />
+          </SetUserDataMiddleware>
+        ),
       },
       {
         path: "/job/:id/apply",

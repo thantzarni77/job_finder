@@ -16,6 +16,11 @@ export const getAllJobPosts = async (
   return data.data;
 };
 
+export const getSingleJob = async (jobID: string | undefined) => {
+  const { data } = await axiosClient.get(`/post-jobs/${jobID}`);
+  return data;
+};
+
 export const postAJob = async (data: FormData) => {
   const res = await axiosClient.post("/post-jobs", data);
   return res.data;

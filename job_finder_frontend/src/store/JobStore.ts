@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
 export type Job = {
+  id: number;
   employer_id: number;
   category_id: number | null;
   job_title: string;
@@ -17,6 +18,7 @@ export type Job = {
   benefits: string;
   gender: string;
   view_count: number;
+  job_code: string;
   created_at: string;
   updated_at: string;
   category: { id: number; name: string; created_at: Date; updated_at: Date };
@@ -36,6 +38,85 @@ export const useJobStore = create<JobData & JobActions>((set) => ({
     set({ jobs: jobsFromServer });
   },
 }));
+
+type JobWithJobDetail = {
+  id: number;
+  employer_id: number;
+  category_id: number;
+  job_title: string;
+  salary: string;
+  role: string;
+  posting_status: string;
+  location: string;
+  type: string;
+  view_count: number | null;
+  job_code: string;
+  created_at: string;
+  updated_at: string;
+  job_detail: {
+    id: number;
+    post_job_id: number;
+    requirements: string;
+    description: string;
+    deadline: string;
+    vacancy: number;
+    note: string;
+    gender: string;
+    save_count: number | null;
+    apply_count: number | null;
+    benefits: string;
+    created_at: string;
+    updated_at: string;
+  };
+};
+
+type JobDetails = {
+  jobDetails: null | JobWithJobDetail;
+};
+
+const initialValues = {
+  id: 0,
+  employer_id: 0,
+  category_id: 0,
+  job_title: "",
+  salary: "",
+  role: "",
+  posting_status: "",
+  location: "",
+  type: "",
+  view_count: null,
+  job_code: "",
+  created_at: "",
+  updated_at: "",
+  job_detail: {
+    id: 0,
+    post_job_id: 0,
+    requirements: "",
+    description: "",
+    deadline: "",
+    vacancy: 0,
+    note: "",
+    gender: "",
+    save_count: null,
+    apply_count: null,
+    benefits: "",
+    created_at: "",
+    updated_at: "",
+  },
+};
+
+type JobDetailActions = {
+  setJobDetails: (jobDetailsFromServer: JobWithJobDetail) => void;
+};
+
+export const useJobDetailStore = create<JobDetails & JobDetailActions>(
+  (set) => ({
+    jobDetails: initialValues,
+    setJobDetails: (jobDetailsFromServer) => {
+      set({ jobDetails: jobDetailsFromServer });
+    },
+  }),
+);
 
 // job filter
 //  filter with job type

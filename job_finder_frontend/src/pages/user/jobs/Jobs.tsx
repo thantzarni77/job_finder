@@ -341,7 +341,9 @@ const Jobs = () => {
               )}
               {allJobsQuery.isSuccess &&
                 allJobs.map((job) => {
-                  return <JobCard key={job.id} job={job} />;
+                  if (job.posting_status == "approved") {
+                    return <JobCard key={job.id} job={job} />;
+                  }
                 })}
             </Box>
             {/* pagination */}

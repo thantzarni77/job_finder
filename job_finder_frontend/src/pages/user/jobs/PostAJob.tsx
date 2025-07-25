@@ -314,7 +314,7 @@ export default function PostAJob() {
                     borderColor: "primary.main",
                   },
                 }}
-                options={genders?.map((single) => single)}
+                options={genders}
                 renderInput={(params) => (
                   <TextField
                     {...params}

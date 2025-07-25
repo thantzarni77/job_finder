@@ -17,9 +17,10 @@ import { useNavigate } from "react-router";
 import { useRef, useState } from "react";
 import CustomFIleUpload from "../../components/custom_svg/CustomFIleUpload";
 import { useForm, Controller } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
-import { seekerAddProject } from "../../helper/seekerProjectApiFunctions";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
+import { seekerAddProject } from "../../helper/seekerProjectApiFunctions";
+import { useUserStore } from "../../store/UserStore";
 
 export type Project = {
   image: File;
@@ -46,8 +47,11 @@ const VisuallyHiddenInput = styled("input")({
 });
 
 export default function AddNewProject() {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const user = useUserStore((state) => state.user);
 
   const [uploadErrors, setUploadErrors] = useState<UploadError | null>();
 
@@ -71,6 +75,9 @@ export default function AddNewProject() {
     },
     onSuccess: (responseData) => {
       if (responseData.statusText == "Created") {
+        queryClient.invalidateQueries({
+          queryKey: ["seekerProject", user?.user_id],
+        });
         return navigate(-1);
       }
     },
@@ -270,6 +277,7 @@ export default function AddNewProject() {
                   },
                 })}
                 fullWidth
+                placeholder="Enter Project Title"
                 id="title"
                 sx={{ bgcolor: "background.paper" }}
                 error={!!errors.title}
@@ -298,6 +306,7 @@ export default function AddNewProject() {
                       "Project description shouldn't be more than 100 words",
                   },
                 })}
+                placeholder="Enter Project Description"
                 fullWidth
                 multiline
                 rows={4}
@@ -327,6 +336,7 @@ export default function AddNewProject() {
                 {...register("link", {
                   required: "Project link is required",
                 })}
+                placeholder="Enter Project Link"
                 fullWidth
                 id="link"
                 sx={{ bgcolor: "background.paper" }}

@@ -72,7 +72,7 @@ const JobCard = ({ job }: { job: Job }) => {
                     ":hover": { cursor: "pointer", color: "primary.main" },
                   }}
                 >
-                  <NavLink to={"/job/JC-1111"}>{job.job_title}</NavLink>
+                  <NavLink to={`/job/${job.id}`}>{job.job_title}</NavLink>
                 </Typography>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <VerifiedIcon
