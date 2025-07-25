@@ -1,11 +1,19 @@
 <?php
 namespace App\Repositories;
 
+use App\Http\Resources\UserResource;
 use App\Interfaces\UserRepositoryInterface;
 use App\Models\User;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UserRepository implements UserRepositoryInterface
 {
+
+    public function getSingleUserData()
+    {
+        $user = User::where('id', JWTAuth::user()->id)->first();
+        return new UserResource($user);
+    }
 
     public function updateUser($request, $id)
     {

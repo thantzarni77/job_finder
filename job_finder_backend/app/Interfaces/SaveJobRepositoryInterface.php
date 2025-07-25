@@ -1,11 +1,7 @@
 <?php
-
 namespace App\Interfaces;
 
-use Faker\Calculator\Ean;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redis;
-use PhpParser\ErrorHandler\Collecting;
 
 interface SaveJobRepositoryInterface
 {
@@ -13,4 +9,5 @@ interface SaveJobRepositoryInterface
     public function store(Request $request);
     public function view();
     public function destroy($id);
+    public function checkIsSaved(Request $request);
 }

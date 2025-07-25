@@ -16,4 +16,9 @@ class UserController extends Controller
     {
         return $this->userRepositoryInterface->updateUser($request, $id);
     }
+
+    public function getSingleUserData()
+    {
+        return $this->userRepositoryInterface->getSingleUserData();
+    }
 }

@@ -52,7 +52,12 @@ Route::get('roles', [JobDetailController::class, 'roles']);
 Route::get('genders', [JobDetailController::class, 'genders']);
 
 Route::group(["middleware" => "AuthMiddleware"], function () {
-    Route::post('/user/update/{id}', [UserController::class, 'updateUser']);
+    Route::prefix("user")->group(function () {
+        Route::get('/get', [UserController::class, 'getSingleUserData']);
+        Route::post('/update/{id}', [UserController::class, 'updateUser']);
+
+    });
+
     Route::get('/profile', [AuthController::class, 'profile']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/refresh', [AuthController::class, 'refresh']);
@@ -126,6 +131,8 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
         Route::get('/seeker-save-list', [SaveJobController::class, 'view']);
         //remove save job
         Route::delete('/{id}', [SaveJobController::class, 'destroy']);
+        //check if job is saved
+        Route::post("/check", [SaveJobController::class, 'checkIsSaved']);
     });
 
     Route::apiResource('project', ProjectController::class);
