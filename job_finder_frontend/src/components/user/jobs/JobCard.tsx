@@ -1,10 +1,10 @@
 import {
-  Avatar,
   Box,
   Checkbox,
   Chip,
   Divider,
   Paper,
+  Skeleton,
   Typography,
 } from "@mui/material";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
@@ -15,8 +15,30 @@ import VerifiedIcon from "@mui/icons-material/Verified";
 import { NavLink } from "react-router";
 import { format } from "date-fns";
 import type { Job } from "../../../store/JobStore";
+import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getSingleEmployerData } from "../../../helper/employerApiFunctions";
+import { useSingleEmployerStore } from "../../../store/EmployerStore";
 
 const JobCard = ({ job }: { job: Job }) => {
+  const employerData = useSingleEmployerStore((state) => state.singleEmployer);
+  const setSingleEmployer = useSingleEmployerStore(
+    (state) => state.setSingleEmployer,
+  );
+
+  const employerDataQuery = useQuery({
+    enabled: job.employer_id != 0,
+    queryKey: ["employerDetail", job.employer_id],
+    queryFn: () => {
+      return getSingleEmployerData(job.employer_id);
+    },
+  });
+
+  useEffect(() => {
+    if (employerDataQuery.data && employerDataQuery.isSuccess) {
+      setSingleEmployer(employerDataQuery.data.data[0]);
+    }
+  }, [employerDataQuery.data, employerDataQuery.isSuccess, setSingleEmployer]);
   return (
     <Box
       sx={{
@@ -45,18 +67,20 @@ const JobCard = ({ job }: { job: Job }) => {
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Avatar
-                sx={{
-                  bgcolor: "primary.main",
-                  borderRadius: "12px",
-                  fontSize: "12px",
-                  fontWeight: "bold",
-                }}
-                variant="square"
-              >
-                KBZ <br />
-                Pay
-              </Avatar>
+              {employerData?.company_image && (
+                <img
+                  src={`${import.meta.env.VITE_API_BASE_URL}/${employerData?.company_image}`}
+                  style={{
+                    backgroundColor: "primary.main",
+                    borderRadius: "12px",
+                    width: "50px",
+                    height: "50px",
+                  }}
+                />
+              )}
+              {employerDataQuery.isLoading && (
+                <Skeleton variant="rounded" width={"50px"} height={"50px"} />
+              )}
               <Box
                 sx={{
                   display: "flex",
@@ -133,13 +157,21 @@ const JobCard = ({ job }: { job: Job }) => {
             >
               <QueryBuilderIcon sx={{ color: "primary.light", fontSize: 22 }} />
               <Typography variant="caption" sx={{ color: "primary.light" }}>
-                posted on {format(new Date(job.created_at), "PPpp")}
+                posted on {format(new Date(job.created_at), "PPp")}
               </Typography>
             </Box>
           </Box>
         </Box>
         {/* tags */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: 1,
+            mb: 2,
+          }}
+        >
           <Chip
             sx={{
               borderRadius: "4px",

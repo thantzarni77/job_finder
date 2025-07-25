@@ -74,7 +74,6 @@ const Jobs = () => {
   useEffect(() => {
     if (allJobsQuery.data && allJobsQuery.isSuccess) {
       setJobs(allJobsQuery.data);
-      console.log(allJobs);
     }
   }, [
     allJobsQuery.data,

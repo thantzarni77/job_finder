@@ -43,8 +43,6 @@ const EmployerCard = ({
                 style={{
                   backgroundColor: "primary.main",
                   borderRadius: "12px",
-                  fontSize: "14px",
-                  fontWeight: "bold",
                   width: "50px",
                   height: "50px",
                 }}
