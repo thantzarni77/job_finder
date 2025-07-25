@@ -27,6 +27,7 @@ import {
   useJobStore,
   useJobTypeFilter,
   useJobCategoryFilter,
+  useJobSalaryFilter,
 } from "../../../store/JobStore";
 
 const jobType = {
@@ -55,6 +56,7 @@ const Jobs = () => {
   const { selectedJobRole } = useJobRoleFilter();
   const { selectedJobType } = useJobTypeFilter();
   const { selectedJobCategory } = useJobCategoryFilter();
+  const { selectedSalary } = useJobSalaryFilter();
 
   const allJobsQuery = useQuery({
     queryKey: [
@@ -62,9 +64,15 @@ const Jobs = () => {
       selectedJobRole,
       selectedJobType,
       selectedJobCategory,
+      selectedSalary,
     ],
     queryFn: () =>
-      getAllJobPosts(selectedJobRole, selectedJobType, selectedJobCategory),
+      getAllJobPosts(
+        selectedJobRole,
+        selectedJobType,
+        selectedJobCategory,
+        selectedSalary,
+      ),
   });
 
   const handleChange = (event: SelectChangeEvent<string>) => {

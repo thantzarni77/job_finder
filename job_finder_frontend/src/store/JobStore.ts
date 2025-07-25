@@ -156,3 +156,21 @@ export const useJobCategoryFilter = create<jobCategoryFilter>((set) => ({
     set({ selectedJobCategory });
   },
 }));
+
+// filter with salary
+type SalaryRange = {
+  min: number;
+  max: number | null;
+};
+
+type jobSalaryFilter = {
+  selectedSalary: SalaryRange | null;
+  setSelectedSalary: (selectedSalary: SalaryRange | null) => void;
+};
+
+export const useJobSalaryFilter = create<jobSalaryFilter>((set) => ({
+  selectedSalary: null,
+  setSelectedSalary: (selectedSalary) => {
+    set({ selectedSalary });
+  },
+}));

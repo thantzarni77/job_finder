@@ -80,6 +80,8 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
     });
 
     //employer post job
+     //employer post job
+
 
     Route::middleware("UserTypeMiddleware:employer")->group(function () {
 
@@ -129,6 +131,8 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
     });
 
     Route::apiResource('project', ProjectController::class);
+
+   
 });
 
 //job category route

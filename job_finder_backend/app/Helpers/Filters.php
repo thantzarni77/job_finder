@@ -44,7 +44,9 @@ class Filters
 
     public function salary(array $salary) : Builder {
 
-        [$min,$max] = $salary ;
+        $min = $salary['min'];
+        $max = $salary['max'];
+        
 
         if($min !== null ){
             $this->builder->where('salary' , '>=' , $min);

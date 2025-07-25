@@ -4,12 +4,14 @@ export const getAllJobPosts = async (
   selectedJobRole: string[],
   selectedJobType: string[],
   selectedJobCategory: string[],
+  selectedSalary: { min: number; max: number | null } | null,
 ) => {
   const { data } = await axiosClient.get("/post-jobs", {
     params: {
       type: selectedJobType,
       role: selectedJobRole,
       category: selectedJobCategory,
+      salary: selectedSalary,
     },
   });
 
