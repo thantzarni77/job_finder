@@ -83,6 +83,8 @@ Route::middleware('AuthMiddleware')->group(function () {
             Route::get('/seeker-save-list', [SaveJobController::class, 'view']);
             //remove save job
             Route::delete('/{id}', [SaveJobController::class, 'destroy']);
+            //check save job
+            Route::post('/check', [SaveJobController::class, 'checkSaveJob']);
         });
         //prject
         Route::apiResource('project', ProjectController::class);
@@ -137,18 +139,9 @@ Route::middleware('AuthMiddleware')->group(function () {
         });
     });
 
-
-
-
-
-
-
     //job category route
     Route::apiResource('job-categories', JobCategoryController::class);
     //job detail route
     Route::apiResource('job-details', JobDetailController::class);
 });
-
-//job category route
-Route::apiResource('job-categories', JobCategoryController::class);
 Route::get('/roles', [RoleController::class, 'index']);

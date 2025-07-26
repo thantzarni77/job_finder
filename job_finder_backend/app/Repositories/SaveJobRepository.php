@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repositories;
 
 use App\Interfaces\SaveJobRepositoryInterface;
@@ -31,5 +32,24 @@ class SaveJobRepository implements SaveJobRepositoryInterface
     {
         Save_job::findOrFail($id)->delete();
         return response()->json(['status' => 'success', 'message' => 'Save job deleted successfully'], 200);
+    }
+
+    //check save job
+    public function checkSaveJob($request)
+    {
+        $post_job_id = $request['post_job_id'];
+        $seeker_id   = $request['seeker_id'];
+        $checked     = Save_job::where("post_job_id", $post_job_id)->where('seeker_id', $seeker_id)->first();
+
+        if ($checked) {
+            return response()->json([
+                "status" => true,
+                "data"   => $checked,
+            ], 200);
+        } else {
+            return response()->json([
+                "status" => false,
+            ], 404);
+        }
     }
 }
