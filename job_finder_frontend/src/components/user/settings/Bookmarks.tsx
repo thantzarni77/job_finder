@@ -1,0 +1,137 @@
+import { Box, IconButton, Typography } from "@mui/material";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import JobCard from "../jobs/JobCard";
+import { useNavigate, useParams } from "react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useProfileStore } from "../../../store/ProfileStore";
+import { getSeekerSavedJobs } from "../../../helper/jobApiFunctions";
+import { useEffect, useState } from "react";
+import { useSeekerSavedJobs } from "../../../store/SavedJobStore";
+import {
+  useJobCategoryFilter,
+  useJobRoleFilter,
+  useJobSalaryFilter,
+  useJobTypeFilter,
+  type Job,
+} from "../../../store/JobStore";
+import { getAllJobPosts } from "../../../helper/postJob";
+
+const Bookmarks = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const seekerData = useProfileStore((state) => state.seekerProfile);
+
+  const [filterSavedJos, setFilterSavedJobs] = useState<Job[]>([]);
+  const setSeekerSavedJobs = useSeekerSavedJobs(
+    (state) => state.setSeekerSavedJobs,
+  );
+
+  const { selectedJobRole } = useJobRoleFilter();
+  const { selectedJobType } = useJobTypeFilter();
+  const { selectedJobCategory } = useJobCategoryFilter();
+  const { selectedSalary } = useJobSalaryFilter();
+
+  const allJobsQuery = useQuery({
+    queryKey: [
+      "jobPosts",
+      selectedJobRole,
+      selectedJobType,
+      selectedJobCategory,
+      selectedSalary,
+    ],
+    queryFn: () =>
+      getAllJobPosts(
+        selectedJobRole,
+        selectedJobType,
+        selectedJobCategory,
+        selectedSalary,
+      ),
+  });
+
+  const savedJobsQuery = useQuery({
+    queryKey: ["savedJobs", seekerData.id],
+    queryFn: getSeekerSavedJobs,
+  });
+
+  useEffect(() => {
+    const foundJobs: Job[] = [];
+    if (savedJobsQuery.data && savedJobsQuery.isSuccess) {
+      if (allJobsQuery.data) {
+        for (const job of allJobsQuery.data) {
+          for (const saved of savedJobsQuery.data.data) {
+            if (saved.post_job_id == job.id) {
+              foundJobs.push(job);
+            }
+          }
+        }
+        setFilterSavedJobs(foundJobs);
+      }
+      setSeekerSavedJobs(savedJobsQuery.data.data);
+    }
+  }, [
+    savedJobsQuery.data,
+    savedJobsQuery.isSuccess,
+    setSeekerSavedJobs,
+    allJobsQuery.data,
+  ]);
+
+  return (
+    <Box
+      sx={{
+        mx: "auto",
+        p: 2,
+        mt: 5,
+        mb: 15,
+        width: "90%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      <Box
+        sx={{
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <IconButton onClick={() => navigate(`/settings/user/${id}`)}>
+          <ArrowBackIosIcon
+            sx={{
+              fontSize: "32px",
+              color: "primary.main",
+              ":hover": { cursor: "pointer" },
+            }}
+          />
+        </IconButton>
+        <Typography variant="h5" sx={{ fontWeight: 600, mx: "auto" }}>
+          Bookmarks
+        </Typography>
+      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 4,
+          justifyContent: "center",
+          flexWrap: "wrap",
+          my: 4,
+          width: { xs: "100%", md: "70%" },
+        }}
+      >
+        {filterSavedJos.length == 0 && (
+          <Typography variant="h5" sx={{ mt: 10 }}>
+            You Have No Saved Jobs
+          </Typography>
+        )}
+        {filterSavedJos.map((single) => {
+          return <JobCard key={single.id} job={single} />;
+        })}
+      </Box>
+    </Box>
+  );
+};
+
+export default Bookmarks;

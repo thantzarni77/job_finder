@@ -1,12 +1,13 @@
 import { Box, Container, Typography } from "@mui/material";
-import TranslateOutlinedIcon from "@mui/icons-material/TranslateOutlined";
-import { useNavigate } from "react-router";
+import SendOutlinedIcon from "@mui/icons-material/SendOutlined";
+import { useNavigate, useParams } from "react-router";
 
-const Language = () => {
+const AppliedJobs = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   return (
     <Container
-      onClick={() => navigate("")}
+      onClick={() => navigate(`/settings/user/${id}/applied-jobs`)}
       sx={{
         display: "flex",
         alignItems: "flex-start",
@@ -22,23 +23,25 @@ const Language = () => {
         },
       }}
     >
-      <TranslateOutlinedIcon sx={{ mt: 1, mr: 2, color: "primary.main" }} />
+      <SendOutlinedIcon
+        sx={{ mt: 1, mr: 2, color: "primary.main", rotate: "-50deg" }}
+      />
       <Box>
         <Typography
           variant="body1"
           sx={{ fontWeight: 600, color: "text.secondary" }}
         >
-          Language
+          Applied Jobs
         </Typography>
         <Typography
           variant="subtitle2"
           sx={{ fontWeight: 400, color: "text.secondary" }}
         >
-          Manage your language
+          View your applied jobs
         </Typography>
       </Box>
     </Container>
   );
 };
 
-export default Language;
+export default AppliedJobs;

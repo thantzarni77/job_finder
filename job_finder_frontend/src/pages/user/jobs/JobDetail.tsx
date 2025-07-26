@@ -20,7 +20,11 @@ import EmployerCard from "../../../components/employer/EmployerCard";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getSingleJob } from "../../../helper/postJob";
 import { useEffect, useState } from "react";
-import { useAppliedJobStore, useJobDetailStore } from "../../../store/JobStore";
+import {
+  useAppliedJobStore,
+  useJobDetailStore,
+  useJobStore,
+} from "../../../store/JobStore";
 import { useSingleEmployerStore } from "../../../store/EmployerStore";
 import { getSingleEmployerData } from "../../../helper/employerApiFunctions";
 import FullScreenLoader from "../../../components/FullScreenLoader";
@@ -32,6 +36,7 @@ import {
   undoSaveJob,
 } from "../../../helper/jobApiFunctions";
 import { useProfileStore } from "../../../store/ProfileStore";
+import JobCard from "../../../components/user/jobs/JobCard";
 
 const JobDetail = () => {
   const queryClient = useQueryClient();
@@ -39,6 +44,7 @@ const JobDetail = () => {
 
   const user = useUserStore((state) => state.user);
 
+  const allJobs = useJobStore((state) => state.jobs);
   const seekerData = useProfileStore((state) => state.seekerProfile);
   const jobDetails = useJobDetailStore((state) => state.jobDetails);
   const setJobDetails = useJobDetailStore((state) => state.setJobDetails);
@@ -64,13 +70,14 @@ const JobDetail = () => {
     },
   });
 
-  const isJobSaved = savedCheckQuery.isSuccess;
+  const isJobSaved = savedCheckQuery.data?.data.status;
   const savedJobRecordId = savedCheckQuery.data?.data?.data?.id;
 
   const saveJobMutation = useMutation({
     mutationFn: doSaveJob,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["savedCheck"] });
+      queryClient.invalidateQueries({ queryKey: ["savedJobs", seekerData.id] });
       setSnackMessage("Bookmarked !");
       handleClick();
     },
@@ -80,6 +87,9 @@ const JobDetail = () => {
     mutationFn: undoSaveJob,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["savedCheck"] });
+      queryClient.invalidateQueries({
+        queryKey: ["savedJobs", seekerData.id],
+      });
       setSnackMessage("Removed form Bookmark !");
       handleClick();
     },
@@ -579,9 +589,13 @@ const JobDetail = () => {
             gap: 6,
           }}
         >
-          {/* <JobCard />
-          <JobCard />
-          <JobCard /> */}
+          {allJobs.map((single) => {
+            if (single.category_id == jobDetails?.category_id) {
+              if (single.id != Number(id)) {
+                return <JobCard key={single.id} job={single} />;
+              }
+            }
+          })}
         </Box>
       </Box>
     </Box>

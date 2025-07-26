@@ -36,7 +36,7 @@ const Bookmark = () => {
           variant="subtitle2"
           sx={{ fontWeight: 400, color: "text.secondary" }}
         >
-          View your saved jobs & following
+          View your saved jobs
         </Typography>
       </Box>
     </Container>

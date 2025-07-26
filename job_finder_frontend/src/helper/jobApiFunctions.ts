@@ -30,3 +30,8 @@ export const getSeekerAppliedJobs = async () => {
   const { data } = await axiosClient.get("/apply-job/seeker");
   return data;
 };
+
+export const getSeekerSavedJobs = async () => {
+  const { data } = await axiosClient.get("/save-job/seeker-save-list");
+  return data;
+};
