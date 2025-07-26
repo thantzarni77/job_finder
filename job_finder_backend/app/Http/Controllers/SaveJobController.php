@@ -14,11 +14,6 @@ class SaveJobController extends Controller
         $this->saveJobRepositoryInterface = $saveJobRepositoryInterface;
     }
 
-    //save job list
-    public function index()
-    {
-        return $this->saveJobRepositoryInterface->index();
-    }
     //create save job
     public function store(Request $request)
     {
@@ -34,11 +29,5 @@ class SaveJobController extends Controller
     public function destroy($id)
     {
         return $this->saveJobRepositoryInterface->destroy($id);
-    }
-
-    //check if a job is saved
-    public function checkIsSaved(Request $request)
-    {
-        return $this->saveJobRepositoryInterface->checkIsSaved($request);
     }
 }

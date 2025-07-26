@@ -17,11 +17,6 @@ class ApplyJobRepository implements ApplyJobRepositoryInterface
      * Create a new class instance.
      */
 
-    public function applyJobData(){
-        //get data from database
-        $data = Apply_job::get();
-        return response()->json(['status' => 'success', 'message' => 'Apply job fetched successfully', 'data' => $data], 200);
-    }
     //seeker apply a job
     public function applyJob(array $applyData)
     {
@@ -44,7 +39,7 @@ class ApplyJobRepository implements ApplyJobRepositoryInterface
     //add to shortlist
     public function addShortlist($id){
         Apply_job::where('id', $id)->update(['shortlist' => true]);
-        return response()->json(['status' => 'success', 'message' => 'Short List Added successfully'], 201);
+        return response()->json(['status' => 'success', 'message' => 'Short List Added successfully'], 200);
     }
 
     //employer view his create job data
@@ -86,18 +81,5 @@ class ApplyJobRepository implements ApplyJobRepositoryInterface
         Mail::to('thantzarni83@gmail.com')->send(new ShortlistContactMail($validate));
 
         return response()->json(['status' => 'success', 'message' => 'You have successfully send mail to seeker.'], 200);
-    }
-
-    //get apply data
-    private function applyData($request){
-        return [
-            'post_job_id' => $request->post_job_id,
-            'seeker_id' => $request->seeker_id,
-            'employer_id' => $request->employer_id,
-            'message' => $request->message,
-            'document' => $request->document,
-            'expected_salary' => $request->expected_salary,
-            'shortlist' => false
-        ];
     }
 }
