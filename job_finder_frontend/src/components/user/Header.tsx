@@ -25,7 +25,7 @@ import { useState, useRef, useEffect, useMemo, type RefObject } from "react";
 import { useNavigate } from "react-router";
 import { useThemeStore } from "../../store/Appstore";
 import { useUserStore } from "../../store/UserStore";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { logoutUser } from "../../helper/authApiFunctions";
 import { useProfileStore } from "../../store/ProfileStore";
 
@@ -42,6 +42,7 @@ function findRefForPath(
 }
 
 export default function Header({ isLoading }: { isLoading: boolean }) {
+  const queryClient = useQueryClient();
   const user = useUserStore((state) => state.user);
   const seekerProfile = useProfileStore((state) => state.seekerProfile);
   const employerProfile = useProfileStore((state) => state.employerProfile);
@@ -267,24 +268,26 @@ export default function Header({ isLoading }: { isLoading: boolean }) {
                   aria-expanded={open ? "true" : undefined}
                   onClick={handleClick}
                 >
-                  {isLoading ? (
+                  {isLoading && (
                     <Skeleton
                       variant="rounded"
                       width={"32px"}
                       height={"32px"}
                     />
-                  ) : (
-                    <img
-                      src={`${import.meta.env.VITE_API_BASE_URL}/${user?.user_type == "seeker" ? seekerProfile.image : employerProfile.company_image}`}
-                      alt={"SeekerProfile"}
-                      style={{
-                        width: "32px",
-                        height: "32px",
-                        borderRadius: "100%",
-                        objectFit: "cover",
-                      }}
-                    />
                   )}
+                  {!isLoading &&
+                    (seekerProfile.image || employerProfile.company_image) && (
+                      <img
+                        src={`${import.meta.env.VITE_API_BASE_URL}/${user?.user_type == "seeker" ? seekerProfile.image : employerProfile.company_image}`}
+                        alt={"SeekerProfile"}
+                        style={{
+                          width: "32px",
+                          height: "32px",
+                          borderRadius: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    )}
 
                   {!isLoading &&
                     !seekerProfile.image &&
@@ -317,7 +320,12 @@ export default function Header({ isLoading }: { isLoading: boolean }) {
                     Profile
                   </MenuItem>
 
-                  <MenuItem onClick={() => logoutMutate.mutate()}>
+                  <MenuItem
+                    onClick={() => {
+                      logoutMutate.mutate();
+                      queryClient.invalidateQueries();
+                    }}
+                  >
                     Logout
                   </MenuItem>
                 </Menu>

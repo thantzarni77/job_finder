@@ -110,9 +110,9 @@ class SeekerController extends Controller
 
             $token = JWTAuth::fromUser($user);
             $seeker->save();
-
-            return $this->successResponseSeeker("Success created", $seeker, $token, 201)->cookie('refresh_token', $refresh_token, 60 * 24 * 7, null, null, true, true);
-        } catch (\Exception $e) {
+    
+            return $this->successResponseSeeker("Success created",$seeker,$token,201)->cookie('refresh_token', $refresh_token, 60 * 24 * 7, null, null, true, true);
+        }catch(\Exception $e) {
             return response()->json(["message" => "Data not found"], 404);
         }
     }

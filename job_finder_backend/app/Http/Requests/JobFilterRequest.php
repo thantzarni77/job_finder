@@ -25,8 +25,6 @@ class JobFilterRequest extends FormRequest
             'type' => 'sometimes|array',
             'role'=>'sometimes|array',
             'salary' => 'sometimes|array|size:2',
-            'salary.0'=> 'nullable|numeric',
-            'salary.1' => 'nullable|numeric',
             'category' => 'sometimes|array',
         ];
     }

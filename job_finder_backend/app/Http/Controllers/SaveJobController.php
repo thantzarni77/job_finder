@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Interfaces\SaveJobRepositoryInterface;
@@ -16,20 +15,30 @@ class SaveJobController extends Controller
     }
 
     //save job list
-    public function index(){
+    public function index()
+    {
         return $this->saveJobRepositoryInterface->index();
     }
     //create save job
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         return $this->saveJobRepositoryInterface->store($request);
     }
     //view save job
-    public function view(){
+    public function view()
+    {
         return $this->saveJobRepositoryInterface->view();
     }
 
     //delete save job
-    public function destroy($id){
+    public function destroy($id)
+    {
         return $this->saveJobRepositoryInterface->destroy($id);
+    }
+
+    //check if a job is saved
+    public function checkIsSaved(Request $request)
+    {
+        return $this->saveJobRepositoryInterface->checkIsSaved($request);
     }
 }

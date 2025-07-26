@@ -1,10 +1,13 @@
-import { Avatar, Box, Button, Paper, Typography } from "@mui/material";
+import { Box, Paper, Typography } from "@mui/material";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import { NavLink } from "react-router";
-import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
-import ApartmentIcon from "@mui/icons-material/Apartment";
+import { type SingleEmployer } from "../../store/EmployerStore";
 
-const EmployerCard = () => {
+const EmployerCard = ({
+  employerData,
+}: {
+  employerData: SingleEmployer | null;
+}) => {
   return (
     <Box
       sx={{
@@ -34,7 +37,17 @@ const EmployerCard = () => {
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Avatar
+              <img
+                src={`${import.meta.env.VITE_API_BASE_URL}/${employerData?.company_image}`}
+                alt={employerData?.company_name}
+                style={{
+                  backgroundColor: "primary.main",
+                  borderRadius: "12px",
+                  width: "50px",
+                  height: "50px",
+                }}
+              />
+              {/* <Avatar
                 sx={{
                   bgcolor: "primary.main",
                   borderRadius: "12px",
@@ -47,7 +60,7 @@ const EmployerCard = () => {
               >
                 KBZ <br />
                 Pay
-              </Avatar>
+              </Avatar> */}
               <Box
                 sx={{
                   display: "flex",
@@ -63,10 +76,10 @@ const EmployerCard = () => {
                     ":hover": { cursor: "pointer", color: "primary.main" },
                   }}
                 >
-                  <NavLink to={"#"}>KBZ Bank</NavLink>
+                  <NavLink to={"#"}>{employerData?.company_name}</NavLink>
                 </Typography>
                 <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                  Bank
+                  {employerData?.company_type}
                 </Typography>
               </Box>
             </Box>
@@ -89,10 +102,10 @@ const EmployerCard = () => {
                 variant="caption"
                 sx={{ color: "primary.light", width: "250px" }}
               >
-                N0.123, Yadanar St, Marchart Road, Yangon
+                {employerData?.company_address}
               </Typography>
             </Box>
-            <Box
+            {/* <Box
               sx={{
                 display: "flex",
                 alignItems: "center",
@@ -104,9 +117,9 @@ const EmployerCard = () => {
               <Typography variant="caption" sx={{ color: "primary.light" }}>
                 5,000 employees on site
               </Typography>
-            </Box>
+            </Box> */}
 
-            <Box
+            {/* <Box
               sx={{
                 display: "flex",
                 alignItems: "center",
@@ -118,7 +131,7 @@ const EmployerCard = () => {
               <Typography variant="caption" sx={{ color: "primary.light" }}>
                 Parent company
               </Typography>
-            </Box>
+            </Box> */}
           </Box>
         </Box>
 
@@ -126,14 +139,9 @@ const EmployerCard = () => {
           variant="caption"
           sx={{ color: "primary.light", textAlign: "left" }}
         >
-          Lorem ipsum dolor sit amet consectetur. Hendrerit aenean lorem sem
-          scelerisque blandit. Nunc aliquet diam mi iaculis consectetur commodo
-          interdum. Sagittis vitae dictum non auctor at eget. Pulvinar blandit
-          convallis blandit dictum ut pulvinar. Condimentum et proin facilisi
-          sagittis enim orci ut est. Mattis varius malesuada bibendum pulvinar
-          arcu.
+          {employerData?.company_description}
         </Typography>
-        <Button
+        {/* <Button
           variant="contained"
           sx={{
             my: 2,
@@ -146,7 +154,7 @@ const EmployerCard = () => {
           }}
         >
           Search Jobs
-        </Button>
+        </Button> */}
       </Paper>
     </Box>
   );

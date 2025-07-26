@@ -62,25 +62,27 @@ export default function UserMainLayout() {
           seekerProfileQuery.isFetching || employerProfileQuery.isFetching
         }
       />
-      {user && employerData.verification == "pending" && (
-        <Alert variant="filled" severity="info" id="verification">
-          <Typography variant="body1">
-            You will only have limited access until we finished verifying your
-            account.
-          </Typography>
-        </Alert>
-      )}
-      {user && employerData.verification == "rejected" && (
-        <Alert variant="filled" severity="error" id="verification">
-          <Typography variant="body1">
-            Your account didn't pass our verification. Click{" "}
-            <Link to={""}>
-              <span style={{ textDecoration: "underline" }}>here </span>
-            </Link>
-            to contact to administrator
-          </Typography>
-        </Alert>
-      )}
+      {user?.user_type == "employer" &&
+        employerData.verification == "pending" && (
+          <Alert variant="filled" severity="info" id="verification">
+            <Typography variant="body1">
+              You will only have limited access until we finished verifying your
+              account.
+            </Typography>
+          </Alert>
+        )}
+      {user?.user_type == "employer" &&
+        employerData.verification == "rejected" && (
+          <Alert variant="filled" severity="error" id="verification">
+            <Typography variant="body1">
+              Your account didn't pass our verification. Click{" "}
+              <Link to={""}>
+                <span style={{ textDecoration: "underline" }}>here </span>
+              </Link>
+              to contact to administrator
+            </Typography>
+          </Alert>
+        )}
       <AppDrawer />
       <Outlet />
       <Footer />

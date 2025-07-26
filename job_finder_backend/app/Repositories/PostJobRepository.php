@@ -64,7 +64,11 @@ class PostJobRepository implements PostJobRepositoryInterface
             'post_job_id'  => $PostJob->id,
             'requirements' => $data['requirements'],
             'description'  => $data['description'],
+<<<<<<< HEAD
             'deadline'    => $data['deadline'], //YYYY-MM-DD format
+=======
+            'deadline'     => $data['deadline'], //YYYY-MM-DD format
+>>>>>>> 41463cfbfe2ebef5308a5de8abf75e28f83dc63a
             'vacancy'      => $data['vacancy'],
             'note'         => $data['note'],
             'benefits'     => $data['benefits'],
@@ -96,7 +100,11 @@ class PostJobRepository implements PostJobRepositoryInterface
         $jobDetail->update([
             'requirements' => $data['requirements'],
             'description'  => $data['description'],
+<<<<<<< HEAD
             'deadline'    => $data['deadline'], //YYYY-MM-DD format
+=======
+            'deadline'     => $data['deadline'], //YYYY-MM-DD format
+>>>>>>> 41463cfbfe2ebef5308a5de8abf75e28f83dc63a
             'vacancy'      => $data['vacancy'],
             'note'         => $data['note'],
             'benefits'     => $data['benefits'],

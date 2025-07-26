@@ -26,6 +26,7 @@ import {
   getAllTypes,
 } from "../../../helper/talentTypeAndRoleApiFunctions";
 import { DatePicker } from "@mui/x-date-pickers";
+import { format } from "date-fns";
 
 type JobTypeAndRole = {
   id: number;
@@ -85,9 +86,41 @@ export default function PostAJob() {
   });
 
   const onSubmit = (data: Job) => {
-    console.log(data);
+    const {
+      employer_id,
+      job_title,
+      salary,
+      location,
+      vacancy,
+      requirements,
+      description,
+      benefits,
+      note,
+      category_id,
+      gender,
+      type,
+      role,
+      deadline,
+    } = data;
 
-    postAJobMutation.mutate(data);
+    const postJobData = new FormData();
+
+    postJobData.append("employer_id", employer_id.toString());
+    postJobData.append(" job_title", job_title);
+    postJobData.append("salary", salary);
+    postJobData.append("location", location);
+    postJobData.append("vacancy", vacancy);
+    postJobData.append("requirements", requirements);
+    postJobData.append("description", description);
+    postJobData.append("benefits", benefits);
+    postJobData.append("note", note);
+    if (category_id) postJobData.append("category_id", category_id.toString());
+    postJobData.append("gender", gender);
+    postJobData.append("type", type);
+    postJobData.append("role", role);
+    postJobData.append("deadline", format(deadline, "yyyy-MM-dd"));
+
+    postAJobMutation.mutate(postJobData);
   };
 
   useEffect(() => {
@@ -281,7 +314,7 @@ export default function PostAJob() {
                     borderColor: "primary.main",
                   },
                 }}
-                options={genders?.map((single) => single)}
+                options={genders}
                 renderInput={(params) => (
                   <TextField
                     {...params}

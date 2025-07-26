@@ -1,5 +1,10 @@
 import axiosClient from "./axiosClient";
 
+export const getUserProfile = async () => {
+  const { data } = await axiosClient.get("/profile");
+  return data;
+};
+
 export const getSeekerProfile = async (userID: number | undefined) => {
   const data = await axiosClient.get(`/seeker-data/${userID}`);
   return data;

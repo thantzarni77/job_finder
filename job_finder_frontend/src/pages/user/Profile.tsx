@@ -16,7 +16,6 @@ import EngineeringOutlinedIcon from "@mui/icons-material/EngineeringOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import { Facebook, Instagram } from "@mui/icons-material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import UserProjectImage from "../../assets/Rectangle 94.png";
 import { useNavigate, useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { getSeekerProfile } from "../../helper/profileApiFunctions";
@@ -24,9 +23,10 @@ import { useEffect } from "react";
 import { useProfileStore } from "../../store/ProfileStore";
 import FullScreenLoader from "../../components/FullScreenLoader";
 import { useUserStore } from "../../store/UserStore";
+import { getSeekerProjects } from "../../helper/SeekerProjectApiFunctions";
+import { useSeekerProject } from "../../store/SeekerStore";
 
 export default function Profile() {
-  const exampleLink = "https://github.com/thantzarni77/job_finder/tree/main";
   const navigate = useNavigate();
 
   const { id } = useParams();
@@ -35,6 +35,26 @@ export default function Profile() {
   const userData = useUserStore((state) => state.user);
   const seekerProfile = useProfileStore((state) => state.seekerProfile);
   const setSeekerProfile = useProfileStore((state) => state.setSeekerProfile);
+
+  const seekerProjects = useSeekerProject((state) => state.projects);
+  const setSeekerProjects = useSeekerProject(
+    (state) => state.setSeekerProjects,
+  );
+
+  const seekerProjectQuery = useQuery({
+    queryKey: ["seekerProject", user_id],
+    queryFn: getSeekerProjects,
+  });
+
+  useEffect(() => {
+    if (seekerProjectQuery.data && seekerProjectQuery.isSuccess) {
+      setSeekerProjects(seekerProjectQuery.data.data);
+    }
+  }, [
+    seekerProjectQuery.data,
+    seekerProjectQuery.isSuccess,
+    setSeekerProjects,
+  ]);
 
   const seekerProfileQuery = useQuery({
     enabled: !seekerProfile.id,
@@ -343,46 +363,49 @@ export default function Profile() {
             Projects
           </Typography>
           <Box className="grid grid-cols-1 place-items-center gap-3 md:grid-cols-2 lg:grid-cols-4">
-            {Array.from({ length: 4 }).map((_, index) => {
-              return (
-                <Card
-                  sx={{
-                    borderTopRadius: "20px",
-                    backgroundColor: "transparent",
-                    boxShadow: "none",
-                    maxWidth: "95%",
-                  }}
-                  key={index}
-                >
-                  <img
-                    src={UserProjectImage}
-                    alt=""
-                    style={{
-                      objectFit: "cover",
-                      width: "100%",
-                      height: "200px",
-                      borderRadius: "10px",
+            {seekerProjectQuery.isSuccess &&
+              seekerProjects.map((single) => {
+                return (
+                  <Card
+                    sx={{
+                      borderTopRadius: "20px",
+                      backgroundColor: "transparent",
+                      boxShadow: "none",
+                      maxWidth: "95%",
                     }}
-                  />
-                  <CardContent>
-                    <Typography variant="h6">Project Name</Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{ color: "text.secondary" }}
-                    >
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Quisquam Lorem ipsum dolor sit amet consectetur
-                      adipisicing elit.
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button variant="outlined" fullWidth href={exampleLink}>
-                      View Project
-                    </Button>
-                  </CardActions>
-                </Card>
-              );
-            })}
+                    key={single.id}
+                  >
+                    <img
+                      src={`${import.meta.env.VITE_API_BASE_URL}/image/${single.image}`}
+                      alt=""
+                      style={{
+                        objectFit: "cover",
+                        width: "100%",
+                        height: "200px",
+                        borderRadius: "10px",
+                      }}
+                    />
+                    <CardContent>
+                      <Typography variant="h6">{single.title}</Typography>
+                      <Typography
+                        variant="body2"
+                        sx={{ color: "text.secondary" }}
+                      >
+                        {single.description}
+                      </Typography>
+                    </CardContent>
+                    <CardActions>
+                      <Button
+                        variant="outlined"
+                        fullWidth
+                        href={`../${single.link}`}
+                      >
+                        View Project
+                      </Button>
+                    </CardActions>
+                  </Card>
+                );
+              })}
           </Box>
         </Box>
       </Box>
