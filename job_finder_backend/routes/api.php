@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Api\IndividualEmployerController;
 use App\Http\Controllers\Api\NewPasswordController;
+use App\Http\Middleware\AdminAuthMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SaveJobController;
@@ -13,6 +15,17 @@ use App\Http\Controllers\JobCategoryController;
 use App\Http\Controllers\Api\EmployerController;
 use App\Http\Controllers\Api\SocialLoginController;
 use App\Http\Controllers\EmployerVerficationController;
+
+Route::post('/admin/register',[AdminAuthController::class,'register']);
+Route::post('/admin/login',[AdminAuthController::class,'login']);
+
+Route::group(["middleware" => AdminAuthMiddleware::class],function(){
+
+    Route::post('/admin/logout',[AdminAuthController::class,'logout']);
+    Route::get('/admin/getprofile',[AdminAuthController::class,'profile']);
+
+});
+
 
 Route::post('/registerstepone',[AuthController::class,'registerStepOne']);
 Route::post('/registersteptwo/{id}',[AuthController::class,'registerStepTwo']);

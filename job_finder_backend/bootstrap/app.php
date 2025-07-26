@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\AdminAuthMiddleware;
 use App\Http\Middleware\AuthMiddleware;
 use App\Http\Middleware\UserTypeMiddleware;
 use Illuminate\Foundation\Application;
@@ -16,7 +17,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             "AuthMiddleware" => AuthMiddleware::class,
-            "UserTypeMiddleware" => UserTypeMiddleware::class
+            "UserTypeMiddleware" => UserTypeMiddleware::class,
+            "AdminAuthMiddleware" => AdminAuthMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
