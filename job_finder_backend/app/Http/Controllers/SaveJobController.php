@@ -30,4 +30,10 @@ class SaveJobController extends Controller
     {
         return $this->saveJobRepositoryInterface->destroy($id);
     }
+
+    //check save job
+    public function checkSaveJob(Request $request)
+    {
+        return $this->saveJobRepositoryInterface->checkSaveJob($request);
+    }
 }
