@@ -1,16 +1,19 @@
 <?php
 
+
+
 use App\Http\Controllers\Api\EmployerController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Api\IndividualEmployerController;
 use App\Http\Controllers\Api\NewPasswordController;
-use App\Http\Controllers\Api\SeekerController;
 use App\Http\Middleware\AdminAuthMiddleware;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SaveJobController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\ApplyJobController;
 use App\Http\Controllers\JobDetailController;
+use App\Http\Controllers\Api\SeekerController;
 use App\Http\Controllers\Api\SocialLoginController;
 use App\Http\Controllers\EmployerVerficationController;
 use App\Http\Controllers\JobCategoryController;
@@ -52,6 +55,7 @@ Route::post('/reset-password',[NewPasswordController::class,'resetPassword']);
 Route::get('types', [JobDetailController::class, 'types']);
 Route::get('roles', [JobDetailController::class, 'roles']);
 Route::get('genders', [JobDetailController::class, 'genders']);
+
 
 
 Route::group(["middleware" => "AuthMiddleware"], function () {
