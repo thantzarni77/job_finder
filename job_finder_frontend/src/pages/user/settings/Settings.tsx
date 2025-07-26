@@ -1,9 +1,11 @@
 import { Box, Container, Typography } from "@mui/material";
 import Security from "./Security";
 import Bookmark from "./Bookmark";
-import Language from "./Language";
+import AppliedJobs from "./AppliedJobs";
+import { useUserStore } from "../../../store/UserStore";
 
 const Settings = () => {
+  const user = useUserStore((state) => state.user);
   return (
     <Container
       sx={{
@@ -20,7 +22,7 @@ const Settings = () => {
       <Box sx={{ my: 4 }}>
         <Security />
         <Bookmark />
-        <Language />
+        {user?.user_type == "seeker" && <AppliedJobs />}
       </Box>
     </Container>
   );

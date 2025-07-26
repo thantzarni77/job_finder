@@ -301,11 +301,17 @@ const JobFilter = ({ filterType, jobTypes, roles }: Props) => {
           }}
         >
           <Box>
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
               <Typography
                 variant="h6"
                 fontWeight="700"
-                sx={{ mb: 1, textAlign: "left" }}
+                sx={{ textAlign: "left" }}
               >
                 Salary
               </Typography>

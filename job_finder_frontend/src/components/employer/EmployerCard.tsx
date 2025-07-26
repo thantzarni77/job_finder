@@ -47,20 +47,6 @@ const EmployerCard = ({
                   height: "50px",
                 }}
               />
-              {/* <Avatar
-                sx={{
-                  bgcolor: "primary.main",
-                  borderRadius: "12px",
-                  fontSize: "14px",
-                  fontWeight: "bold",
-                  width: "50px",
-                  height: "50px",
-                }}
-                variant="square"
-              >
-                KBZ <br />
-                Pay
-              </Avatar> */}
               <Box
                 sx={{
                   display: "flex",

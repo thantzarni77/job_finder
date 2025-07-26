@@ -3,11 +3,16 @@ import {
   Checkbox,
   Chip,
   Divider,
+  IconButton,
   Paper,
   Skeleton,
+  Snackbar,
+  SnackbarContent,
   Typography,
+  type SnackbarCloseReason,
 } from "@mui/material";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
+import CloseIcon from "@mui/icons-material/Close";
 import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
@@ -15,12 +20,20 @@ import VerifiedIcon from "@mui/icons-material/Verified";
 import { NavLink } from "react-router";
 import { format } from "date-fns";
 import type { Job } from "../../../store/JobStore";
-import { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getSingleEmployerData } from "../../../helper/employerApiFunctions";
 import { useSingleEmployerStore } from "../../../store/EmployerStore";
+import { useProfileStore } from "../../../store/ProfileStore";
+import {
+  doSaveJob,
+  isSaved,
+  undoSaveJob,
+} from "../../../helper/jobApiFunctions";
 
 const JobCard = ({ job }: { job: Job }) => {
+  const queryClient = useQueryClient();
+  const seekerData = useProfileStore((state) => state.seekerProfile);
   const employerData = useSingleEmployerStore((state) => state.singleEmployer);
   const setSingleEmployer = useSingleEmployerStore(
     (state) => state.setSingleEmployer,
@@ -39,12 +52,103 @@ const JobCard = ({ job }: { job: Job }) => {
       setSingleEmployer(employerDataQuery.data.data[0]);
     }
   }, [employerDataQuery.data, employerDataQuery.isSuccess, setSingleEmployer]);
+
+  const [open, setOpen] = useState(false);
+  const [snackMessage, setSnackMessage] = useState("");
+
+  const handleClick = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (
+    event: React.SyntheticEvent | Event,
+    reason?: SnackbarCloseReason,
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  const savedCheckQuery = useQuery({
+    enabled: !!seekerData?.id && !!job?.id,
+    queryKey: ["savedCheck", seekerData.id, job?.id],
+    queryFn: () => {
+      return isSaved({
+        seeker_id: seekerData.id,
+        post_job_id: job.id,
+      });
+    },
+  });
+
+  const isJobSaved = savedCheckQuery.data?.data.status;
+  const savedJobRecordId = savedCheckQuery.data?.data?.data?.id;
+
+  const saveJobMutation = useMutation({
+    mutationFn: doSaveJob,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["savedCheck"] });
+      queryClient.invalidateQueries({ queryKey: ["savedJobs", seekerData.id] });
+      setSnackMessage("Bookmarked !");
+      handleClick();
+    },
+  });
+
+  const undoSaveJobMutation = useMutation({
+    mutationFn: undoSaveJob,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["savedCheck"] });
+      queryClient.invalidateQueries({
+        queryKey: ["savedJobs", seekerData.id],
+      });
+      setSnackMessage("Removed form Bookmark !");
+      handleClick();
+    },
+  });
+
+  const saveJobHandler = () => {
+    if (!seekerData.id || !job.id) return;
+    const payload = {
+      seeker_id: seekerData.id,
+      post_job_id: job.id,
+    };
+    saveJobMutation.mutate(payload);
+  };
+
+  const undoSaveJobHandler = () => {
+    if (!savedJobRecordId) return;
+    undoSaveJobMutation.mutate(savedJobRecordId);
+  };
+
   return (
     <Box
       sx={{
         textAlign: "center",
       }}
     >
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={open}
+        autoHideDuration={4000}
+        onClose={handleClose}
+        sx={{ marginTop: "50px" }}
+      >
+        <SnackbarContent
+          sx={{ backgroundColor: "success.main" }}
+          message={snackMessage}
+          action={
+            <IconButton
+              size="small"
+              aria-label="close"
+              color="inherit"
+              onClick={handleClose}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          }
+        />
+      </Snackbar>
       <Paper
         elevation={1}
         sx={{
@@ -112,8 +216,17 @@ const JobCard = ({ job }: { job: Job }) => {
               </Box>
             </Box>
             <Checkbox
-              defaultChecked
-              disableRipple
+              onClick={() => {
+                if (isJobSaved) {
+                  undoSaveJobHandler();
+                } else {
+                  saveJobHandler();
+                }
+              }}
+              disabled={
+                saveJobMutation.isPending || undoSaveJobMutation.isPending
+              }
+              checked={isJobSaved}
               sx={{
                 "& .MuiSvgIcon-root": { fontSize: 26, mr: -2 },
                 color: "primary.main",
@@ -123,7 +236,7 @@ const JobCard = ({ job }: { job: Job }) => {
               }}
               icon={<BookmarkBorderOutlinedIcon />}
               checkedIcon={<BookmarkIcon />}
-              name={"fullTime"}
+              name={"bookmark"}
             />
           </Box>
           {/* location date */}

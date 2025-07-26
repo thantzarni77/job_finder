@@ -33,6 +33,7 @@ import {
   getAllTalents,
 } from "../../helper/talentTypeAndRoleApiFunctions";
 import { updateUser } from "../../helper/userApiFunctions";
+import FullScreenLoader from "../../components/FullScreenLoader";
 
 type Inputs = {
   name: string;
@@ -313,615 +314,640 @@ export default function EditProfile() {
     });
   };
 
-  return (
-    <>
-      <Box
-        sx={{
-          my: 3,
-          alignItems: "center",
-          display: "flex",
-          position: "relative",
-        }}
-      >
-        <IconButton onClick={() => navigate(-1)} sx={{ ml: { xs: 1, sm: 5 } }}>
-          <ArrowBackIosNewIcon fontSize="large" />
-        </IconButton>
-        <Typography
-          variant="h5"
+  if (
+    talentsQuery.isSuccess &&
+    rolesQuery.isSuccess &&
+    seekerProfileQuery.isSuccess
+  ) {
+    return (
+      <>
+        <Box
           sx={{
-            fontWeight: 600,
-            position: "absolute",
-            left: "50%",
-            transform: "translateX(-50%)",
+            my: 3,
+            alignItems: "center",
+            display: "flex",
+            position: "relative",
           }}
         >
-          Edit Profile
-        </Typography>
-      </Box>
-      <Container
-        sx={{
-          mb: 5,
-          alignItems: "center",
-          justifyContent: "center",
-          display: "flex",
-        }}
-        maxWidth="sm"
-      >
-        <form onSubmit={handleSubmit(onSubmit)} style={{ width: "100%" }}>
-          {/* --- Profile Picture --- */}
-          <Controller
-            name="image"
-            control={control}
-            render={({ field: { onChange } }) => (
-              <Box
-                sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}
-              >
-                <Box sx={{ position: "relative", display: "inline-block" }}>
-                  <Avatar
-                    src={
-                      imagePreview
-                        ? imagePreview.startsWith("blob:")
-                          ? imagePreview
-                          : `${import.meta.env.VITE_API_BASE_URL}/${imagePreview}`
-                        : undefined
-                    }
-                    sx={{ width: 70, height: 70, cursor: "pointer" }}
-                    onClick={() => document.getElementById("image")?.click()}
-                  />
-                  <IconButton
-                    size="small"
-                    sx={{
-                      position: "absolute",
-                      bottom: 0,
-                      right: 0,
-                      boxShadow: 1,
-                      bgcolor: "white",
-                      "&:hover": { bgcolor: "white" },
-                    }}
-                    onClick={() => document.getElementById("image")?.click()}
-                  >
-                    <CameraAltIcon fontSize="small" />
-                  </IconButton>
-
-                  <input
-                    type="file"
-                    id="image"
-                    style={{ display: "none" }}
-                    accept="image/*"
-                    onChange={(e) => {
-                      if (e.target.files && e.target.files[0]) {
-                        const file = e.target.files[0];
-                        onChange(file);
-                        setImagePreview(URL.createObjectURL(file));
-                      }
-                    }}
-                  />
-                </Box>
-                <Typography>Upload Picture</Typography>
-              </Box>
-            )}
-          />
-
-          <Box
-            sx={{ mt: 3, display: "flex", flexDirection: "column", gap: 2.5 }}
+          <IconButton
+            onClick={() => navigate(-1)}
+            sx={{ ml: { xs: 1, sm: 5 } }}
           >
-            {/* ---name --- */}
-            <Box>
-              <InputLabel
-                htmlFor="name"
-                sx={{ color: "text.secondary", mb: 0.5 }}
-              >
-                Your Name
-              </InputLabel>
-              <OutlinedInput
-                {...register("name", { required: "Name is required" })}
-                id="name"
-                placeholder="Please Enter Your Name"
-                size="small"
-                fullWidth
-                sx={{ bgcolor: "background.paper" }}
-                error={!!errors.name}
-              />
-              {errors.name && (
-                <FormHelperText error>{errors.name.message}</FormHelperText>
-              )}
-            </Box>
-
-            {/* role  */}
-            <Box>
-              <InputLabel htmlFor="role" sx={{ mb: 1 }}>
-                Role
-              </InputLabel>
-              <Controller
-                name="role"
-                control={control}
-                rules={{ required: "You must select a role" }}
-                render={({ field, fieldState: { error } }) => {
-                  const { onChange, value } = field;
-                  const selectedRole =
-                    roles.find((r) => r.name === value) || null;
-                  return (
-                    <Autocomplete
-                      value={selectedRole}
-                      options={roles}
-                      getOptionLabel={(option) => option.name}
-                      isOptionEqualToValue={(option, val) =>
-                        option.id === val.id
+            <ArrowBackIosNewIcon fontSize="large" />
+          </IconButton>
+          <Typography
+            variant="h5"
+            sx={{
+              fontWeight: 600,
+              position: "absolute",
+              left: "50%",
+              transform: "translateX(-50%)",
+            }}
+          >
+            Edit Profile
+          </Typography>
+        </Box>
+        <Container
+          sx={{
+            mb: 5,
+            alignItems: "center",
+            justifyContent: "center",
+            display: "flex",
+          }}
+          maxWidth="sm"
+        >
+          <form onSubmit={handleSubmit(onSubmit)} style={{ width: "100%" }}>
+            {/* --- Profile Picture --- */}
+            <Controller
+              name="image"
+              control={control}
+              render={({ field: { onChange } }) => (
+                <Box
+                  sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}
+                >
+                  <Box sx={{ position: "relative", display: "inline-block" }}>
+                    <Avatar
+                      src={
+                        imagePreview
+                          ? imagePreview.startsWith("blob:")
+                            ? imagePreview
+                            : `${import.meta.env.VITE_API_BASE_URL}/${imagePreview}`
+                          : undefined
                       }
-                      onChange={(_, newValue) => {
-                        onChange(newValue ? newValue.name : "");
-                      }}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          placeholder="Select a role"
-                          size="small"
-                          error={!!error}
-                          helperText={error?.message}
-                          sx={{
-                            mb: 1,
-                            "& .MuiInputBase-root": {
-                              bgcolor: "background.paper",
-                              borderRadius: 2,
-                            },
-                            "& .MuiOutlinedInput-notchedOutline": {
-                              borderWidth: "1px",
-                              borderColor: "primary.main",
-                            },
-                          }}
-                        />
-                      )}
+                      sx={{ width: 70, height: 70, cursor: "pointer" }}
+                      onClick={() => document.getElementById("image")?.click()}
                     />
-                  );
-                }}
-              />
-              {errors.role && (
-                <Typography
-                  variant="caption"
-                  sx={{ display: "block" }}
-                  color="error"
-                >
-                  {errors.role.message}
-                </Typography>
-              )}
-            </Box>
-
-            {/* talent  */}
-            <Box>
-              <InputLabel htmlFor="talent" sx={{ mb: 1 }}>
-                Talent
-              </InputLabel>
-              <Controller
-                name="talent"
-                control={control}
-                rules={{ required: "You must select a talent" }}
-                render={({ field, fieldState: { error } }) => {
-                  const { onChange, value } = field;
-                  const selectedTalent =
-                    talents.find((t) => t.name === value) || null;
-                  return (
-                    <Autocomplete
-                      value={selectedTalent}
-                      options={talents}
-                      getOptionLabel={(option) => option.name}
-                      isOptionEqualToValue={(option, val) =>
-                        option.id === val.id
-                      }
-                      onChange={(_, newValue) => {
-                        onChange(newValue ? newValue.name : "");
-                      }}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          placeholder="Select a talent"
-                          size="small"
-                          error={!!error}
-                          helperText={error?.message}
-                          sx={{
-                            mb: 1,
-                            "& .MuiInputBase-root": {
-                              bgcolor: "background.paper",
-                              borderRadius: 2,
-                            },
-                            "& .MuiOutlinedInput-notchedOutline": {
-                              borderWidth: "1px",
-                              borderColor: "primary.main",
-                            },
-                          }}
-                        />
-                      )}
-                    />
-                  );
-                }}
-              />
-              {errors.role && (
-                <Typography
-                  variant="caption"
-                  sx={{ display: "block" }}
-                  color="error"
-                >
-                  {errors.role.message}
-                </Typography>
-              )}
-            </Box>
-
-            {/* ---bio --- */}
-            <Box>
-              <InputLabel
-                htmlFor="bio"
-                sx={{ color: "text.secondary", mb: 0.5 }}
-              >
-                Bio
-              </InputLabel>
-              <TextField
-                {...register("bio", { required: "bio is required" })}
-                id="bio"
-                placeholder="Please Enter Your bio"
-                size="small"
-                fullWidth
-                multiline
-                minRows={4}
-                sx={{
-                  "& .MuiInputBase-root": {
-                    bgcolor: "background.paper",
-                  },
-                }}
-                error={!!errors.bio}
-              />
-              {errors.bio && (
-                <FormHelperText error>{errors.bio.message}</FormHelperText>
-              )}
-            </Box>
-            <Divider sx={{ my: 1 }} />
-
-            {/* --- skills  --- */}
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <Typography variant="h6" sx={{ fontWeight: 400 }}>
-                  Skills
-                </Typography>
-                <IconButton
-                  type="button"
-                  onClick={() => appendSkill({ value: "" })}
-                >
-                  <AddCircleOutlineIcon />
-                </IconButton>
-              </Box>
-              {skillFileds.map((field, index) => (
-                <Box
-                  key={field.id}
-                  sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                >
-                  <OutlinedInput
-                    {...register(`skills.${index}.value`)}
-                    placeholder="Enter your skill"
-                    fullWidth
-                    size="small"
-                    sx={{ bgcolor: "background.paper" }}
-                  />
-                  {skillFileds.length > 1 && (
-                    <IconButton onClick={() => removeSkill(index)}>
-                      <RemoveCircleOutlineIcon />
-                    </IconButton>
-                  )}
-                </Box>
-              ))}
-            </Box>
-
-            {/* --- Education  --- */}
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <Typography variant="h6" sx={{ fontWeight: 400 }}>
-                  Education
-                </Typography>
-                <IconButton
-                  type="button"
-                  onClick={() => appendEducation({ degree: "", year: "" })}
-                >
-                  <AddCircleOutlineIcon />
-                </IconButton>
-              </Box>
-              {educationFields.map((field, index) => (
-                <Box
-                  key={field.id}
-                  sx={{
-                    p: 2,
-                    border: "1px solid",
-                    borderColor: "divider",
-                    borderRadius: 2,
-                    position: "relative",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 1.5,
-                  }}
-                >
-                  {educationFields.length > 1 && (
                     <IconButton
-                      onClick={() => removeEducation(index)}
-                      sx={{ position: "absolute", top: 8, right: 8 }}
+                      size="small"
+                      sx={{
+                        position: "absolute",
+                        bottom: 0,
+                        right: 0,
+                        boxShadow: 1,
+                        bgcolor: "white",
+                        "&:hover": { bgcolor: "white" },
+                      }}
+                      onClick={() => document.getElementById("image")?.click()}
                     >
-                      <RemoveCircleOutlineIcon />
+                      <CameraAltIcon fontSize="small" />
                     </IconButton>
-                  )}
-                  <Box sx={{ my: 1 }}>
-                    <InputLabel
-                      htmlFor={`education.${index}.degree`}
-                      sx={{ color: "text.secondary", fontSize: "0.9rem" }}
-                    >
-                      Degree / Certificate
-                    </InputLabel>
-                    <OutlinedInput
-                      {...register(`education.${index}.degree`, {
-                        required: "Degree is required",
-                      })}
-                      fullWidth
-                      size="small"
-                      sx={{ bgcolor: "background.paper" }}
-                      error={!!errors.education?.[index]?.degree}
+
+                    <input
+                      type="file"
+                      id="image"
+                      style={{ display: "none" }}
+                      accept="image/*"
+                      onChange={(e) => {
+                        if (e.target.files && e.target.files[0]) {
+                          const file = e.target.files[0];
+                          onChange(file);
+                          setImagePreview(URL.createObjectURL(file));
+                        }
+                      }}
                     />
-                    {errors.education?.[index]?.degree && (
-                      <FormHelperText error>
-                        {errors.education?.[index]?.degree?.message}
-                      </FormHelperText>
-                    )}
                   </Box>
-                  <Box>
-                    <InputLabel
-                      htmlFor={`education.${index}.year`}
-                      sx={{ color: "text.secondary", fontSize: "0.9rem" }}
-                    >
-                      Year
-                    </InputLabel>
-                    <OutlinedInput
-                      {...register(`education.${index}.year`, {
-                        required: "Year is required",
-                      })}
-                      fullWidth
-                      size="small"
-                      sx={{ bgcolor: "background.paper" }}
-                      error={!!errors.education?.[index]?.year}
-                    />
-                    {errors.education?.[index]?.year && (
-                      <FormHelperText error>
-                        {errors.education?.[index]?.year?.message}
-                      </FormHelperText>
-                    )}
-                  </Box>
+                  <Typography>Upload Picture</Typography>
                 </Box>
-              ))}
-            </Box>
-
-            <Divider sx={{ my: 1 }} />
-
-            {/* --- Experience --- */}
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <Typography variant="h6" sx={{ fontWeight: 400 }}>
-                  Experience
-                </Typography>
-                <IconButton
-                  type="button"
-                  onClick={() => appendExperience({ workPos: "", year: "" })}
-                >
-                  <AddCircleOutlineIcon />
-                </IconButton>
-              </Box>
-              {experienceFields.map((field, index) => (
-                <Box
-                  key={field.id}
-                  sx={{
-                    p: 2,
-                    border: "1px solid",
-                    borderColor: "divider",
-                    borderRadius: 2,
-                    position: "relative",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 1.5,
-                  }}
-                >
-                  {experienceFields.length > 1 && (
-                    <IconButton
-                      onClick={() => removeExperience(index)}
-                      sx={{ position: "absolute", top: 8, right: 8 }}
-                    >
-                      <RemoveCircleOutlineIcon />
-                    </IconButton>
-                  )}
-                  <Box sx={{ my: 1 }}>
-                    <InputLabel
-                      htmlFor={`experience.${index}.workPos`}
-                      sx={{ color: "text.secondary", fontSize: "0.9rem" }}
-                    >
-                      Position
-                    </InputLabel>
-                    <OutlinedInput
-                      {...register(`experience.${index}.workPos`, {
-                        required: "Position is required",
-                      })}
-                      fullWidth
-                      size="small"
-                      sx={{ bgcolor: "background.paper" }}
-                      error={!!errors.experience?.[index]?.workPos}
-                    />
-                    {errors.experience?.[index]?.workPos && (
-                      <FormHelperText error>
-                        {errors.experience?.[index]?.workPos?.message}
-                      </FormHelperText>
-                    )}
-                  </Box>
-                  <Box>
-                    <InputLabel
-                      htmlFor={`experience.${index}.year`}
-                      sx={{ color: "text.secondary", fontSize: "0.9rem" }}
-                    >
-                      Year
-                    </InputLabel>
-                    <OutlinedInput
-                      {...register(`experience.${index}.year`, {
-                        required: "year is required",
-                      })}
-                      fullWidth
-                      size="small"
-                      sx={{ bgcolor: "background.paper" }}
-                      error={!!errors.experience?.[index]?.year}
-                    />
-                    {errors.experience?.[index]?.year && (
-                      <FormHelperText error>
-                        {errors.experience?.[index]?.year?.message}
-                      </FormHelperText>
-                    )}
-                  </Box>
-                </Box>
-              ))}
-            </Box>
-
-            <Divider sx={{ my: 1 }} />
-
-            {/* --- Contact Info --- */}
-            <Box>
-              <InputLabel
-                htmlFor="email"
-                sx={{ color: "text.secondary", mb: 0.5 }}
-              >
-                Email Address
-              </InputLabel>
-              <OutlinedInput
-                type="email"
-                {...register("email", { required: "Email is required" })}
-                id="email"
-                placeholder="Please Enter Your Email Address"
-                size="small"
-                fullWidth
-                sx={{ bgcolor: "background.paper" }}
-                error={!!errors.email}
-              />
-              {errors.email && (
-                <FormHelperText error>{errors.email.message}</FormHelperText>
               )}
-            </Box>
-            <Box>
-              <InputLabel
-                htmlFor="phone"
-                sx={{ color: "text.secondary", mb: 0.5 }}
-              >
-                Phone Number
-              </InputLabel>
-              <OutlinedInput
-                type="tel"
-                {...register("phone")}
-                id="phone"
-                placeholder="Please Enter Your Phone Number"
-                size="small"
-                fullWidth
-                sx={{ bgcolor: "background.paper" }}
-                error={!!errors.phone}
-              />
-              {errors.phone && (
-                <FormHelperText error>{errors.phone.message}</FormHelperText>
-              )}
-            </Box>
+            />
 
-            <Box>
-              <InputLabel
-                htmlFor="address"
-                sx={{ color: "text.secondary", mb: 0.5 }}
-              >
-                Address
-              </InputLabel>
-              <OutlinedInput
-                {...register("address")}
-                id="address"
-                placeholder="Please Enter Your Address"
-                size="small"
-                fullWidth
-                sx={{ bgcolor: "background.paper" }}
-                error={!!errors.address}
-              />
-              {errors.address && (
-                <FormHelperText error>{errors.address.message}</FormHelperText>
-              )}
-            </Box>
-
-            <Divider sx={{ my: 1 }} />
-
-            {/* --- Social Media  --- */}
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <Typography variant="h6" sx={{ fontWeight: 400 }}>
-                  Social Media
-                </Typography>
-                <IconButton
-                  type="button"
-                  onClick={() => appendSocial({ value: "" })}
-                >
-                  <AddCircleOutlineIcon />
-                </IconButton>
-              </Box>
-              {socialMediaFields.map((field, index) => (
-                <Box
-                  key={field.id}
-                  sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                >
-                  <OutlinedInput
-                    {...register(`social_media_link.${index}.value`)}
-                    placeholder="e.g., https://github.com/user"
-                    fullWidth
-                    size="small"
-                    sx={{ bgcolor: "background.paper" }}
-                  />
-                  {socialMediaFields.length > 1 && (
-                    <IconButton onClick={() => removeSocial(index)}>
-                      <RemoveCircleOutlineIcon />
-                    </IconButton>
-                  )}
-                </Box>
-              ))}
-            </Box>
-          </Box>
-          <Box>
-            <Button
-              type="submit"
-              variant="contained"
-              fullWidth
-              sx={{
-                mt: 4,
-                py: 1,
-                textTransform: "none",
-                borderRadius: 2,
-                boxShadow: "none",
-                ":hover": { boxShadow: "none" },
-              }}
+            <Box
+              sx={{ mt: 3, display: "flex", flexDirection: "column", gap: 2.5 }}
             >
-              Save Changes
-            </Button>
-          </Box>
-        </form>
-      </Container>
-    </>
-  );
+              {/* ---name --- */}
+              <Box>
+                <InputLabel
+                  htmlFor="name"
+                  sx={{ color: "text.secondary", mb: 0.5 }}
+                >
+                  Your Name
+                </InputLabel>
+                <OutlinedInput
+                  {...register("name", { required: "Name is required" })}
+                  id="name"
+                  placeholder="Please Enter Your Name"
+                  size="small"
+                  fullWidth
+                  sx={{ bgcolor: "background.paper" }}
+                  error={!!errors.name}
+                />
+                {errors.name && (
+                  <FormHelperText error>{errors.name.message}</FormHelperText>
+                )}
+              </Box>
+
+              {/* role  */}
+              <Box>
+                <InputLabel htmlFor="role" sx={{ mb: 1 }}>
+                  Role
+                </InputLabel>
+                <Controller
+                  name="role"
+                  control={control}
+                  rules={{ required: "You must select a role" }}
+                  render={({ field, fieldState: { error } }) => {
+                    const { onChange, value } = field;
+                    const selectedRole =
+                      roles.find((r) => r.name === value) || null;
+                    return (
+                      <Autocomplete
+                        value={selectedRole}
+                        options={roles}
+                        getOptionLabel={(option) => option.name}
+                        isOptionEqualToValue={(option, val) =>
+                          option.id === val.id
+                        }
+                        onChange={(_, newValue) => {
+                          onChange(newValue ? newValue.name : "");
+                        }}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            placeholder="Select a role"
+                            size="small"
+                            error={!!error}
+                            helperText={error?.message}
+                            sx={{
+                              mb: 1,
+                              "& .MuiInputBase-root": {
+                                bgcolor: "background.paper",
+                                borderRadius: 2,
+                              },
+                              "& .MuiOutlinedInput-notchedOutline": {
+                                borderWidth: "1px",
+                                borderColor: "primary.main",
+                              },
+                            }}
+                          />
+                        )}
+                      />
+                    );
+                  }}
+                />
+                {errors.role && (
+                  <Typography
+                    variant="caption"
+                    sx={{ display: "block" }}
+                    color="error"
+                  >
+                    {errors.role.message}
+                  </Typography>
+                )}
+              </Box>
+
+              {/* talent  */}
+              <Box>
+                <InputLabel htmlFor="talent" sx={{ mb: 1 }}>
+                  Talent
+                </InputLabel>
+                <Controller
+                  name="talent"
+                  control={control}
+                  rules={{ required: "You must select a talent" }}
+                  render={({ field, fieldState: { error } }) => {
+                    const { onChange, value } = field;
+                    const selectedTalent =
+                      talents.find((t) => t.name === value) || null;
+                    return (
+                      <Autocomplete
+                        value={selectedTalent}
+                        options={talents}
+                        getOptionLabel={(option) => option.name}
+                        isOptionEqualToValue={(option, val) =>
+                          option.id === val.id
+                        }
+                        onChange={(_, newValue) => {
+                          onChange(newValue ? newValue.name : "");
+                        }}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            placeholder="Select a talent"
+                            size="small"
+                            error={!!error}
+                            helperText={error?.message}
+                            sx={{
+                              mb: 1,
+                              "& .MuiInputBase-root": {
+                                bgcolor: "background.paper",
+                                borderRadius: 2,
+                              },
+                              "& .MuiOutlinedInput-notchedOutline": {
+                                borderWidth: "1px",
+                                borderColor: "primary.main",
+                              },
+                            }}
+                          />
+                        )}
+                      />
+                    );
+                  }}
+                />
+                {errors.role && (
+                  <Typography
+                    variant="caption"
+                    sx={{ display: "block" }}
+                    color="error"
+                  >
+                    {errors.role.message}
+                  </Typography>
+                )}
+              </Box>
+
+              {/* ---bio --- */}
+              <Box>
+                <InputLabel
+                  htmlFor="bio"
+                  sx={{ color: "text.secondary", mb: 0.5 }}
+                >
+                  Bio
+                </InputLabel>
+                <TextField
+                  {...register("bio", { required: "bio is required" })}
+                  id="bio"
+                  placeholder="Please Enter Your bio"
+                  size="small"
+                  fullWidth
+                  multiline
+                  minRows={4}
+                  sx={{
+                    "& .MuiInputBase-root": {
+                      bgcolor: "background.paper",
+                    },
+                  }}
+                  error={!!errors.bio}
+                />
+                {errors.bio && (
+                  <FormHelperText error>{errors.bio.message}</FormHelperText>
+                )}
+              </Box>
+              <Divider sx={{ my: 1 }} />
+
+              {/* --- skills  --- */}
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography variant="h6" sx={{ fontWeight: 400 }}>
+                    Skills
+                  </Typography>
+                  <IconButton
+                    type="button"
+                    onClick={() => appendSkill({ value: "" })}
+                  >
+                    <AddCircleOutlineIcon />
+                  </IconButton>
+                </Box>
+                {skillFileds.map((field, index) => (
+                  <Box
+                    key={field.id}
+                    sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                  >
+                    <OutlinedInput
+                      {...register(`skills.${index}.value`)}
+                      placeholder="Enter your skill"
+                      fullWidth
+                      size="small"
+                      sx={{ bgcolor: "background.paper" }}
+                    />
+                    {skillFileds.length > 1 && (
+                      <IconButton onClick={() => removeSkill(index)}>
+                        <RemoveCircleOutlineIcon />
+                      </IconButton>
+                    )}
+                  </Box>
+                ))}
+              </Box>
+
+              {/* --- Education  --- */}
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography variant="h6" sx={{ fontWeight: 400 }}>
+                    Education
+                  </Typography>
+                  <IconButton
+                    type="button"
+                    onClick={() => appendEducation({ degree: "", year: "" })}
+                  >
+                    <AddCircleOutlineIcon />
+                  </IconButton>
+                </Box>
+                {educationFields.map((field, index) => (
+                  <Box
+                    key={field.id}
+                    sx={{
+                      p: 2,
+                      border: "1px solid",
+                      borderColor: "divider",
+                      borderRadius: 2,
+                      position: "relative",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 1.5,
+                    }}
+                  >
+                    {educationFields.length > 1 && (
+                      <IconButton
+                        onClick={() => removeEducation(index)}
+                        sx={{ position: "absolute", top: 8, right: 8 }}
+                      >
+                        <RemoveCircleOutlineIcon />
+                      </IconButton>
+                    )}
+                    <Box sx={{ my: 1 }}>
+                      <InputLabel
+                        htmlFor={`education.${index}.degree`}
+                        sx={{ color: "text.secondary", fontSize: "0.9rem" }}
+                      >
+                        Degree / Certificate
+                      </InputLabel>
+                      <OutlinedInput
+                        {...register(`education.${index}.degree`, {
+                          required: "Degree is required",
+                        })}
+                        fullWidth
+                        size="small"
+                        sx={{ bgcolor: "background.paper" }}
+                        error={!!errors.education?.[index]?.degree}
+                      />
+                      {errors.education?.[index]?.degree && (
+                        <FormHelperText error>
+                          {errors.education?.[index]?.degree?.message}
+                        </FormHelperText>
+                      )}
+                    </Box>
+                    <Box>
+                      <InputLabel
+                        htmlFor={`education.${index}.year`}
+                        sx={{ color: "text.secondary", fontSize: "0.9rem" }}
+                      >
+                        Year
+                      </InputLabel>
+                      <OutlinedInput
+                        {...register(`education.${index}.year`, {
+                          required: "Year is required",
+                        })}
+                        fullWidth
+                        size="small"
+                        sx={{ bgcolor: "background.paper" }}
+                        error={!!errors.education?.[index]?.year}
+                      />
+                      {errors.education?.[index]?.year && (
+                        <FormHelperText error>
+                          {errors.education?.[index]?.year?.message}
+                        </FormHelperText>
+                      )}
+                    </Box>
+                  </Box>
+                ))}
+              </Box>
+
+              <Divider sx={{ my: 1 }} />
+
+              {/* --- Experience --- */}
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography variant="h6" sx={{ fontWeight: 400 }}>
+                    Experience
+                  </Typography>
+                  <IconButton
+                    type="button"
+                    onClick={() => appendExperience({ workPos: "", year: "" })}
+                  >
+                    <AddCircleOutlineIcon />
+                  </IconButton>
+                </Box>
+                {experienceFields.map((field, index) => (
+                  <Box
+                    key={field.id}
+                    sx={{
+                      p: 2,
+                      border: "1px solid",
+                      borderColor: "divider",
+                      borderRadius: 2,
+                      position: "relative",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 1.5,
+                    }}
+                  >
+                    {experienceFields.length > 1 && (
+                      <IconButton
+                        onClick={() => removeExperience(index)}
+                        sx={{ position: "absolute", top: 8, right: 8 }}
+                      >
+                        <RemoveCircleOutlineIcon />
+                      </IconButton>
+                    )}
+                    <Box sx={{ my: 1 }}>
+                      <InputLabel
+                        htmlFor={`experience.${index}.workPos`}
+                        sx={{ color: "text.secondary", fontSize: "0.9rem" }}
+                      >
+                        Position
+                      </InputLabel>
+                      <OutlinedInput
+                        {...register(`experience.${index}.workPos`, {
+                          required: "Position is required",
+                        })}
+                        fullWidth
+                        size="small"
+                        sx={{ bgcolor: "background.paper" }}
+                        error={!!errors.experience?.[index]?.workPos}
+                      />
+                      {errors.experience?.[index]?.workPos && (
+                        <FormHelperText error>
+                          {errors.experience?.[index]?.workPos?.message}
+                        </FormHelperText>
+                      )}
+                    </Box>
+                    <Box>
+                      <InputLabel
+                        htmlFor={`experience.${index}.year`}
+                        sx={{ color: "text.secondary", fontSize: "0.9rem" }}
+                      >
+                        Year
+                      </InputLabel>
+                      <OutlinedInput
+                        {...register(`experience.${index}.year`, {
+                          required: "year is required",
+                        })}
+                        fullWidth
+                        size="small"
+                        sx={{ bgcolor: "background.paper" }}
+                        error={!!errors.experience?.[index]?.year}
+                      />
+                      {errors.experience?.[index]?.year && (
+                        <FormHelperText error>
+                          {errors.experience?.[index]?.year?.message}
+                        </FormHelperText>
+                      )}
+                    </Box>
+                  </Box>
+                ))}
+              </Box>
+
+              <Divider sx={{ my: 1 }} />
+
+              {/* --- Contact Info --- */}
+              <Box>
+                <InputLabel
+                  htmlFor="email"
+                  sx={{ color: "text.secondary", mb: 0.5 }}
+                >
+                  Email Address
+                </InputLabel>
+                <OutlinedInput
+                  type="email"
+                  {...register("email", { required: "Email is required" })}
+                  id="email"
+                  placeholder="Please Enter Your Email Address"
+                  size="small"
+                  fullWidth
+                  sx={{ bgcolor: "background.paper" }}
+                  error={!!errors.email}
+                />
+                {errors.email && (
+                  <FormHelperText error>{errors.email.message}</FormHelperText>
+                )}
+              </Box>
+              <Box>
+                <InputLabel
+                  htmlFor="phone"
+                  sx={{ color: "text.secondary", mb: 0.5 }}
+                >
+                  Phone Number
+                </InputLabel>
+                <OutlinedInput
+                  type="tel"
+                  {...register("phone")}
+                  id="phone"
+                  placeholder="Please Enter Your Phone Number"
+                  size="small"
+                  fullWidth
+                  sx={{ bgcolor: "background.paper" }}
+                  error={!!errors.phone}
+                />
+                {errors.phone && (
+                  <FormHelperText error>{errors.phone.message}</FormHelperText>
+                )}
+              </Box>
+
+              <Box>
+                <InputLabel
+                  htmlFor="address"
+                  sx={{ color: "text.secondary", mb: 0.5 }}
+                >
+                  Address
+                </InputLabel>
+                <OutlinedInput
+                  {...register("address")}
+                  id="address"
+                  placeholder="Please Enter Your Address"
+                  size="small"
+                  fullWidth
+                  sx={{ bgcolor: "background.paper" }}
+                  error={!!errors.address}
+                />
+                {errors.address && (
+                  <FormHelperText error>
+                    {errors.address.message}
+                  </FormHelperText>
+                )}
+              </Box>
+
+              <Divider sx={{ my: 1 }} />
+
+              {/* --- Social Media  --- */}
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography variant="h6" sx={{ fontWeight: 400 }}>
+                    Social Media
+                  </Typography>
+                  <IconButton
+                    type="button"
+                    onClick={() => appendSocial({ value: "" })}
+                  >
+                    <AddCircleOutlineIcon />
+                  </IconButton>
+                </Box>
+                {socialMediaFields.map((field, index) => (
+                  <Box
+                    key={field.id}
+                    sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                  >
+                    <OutlinedInput
+                      {...register(`social_media_link.${index}.value`)}
+                      placeholder="e.g., https://github.com/user"
+                      fullWidth
+                      size="small"
+                      sx={{ bgcolor: "background.paper" }}
+                    />
+                    {socialMediaFields.length > 1 && (
+                      <IconButton onClick={() => removeSocial(index)}>
+                        <RemoveCircleOutlineIcon />
+                      </IconButton>
+                    )}
+                  </Box>
+                ))}
+              </Box>
+            </Box>
+            <Box>
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                loading={
+                  userUpdateMutation.isPending || seekerUpdateMutation.isPending
+                }
+                sx={{
+                  mt: 4,
+                  py: 1,
+                  textTransform: "none",
+                  borderRadius: 2,
+                  boxShadow: "none",
+                  ":hover": { boxShadow: "none" },
+                }}
+              >
+                Save Changes
+              </Button>
+            </Box>
+          </form>
+        </Container>
+      </>
+    );
+  } else {
+    return (
+      <FullScreenLoader
+        open={
+          talentsQuery.isSuccess ||
+          rolesQuery.isSuccess ||
+          seekerProfileQuery.isSuccess
+        }
+        message="Getting Data..."
+      />
+    );
+  }
 }

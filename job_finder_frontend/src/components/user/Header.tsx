@@ -15,15 +15,15 @@ import {
   SettingsOutlined as SettingIcon,
   NotificationsActiveOutlined as NotiIcon,
   Menu as MenuIcon,
-  LightMode as LightModeIcon,
-  DarkMode as DarkModeIcon,
+  // LightMode as LightModeIcon,
+  // DarkMode as DarkModeIcon,
 } from "@mui/icons-material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { NavLink, useLocation, matchPath } from "react-router";
 import { useAppStore } from "../../store/Appstore";
 import { useState, useRef, useEffect, useMemo, type RefObject } from "react";
 import { useNavigate } from "react-router";
-import { useThemeStore } from "../../store/Appstore";
+
 import { useUserStore } from "../../store/UserStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { logoutUser } from "../../helper/authApiFunctions";
@@ -58,8 +58,8 @@ export default function Header({ isLoading }: { isLoading: boolean }) {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const mode = useThemeStore((state) => state.mode);
-  const setMode = useThemeStore((state) => state.setMode);
+  // const mode = useThemeStore((state) => state.mode);
+  // const setMode = useThemeStore((state) => state.setMode);
   const navigate = useNavigate();
   const userRole = user?.user_type;
 
@@ -100,8 +100,7 @@ export default function Header({ isLoading }: { isLoading: boolean }) {
         "/notifications/user/:id": notificationsRef,
         "/settings/user/:id": settingsRef,
         "/settings/user/:id/bookmarks": settingsRef,
-        "/settings/user/:id/bookmarks/savedJobs": settingsRef,
-        "/settings/user/:id/bookmarks/following": settingsRef,
+        "/settings/user/:id/applied-jobs": settingsRef,
         "/settings/user/:id/security": settingsRef,
         "/settings/user/:id/security/changeEmail": settingsRef,
         "/settings/user/:id/security/changePassword": settingsRef,
@@ -238,12 +237,12 @@ export default function Header({ isLoading }: { isLoading: boolean }) {
               <Box
                 sx={{ gap: 1, display: { md: "flex", sm: "none", xs: "none" } }}
               >
-                <IconButton
+                {/* <IconButton
                   color="inherit"
                   onClick={() => setMode(mode === "light" ? "dark" : "light")}
                 >
                   {mode === "light" ? <LightModeIcon /> : <DarkModeIcon />}
-                </IconButton>
+                </IconButton> */}
                 <IconButton
                   color="inherit"
                   ref={notificationsRef}

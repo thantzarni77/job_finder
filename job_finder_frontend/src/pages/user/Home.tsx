@@ -13,9 +13,14 @@ import Meta from "../../assets/meta.png";
 import AyaBank from "../../assets/ayabank.jpeg";
 import Xiaomi from "../../assets/Xiaomi.png";
 import { useNavigate } from "react-router";
+import { useJobStore } from "../../store/JobStore";
+import { useProfileStore } from "../../store/ProfileStore";
+import JobCard from "../../components/user/jobs/JobCard";
 
 export default function Home() {
   const navigate = useNavigate();
+  const seekerdata = useProfileStore((state) => state.seekerProfile);
+  const allJobs = useJobStore((state) => state.jobs);
 
   return (
     <Box>
@@ -76,12 +81,12 @@ export default function Home() {
           Recommeded Jobs For You
         </Typography>
 
-        <Box className="flex flex-wrap items-center gap-3 md:justify-center">
-          {/* {!isPending &&
-            data?.map((job) => {
-              return <JobCard key={job.id} job={job} />;
-            })} */}
-        </Box>
+        {allJobs.map((single) => {
+          if (seekerdata.talent.includes(single.job_title)) {
+            return <JobCard key={single.id} job={single} />;
+          }
+        })}
+        <Box className="flex flex-wrap items-center gap-3 md:justify-center"></Box>
         <Box sx={{ display: "flex", justifyContent: "center", mt: 5, mb: 10 }}>
           <Stack>
             <Pagination
