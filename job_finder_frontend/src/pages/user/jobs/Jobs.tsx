@@ -179,6 +179,16 @@ const Jobs = () => {
             <JobFilter filterType={"Job"} jobTypes={jobTypes} roles={roles} />
           </Box>
         )}
+        {isJobTypesPending && isRolesPending && (
+          <Box sx={{ display: { xs: "none", md: "block" } }}>
+            <Skeleton
+              variant="rounded"
+              width={"320px"}
+              height={"500px"}
+              sx={{ borderRadius: 2 }}
+            />
+          </Box>
+        )}
 
         <Box
           sx={{

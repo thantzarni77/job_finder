@@ -39,7 +39,7 @@ export const useJobStore = create<JobData & JobActions>((set) => ({
   },
 }));
 
-type JobWithJobDetail = {
+export type JobWithJobDetail = {
   id: number;
   employer_id: number;
   category_id: number;

@@ -20,3 +20,8 @@ export const isSaved = async (payload: {
   const response = await axiosClient.post("/save-job/check", payload);
   return response;
 };
+
+export const applyJob = async (payload: FormData) => {
+  const { data } = await axiosClient.post("/apply-job", payload);
+  return data;
+};
