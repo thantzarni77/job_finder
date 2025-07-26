@@ -17,7 +17,7 @@ import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlin
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import { useNavigate, useParams } from "react-router";
 import EmployerCard from "../../../components/employer/EmployerCard";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getSingleJob } from "../../../helper/postJob";
 import { useEffect, useState } from "react";
 import { useJobDetailStore } from "../../../store/JobStore";
@@ -31,18 +31,18 @@ import {
   undoSaveJob,
 } from "../../../helper/jobApiFunctions";
 import { useProfileStore } from "../../../store/ProfileStore";
-import { useSavedSingleJobStore } from "../../../store/SavedJobStore";
 
 const JobDetail = () => {
+  const queryClient = useQueryClient();
   const user = useUserStore((state) => state.user);
   const seekerData = useProfileStore((state) => state.seekerProfile);
   const jobDetails = useJobDetailStore((state) => state.jobDetails);
   const setJobDetails = useJobDetailStore((state) => state.setJobDetails);
 
-  const savedJob = useSavedSingleJobStore((state) => state.saveJob);
-  const setSingleSavedJob = useSavedSingleJobStore(
-    (state) => state.setSingleSavedJob,
-  );
+  // const savedJob = useSavedSingleJobStore((state) => state.saveJob);
+  // const setSingleSavedJob = useSavedSingleJobStore(
+  //   (state) => state.setSingleSavedJob,
+  // );
 
   const employerData = useSingleEmployerStore((state) => state.singleEmployer);
   const setSingleEmployer = useSingleEmployerStore(
@@ -50,7 +50,8 @@ const JobDetail = () => {
   );
 
   const savedCheckQuery = useQuery({
-    queryKey: ["savedCheckQuery", seekerData.id, jobDetails?.id],
+    enabled: !!seekerData?.id && !!jobDetails?.id,
+    queryKey: ["savedCheck", seekerData.id, jobDetails?.id],
     queryFn: () => {
       return isSaved({
         seeker_id: seekerData.id,
@@ -59,21 +60,24 @@ const JobDetail = () => {
     },
   });
 
-  const [isJobSaved, setIsSaved] = useState(
-    savedCheckQuery.isSuccess ? true : false,
-  );
+  const isJobSaved = savedCheckQuery.isSuccess;
+  const savedJobRecordId = savedCheckQuery.data?.data?.data?.id;
 
   const saveJobMutation = useMutation({
     mutationFn: doSaveJob,
     onSuccess: () => {
-      setIsSaved(true);
+      queryClient.invalidateQueries({ queryKey: ["savedCheck"] });
+      setSnackMessage("Bookmarked !");
+      handleClick();
     },
   });
 
   const undoSaveJobMutation = useMutation({
     mutationFn: undoSaveJob,
     onSuccess: () => {
-      setIsSaved(false);
+      queryClient.invalidateQueries({ queryKey: ["savedCheck"] });
+      setSnackMessage("Removed form Bookmark !");
+      handleClick();
     },
   });
 
@@ -81,6 +85,7 @@ const JobDetail = () => {
   const { id } = useParams();
 
   const [open, setOpen] = useState(false);
+  const [snackMessage, setSnackMessage] = useState("");
 
   const handleClick = () => {
     setOpen(true);
@@ -124,12 +129,11 @@ const JobDetail = () => {
     }
   }, [employerDataQuery.data, employerDataQuery.isSuccess, setSingleEmployer]);
 
-  useEffect(() => {
-    if ((savedCheckQuery.isSuccess, savedCheckQuery.data)) {
-      setIsSaved(true);
-      setSingleSavedJob(savedCheckQuery.data.data.data);
-    }
-  }, [savedCheckQuery.isSuccess, savedCheckQuery.data, setSingleSavedJob]);
+  // useEffect(() => {
+  //   if ((savedCheckQuery.isSuccess, savedCheckQuery.data)) {
+  //     setSingleSavedJob(savedCheckQuery.data.data.data);
+  //   }
+  // }, [savedCheckQuery.isSuccess, savedCheckQuery.data, setSingleSavedJob]);
 
   if (jobDetailQuery.isPending) {
     return (
@@ -141,8 +145,7 @@ const JobDetail = () => {
   }
 
   const saveJobHandler = () => {
-    console.log("clicked");
-
+    if (!seekerData.id || !jobDetails?.id) return;
     const payload = {
       seeker_id: seekerData.id,
       post_job_id: jobDetails?.id,
@@ -151,7 +154,8 @@ const JobDetail = () => {
   };
 
   const undoSaveJobHandler = () => {
-    undoSaveJobMutation.mutate(savedJob?.id);
+    if (!savedJobRecordId) return;
+    undoSaveJobMutation.mutate(savedJobRecordId);
   };
 
   return (
@@ -165,7 +169,7 @@ const JobDetail = () => {
       >
         <SnackbarContent
           sx={{ backgroundColor: "success.main" }}
-          message={isJobSaved ? "Bookmarked" : "Removed from Bookmark"}
+          message={snackMessage}
           action={
             <IconButton
               size="small"
@@ -256,14 +260,16 @@ const JobDetail = () => {
           <Checkbox
             disableRipple
             onClick={() => {
-              if (!isJobSaved) {
-                saveJobHandler();
-                handleClick();
-              } else {
+              if (isJobSaved) {
                 undoSaveJobHandler();
-                handleClick();
+              } else {
+                saveJobHandler();
               }
             }}
+            disabled={
+              saveJobMutation.isPending || undoSaveJobMutation.isPending
+            }
+            checked={isJobSaved}
             sx={{
               "& .MuiSvgIcon-root": { fontSize: 22, ml: -1 },
               color: "primary.main",
