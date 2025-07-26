@@ -1,9 +1,10 @@
 <?php
 
-use Illuminate\Foundation\Application;
+use App\Http\Middleware\AdminAuthMiddleware;
 use App\Http\Middleware\AuthMiddleware;
-use Illuminate\Http\Middleware\HandleCors;
 use App\Http\Middleware\UserTypeMiddleware;
+use Illuminate\Foundation\Application;
+use Illuminate\Http\Middleware\HandleCors;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 
@@ -18,7 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             "AuthMiddleware" => AuthMiddleware::class,
             "UserTypeMiddleware" => UserTypeMiddleware::class,
-             
+            "AdminAuthMiddleware" => AdminAuthMiddleware::class,
         ]);
     })
    
