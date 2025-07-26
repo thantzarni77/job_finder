@@ -25,7 +25,6 @@ class ApplyJobController extends Controller
             'message'         => 'max:100',
             'expected_salary' => 'required',
         ]);
-        // dd($request->all());
         //handle multiple file
         if ($request->hasFile('document')) {
             $documents = [];
@@ -34,17 +33,9 @@ class ApplyJobController extends Controller
                 $image_path  = $file->move(public_path('document'), $name);
                 $documents[] = $name;
             }
-            // dd($documents);
             $applyData['document'] = $documents;
         }
-        // dd($request->all());
-
         return $this->applyJobRepositoryInterface->applyJob($applyData);
-    }
-    //get apply data
-    public function applyJobData()
-    {
-        return $this->applyJobRepositoryInterface->applyJobData();
     }
     //make shortlist
     public function addShortList($id)
