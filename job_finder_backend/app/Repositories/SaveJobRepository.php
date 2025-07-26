@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Repositories;
 
 use App\Interfaces\SaveJobRepositoryInterface;
@@ -49,7 +48,7 @@ class SaveJobRepository implements SaveJobRepositoryInterface
         } else {
             return response()->json([
                 "status" => false,
-            ], 404);
+            ], 200);
         }
     }
 }
