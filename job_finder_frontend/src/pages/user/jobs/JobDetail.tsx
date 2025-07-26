@@ -20,13 +20,14 @@ import EmployerCard from "../../../components/employer/EmployerCard";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getSingleJob } from "../../../helper/postJob";
 import { useEffect, useState } from "react";
-import { useJobDetailStore } from "../../../store/JobStore";
+import { useAppliedJobStore, useJobDetailStore } from "../../../store/JobStore";
 import { useSingleEmployerStore } from "../../../store/EmployerStore";
 import { getSingleEmployerData } from "../../../helper/employerApiFunctions";
 import FullScreenLoader from "../../../components/FullScreenLoader";
 import { useUserStore } from "../../../store/UserStore";
 import {
   doSaveJob,
+  getSeekerAppliedJobs,
   isSaved,
   undoSaveJob,
 } from "../../../helper/jobApiFunctions";
@@ -34,15 +35,18 @@ import { useProfileStore } from "../../../store/ProfileStore";
 
 const JobDetail = () => {
   const queryClient = useQueryClient();
+  const { id } = useParams();
+
   const user = useUserStore((state) => state.user);
+
   const seekerData = useProfileStore((state) => state.seekerProfile);
   const jobDetails = useJobDetailStore((state) => state.jobDetails);
   const setJobDetails = useJobDetailStore((state) => state.setJobDetails);
 
-  // const savedJob = useSavedSingleJobStore((state) => state.saveJob);
-  // const setSingleSavedJob = useSavedSingleJobStore(
-  //   (state) => state.setSingleSavedJob,
-  // );
+  const seekerAppliedJobs = useAppliedJobStore(
+    (state) => state.seekerAppliedJobs,
+  );
+  const setAppliedJobs = useAppliedJobStore((state) => state.setAppliedJobs);
 
   const employerData = useSingleEmployerStore((state) => state.singleEmployer);
   const setSingleEmployer = useSingleEmployerStore(
@@ -81,8 +85,26 @@ const JobDetail = () => {
     },
   });
 
+  const seekerAppliedJobsQuery = useQuery({
+    queryKey: ["seekerAppliedJobs", seekerData.id],
+    queryFn: getSeekerAppliedJobs,
+  });
+
+  useEffect(() => {
+    if (seekerAppliedJobsQuery.data && seekerAppliedJobsQuery.isSuccess) {
+      setAppliedJobs(seekerAppliedJobsQuery.data.data);
+    }
+  }, [
+    seekerAppliedJobsQuery.data,
+    seekerAppliedJobsQuery.isSuccess,
+    setAppliedJobs,
+  ]);
+
+  const alreadyAppliedCheck = seekerAppliedJobs.filter(
+    (job) => job.post_job_id == Number(id),
+  );
+
   const navigate = useNavigate();
-  const { id } = useParams();
 
   const [open, setOpen] = useState(false);
   const [snackMessage, setSnackMessage] = useState("");
@@ -128,12 +150,6 @@ const JobDetail = () => {
       setSingleEmployer(employerDataQuery.data.data[0]);
     }
   }, [employerDataQuery.data, employerDataQuery.isSuccess, setSingleEmployer]);
-
-  // useEffect(() => {
-  //   if ((savedCheckQuery.isSuccess, savedCheckQuery.data)) {
-  //     setSingleSavedJob(savedCheckQuery.data.data.data);
-  //   }
-  // }, [savedCheckQuery.isSuccess, savedCheckQuery.data, setSingleSavedJob]);
 
   if (jobDetailQuery.isPending) {
     return (
@@ -464,25 +480,6 @@ const JobDetail = () => {
             </Typography>
           </Box>
 
-          {/* <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 1,
-              mt: 3,
-            }}
-          >
-            <Typography variant="body1" sx={{ fontWeight: 600 }}>
-              Working hour
-            </Typography>
-            <Typography
-              variant="subtitle2"
-              sx={{ fontWeight: 400, color: "text.secondary" }}
-            >
-              9:00 am to 5:00 pm
-            </Typography>
-          </Box> */}
-
           <Box
             sx={{
               display: "flex",
@@ -530,7 +527,9 @@ const JobDetail = () => {
           </Box>
 
           <Button
-            disabled={user?.user_type == "employer"}
+            disabled={
+              user?.user_type == "employer" || alreadyAppliedCheck.length != 0
+            }
             onClick={() => navigate(`/job/${id}/apply`)}
             variant="contained"
             sx={{
@@ -545,7 +544,7 @@ const JobDetail = () => {
               },
             }}
           >
-            Apply Now
+            {alreadyAppliedCheck.length != 0 ? "Applied" : "Apply Now"}
           </Button>
         </Box>
 

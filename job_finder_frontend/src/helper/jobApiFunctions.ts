@@ -25,3 +25,8 @@ export const applyJob = async (payload: FormData) => {
   const { data } = await axiosClient.post("/apply-job", payload);
   return data;
 };
+
+export const getSeekerAppliedJobs = async () => {
+  const { data } = await axiosClient.get("/apply-job/seeker");
+  return data;
+};

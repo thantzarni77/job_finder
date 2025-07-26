@@ -174,3 +174,47 @@ export const useJobSalaryFilter = create<jobSalaryFilter>((set) => ({
     set({ selectedSalary });
   },
 }));
+
+//seeker applied jobs
+type AppliedJob = {
+  id: number;
+  seeker_id: number;
+  employer_id: number;
+  post_job_id: number;
+  document: string[];
+  message: string;
+  shortlist: number;
+  expected_salary: string;
+  created_at: string;
+  updated_at: string;
+};
+
+type SeekerAppliedJobs = {
+  seekerAppliedJobs: AppliedJob[];
+};
+
+type SeekerAppliedJobsActions = {
+  setAppliedJobs: (value: AppliedJob[]) => void;
+};
+
+export const useAppliedJobStore = create<
+  SeekerAppliedJobs & SeekerAppliedJobsActions
+>((set) => ({
+  seekerAppliedJobs: [
+    {
+      id: 0,
+      seeker_id: 0,
+      employer_id: 0,
+      post_job_id: 0,
+      document: [""],
+      message: "",
+      shortlist: 0,
+      expected_salary: "",
+      created_at: "2025-07-26T15:05:32.000000Z",
+      updated_at: "2025-07-26T15:05:32.000000Z",
+    },
+  ],
+  setAppliedJobs: (value: AppliedJob[]) => {
+    set({ seekerAppliedJobs: value });
+  },
+}));

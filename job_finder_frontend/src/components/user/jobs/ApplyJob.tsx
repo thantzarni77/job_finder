@@ -1,4 +1,5 @@
 import {
+  Alert,
   Box,
   Button,
   FormHelperText,
@@ -14,13 +15,21 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { useNavigate, useParams } from "react-router";
 import JobCard from "./JobCard";
 import CustomFIleUpload from "../../custom_svg/CustomFIleUpload";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
-import { useJobStore } from "../../../store/JobStore";
+import {
+  useJobCategoryFilter,
+  useJobRoleFilter,
+  useJobSalaryFilter,
+  useJobStore,
+  useJobTypeFilter,
+} from "../../../store/JobStore";
 import { Controller, useForm } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { applyJob } from "../../../helper/jobApiFunctions";
 import { useProfileStore } from "../../../store/ProfileStore";
+import { getAllJobPosts } from "../../../helper/postJob";
+import { isAxiosError } from "axios";
 
 type ApplyFormData = {
   salary: string;
@@ -45,6 +54,32 @@ const ApplyJob = () => {
   const { id } = useParams();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const allJobs = useJobStore((state) => state.jobs);
+  const setJobs = useJobStore((state) => state.setJobs);
+
+  const { selectedJobRole } = useJobRoleFilter();
+  const { selectedJobType } = useJobTypeFilter();
+  const { selectedJobCategory } = useJobCategoryFilter();
+  const { selectedSalary } = useJobSalaryFilter();
+
+  const [serverErrors, setServerErrors] = useState<string | null>(null);
+
+  const allJobsQuery = useQuery({
+    queryKey: [
+      "jobPosts",
+      selectedJobRole,
+      selectedJobType,
+      selectedJobCategory,
+      selectedSalary,
+    ],
+    queryFn: () =>
+      getAllJobPosts(
+        selectedJobRole,
+        selectedJobType,
+        selectedJobCategory,
+        selectedSalary,
+      ),
+  });
+
   const currentJob = allJobs.filter((single) => single.id == Number(id));
 
   const seekerData = useProfileStore((state) => state.seekerProfile);
@@ -64,12 +99,14 @@ const ApplyJob = () => {
   const applyJobMutation = useMutation({
     mutationFn: applyJob,
     onSuccess: (data) => {
-      // if (data.status == "success") {
-      //   navigate(`/job/${id}/apply/confirm`);
-      // }
+      if (data.status == "success") {
+        navigate(`/job/${id}/apply/confirm`);
+      }
     },
     onError: (err) => {
-      console.log(err);
+      if (isAxiosError(err)) {
+        setServerErrors(err.response?.data.message);
+      }
     },
   });
 
@@ -84,13 +121,25 @@ const ApplyJob = () => {
 
     if (data.document && data.document.length > 0) {
       data.document.forEach((file) => {
-        applyJobFormData.append("document", file);
+        applyJobFormData.append("document[]", file);
       });
     }
-    console.log(applyJobFormData.getAll("document"));
 
-    // applyJobMutation.mutate(applyJobFormData);
+    applyJobMutation.mutate(applyJobFormData);
   };
+
+  useEffect(() => {
+    if (allJobsQuery.data && allJobsQuery.isSuccess) {
+      setJobs(allJobsQuery.data);
+    }
+  }, [
+    allJobsQuery.data,
+    allJobsQuery.isSuccess,
+    setJobs,
+    allJobs,
+    selectedJobRole,
+    selectedJobType,
+  ]);
 
   return (
     <Box sx={{ width: "90%", mx: "auto", mb: 15 }}>
@@ -357,6 +406,18 @@ const ApplyJob = () => {
                     <FormHelperText error sx={{ mt: 1 }}>
                       {errors.document.message}
                     </FormHelperText>
+                  )}
+                  {serverErrors && (
+                    <Alert
+                      sx={{ borderRadius: 3 }}
+                      variant="outlined"
+                      severity="error"
+                      onClose={() => {
+                        setServerErrors(null);
+                      }}
+                    >
+                      {serverErrors}
+                    </Alert>
                   )}
                 </Box>
               );
