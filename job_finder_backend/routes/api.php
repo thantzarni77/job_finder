@@ -30,6 +30,7 @@ Route::group(["middleware" => AdminAuthMiddleware::class],function(){
 Route::post('/registerstepone',[AuthController::class,'registerStepOne']);
 Route::post('/registersteptwo/{id}',[AuthController::class,'registerStepTwo']);
 
+
 Route::post('/login',[AuthController::class,'login']);
 Route::post('/forgot-password',[NewPasswordController::class,'forgotPassword']);
 Route::post('/reset-password',[NewPasswordController::class,'resetPassword']);
@@ -105,7 +106,6 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
         //remove save job
         Route::delete('/{id}',[SaveJobController::class,'destroy']);
     });
-
 
 
     //job category route
