@@ -45,7 +45,7 @@ class ApplyJobRepository implements ApplyJobRepositoryInterface
     //employer view his create job data
     public function employerPostedJobs(){
 
-        $data = Apply_job::where('employer_id', JWTAuth::user())->get();
+        $data = Apply_job::where('employer_id', JWTAuth::user()->id)->get();
         if(!$data){
             return response()->json(['status' => 'success', 'message' => 'You have not posted any job postings yet.', 'data' => $data],400);
         }
@@ -54,7 +54,7 @@ class ApplyJobRepository implements ApplyJobRepositoryInterface
 
     //seeeker view his applied jobs
     public function seekerAppliedJobs(){
-        $data = Apply_job::where('seeker_id', JWTAuth::user())->get();
+        $data = Apply_job::where('seeker_id', JWTAuth::user()->id)->get();
         if(!$data){
             return response()->json(['status' => 'success', 'message' => 'You have not applied any job postings yet.', 'data' => $data],400);
         }
@@ -63,7 +63,7 @@ class ApplyJobRepository implements ApplyJobRepositoryInterface
 
     //emoyer view his shortlisted jobs
     public function employerShortlistJobs(){
-        $data = Apply_job::where('employer_id', JWTAuth::user())->where('shortlist', true)->get();
+        $data = Apply_job::where('employer_id', JWTAuth::user()->id)->where('shortlist', true)->get();
         return response()->json(['status' => 'success', 'message' => 'You have successfully fetch your shortlisted job postings.', 'data' => $data], 200);
     }
 
