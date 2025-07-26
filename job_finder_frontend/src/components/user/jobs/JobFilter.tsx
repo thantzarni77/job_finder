@@ -64,7 +64,7 @@ const JobFilter = ({ filterType, jobTypes, roles }: Props) => {
   const { selectedJobRole, setSelectedJobRole } = useJobRoleFilter();
   const { selectedJobCategory, setSelectedJobCategory } =
     useJobCategoryFilter();
-  const { selectedSalary, setSelectedSalary } = useJobSalaryFilter();
+  const { setSelectedSalary } = useJobSalaryFilter();
 
   // checkBoxHandleChange = collect checked value then pass to zustand global state
   const checkBoxHandleChange = (
@@ -105,8 +105,6 @@ const JobFilter = ({ filterType, jobTypes, roles }: Props) => {
     if (event.target.name === "salary") {
       const value = JSON.parse(event.target.value);
       setSelectedSalary(value);
-
-      console.log(selectedSalary);
     }
   };
 
@@ -202,7 +200,7 @@ const JobFilter = ({ filterType, jobTypes, roles }: Props) => {
                       name={"type"}
                       value={value.name}
                       onChange={checkBoxHandleChange}
-                      key={key}
+                      key={value.id}
                     />
                   }
                   label={value.name}

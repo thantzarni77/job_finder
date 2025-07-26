@@ -2,11 +2,20 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Seeker extends Model
 {
-    protected $fillable = [  
+    use HasFactory;
+    protected $casts = [
+        'skills' => 'array',
+        'education' => 'array',
+        'work_experience' => 'array',
+        'social_media_link' => 'array',
+    ];
+
+    protected $fillable = [
         'user_id',
         'skills',
         'education',
@@ -18,7 +27,8 @@ class Seeker extends Model
         'bio'
     ];
 
-    public static function getRole() {
+    public static function getRole()
+    {
         return [
             'junior' => 'junior',
             'mid-level' => 'mid-level',
@@ -26,7 +36,8 @@ class Seeker extends Model
         ];
     }
 
-    public static function getTalent() {
+    public static function getTalent()
+    {
         return [
             'Developer' => 'Developer',
             'Designer' => 'Designer',
@@ -40,7 +51,8 @@ class Seeker extends Model
         ];
     }
 
-    public function user(){
+    public function user()
+    {
         return $this->hasOne(User::class);
     }
 

@@ -18,15 +18,9 @@ import SearchBox from "../../components/user/SearchBox";
 import TalentFilterDrawer from "../../components/user/TalentFilterDrawer";
 import { useTalentFilterStore } from "../../store/Appstore";
 import SeekerCard from "../../components/seeker/SeekerCard";
-
-const jobs = [
-  "full Time",
-  "part Time",
-  "intership",
-  "volunteer",
-  "freelancer",
-  "work from home",
-];
+import { getSeekerList, type SeekerType } from "../../helper/talentPage";
+import { useQuery } from "@tanstack/react-query";
+import SeekerFilter from "../../components/seeker/SeekerFilter";
 
 export default function Talent() {
   const [sortBy, setSortBy] = useState<string>("recent");
@@ -58,6 +52,11 @@ export default function Talent() {
       }}
     />
   );
+
+  const { data: seekers, isPending: seekerPending } = useQuery<SeekerType[]>({
+    queryKey: ["seekers"],
+    queryFn: getSeekerList,
+  });
 
   return (
     <Box
@@ -124,7 +123,7 @@ export default function Talent() {
         }}
       >
         <Box sx={{ display: { xs: "none", md: "block" } }}>
-          <JobFilter filterType={"Job"} filterTypeArray={jobs} />
+          <SeekerFilter />
         </Box>
 
         <Box
@@ -263,12 +262,10 @@ export default function Talent() {
                 flexWrap: "wrap",
               }}
             >
-              <SeekerCard />
-              <SeekerCard />
-              <SeekerCard />
-              <SeekerCard />
-              <SeekerCard />
-              <SeekerCard />
+              {!seekerPending &&
+                seekers?.map((seeker: SeekerType) => {
+                  return <SeekerCard key={seeker.id} seeker={seeker} />;
+                })}
             </Box>
             {/* pagination */}
             <Box

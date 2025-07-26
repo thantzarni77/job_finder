@@ -328,41 +328,22 @@ const Jobs = () => {
             >
               {allJobsQuery.isFetching && (
                 <>
-                  <Skeleton
-                    variant="rounded"
-                    width={375}
-                    height={150}
-                    sx={{ borderRadius: "20px" }}
-                  />
-                  <Skeleton
-                    variant="rounded"
-                    width={375}
-                    height={150}
-                    sx={{ borderRadius: "20px" }}
-                  />
-                  <Skeleton
-                    variant="rounded"
-                    width={375}
-                    height={150}
-                    sx={{ borderRadius: "20px" }}
-                  />
-                  <Skeleton
-                    variant="rounded"
-                    width={375}
-                    height={150}
-                    sx={{ borderRadius: "20px" }}
-                  />
-                  <Skeleton
-                    variant="rounded"
-                    width={325}
-                    height={150}
-                    sx={{ borderRadius: "20px" }}
-                  />
+                  {...Array(10).map((_, index) => {
+                    return (
+                      <Skeleton
+                        variant="rounded"
+                        width={375}
+                        height={150}
+                        sx={{ borderRadius: "20px" }}
+                        key={index}
+                      />
+                    );
+                  })}
                 </>
               )}
               {allJobsQuery.isSuccess &&
                 allJobs.map((job) => {
-                  if (job.posting_status == "approved") {
+                  if (job.posting_status == "pending") {
                     return <JobCard key={job.id} job={job} />;
                   }
                 })}

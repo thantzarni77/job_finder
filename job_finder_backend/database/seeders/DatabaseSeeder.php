@@ -1,10 +1,12 @@
 <?php
+
 namespace Database\Seeders;
 
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use App\Models\Category;
+use App\Models\Seeker;
 use App\Models\PostJob;
+use App\Models\Category;
 use Illuminate\Database\Seeder;
 use Database\Seeders\RoleSeeder;
 use Database\Seeders\TypeSeeder;
@@ -30,7 +32,7 @@ class DatabaseSeeder extends Seeder
         ]);
         Category::factory(10)->create();
 
-    PostJob::factory(50)->create();
-
+        PostJob::factory(50)->create();
+        Seeker::factory(10)->create();
     }
 }

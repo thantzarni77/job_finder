@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Resources;
 
 use App\Models\User;
@@ -16,16 +17,16 @@ class SeekerResource extends JsonResource
     {
         return [
             "id"                => $this->id,
-            "skills"            => json_decode($this->skills),
-            "education"         => json_decode($this->education),
-            "work_experience"   => json_decode($this->work_experience),
+            "skills"            => $this->skills,
+            "education"         => $this->education,
+            "work_experience"   => $this->work_experience,
             "role"              => $this->role,
             "talent"            => $this->talent,
-            "social_media_link" => json_decode($this->social_media_link),
+            "social_media_link" => $this->social_media_link,
             "image"             => $this->image,
             "bio"               => $this->bio,
-            "user_id"           => User::where('id', $this->user_id)->select('id', 'name', 'phone', 'address')->first(),
+            "user_id"           => User::where('id', $this->user_id)->select('id', 'email', 'name', 'phone', 'address')->first(),
+            "created_at"  => $this->created_at,
         ];
     }
-
 }
