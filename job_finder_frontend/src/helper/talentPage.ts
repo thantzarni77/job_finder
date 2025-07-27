@@ -47,8 +47,14 @@ type TalentsType = {
 };
 
 // getting seeker user list
-export const getSeekerList = async (): Promise<SeekerType[]> => {
-  const { data } = await axiosClient.get("/seeker");
+export const getSeekerList = async (
+  talents: string[],
+): Promise<SeekerType[]> => {
+  const { data } = await axiosClient.get("/seeker", {
+    params: {
+      talent: talents,
+    },
+  });
   return data.data;
 };
 

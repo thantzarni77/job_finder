@@ -15,8 +15,23 @@ import CustomCheckboxOutline from "../custom_svg/CustomCheckboxOutline";
 import CustomCheckbox from "../custom_svg/CustomCheckbox";
 import { useQuery } from "@tanstack/react-query";
 import { getTalents } from "../../helper/talentPage";
+import { useSeekerFilterStore } from "../../store/SeekerStore";
+import type { ChangeEvent } from "react";
 
-export default function SeekerFilter() {
+export default function TalentFilter() {
+  const { selectedTalents, setSelectedTalents } = useSeekerFilterStore();
+  function checkBoxHandleChange(
+    event: ChangeEvent<HTMLInputElement>,
+    checked: boolean,
+  ) {
+    if (event.target.name === "talent") {
+      const value = event.target.value;
+      const updated = checked
+        ? [...selectedTalents, value]
+        : selectedTalents.filter((talent) => talent !== value);
+      setSelectedTalents(updated);
+    }
+  }
   const { data: talents, isPending: isTalentPending } = useQuery({
     queryKey: ["talents"],
     queryFn: getTalents,
@@ -93,10 +108,13 @@ export default function SeekerFilter() {
                     control={
                       <Checkbox
                         disableRipple
+                        checked={selectedTalents.includes(talent.name)}
                         icon={<CustomCheckboxOutline />}
                         checkedIcon={<CustomCheckbox />}
                         name={"talent"}
                         key={talent.id}
+                        onChange={checkBoxHandleChange}
+                        value={talent.name}
                       />
                     }
                     label={talent.name}

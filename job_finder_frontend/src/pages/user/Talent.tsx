@@ -11,8 +11,6 @@ import {
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import FilterListIcon from "@mui/icons-material/FilterList";
 
-import JobFilter from "../../components/user/jobs/JobFilter";
-
 import { useState } from "react";
 import SearchBox from "../../components/user/SearchBox";
 import TalentFilterDrawer from "../../components/user/TalentFilterDrawer";
@@ -20,9 +18,11 @@ import { useTalentFilterStore } from "../../store/Appstore";
 import SeekerCard from "../../components/seeker/SeekerCard";
 import { getSeekerList, type SeekerType } from "../../helper/talentPage";
 import { useQuery } from "@tanstack/react-query";
-import SeekerFilter from "../../components/seeker/SeekerFilter";
+import TalentFilter from "../../components/seeker/TalentFilter";
+import { useSeekerFilterStore } from "../../store/SeekerStore";
 
 export default function Talent() {
+  const { selectedTalents } = useSeekerFilterStore();
   const [sortBy, setSortBy] = useState<string>("recent");
   const [open, setOpen] = useState<boolean>(false);
 
@@ -54,8 +54,8 @@ export default function Talent() {
   );
 
   const { data: seekers, isPending: seekerPending } = useQuery<SeekerType[]>({
-    queryKey: ["seekers"],
-    queryFn: getSeekerList,
+    queryKey: ["seekers", selectedTalents],
+    queryFn: () => getSeekerList(selectedTalents),
   });
 
   return (
@@ -123,7 +123,7 @@ export default function Talent() {
         }}
       >
         <Box sx={{ display: { xs: "none", md: "block" } }}>
-          <SeekerFilter />
+          <TalentFilter />
         </Box>
 
         <Box

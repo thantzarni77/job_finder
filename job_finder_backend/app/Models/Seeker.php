@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Helpers\Filters;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Seeker extends Model
 {
@@ -60,5 +62,10 @@ class Seeker extends Model
     {
         $decoded = json_decode($value, true);
         return $decoded !== null ? $decoded : trim($value, '"');
+    }
+
+    public function scopeFilter(Builder $builder, Filters $filter)
+    {
+        return $filter->filter($builder);
     }
 }
