@@ -7,12 +7,6 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class SaveJobRepository implements SaveJobRepositoryInterface
 {
-    //save job list
-    public function index()
-    {
-        $data = Save_job::get();
-        return response()->json(['status' => 'success', 'message' => 'Save job fetched successfully', 'data' => $data], 200);
-    }
 
     //create save job
     public function store($request)
@@ -39,8 +33,8 @@ class SaveJobRepository implements SaveJobRepositoryInterface
         return response()->json(['status' => 'success', 'message' => 'Save job deleted successfully'], 200);
     }
 
-    //check if a job is saved
-    public function checkIsSaved($request)
+    //check save job
+    public function checkSaveJob($request)
     {
         $post_job_id = $request['post_job_id'];
         $seeker_id   = $request['seeker_id'];
@@ -54,7 +48,7 @@ class SaveJobRepository implements SaveJobRepositoryInterface
         } else {
             return response()->json([
                 "status" => false,
-            ], 404);
+            ], 200);
         }
     }
 }

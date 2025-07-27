@@ -14,15 +14,48 @@ import WorkIcon from "@mui/icons-material/Work";
 import PhoneInTalkIcon from "@mui/icons-material/PhoneInTalk";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
-import LinkedInIcon from "@mui/icons-material/LinkedIn";
+
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import UserProjectImage from "../../assets/Rectangle 94.png";
 import { useNavigate } from "react-router";
+import { useParams } from "react-router";
+import { getSeekerDetail, type SeekerType } from "../../helper/talentPage";
+import { useQuery } from "@tanstack/react-query";
+import FullScreenLoader from "../../components/FullScreenLoader";
+import {
+  Facebook as FaceBookIcon,
+  Instagram as InstagramIcon,
+  Twitter as TwitterIcon,
+  LinkedIn as LinkedInIcon,
+  GitHub as GitHubIcon,
+} from "@mui/icons-material";
+import type { ReactNode } from "react";
+
+const socialLinkIcons: Record<string, ReactNode> = {
+  facebook: <FaceBookIcon color="primary" />,
+  instagram: <InstagramIcon color="primary" />,
+  twitter: <TwitterIcon color="primary" />,
+  github: <GitHubIcon color="primary" />,
+  linkedin: <LinkedInIcon color="primary" />,
+};
 
 export default function TalentProfile() {
   const exampleLink = "https://github.com/thantzarni77/job_finder/tree/main";
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const user_id = Number(id);
+
+  const { data: seeker, isPending: isSeekerPending } = useQuery<SeekerType>({
+    queryKey: ["seeker", user_id],
+    queryFn: () => getSeekerDetail(user_id),
+  });
+
+  if (isSeekerPending) {
+    return <FullScreenLoader open={true} message={"Loading..."} />;
+  }
+
+  console.log(seeker);
 
   return (
     <Container sx={{ py: 3, mb: 20 }} maxWidth="lg">
@@ -63,10 +96,10 @@ export default function TalentProfile() {
             />
             <Box>
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                John Doe
+                {!isSeekerPending && seeker?.user_id.name}
               </Typography>
               <Typography variant="body2" sx={{ opacity: 0.8 }}>
-                Graphic Designer
+                {seeker?.talent}
               </Typography>
               <Typography
                 variant="overline"
@@ -138,54 +171,81 @@ export default function TalentProfile() {
           <Box>
             <Typography variant="h6">About Me</Typography>
             <Typography variant="body2" sx={{ mt: 1, opacity: 0.7 }}>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempore
-              voluptatem voluptates soluta quod amet neque magnam, veritatis
-              facere mollitia nostrum vero rerum a fuga molestias totam non
-              accusamus architecto incidunt!
+              {seeker?.bio}
             </Typography>
           </Box>
 
           <Box sx={{ mt: 4 }}>
             <Typography variant="h6">Education</Typography>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
-              <SchoolIcon color="primary" />
-              <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                Degree in Design
-              </Typography>
-            </Box>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
-              <SchoolIcon color="primary" />
-              <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                Diploma in Digital Marketing
-              </Typography>
-            </Box>
+            {seeker?.education.map((edu, index) => {
+              return (
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                    mt: 1,
+                  }}
+                  key={index}
+                >
+                  <SchoolIcon color="primary" />
+                  <Box sx={{ display: "flex", flexDirection: "column" }}>
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      University - {edu.school}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      Degree - {edu.degree}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      Year - {edu.year}
+                    </Typography>
+                  </Box>
+                </Box>
+              );
+            })}
           </Box>
 
           <Box sx={{ mt: 4 }}>
             <Typography variant="h6">Experience</Typography>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
-              <WorkIcon color="primary" />
-              <Box sx={{ display: "flex", flexDirection: "column" }}>
-                <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                  Weed Developer
-                </Typography>
-                <Typography variant="body2" color="primary">
-                  2018 - 2022
-                </Typography>
-              </Box>
-            </Box>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
-              <WorkIcon color="primary" />
-              <Box sx={{ display: "flex", flexDirection: "column" }}>
-                <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                  Creative Studio
-                </Typography>
-                <Typography variant="body2" color="primary">
-                  2018 - 2022
-                </Typography>
-              </Box>
-            </Box>
+            {seeker?.work_experience.map((exp, index) => {
+              return (
+                <Box
+                  sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}
+                  key={index}
+                >
+                  <WorkIcon color="primary" />
+                  <Box sx={{ display: "flex", flexDirection: "column" }}>
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      Company - {exp.company}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      Position - {exp.position}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      {`${exp.start_date} to ${exp.end_date} `}
+                    </Typography>
+                  </Box>
+                </Box>
+              );
+            })}
           </Box>
 
           <Box sx={{ mt: 4 }}>
@@ -201,13 +261,13 @@ export default function TalentProfile() {
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <PhoneInTalkIcon color="primary" />
                 <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                  +09-123456789
+                  {seeker?.user_id.phone}
                 </Typography>
               </Box>
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <EmailOutlinedIcon color="primary" />
                 <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                  abc@gmail.com
+                  {seeker?.user_id.email}
                 </Typography>
               </Box>
             </Box>
@@ -215,12 +275,20 @@ export default function TalentProfile() {
 
           <Box sx={{ mt: 4 }}>
             <Typography variant="h6">Social Media</Typography>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
-              <LinkedInIcon color="primary" />
-              <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                https://www.linkedin.com/in/johndoe
-              </Typography>
-            </Box>
+            {seeker?.social_media_link.map((link, index) => {
+              const [platform, url] = Object.entries(link)[0];
+              return (
+                <Box
+                  sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}
+                  key={index}
+                >
+                  {socialLinkIcons[platform] || null}
+                  <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                    {url}
+                  </Typography>
+                </Box>
+              );
+            })}
           </Box>
 
           <Box sx={{ mt: 4 }}>
@@ -228,7 +296,7 @@ export default function TalentProfile() {
             <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
               <LocationOnIcon color="primary" />
               <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                123 Main Street, City, Country
+                {seeker?.user_id.address}
               </Typography>
             </Box>
           </Box>

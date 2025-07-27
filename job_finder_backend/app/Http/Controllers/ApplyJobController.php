@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Interfaces\ApplyJobRepositoryInterface;
@@ -16,32 +15,27 @@ class ApplyJobController extends Controller
     //create apply job
     public function applyJob(Request $request)
     {
+        logger($request->file('document'));
         $applyData = $request->validate([
-            'document' => 'required',
-            'document.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:5000',
-            'message' => 'max:100',
-            'expected_salary' => 'sometimes|numeric',
+            'post_job_id'     => "required",
+            'employer_id'     => "required",
+            'seeker_id'       => "required",
+            'document'        => 'required',
+            'document.*'      => 'image|mimes:jpeg,png,jpg,gif,svg|max:5000',
+            'message'         => 'max:100',
+            'expected_salary' => 'required',
         ]);
-        // dd($request->all());
         //handle multiple file
         if ($request->hasFile('document')) {
             $documents = [];
             foreach ($request->file('document') as $file) {
-                $name = uniqid() . '_' . $file->getClientOriginalName();
-                $image_path = $file->move(public_path('document'), $name);
+                $name        = uniqid() . '_' . $file->getClientOriginalName();
+                $image_path  = $file->move(public_path('document'), $name);
                 $documents[] = $name;
             }
-            // dd($documents);
             $applyData['document'] = $documents;
         }
-        // dd($request->all());
-
         return $this->applyJobRepositoryInterface->applyJob($applyData);
-    }
-    //get apply data
-    public function applyJobData()
-    {
-        return $this->applyJobRepositoryInterface->applyJobData();
     }
     //make shortlist
     public function addShortList($id)

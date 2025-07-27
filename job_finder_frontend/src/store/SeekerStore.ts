@@ -27,3 +27,16 @@ export const useSeekerProject = create<Projects & SeekerProjectActions>(
     },
   }),
 );
+
+// state which to store talents to filter
+type TalentFilterType = {
+  selectedTalents: string[];
+  setSelectedTalents: (selectedTalents: string[]) => void;
+};
+
+export const useSeekerFilterStore = create<TalentFilterType>((set) => ({
+  selectedTalents: [],
+  setSelectedTalents: (selectedTalents) => {
+    set({ selectedTalents });
+  },
+}));

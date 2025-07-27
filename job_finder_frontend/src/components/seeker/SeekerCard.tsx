@@ -12,8 +12,10 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
 import { NavLink } from "react-router";
+import { format } from "date-fns";
+import type { SeekerType } from "../../helper/talentPage";
 
-const SeekerCard = () => {
+const SeekerCard = ({ seeker }: { seeker: SeekerType }) => {
   return (
     <Box
       sx={{
@@ -51,7 +53,7 @@ const SeekerCard = () => {
                 }}
                 variant="square"
               >
-                F
+                {seeker.user_id.name[0]}
               </Avatar>
               <Box
                 sx={{
@@ -68,8 +70,8 @@ const SeekerCard = () => {
                     ":hover": { cursor: "pointer", color: "primary.main" },
                   }}
                 >
-                  <NavLink to={"/talent/1/profile"}>
-                    Full Stack Developer
+                  <NavLink to={`/talent/${seeker.user_id.id}/profile`}>
+                    {seeker.user_id.name}
                   </NavLink>
                 </Typography>
               </Box>
@@ -104,7 +106,7 @@ const SeekerCard = () => {
               />
 
               <Typography variant="caption" sx={{ color: "primary.light" }}>
-                Yangon
+                {seeker.user_id.address}
               </Typography>
             </Box>
             <Box
@@ -118,7 +120,7 @@ const SeekerCard = () => {
             >
               <QueryBuilderIcon sx={{ color: "primary.light", fontSize: 22 }} />
               <Typography variant="caption" sx={{ color: "primary.light" }}>
-                posted on 1 day ago
+                posted on {format(new Date(seeker.created_at), "PPP")}
               </Typography>
             </Box>
           </Box>
@@ -132,7 +134,7 @@ const SeekerCard = () => {
                 width: "fit-content",
                 height: "28px",
               }}
-              label="Chip Filled"
+              label={seeker.talent}
             />
             <Chip
               sx={{
@@ -142,7 +144,7 @@ const SeekerCard = () => {
                 width: "fit-content",
                 height: "28px",
               }}
-              label="Chip Filled"
+              label={seeker.skills[0]}
             />
             <Chip
               sx={{
@@ -152,7 +154,7 @@ const SeekerCard = () => {
                 width: "fit-content",
                 height: "28px",
               }}
-              label="Chip Filled"
+              label={seeker.education[0].degree}
             />
           </Box>
           <Divider flexItem />

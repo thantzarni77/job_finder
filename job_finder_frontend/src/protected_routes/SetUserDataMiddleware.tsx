@@ -50,6 +50,8 @@ const SetUserDataMiddleware = ({ children }: { children: React.ReactNode }) => {
       .catch((err) => {
         console.error(err);
       });
+  } else {
+    return children;
   }
 };
 

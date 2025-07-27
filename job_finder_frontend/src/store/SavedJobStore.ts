@@ -8,25 +8,19 @@ type SaveJob = {
   updated_at: string;
 };
 
-type SingleSavedJob = {
-  saveJob: SaveJob;
+type SeekerSavedJobs = {
+  seekerSavedJobs: SaveJob[];
 };
 
-type SingleSavedJobActions = {
-  setSingleSavedJob: (value: SaveJob) => void;
+type SeekerSavedJobsActions = {
+  setSeekerSavedJobs: (value: SaveJob[]) => void;
 };
 
-export const useSavedSingleJobStore = create<
-  SingleSavedJob & SingleSavedJobActions
+export const useSeekerSavedJobs = create<
+  SeekerSavedJobs & SeekerSavedJobsActions
 >((set) => ({
-  saveJob: {
-    id: 0,
-    seeker_id: 0,
-    post_job_id: 0,
-    created_at: "",
-    updated_at: "",
-  },
-  setSingleSavedJob: (value: SaveJob) => {
-    set({ saveJob: value });
+  seekerSavedJobs: [],
+  setSeekerSavedJobs: (value: SaveJob[]) => {
+    set({ seekerSavedJobs: value });
   },
 }));

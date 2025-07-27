@@ -2,10 +2,11 @@ import { Box, IconButton, Typography } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import Email from "./Email";
 import Password from "./Password";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 const SecuritySetting = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   return (
     <Box
       sx={{
@@ -27,7 +28,7 @@ const SecuritySetting = () => {
           justifyContent: "space-between",
         }}
       >
-        <IconButton onClick={() => navigate("/settings/user/1/")}>
+        <IconButton onClick={() => navigate(`/settings/user/${id}`)}>
           <ArrowBackIosIcon
             sx={{
               fontSize: "32px",
