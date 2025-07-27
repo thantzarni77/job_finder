@@ -343,7 +343,7 @@ const Jobs = () => {
               )}
               {allJobsQuery.isSuccess &&
                 allJobs.map((job) => {
-                  if (job.posting_status == "pending") {
+                  if (job.posting_status == "approved") {
                     return <JobCard key={job.id} job={job} />;
                   }
                 })}

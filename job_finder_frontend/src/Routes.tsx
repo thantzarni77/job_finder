@@ -35,6 +35,7 @@ import IsLoginnedMiddleware from "./protected_routes/IsLoginnedMiddleware";
 import SetUserDataMiddleware from "./protected_routes/SetUserDataMiddleware";
 import Bookmarks from "./components/user/settings/Bookmarks";
 import AppliedJobsList from "./components/user/settings/AppliedJobsList";
+import EditEmployerProfile from "./pages/employer/EditEmployerProfile";
 
 export const router = createBrowserRouter([
   {
@@ -45,9 +46,9 @@ export const router = createBrowserRouter([
         path: "/",
         index: true,
         element: (
-          <IsLoginnedMiddleware>
+          <SetUserDataMiddleware>
             <Home />
-          </IsLoginnedMiddleware>
+          </SetUserDataMiddleware>
         ),
       },
       {
@@ -119,6 +120,14 @@ export const router = createBrowserRouter([
         element: (
           <IsLoginnedMiddleware>
             <EmployerProfile />
+          </IsLoginnedMiddleware>
+        ),
+      },
+      {
+        path: "/employer-profile/:id/edit",
+        element: (
+          <IsLoginnedMiddleware>
+            <EditEmployerProfile />
           </IsLoginnedMiddleware>
         ),
       },

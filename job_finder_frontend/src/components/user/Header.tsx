@@ -28,6 +28,7 @@ import { useUserStore } from "../../store/UserStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { logoutUser } from "../../helper/authApiFunctions";
 import { useProfileStore } from "../../store/ProfileStore";
+import { useUserDataStore } from "../../store/UserDataStore";
 
 function findRefForPath(
   pathname: string,
@@ -44,6 +45,7 @@ function findRefForPath(
 export default function Header({ isLoading }: { isLoading: boolean }) {
   const queryClient = useQueryClient();
   const user = useUserStore((state) => state.user);
+  const userData = useUserDataStore((state) => state.userData);
   const seekerProfile = useProfileStore((state) => state.seekerProfile);
   const employerProfile = useProfileStore((state) => state.employerProfile);
   const setUserData = useUserStore((state) => state.setUserData);
@@ -96,6 +98,7 @@ export default function Header({ isLoading }: { isLoading: boolean }) {
         "/profile/:id": profileRef,
         "/profile/:id/edit": profileRef,
         "/employer-profile/:id": profileRef,
+        "/employer-profile/:id/edit": profileRef,
         "/project/add": profileRef,
         "/notifications/user/:id": notificationsRef,
         "/settings/user/:id": settingsRef,
@@ -275,9 +278,41 @@ export default function Header({ isLoading }: { isLoading: boolean }) {
                     />
                   )}
                   {!isLoading &&
-                    (seekerProfile.image || employerProfile.company_image) && (
+                    user?.user_type == "seeker" &&
+                    seekerProfile.image &&
+                    seekerProfile.user_id.id == user?.user_id && (
                       <img
-                        src={`${import.meta.env.VITE_API_BASE_URL}/${user?.user_type == "seeker" ? seekerProfile.image : employerProfile.company_image}`}
+                        src={`${import.meta.env.VITE_API_BASE_URL}/${seekerProfile.image}`}
+                        alt={"SeekerProfile"}
+                        style={{
+                          width: "32px",
+                          height: "32px",
+                          borderRadius: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    )}
+                  {!isLoading &&
+                    user?.user_type == "employer" &&
+                    employerProfile.company_image &&
+                    employerProfile.user_id == user?.user_id && (
+                      <img
+                        src={`${import.meta.env.VITE_API_BASE_URL}/${employerProfile.company_image}`}
+                        alt={"SeekerProfile"}
+                        style={{
+                          width: "32px",
+                          height: "32px",
+                          borderRadius: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    )}
+                  {!isLoading &&
+                    user?.user_type == "employer" &&
+                    !employerProfile.company_name &&
+                    employerProfile.user_id == user?.user_id && (
+                      <img
+                        src={`${import.meta.env.VITE_API_BASE_URL}/${userData.profile_picture}`}
                         alt={"SeekerProfile"}
                         style={{
                           width: "32px",
@@ -289,8 +324,17 @@ export default function Header({ isLoading }: { isLoading: boolean }) {
                     )}
 
                   {!isLoading &&
-                    !seekerProfile.image &&
-                    !employerProfile.company_image && (
+                    user?.user_type == "employer" &&
+                    employerProfile.user_id == user?.user_id &&
+                    !employerProfile.company_image &&
+                    !userData.profile_picture && (
+                      <Avatar sx={{ width: 32, height: 32 }} />
+                    )}
+
+                  {!isLoading &&
+                    user?.user_type == "seeker" &&
+                    seekerProfile.user_id.id == user?.user_id &&
+                    !seekerProfile.image && (
                       <Avatar sx={{ width: 32, height: 32 }} />
                     )}
                 </Button>

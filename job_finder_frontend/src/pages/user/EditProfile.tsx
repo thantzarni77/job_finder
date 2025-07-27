@@ -11,6 +11,7 @@ import {
   FormHelperText,
   Autocomplete,
   TextField,
+  Alert,
 } from "@mui/material";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
@@ -34,6 +35,7 @@ import {
 } from "../../helper/talentTypeAndRoleApiFunctions";
 import { updateUser } from "../../helper/userApiFunctions";
 import FullScreenLoader from "../../components/FullScreenLoader";
+import { isAxiosError } from "axios";
 
 type Inputs = {
   name: string;
@@ -75,6 +77,7 @@ export default function EditProfile() {
   const user_id = Number(id);
   const navigate = useNavigate();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [fileUploadError, setFileUploadError] = useState<string | null>(null);
 
   const [roles, setRoles] = useState<SingleRole[]>([]);
   const [talents, setTalents] = useState<SingleTalent[]>([]);
@@ -213,7 +216,9 @@ export default function EditProfile() {
     mutationFn: updateUser,
     onSuccess: () => {},
     onError: (err) => {
-      console.log(err);
+      if (isAxiosError(err)) {
+        setFileUploadError(err.response?.data.message);
+      }
     },
   });
 
@@ -913,6 +918,18 @@ export default function EditProfile() {
                   </Box>
                 ))}
               </Box>
+              {fileUploadError && (
+                <Alert
+                  sx={{ borderRadius: 3, my: 2 }}
+                  variant="outlined"
+                  severity="error"
+                  onClose={() => {
+                    setFileUploadError(null);
+                  }}
+                >
+                  {fileUploadError}
+                </Alert>
+              )}
             </Box>
             <Box>
               <Button

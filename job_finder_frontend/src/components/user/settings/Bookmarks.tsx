@@ -21,6 +21,7 @@ const Bookmarks = () => {
   const navigate = useNavigate();
 
   const seekerData = useProfileStore((state) => state.seekerProfile);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [filterSavedJos, setFilterSavedJobs] = useState<Job[]>([]);
   const setSeekerSavedJobs = useSeekerSavedJobs(
@@ -61,11 +62,13 @@ const Bookmarks = () => {
         for (const job of allJobsQuery.data) {
           for (const saved of savedJobsQuery.data.data) {
             if (saved.post_job_id == job.id) {
+              setIsLoading(true);
               foundJobs.push(job);
             }
           }
         }
         setFilterSavedJobs(foundJobs);
+        setIsLoading(false);
       }
       setSeekerSavedJobs(savedJobsQuery.data.data);
     }
@@ -121,14 +124,23 @@ const Bookmarks = () => {
           width: { xs: "100%", md: "70%" },
         }}
       >
-        {filterSavedJos.length == 0 && (
+        {isLoading && (
           <Typography variant="h5" sx={{ mt: 10 }}>
-            You Have No Saved Jobs
+            Loading Data
           </Typography>
         )}
-        {filterSavedJos.map((single) => {
-          return <JobCard key={single.id} job={single} />;
-        })}
+        {!allJobsQuery.isPending &&
+          !savedJobsQuery.isPending &&
+          !isLoading &&
+          filterSavedJos.length == 0 && (
+            <Typography variant="h5" sx={{ mt: 10 }}>
+              You Have No Saved Jobs
+            </Typography>
+          )}
+        {!isLoading &&
+          filterSavedJos.map((single) => {
+            return <JobCard key={single.id} job={single} />;
+          })}
       </Box>
     </Box>
   );
