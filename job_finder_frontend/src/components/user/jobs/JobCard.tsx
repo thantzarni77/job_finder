@@ -30,9 +30,13 @@ import {
   isSaved,
   undoSaveJob,
 } from "../../../helper/jobApiFunctions";
+import { useUserStore } from "../../../store/UserStore";
 
 const JobCard = ({ job }: { job: Job }) => {
+  console.log(job);
+
   const queryClient = useQueryClient();
+  const user = useUserStore((state) => state.user);
   const seekerData = useProfileStore((state) => state.seekerProfile);
   const employerData = useSingleEmployerStore((state) => state.singleEmployer);
   const setSingleEmployer = useSingleEmployerStore(
@@ -52,6 +56,18 @@ const JobCard = ({ job }: { job: Job }) => {
       setSingleEmployer(employerDataQuery.data.data[0]);
     }
   }, [employerDataQuery.data, employerDataQuery.isSuccess, setSingleEmployer]);
+
+  // const userDataQuery = useQuery({
+  //   enabled: !employerData?.company_name,
+  //   queryKey: ["userSingleData", job.employer_id],
+  //   queryFn: getSingleUserData,
+  // });
+
+  // useEffect(() => {
+  //   if (userDataQuery.data && userDataQuery.isSuccess) {
+  //     setUserData(userDataQuery.data.data);
+  //   }
+  // }, [userDataQuery.data, userDataQuery.isSuccess, setUserData]);
 
   const [open, setOpen] = useState(false);
   const [snackMessage, setSnackMessage] = useState("");
@@ -182,6 +198,7 @@ const JobCard = ({ job }: { job: Job }) => {
                   }}
                 />
               )}
+
               {employerDataQuery.isLoading && (
                 <Skeleton variant="rounded" width={"50px"} height={"50px"} />
               )}
@@ -215,29 +232,31 @@ const JobCard = ({ job }: { job: Job }) => {
                 </Box>
               </Box>
             </Box>
-            <Checkbox
-              onClick={() => {
-                if (isJobSaved) {
-                  undoSaveJobHandler();
-                } else {
-                  saveJobHandler();
+            {user?.user_id && user.user_type == "seeker" && (
+              <Checkbox
+                onClick={() => {
+                  if (isJobSaved) {
+                    undoSaveJobHandler();
+                  } else {
+                    saveJobHandler();
+                  }
+                }}
+                disabled={
+                  saveJobMutation.isPending || undoSaveJobMutation.isPending
                 }
-              }}
-              disabled={
-                saveJobMutation.isPending || undoSaveJobMutation.isPending
-              }
-              checked={isJobSaved}
-              sx={{
-                "& .MuiSvgIcon-root": { fontSize: 26, mr: -2 },
-                color: "primary.main",
-                "&.Mui-checked": {
+                checked={isJobSaved}
+                sx={{
+                  "& .MuiSvgIcon-root": { fontSize: 26, mr: -2 },
                   color: "primary.main",
-                },
-              }}
-              icon={<BookmarkBorderOutlinedIcon />}
-              checkedIcon={<BookmarkIcon />}
-              name={"bookmark"}
-            />
+                  "&.Mui-checked": {
+                    color: "primary.main",
+                  },
+                }}
+                icon={<BookmarkBorderOutlinedIcon />}
+                checkedIcon={<BookmarkIcon />}
+                name={"bookmark"}
+              />
+            )}
           </Box>
           {/* location date */}
           <Box sx={{ my: 1 }}>

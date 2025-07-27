@@ -13,14 +13,57 @@ import Meta from "../../assets/meta.png";
 import AyaBank from "../../assets/ayabank.jpeg";
 import Xiaomi from "../../assets/Xiaomi.png";
 import { useNavigate } from "react-router";
-import { useJobStore } from "../../store/JobStore";
-import { useProfileStore } from "../../store/ProfileStore";
+import {
+  useJobCategoryFilter,
+  useJobRoleFilter,
+  useJobSalaryFilter,
+  useJobStore,
+  useJobTypeFilter,
+} from "../../store/JobStore";
 import JobCard from "../../components/user/jobs/JobCard";
+import { useQuery } from "@tanstack/react-query";
+import { getAllJobPosts } from "../../helper/postJob";
+import { useEffect } from "react";
 
 export default function Home() {
   const navigate = useNavigate();
-  const seekerdata = useProfileStore((state) => state.seekerProfile);
   const allJobs = useJobStore((state) => state.jobs);
+  const setJobs = useJobStore((state) => state.setJobs);
+
+  const { selectedJobRole } = useJobRoleFilter();
+  const { selectedJobType } = useJobTypeFilter();
+  const { selectedJobCategory } = useJobCategoryFilter();
+  const { selectedSalary } = useJobSalaryFilter();
+
+  const allJobsQuery = useQuery({
+    queryKey: [
+      "jobPosts",
+      selectedJobRole,
+      selectedJobType,
+      selectedJobCategory,
+      selectedSalary,
+    ],
+    queryFn: () =>
+      getAllJobPosts(
+        selectedJobRole,
+        selectedJobType,
+        selectedJobCategory,
+        selectedSalary,
+      ),
+  });
+
+  useEffect(() => {
+    if (allJobsQuery.data && allJobsQuery.isSuccess) {
+      setJobs(allJobsQuery.data);
+    }
+  }, [
+    allJobsQuery.data,
+    allJobsQuery.isSuccess,
+    setJobs,
+    allJobs,
+    selectedJobRole,
+    selectedJobType,
+  ]);
 
   return (
     <Box>
@@ -81,12 +124,11 @@ export default function Home() {
           Recommeded Jobs For You
         </Typography>
 
-        {allJobs.map((single) => {
-          if (seekerdata.talent.includes(single.job_title)) {
+        <Box className="flex flex-wrap items-center gap-3 md:justify-center">
+          {allJobs.map((single) => {
             return <JobCard key={single.id} job={single} />;
-          }
-        })}
-        <Box className="flex flex-wrap items-center gap-3 md:justify-center"></Box>
+          })}
+        </Box>
         <Box sx={{ display: "flex", justifyContent: "center", mt: 5, mb: 10 }}>
           <Stack>
             <Pagination

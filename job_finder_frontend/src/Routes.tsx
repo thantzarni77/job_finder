@@ -62,9 +62,9 @@ export const router = createBrowserRouter([
       {
         path: "/job/:id",
         element: (
-          <IsLoginnedMiddleware>
+          <SetUserDataMiddleware>
             <JobDetail />
-          </IsLoginnedMiddleware>
+          </SetUserDataMiddleware>
         ),
       },
       {

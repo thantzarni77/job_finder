@@ -1,14 +1,4 @@
-import {
-  Avatar,
-  Box,
-  Checkbox,
-  Chip,
-  Divider,
-  Paper,
-  Typography,
-} from "@mui/material";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
+import { Avatar, Box, Chip, Paper, Typography } from "@mui/material";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
 import { NavLink } from "react-router";
@@ -76,7 +66,7 @@ const SeekerCard = ({ seeker }: { seeker: SeekerType }) => {
                 </Typography>
               </Box>
             </Box>
-            <Checkbox
+            {/* <Checkbox
               disableRipple
               sx={{
                 "& .MuiSvgIcon-root": { fontSize: 26, mr: -2 },
@@ -88,7 +78,7 @@ const SeekerCard = ({ seeker }: { seeker: SeekerType }) => {
               icon={<AddCircleIcon />}
               checkedIcon={<CheckCircleIcon sx={{ color: "#75C149" }} />}
               name={"fullTime"}
-            />
+            /> */}
           </Box>
           {/* location date */}
           <Box sx={{ my: 1 }}>
@@ -106,7 +96,7 @@ const SeekerCard = ({ seeker }: { seeker: SeekerType }) => {
               />
 
               <Typography variant="caption" sx={{ color: "primary.light" }}>
-                {seeker.user_id.address}
+                {seeker.user_id.address ? seeker.user_id.address : "No Data"}
               </Typography>
             </Box>
             <Box
@@ -120,7 +110,7 @@ const SeekerCard = ({ seeker }: { seeker: SeekerType }) => {
             >
               <QueryBuilderIcon sx={{ color: "primary.light", fontSize: 22 }} />
               <Typography variant="caption" sx={{ color: "primary.light" }}>
-                posted on {format(new Date(seeker.created_at), "PPP")}
+                joined on {format(new Date(seeker.created_at), "PPP")}
               </Typography>
             </Box>
           </Box>
@@ -156,28 +146,6 @@ const SeekerCard = ({ seeker }: { seeker: SeekerType }) => {
               }}
               label={seeker.education[0].degree}
             />
-          </Box>
-          <Divider flexItem />
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              mt: 1,
-            }}
-          >
-            <Typography
-              variant="body1"
-              sx={{ fontWeight: "bold", color: "text.secondary" }}
-            >
-              Salary
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{ fontWeight: "bold", color: "text.secondary" }}
-            >
-              800000MMK
-            </Typography>
           </Box>
         </Box>
       </Paper>

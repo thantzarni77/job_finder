@@ -149,6 +149,14 @@ export default function EmployerProfile() {
             </Box>
           </Box>
         </Box>
+        {employerData.company_name && (
+          <Box sx={{ mt: 4 }}>
+            <Typography sx={{ fontWeight: 600 }}>User Name</Typography>
+            <Typography variant="body2" sx={{ mt: 1, color: "text.secondary" }}>
+              {userData.name}
+            </Typography>
+          </Box>
+        )}
         {employerData.company_description && (
           <Box sx={{ mt: 4 }}>
             <Typography sx={{ fontWeight: 600 }}>Description</Typography>

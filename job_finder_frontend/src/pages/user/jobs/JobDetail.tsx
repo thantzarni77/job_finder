@@ -268,55 +268,57 @@ const JobDetail = () => {
         </Box>
 
         {/* bookmark icon */}
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            width: "fit-content",
-            bgcolor: isJobSaved ? "primary.main" : "background.paper",
-            border: 1,
-            color: isJobSaved ? "background.paper" : "text.primary",
-            borderColor: "primary.main",
-            borderRadius: "4px",
-            height: "28px",
-            px: "5px",
-            py: "5px",
-          }}
-        >
-          <Checkbox
-            disableRipple
-            onClick={() => {
-              if (isJobSaved) {
-                undoSaveJobHandler();
-              } else {
-                saveJobHandler();
-              }
-            }}
-            disabled={
-              saveJobMutation.isPending || undoSaveJobMutation.isPending
-            }
-            checked={isJobSaved}
+        {user?.user_id && user.user_type == "seeker" && (
+          <Box
             sx={{
-              "& .MuiSvgIcon-root": { fontSize: 22, ml: -1 },
-              color: "primary.main",
-              "&.Mui-checked": {
-                color: "primary.main",
-              },
+              display: "flex",
+              alignItems: "center",
+              width: "fit-content",
+              bgcolor: isJobSaved ? "primary.main" : "background.paper",
+              border: 1,
+              color: isJobSaved ? "background.paper" : "text.primary",
+              borderColor: "primary.main",
+              borderRadius: "4px",
+              height: "28px",
+              px: "5px",
+              py: "5px",
             }}
-            icon={<BookmarkBorderOutlinedIcon />}
-            checkedIcon={
-              <BookmarkIcon
-                sx={{
-                  color: isJobSaved ? "background.paper" : "text.primary",
-                }}
-              />
-            }
-            name={"bookMark"}
-          />
-          <Typography variant="caption">
-            {isJobSaved ? "Saved" : "Save this"}
-          </Typography>
-        </Box>
+          >
+            <Checkbox
+              disableRipple
+              onClick={() => {
+                if (isJobSaved) {
+                  undoSaveJobHandler();
+                } else {
+                  saveJobHandler();
+                }
+              }}
+              disabled={
+                saveJobMutation.isPending || undoSaveJobMutation.isPending
+              }
+              checked={isJobSaved}
+              sx={{
+                "& .MuiSvgIcon-root": { fontSize: 22, ml: -1 },
+                color: "primary.main",
+                "&.Mui-checked": {
+                  color: "primary.main",
+                },
+              }}
+              icon={<BookmarkBorderOutlinedIcon />}
+              checkedIcon={
+                <BookmarkIcon
+                  sx={{
+                    color: isJobSaved ? "background.paper" : "text.primary",
+                  }}
+                />
+              }
+              name={"bookMark"}
+            />
+            <Typography variant="caption">
+              {isJobSaved ? "Saved" : "Save this"}
+            </Typography>
+          </Box>
+        )}
 
         {/* appilicant icon */}
         <Box
@@ -538,7 +540,9 @@ const JobDetail = () => {
 
           <Button
             disabled={
-              user?.user_type == "employer" || alreadyAppliedCheck.length != 0
+              user?.user_type == "employer" ||
+              alreadyAppliedCheck.length != 0 ||
+              !user?.user_id
             }
             onClick={() => navigate(`/job/${id}/apply`)}
             variant="contained"
@@ -554,7 +558,9 @@ const JobDetail = () => {
               },
             }}
           >
-            {alreadyAppliedCheck.length != 0 ? "Applied" : "Apply Now"}
+            {user?.user_id &&
+              (alreadyAppliedCheck.length != 0 ? "Applied" : "Apply Now")}
+            {!user?.user_id && "Create an account or login to apply"}
           </Button>
         </Box>
 

@@ -42,6 +42,7 @@ type Inputs = {
   companyAddress?: string;
   companyDescription?: string;
   companyType?: string;
+  companyProfile?: File | string;
 };
 
 export default function EditEmployerProfile() {
@@ -51,6 +52,9 @@ export default function EditEmployerProfile() {
   const user_id = Number(id);
   const navigate = useNavigate();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [companyImagePreview, setCompanyImagePreview] = useState<string | null>(
+    null,
+  );
   const [fileUploadError, setFileUploadError] = useState<string | null>(null);
 
   const user = useUserStore((state) => state.user);
@@ -106,8 +110,12 @@ export default function EditEmployerProfile() {
       queryClient.invalidateQueries({
         queryKey: ["userSingleData", user_id],
       });
+      if (!employerData.company_name) {
+        navigate(-1);
+      }
     },
     onError: (err) => {
+      console.log(err);
       if (isAxiosError(err)) {
         setFileUploadError(err.response?.data.message);
       }
@@ -124,7 +132,6 @@ export default function EditEmployerProfile() {
     },
     onError: (err) => {
       console.log(err);
-
       if (isAxiosError(err)) {
         setFileUploadError(err.response?.data.message);
       }
@@ -144,6 +151,7 @@ export default function EditEmployerProfile() {
       companyAddress,
       companyDescription,
       companyType,
+      companyProfile,
     } = data;
 
     const userForm = new FormData();
@@ -170,8 +178,7 @@ export default function EditEmployerProfile() {
       if (companyType) employerForm.append("company_type", companyType);
       if (employerData.verification)
         employerForm.append("verification", employerData.verification);
-      if (profile_picture)
-        employerForm.append("company_image", profile_picture);
+      if (companyProfile) employerForm.append("company_image", companyProfile);
       if (companyDescription)
         employerForm.append("company_description", companyDescription);
 
@@ -192,7 +199,7 @@ export default function EditEmployerProfile() {
         setImagePreview(userData.profile_picture);
       }
       if (employerData.company_image) {
-        setImagePreview(employerData.company_image);
+        setCompanyImagePreview(employerData.company_image);
       }
 
       if (employerData.company_name)
@@ -249,59 +256,134 @@ export default function EditEmployerProfile() {
           maxWidth="sm"
         >
           <form onSubmit={handleSubmit(onSubmit)} style={{ width: "100%" }}>
-            {/* --- Profile Picture --- */}
-            <Controller
-              name="profile_picture"
-              control={control}
-              render={({ field: { onChange } }) => (
-                <Box
-                  sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}
-                >
-                  <Box sx={{ position: "relative", display: "inline-block" }}>
-                    <Avatar
-                      src={
-                        imagePreview
-                          ? imagePreview.startsWith("blob:")
-                            ? imagePreview
-                            : `${import.meta.env.VITE_API_BASE_URL}/${imagePreview}`
-                          : undefined
-                      }
-                      sx={{ width: 70, height: 70, cursor: "pointer" }}
-                      onClick={() => document.getElementById("image")?.click()}
-                    />
-                    <IconButton
-                      size="small"
-                      sx={{
-                        position: "absolute",
-                        bottom: 0,
-                        right: 0,
-                        boxShadow: 1,
-                        bgcolor: "white",
-                        "&:hover": { bgcolor: "white" },
-                      }}
-                      onClick={() => document.getElementById("image")?.click()}
-                    >
-                      <CameraAltIcon fontSize="small" />
-                    </IconButton>
-
-                    <input
-                      type="file"
-                      id="image"
-                      style={{ display: "none" }}
-                      accept="image/*"
-                      onChange={(e) => {
-                        if (e.target.files && e.target.files[0]) {
-                          const file = e.target.files[0];
-                          onChange(file);
-                          setImagePreview(URL.createObjectURL(file));
+            {!employerData.company_name && (
+              <Controller
+                name="profile_picture"
+                control={control}
+                render={({ field: { onChange } }) => (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 2,
+                      mb: 2,
+                    }}
+                  >
+                    <Box sx={{ position: "relative", display: "inline-block" }}>
+                      <Avatar
+                        src={
+                          imagePreview
+                            ? imagePreview.startsWith("blob:")
+                              ? imagePreview
+                              : `${import.meta.env.VITE_API_BASE_URL}/${imagePreview}`
+                            : undefined
                         }
-                      }}
-                    />
+                        sx={{ width: 70, height: 70, cursor: "pointer" }}
+                        onClick={() =>
+                          document.getElementById("image")?.click()
+                        }
+                      />
+                      <IconButton
+                        size="small"
+                        sx={{
+                          position: "absolute",
+                          bottom: 0,
+                          right: 0,
+                          boxShadow: 1,
+                          bgcolor: "white",
+                          "&:hover": { bgcolor: "white" },
+                        }}
+                        onClick={() =>
+                          document.getElementById("image")?.click()
+                        }
+                      >
+                        <CameraAltIcon fontSize="small" />
+                      </IconButton>
+
+                      <input
+                        type="file"
+                        id="image"
+                        style={{ display: "none" }}
+                        accept="image/*"
+                        onChange={(e) => {
+                          if (e.target.files && e.target.files[0]) {
+                            const file = e.target.files[0];
+                            onChange(file);
+                            setImagePreview(URL.createObjectURL(file));
+                          }
+                        }}
+                      />
+                    </Box>
+                    <Typography>Upload Picture</Typography>
                   </Box>
-                  <Typography>Upload Picture</Typography>
-                </Box>
-              )}
-            />
+                )}
+              />
+            )}
+
+            {/* --- Profile Picture --- */}
+            {employerData.company_name && (
+              <Controller
+                name="companyProfile"
+                control={control}
+                render={({ field: { onChange } }) => (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 2,
+                      mb: 2,
+                    }}
+                  >
+                    <Box sx={{ position: "relative", display: "inline-block" }}>
+                      <Avatar
+                        src={
+                          companyImagePreview
+                            ? companyImagePreview.startsWith("blob:")
+                              ? companyImagePreview
+                              : `${import.meta.env.VITE_API_BASE_URL}/${companyImagePreview}`
+                            : undefined
+                        }
+                        sx={{ width: 70, height: 70, cursor: "pointer" }}
+                        onClick={() =>
+                          document.getElementById("image")?.click()
+                        }
+                      />
+                      <IconButton
+                        size="small"
+                        sx={{
+                          position: "absolute",
+                          bottom: 0,
+                          right: 0,
+                          boxShadow: 1,
+                          bgcolor: "white",
+                          "&:hover": { bgcolor: "white" },
+                        }}
+                        onClick={() =>
+                          document.getElementById("image")?.click()
+                        }
+                      >
+                        <CameraAltIcon fontSize="small" />
+                      </IconButton>
+
+                      <input
+                        type="file"
+                        id="image"
+                        style={{ display: "none" }}
+                        accept="image/*"
+                        onChange={(e) => {
+                          if (e.target.files && e.target.files[0]) {
+                            const file = e.target.files[0];
+                            onChange(file);
+                            setCompanyImagePreview(URL.createObjectURL(file));
+                          }
+                        }}
+                      />
+                    </Box>
+                    <Typography>Upload Picture</Typography>
+                  </Box>
+                )}
+              />
+            )}
 
             <Box
               sx={{ mt: 3, display: "flex", flexDirection: "column", gap: 2.5 }}

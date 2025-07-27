@@ -12,9 +12,12 @@ import {
   getEmployerProfile,
   getSeekerProfile,
 } from "../../helper/profileApiFunctions";
+import { getSingleUserData } from "../../helper/userApiFunctions";
+import { useUserDataStore } from "../../store/UserDataStore";
 
 export default function UserMainLayout() {
   const user = useUserStore((state) => state.user);
+  const setUserData = useUserDataStore((state) => state.setUserData);
   const seekerData = useProfileStore((state) => state.seekerProfile);
   const setSeekerProfile = useProfileStore((state) => state.setSeekerProfile);
   const employerData = useProfileStore((state) => state.employerProfile);
@@ -54,12 +57,25 @@ export default function UserMainLayout() {
     }
   }, [seekerProfileQuery.data, seekerProfileQuery.isSuccess, setSeekerProfile]);
 
+  const userDataQuery = useQuery({
+    queryKey: ["userSingleData", user?.user_id],
+    queryFn: getSingleUserData,
+  });
+
+  useEffect(() => {
+    if (userDataQuery.data && userDataQuery.isSuccess) {
+      setUserData(userDataQuery.data.data);
+    }
+  }, [userDataQuery.data, userDataQuery.isSuccess, setUserData]);
+
   return (
     <Box sx={{ bgcolor: "backgroud.default" }}>
       <ScrollToTop />
       <Header
         isLoading={
-          seekerProfileQuery.isFetching || employerProfileQuery.isFetching
+          seekerProfileQuery.isFetching ||
+          employerProfileQuery.isFetching ||
+          userDataQuery.isFetching
         }
       />
       {user?.user_type == "employer" &&
