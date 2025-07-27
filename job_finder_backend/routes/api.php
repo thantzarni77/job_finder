@@ -57,7 +57,7 @@ Route::middleware('AuthMiddleware')->group(function () {
     Route::delete('/removeuser', [AuthController::class, 'removeUser']);
     Route::post('/admin-account-creation', [AuthController::class, 'adminAccountCreation']);
     Route::post('/auth/{provider}/call-back', [SocialLoginController::class, 'socialLogin']);
-    Route::get('/employer-data/{id}', [EmployerController::class, 'getEmployerData']);
+    Route::get('/employer-data/{id}', [EmployerController::class, 'getEmployerData'])->withoutMiddleware("AuthMiddleware");
 
     Route::middleware("UserTypeMiddleware:superadmin")->group(function () {});
 
@@ -66,7 +66,7 @@ Route::middleware('AuthMiddleware')->group(function () {
     Route::middleware("UserTypeMiddleware:admin")->group(function () {});
 
     Route::middleware("UserTypeMiddleware:seeker")->group(function () {
-        Route::get('/seeker', [SeekerController::class, 'index']);
+        Route::get('/seeker', [SeekerController::class, 'index'])->withoutMiddleware(["AuthMiddleware", "UserTypeMiddleware:seeker"]);
         Route::get('/seeker/{id}', [SeekerController::class, 'getdata']);
         Route::get('/seeker-data/{id}', [SeekerController::class, 'getSeekerData']);
         Route::post('/seeker', [SeekerController::class, 'store']);
@@ -98,7 +98,7 @@ Route::middleware('AuthMiddleware')->group(function () {
     //talent module
     Route::prefix('talent')->group(function () {
         //save job list
-        Route::get('/', [TalentController::class, 'index']);
+        Route::get('/', [TalentController::class, 'index'])->withoutMiddleware("AuthMiddleware");
         // create save job
         Route::post('/', [TalentController::class, 'create']);
         //view save job
@@ -117,14 +117,13 @@ Route::middleware('AuthMiddleware')->group(function () {
             Route::delete('/{id}', [EmployerController::class, 'destroy']);
         });
 
-
         Route::get('/indi_employer', [IndividualEmployerController::class, 'index']);
         Route::get('/indi_employer/{id}', [IndividualEmployerController::class, 'getData']);
         Route::get('/indi_data_employer/{id}', [IndividualEmployerController::class, 'getIndiEmployerData']);
 
         //job post
         Route::prefix('post-jobs')->group(function () {
-            Route::get('/', [PostJobController::class, 'index'])->withoutMiddleware('UserTypeMiddleware:employer');
+            Route::get('/', [PostJobController::class, 'index'])->withoutMiddleware(['UserTypeMiddleware:employer', "AuthMiddleware"]);
             Route::post('/', [PostJobController::class, 'store']);
             Route::get('/{id}', [PostJobController::class, 'show'])->withoutMiddleware('UserTypeMiddleware:employer');
             Route::post('/{id}', [PostJobController::class, 'update']);
