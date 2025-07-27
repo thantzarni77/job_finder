@@ -20,7 +20,7 @@ import { useForm, Controller } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import { seekerAddProject } from "../../helper/seekerProjectApiFunctions";
-import { useUserStore } from "../../store/UserStore";
+import { useProfileStore } from "../../store/ProfileStore";
 
 export type Project = {
   image: File;
@@ -51,7 +51,7 @@ export default function AddNewProject() {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const user = useUserStore((state) => state.user);
+  const seekerProfile = useProfileStore((state) => state.seekerProfile);
 
   const [uploadErrors, setUploadErrors] = useState<UploadError | null>();
 
@@ -76,7 +76,7 @@ export default function AddNewProject() {
     onSuccess: (responseData) => {
       if (responseData.statusText == "Created") {
         queryClient.invalidateQueries({
-          queryKey: ["seekerProject", user?.user_id],
+          queryKey: ["seekerProject", seekerProfile.id],
         });
         return navigate(-1);
       }
@@ -366,6 +366,7 @@ export default function AddNewProject() {
             type="submit"
             variant="contained"
             fullWidth
+            loading={addProjectMutation.isPending}
             sx={{
               mt: 4,
               borderRadius: 2,

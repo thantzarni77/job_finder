@@ -67,12 +67,12 @@ const Jobs = () => {
       ),
   });
 
-  const { data: jobTypes, isPending: isJobTypesPending } = useQuery({
+  const { data: jobTypes, isFetching: isJobTypesPending } = useQuery({
     queryKey: ["jobTypes"],
     queryFn: getJobTypes,
   });
 
-  const { data: roles, isPending: isRolesPending } = useQuery({
+  const { data: roles, isFetching: isRolesPending } = useQuery({
     queryKey: ["roles"],
     queryFn: getRoles,
   });
@@ -93,6 +93,8 @@ const Jobs = () => {
     selectedJobRole,
     selectedJobType,
   ]);
+
+  console.log(jobTypes);
 
   // custom component for dropdown icon
   const CustomIcon = () => (
@@ -328,7 +330,7 @@ const Jobs = () => {
             >
               {allJobsQuery.isFetching && (
                 <>
-                  {...Array(10).map((_, index) => {
+                  {[...Array(10)].map((_, index) => {
                     return (
                       <Skeleton
                         variant="rounded"
@@ -341,7 +343,8 @@ const Jobs = () => {
                   })}
                 </>
               )}
-              {allJobsQuery.isSuccess &&
+
+              {allJobsQuery.data &&
                 allJobs.map((job) => {
                   if (job.posting_status == "approved") {
                     return <JobCard key={job.id} job={job} />;

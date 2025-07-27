@@ -27,8 +27,11 @@ import { useNavigate } from "react-router";
 import { useUserStore } from "../../store/UserStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { logoutUser } from "../../helper/authApiFunctions";
-import { useProfileStore } from "../../store/ProfileStore";
-import { useUserDataStore } from "../../store/UserDataStore";
+import {
+  type EmployerProfile,
+  type SeekerProfile,
+} from "../../store/ProfileStore";
+import type { UserData } from "../../store/UserDataStore";
 
 function findRefForPath(
   pathname: string,
@@ -42,12 +45,24 @@ function findRefForPath(
   return null;
 }
 
-export default function Header({ isLoading }: { isLoading: boolean }) {
+interface HeaderProps {
+  isLoading: boolean;
+  seekerProfile?: SeekerProfile;
+  employerProfile?: EmployerProfile;
+  userData?: UserData;
+}
+
+export default function Header({
+  isLoading,
+  seekerProfile,
+  employerProfile,
+  userData,
+}: HeaderProps) {
   const queryClient = useQueryClient();
   const user = useUserStore((state) => state.user);
-  const userData = useUserDataStore((state) => state.userData);
-  const seekerProfile = useProfileStore((state) => state.seekerProfile);
-  const employerProfile = useProfileStore((state) => state.employerProfile);
+  // const userData = useUserDataStore((state) => state.userData);
+  // const seekerProfile = useProfileStore((state) => state.seekerProfile);
+  // const employerProfile = useProfileStore((state) => state.employerProfile);
   const setUserData = useUserStore((state) => state.setUserData);
   const removeToken = useUserStore((state) => state.removeToken);
   const accessToken = localStorage.getItem("token");
@@ -132,6 +147,7 @@ export default function Header({ isLoading }: { isLoading: boolean }) {
       if (data.status == 200) {
         setUserData(null);
         removeToken();
+        queryClient.clear();
       }
     },
   });
@@ -213,8 +229,8 @@ export default function Header({ isLoading }: { isLoading: boolean }) {
                 <Button
                   onClick={() => navigate("/post/job")}
                   disabled={
-                    employerProfile.verification == "pending" ||
-                    employerProfile.verification == "rejected"
+                    employerProfile?.verification == "pending" ||
+                    employerProfile?.verification == "rejected"
                   }
                   sx={{
                     fontWeight: "700",
@@ -272,15 +288,14 @@ export default function Header({ isLoading }: { isLoading: boolean }) {
                 >
                   {isLoading && (
                     <Skeleton
-                      variant="rounded"
+                      variant="circular"
                       width={"32px"}
                       height={"32px"}
                     />
                   )}
                   {!isLoading &&
                     user?.user_type == "seeker" &&
-                    seekerProfile.image &&
-                    seekerProfile.user_id.id == user?.user_id && (
+                    seekerProfile?.image && (
                       <img
                         src={`${import.meta.env.VITE_API_BASE_URL}/${seekerProfile.image}`}
                         alt={"SeekerProfile"}
@@ -294,8 +309,7 @@ export default function Header({ isLoading }: { isLoading: boolean }) {
                     )}
                   {!isLoading &&
                     user?.user_type == "employer" &&
-                    employerProfile.company_image &&
-                    employerProfile.user_id == user?.user_id && (
+                    employerProfile?.company_image && (
                       <img
                         src={`${import.meta.env.VITE_API_BASE_URL}/${employerProfile.company_image}`}
                         alt={"SeekerProfile"}
@@ -309,9 +323,8 @@ export default function Header({ isLoading }: { isLoading: boolean }) {
                     )}
                   {!isLoading &&
                     user?.user_type == "employer" &&
-                    !employerProfile.company_name &&
-                    userData.profile_picture &&
-                    employerProfile.user_id == user?.user_id && (
+                    employerProfile?.created_at == null &&
+                    userData?.profile_picture && (
                       <img
                         src={`${import.meta.env.VITE_API_BASE_URL}/${userData.profile_picture}`}
                         alt={"SeekerProfile"}
@@ -326,16 +339,16 @@ export default function Header({ isLoading }: { isLoading: boolean }) {
 
                   {!isLoading &&
                     user?.user_type == "employer" &&
-                    employerProfile.user_id == user?.user_id &&
-                    !employerProfile.company_image &&
-                    !userData.profile_picture && (
+                    employerProfile?.user_id == user?.user_id &&
+                    !employerProfile?.company_image &&
+                    !userData?.profile_picture && (
                       <Avatar sx={{ width: 32, height: 32 }} />
                     )}
 
                   {!isLoading &&
                     user?.user_type == "seeker" &&
-                    seekerProfile.user_id.id == user?.user_id &&
-                    !seekerProfile.image && (
+                    seekerProfile?.user_id.id == user?.user_id &&
+                    !seekerProfile?.image && (
                       <Avatar sx={{ width: 32, height: 32 }} />
                     )}
                 </Button>

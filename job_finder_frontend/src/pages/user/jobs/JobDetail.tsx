@@ -158,7 +158,7 @@ const JobDetail = () => {
 
   const employerData = employerDataQuery.data?.data[0];
 
-  const { data: IndividualData } = useQuery({
+  const { data: IndividualData, isPending: individualPending } = useQuery({
     enabled: employerData?.created_at == null,
     queryKey: ["individualJob", jobDetails?.employer_id],
     queryFn: () => {
@@ -174,7 +174,11 @@ const JobDetail = () => {
   //   }
   // }, [employerDataQuery.data, employerDataQuery.isSuccess, setSingleEmployer]);
 
-  if (jobDetailQuery.isPending) {
+  if (
+    jobDetailQuery.isPending ||
+    employerDataQuery.isPending ||
+    individualPending
+  ) {
     return (
       <FullScreenLoader
         open={jobDetailQuery.isPending}
@@ -605,7 +609,7 @@ const JobDetail = () => {
           {employerData && employerData.created_at != null && (
             <EmployerCard employerData={employerData} />
           )}
-          {employerData.created_at == null && individualJobData && (
+          {employerData?.created_at == null && individualJobData && (
             <IndividualCard individualData={individualJobData} />
           )}
         </Box>

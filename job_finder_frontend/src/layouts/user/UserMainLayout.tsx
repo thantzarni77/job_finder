@@ -18,55 +18,49 @@ import { useUserDataStore } from "../../store/UserDataStore";
 export default function UserMainLayout() {
   const user = useUserStore((state) => state.user);
   const setUserData = useUserDataStore((state) => state.setUserData);
-  const seekerData = useProfileStore((state) => state.seekerProfile);
+
   const setSeekerProfile = useProfileStore((state) => state.setSeekerProfile);
-  const employerData = useProfileStore((state) => state.employerProfile);
+
   const setEmployerProfile = useProfileStore(
     (state) => state.setEmployerProfile,
   );
 
   const employerProfileQuery = useQuery({
-    enabled: user?.user_type == "employer" && !employerData.id,
+    enabled: user?.user_type == "employer",
     queryKey: ["employerProfile", user?.user_id],
     queryFn: () => {
       return getEmployerProfile(user?.user_id);
     },
   });
 
-  useEffect(() => {
-    if (employerProfileQuery.data && employerProfileQuery.isSuccess) {
-      setEmployerProfile(employerProfileQuery.data.data.data[0]);
-    }
-  }, [
-    employerProfileQuery.data,
-    employerProfileQuery.isSuccess,
-    setEmployerProfile,
-  ]);
-
   const seekerProfileQuery = useQuery({
-    enabled: user?.user_type == "seeker" && !seekerData.id,
+    enabled: user?.user_type == "seeker",
     queryKey: ["seekerProfile", user?.user_id],
     queryFn: () => {
       return getSeekerProfile(user?.user_id);
     },
   });
 
-  useEffect(() => {
-    if (seekerProfileQuery.data && seekerProfileQuery.isSuccess) {
-      setSeekerProfile(seekerProfileQuery.data.data.data[0]);
-    }
-  }, [seekerProfileQuery.data, seekerProfileQuery.isSuccess, setSeekerProfile]);
-
   const userDataQuery = useQuery({
     queryKey: ["userSingleData", user?.user_id],
     queryFn: getSingleUserData,
   });
 
+  const employerData = employerProfileQuery.data?.data.data[0];
+  const seekerData = seekerProfileQuery.data?.data.data[0];
+  const userData = userDataQuery.data?.data;
+
   useEffect(() => {
-    if (userDataQuery.data && userDataQuery.isSuccess) {
-      setUserData(userDataQuery.data.data);
-    }
-  }, [userDataQuery.data, userDataQuery.isSuccess, setUserData]);
+    if (employerData) setEmployerProfile(employerData);
+  }, [employerData, setEmployerProfile]);
+
+  useEffect(() => {
+    if (seekerData) setSeekerProfile(seekerData);
+  }, [seekerData, setSeekerProfile]);
+
+  useEffect(() => {
+    if (userData) setUserData(userData);
+  }, [userData, setUserData]);
 
   return (
     <Box sx={{ bgcolor: "backgroud.default" }}>
@@ -77,9 +71,12 @@ export default function UserMainLayout() {
           employerProfileQuery.isFetching ||
           userDataQuery.isFetching
         }
+        employerProfile={employerData}
+        seekerProfile={seekerData}
+        userData={userData}
       />
       {user?.user_type == "employer" &&
-        employerData.verification == "pending" && (
+        employerData?.verification == "pending" && (
           <Alert variant="filled" severity="info" id="verification">
             <Typography variant="body1">
               You will only have limited access until we finished verifying your
@@ -88,7 +85,7 @@ export default function UserMainLayout() {
           </Alert>
         )}
       {user?.user_type == "employer" &&
-        employerData.verification == "rejected" && (
+        employerData?.verification == "rejected" && (
           <Alert variant="filled" severity="error" id="verification">
             <Typography variant="body1">
               Your account didn't pass our verification. Click{" "}

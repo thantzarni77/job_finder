@@ -20,11 +20,14 @@ import { getSeekerList, type SeekerType } from "../../helper/talentPage";
 import { useQuery } from "@tanstack/react-query";
 import TalentFilter from "../../components/seeker/TalentFilter";
 import { useSeekerFilterStore } from "../../store/SeekerStore";
+import { useUserDataStore } from "../../store/UserDataStore";
 
 export default function Talent() {
   const { selectedTalents } = useSeekerFilterStore();
   const [sortBy, setSortBy] = useState<string>("recent");
   const [open, setOpen] = useState<boolean>(false);
+
+  const userProfile = useUserDataStore((state) => state.userData);
 
   const showTalentFilterDrawer = useTalentFilterStore(
     (state) => state.showTalentFilterDrawer,
@@ -145,7 +148,7 @@ export default function Talent() {
             }}
           >
             <Typography variant="caption" sx={{ color: "primary.light" }}>
-              500+ jobs are found
+              {seekers?.length}+ talents are found
             </Typography>
             {/* filter box */}
             <Select
@@ -264,7 +267,9 @@ export default function Talent() {
             >
               {!seekerPending &&
                 seekers?.map((seeker: SeekerType) => {
-                  return <SeekerCard key={seeker.id} seeker={seeker} />;
+                  if (seeker.user_id.id != userProfile.id) {
+                    return <SeekerCard key={seeker.id} seeker={seeker} />;
+                  }
                 })}
             </Box>
             {/* pagination */}

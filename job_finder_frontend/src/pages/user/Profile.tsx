@@ -22,17 +22,14 @@ import { getSeekerProfile } from "../../helper/profileApiFunctions";
 import { useEffect } from "react";
 import { useProfileStore } from "../../store/ProfileStore";
 import FullScreenLoader from "../../components/FullScreenLoader";
-import { useUserStore } from "../../store/UserStore";
-import { getSeekerProjects } from "../../helper/SeekerProjectApiFunctions";
 import { useSeekerProject } from "../../store/SeekerStore";
+import { seekerGetProject } from "../../helper/seekerProjectApiFunctions";
 
 export default function Profile() {
   const navigate = useNavigate();
 
   const { id } = useParams();
   const user_id = Number(id);
-
-  const userData = useUserStore((state) => state.user);
   const seekerProfile = useProfileStore((state) => state.seekerProfile);
   const setSeekerProfile = useProfileStore((state) => state.setSeekerProfile);
 
@@ -43,7 +40,7 @@ export default function Profile() {
 
   const seekerProjectQuery = useQuery({
     queryKey: ["seekerProject", user_id],
-    queryFn: getSeekerProjects,
+    queryFn: seekerGetProject,
   });
 
   useEffect(() => {
@@ -66,7 +63,6 @@ export default function Profile() {
 
   useEffect(() => {
     if (seekerProfileQuery.data && seekerProfileQuery.isSuccess) {
-      console.log(seekerProfileQuery.data);
       setSeekerProfile(seekerProfileQuery.data.data.data[0]);
     }
   }, [seekerProfileQuery.data, seekerProfileQuery.isSuccess, setSeekerProfile]);
@@ -315,7 +311,7 @@ export default function Profile() {
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <EmailOutlinedIcon color="primary" />
                 <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                  {userData?.user_email}
+                  {seekerProfile.user_id.email}
                 </Typography>
               </Box>
             </Box>
@@ -365,7 +361,7 @@ export default function Profile() {
           </Typography>
           {seekerProjects.length > 0 && (
             <Box className="grid grid-cols-1 place-items-center gap-3 md:grid-cols-2 lg:grid-cols-4">
-              {seekerProjectQuery.isSuccess &&
+              {seekerProjectQuery.data &&
                 seekerProjects.map((single) => {
                   return (
                     <Card

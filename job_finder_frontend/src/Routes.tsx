@@ -93,11 +93,19 @@ export const router = createBrowserRouter([
       },
       {
         path: "/talents",
-        Component: Talent,
+        element: (
+          <SetUserDataMiddleware>
+            <Talent />
+          </SetUserDataMiddleware>
+        ),
       },
       {
         path: "/talent/:id/profile",
-        Component: TalentProfile,
+        element: (
+          <SetUserDataMiddleware>
+            <TalentProfile />
+          </SetUserDataMiddleware>
+        ),
       },
       {
         path: "/companies",

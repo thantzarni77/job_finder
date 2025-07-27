@@ -1,4 +1,4 @@
-import { Avatar, Box, Chip, Paper, Typography } from "@mui/material";
+import { Box, Chip, Paper, Typography } from "@mui/material";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
 import { NavLink } from "react-router";
@@ -34,17 +34,17 @@ const SeekerCard = ({ seeker }: { seeker: SeekerType }) => {
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Avatar
-                sx={{
-                  bgcolor: "primary.main",
+              <img
+                src={`${import.meta.env.VITE_API_BASE_URL}/${seeker.image}`}
+                style={{
                   borderRadius: "12px",
                   fontSize: "12px",
                   fontWeight: "bold",
+                  width: "50px",
+                  height: "50px",
                 }}
-                variant="square"
-              >
-                {seeker.user_id.name[0]}
-              </Avatar>
+              />
+
               <Box
                 sx={{
                   display: "flex",

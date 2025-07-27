@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-type SeekerProject = {
+export type SeekerProject = {
   id: number;
   seeker_id: number;
   title: string;
