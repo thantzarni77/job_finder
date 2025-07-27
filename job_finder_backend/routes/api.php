@@ -48,6 +48,7 @@ Route::middleware('AuthMiddleware')->group(function () {
     Route::prefix("user")->group(function () {
         Route::get('/get', [UserController::class, 'getSingleUserData']);
         Route::post('/update/{id}', [UserController::class, 'updateUser']);
+        Route::get('/individual-employer/{id}', [UserController::class, "getIndividualEmployerData"])->withoutMiddleware("AuthMiddleware");
     });
 
     Route::get('/profile', [AuthController::class, 'profile']);
@@ -125,7 +126,7 @@ Route::middleware('AuthMiddleware')->group(function () {
         Route::prefix('post-jobs')->group(function () {
             Route::get('/', [PostJobController::class, 'index'])->withoutMiddleware(['UserTypeMiddleware:employer', "AuthMiddleware"]);
             Route::post('/', [PostJobController::class, 'store']);
-            Route::get('/{id}', [PostJobController::class, 'show'])->withoutMiddleware('UserTypeMiddleware:employer');
+            Route::get('/{id}', [PostJobController::class, 'show'])->withoutMiddleware(['UserTypeMiddleware:employer', "AuthMiddleware"]);
             Route::post('/{id}', [PostJobController::class, 'update']);
             Route::delete('/{id}', [PostJobController::class, 'destroy']);
         });

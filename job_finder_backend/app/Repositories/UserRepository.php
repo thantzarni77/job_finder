@@ -52,4 +52,12 @@ class UserRepository implements UserRepositoryInterface
         ], 200);
 
     }
+
+    public function getIndividualEmployerData($id)
+    {
+
+        $user = User::where('id', $id)->first();
+        return new UserResource($user);
+
+    }
 }
