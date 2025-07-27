@@ -64,36 +64,50 @@ Route::middleware('AuthMiddleware')->group(function () {
 
     Route::middleware("UserTypeMiddleware:admin")->group(function () {});
 
-    Route::middleware("UserTypeMiddleware:admin")->group(function () {});
-
     Route::middleware("UserTypeMiddleware:seeker")->group(function () {
         Route::get('/seeker', [SeekerController::class, 'index'])->withoutMiddleware(["AuthMiddleware", "UserTypeMiddleware:seeker"]);
         Route::get('/seeker/{id}', [SeekerController::class, 'getdata']);
-        Route::get('/seeker-data/{id}', [SeekerController::class, 'getSeekerData']);
+        Route::get('/seeker-data/{id}', [SeekerController::class, 'getSeekerData'])->withoutMiddleware(["AuthMiddleware", "UserTypeMiddleware:seeker"]);
         Route::post('/seeker', [SeekerController::class, 'store']);
         Route::post('/seeker/{id}', [SeekerController::class, 'update']);
         Route::delete('/seeker/{id}', [SeekerController::class, 'destroy']);
 
         //apply job module
         Route::prefix('apply-job')->group(function () {
-            Route::post('', [ApplyJobController::class, 'applyJob']);
+            Route::post('/', [ApplyJobController::class, 'applyJob']);
+            Route::get('/', [ApplyJobController::class, 'applyJobData']);
+            //making shortlist
+            Route::patch('/shortlist/{id}', [ApplyJobController::class, 'addShortlist']);
+            //employer view his uploaded jobs
+            Route::get('/employer', [ApplyJobController::class, 'employerPostedJobs']);
             //seeker view his applied jobs
             Route::get('/seeker', [ApplyJobController::class, 'seekerAppliedJobs']);
+            //employer view shorlist his posted jobs
+            Route::get('/shortlist/employer/{id}', [ApplyJobController::class, 'employerShortlistJobs']);
+            //mail send to seeker
+            Route::post('/mail', [ApplyJobController::class, 'sendMail']);
         });
 
         //job save module
         Route::prefix('save-job')->group(function () {
+            //save job list
+            Route::get('/', [SaveJobController::class, 'index']);
             // create save job
             Route::post('/', [SaveJobController::class, 'store']);
             //view save job
             Route::get('/seeker-save-list', [SaveJobController::class, 'view']);
             //remove save job
             Route::delete('/{id}', [SaveJobController::class, 'destroy']);
-            //check save job
-            Route::post('/check', [SaveJobController::class, 'checkSaveJob']);
         });
-        //prject
-        Route::apiResource('project', ProjectController::class);
+
+        Route::prefix("project")->group(function () {
+            Route::get("/", [ProjectController::class, 'index']);
+            Route::post("/", [ProjectController::class, 'store']);
+            Route::get("/{userID}", [ProjectController::class, 'show'])->withoutMiddleware(["AuthMiddleware", "UserTypeMiddleware:seeker"]);
+            Route::post("/{userID}", [ProjectController::class, 'update']);
+            Route::post("/{userID}", [ProjectController::class, 'destroy']);
+        });
+
     });
 
     //talent module
@@ -149,35 +163,6 @@ Route::middleware('AuthMiddleware')->group(function () {
     //job detail route
     Route::apiResource('job-details', JobDetailController::class);
 
-    //apply job module
-    Route::prefix('apply-job')->group(function () {
-        Route::post('/', [ApplyJobController::class, 'applyJob']);
-        Route::get('/', [ApplyJobController::class, 'applyJobData']);
-        //making shortlist
-        Route::patch('/shortlist/{id}', [ApplyJobController::class, 'addShortlist']);
-        //employer view his uploaded jobs
-        Route::get('/employer', [ApplyJobController::class, 'employerPostedJobs']);
-        //seeker view his applied jobs
-        Route::get('/seeker', [ApplyJobController::class, 'seekerAppliedJobs']);
-        //employer view shorlist his posted jobs
-        Route::get('/shortlist/employer/{id}', [ApplyJobController::class, 'employerShortlistJobs']);
-        //mail send to seeker
-        Route::post('/mail', [ApplyJobController::class, 'sendMail']);
-    });
-
-    //job save module
-    Route::prefix('save-job')->group(function () {
-        //save job list
-        Route::get('/', [SaveJobController::class, 'index']);
-        // create save job
-        Route::post('/', [SaveJobController::class, 'store']);
-        //view save job
-        Route::get('/seeker-save-list', [SaveJobController::class, 'view']);
-        //remove save job
-        Route::delete('/{id}', [SaveJobController::class, 'destroy']);
-    });
-
-    Route::apiResource('project', ProjectController::class);
 });
 
 //job category route
