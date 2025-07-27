@@ -67,6 +67,7 @@ export default function Profile() {
   useEffect(() => {
     if (seekerProfileQuery.data && seekerProfileQuery.isSuccess) {
       setSeekerProfile(seekerProfileQuery.data.data.data[0]);
+      console.log(seekerProfileQuery.data);
     }
   }, [seekerProfileQuery.data, seekerProfileQuery.isSuccess, setSeekerProfile]);
 

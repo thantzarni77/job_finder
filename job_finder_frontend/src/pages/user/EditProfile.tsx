@@ -319,11 +319,7 @@ export default function EditProfile() {
     });
   };
 
-  if (
-    talentsQuery.isSuccess &&
-    rolesQuery.isSuccess &&
-    seekerProfileQuery.isSuccess
-  ) {
+  if (talentsQuery.data && rolesQuery.data && seekerProfileQuery.data) {
     return (
       <>
         <Box
