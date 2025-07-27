@@ -25,7 +25,6 @@ import {
   useJobDetailStore,
   useJobStore,
 } from "../../../store/JobStore";
-import { useSingleEmployerStore } from "../../../store/EmployerStore";
 import { getSingleEmployerData } from "../../../helper/employerApiFunctions";
 import FullScreenLoader from "../../../components/FullScreenLoader";
 import { useUserStore } from "../../../store/UserStore";
@@ -37,6 +36,8 @@ import {
 } from "../../../helper/jobApiFunctions";
 import { useProfileStore } from "../../../store/ProfileStore";
 import JobCard from "../../../components/user/jobs/JobCard";
+import { getIndividualDataForJob } from "../../../helper/userApiFunctions";
+import IndividualCard from "../../../components/employer/IndividualCard";
 
 const JobDetail = () => {
   const queryClient = useQueryClient();
@@ -54,10 +55,10 @@ const JobDetail = () => {
   );
   const setAppliedJobs = useAppliedJobStore((state) => state.setAppliedJobs);
 
-  const employerData = useSingleEmployerStore((state) => state.singleEmployer);
-  const setSingleEmployer = useSingleEmployerStore(
-    (state) => state.setSingleEmployer,
-  );
+  // const employerData = useSingleEmployerStore((state) => state.singleEmployer);
+  // const setSingleEmployer = useSingleEmployerStore(
+  //   (state) => state.setSingleEmployer,
+  // );
 
   const savedCheckQuery = useQuery({
     enabled: !!seekerData?.id && !!jobDetails?.id,
@@ -155,11 +156,23 @@ const JobDetail = () => {
     },
   });
 
-  useEffect(() => {
-    if (employerDataQuery.data && employerDataQuery.isSuccess) {
-      setSingleEmployer(employerDataQuery.data.data[0]);
-    }
-  }, [employerDataQuery.data, employerDataQuery.isSuccess, setSingleEmployer]);
+  const employerData = employerDataQuery.data?.data[0];
+
+  const { data: IndividualData } = useQuery({
+    enabled: employerData?.created_at == null,
+    queryKey: ["individualJob", jobDetails?.employer_id],
+    queryFn: () => {
+      return getIndividualDataForJob(jobDetails?.employer_id);
+    },
+  });
+
+  const individualJobData = IndividualData?.data;
+
+  // useEffect(() => {
+  //   if (employerDataQuery.data && employerDataQuery.isSuccess) {
+  //     setSingleEmployer(employerDataQuery.data.data[0]);
+  //   }
+  // }, [employerDataQuery.data, employerDataQuery.isSuccess, setSingleEmployer]);
 
   if (jobDetailQuery.isPending) {
     return (
@@ -538,6 +551,29 @@ const JobDetail = () => {
             </Typography>
           </Box>
 
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 1,
+              mb: 3,
+            }}
+          >
+            <Typography variant="body1" sx={{ fontWeight: 600 }}>
+              Benefits
+            </Typography>
+            <Typography
+              variant="subtitle2"
+              sx={{
+                fontWeight: 400,
+                color: "text.secondary",
+                width: { xs: "100%", md: "100%", lg: "100%" },
+              }}
+            >
+              {jobDetails?.job_detail.benefits}
+            </Typography>
+          </Box>
+
           <Button
             disabled={
               user?.user_type == "employer" ||
@@ -566,7 +602,12 @@ const JobDetail = () => {
 
         {/* employer card */}
         <Box sx={{ mt: { xs: 4, md: 4, lg: 0 } }}>
-          <EmployerCard employerData={employerData} />
+          {employerData && employerData.created_at != null && (
+            <EmployerCard employerData={employerData} />
+          )}
+          {employerData.created_at == null && individualJobData && (
+            <IndividualCard individualData={individualJobData} />
+          )}
         </Box>
       </Box>
 

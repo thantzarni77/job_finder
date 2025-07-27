@@ -123,6 +123,10 @@ export default function EmployerProfile() {
               sx={{ display: "flex", gap: 2, flexDirection: "column", mx: 2 }}
             >
               <Button
+                disabled={
+                  employerData.verification == "pending" ||
+                  employerData.verification == "rejected"
+                }
                 variant="outlined"
                 sx={{
                   width: { xs: "20px", sm: " 150px", md: "150px" },
@@ -173,6 +177,8 @@ export default function EmployerProfile() {
               {employerData.company_address
                 ? employerData.company_address
                 : userData.address}
+
+              {!employerData.company_address && !userData.address && "No Data"}
             </Typography>
           </Box>
         </Box>
@@ -222,6 +228,7 @@ export default function EmployerProfile() {
                 {employerData.company_phone
                   ? employerData.company_phone
                   : userData.phone}
+                {!employerData.company_phone && !userData.phone && "No Data"}
               </Typography>
             </Box>
           </Box>

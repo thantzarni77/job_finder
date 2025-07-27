@@ -310,6 +310,7 @@ export default function Header({ isLoading }: { isLoading: boolean }) {
                   {!isLoading &&
                     user?.user_type == "employer" &&
                     !employerProfile.company_name &&
+                    userData.profile_picture &&
                     employerProfile.user_id == user?.user_id && (
                       <img
                         src={`${import.meta.env.VITE_API_BASE_URL}/${userData.profile_picture}`}

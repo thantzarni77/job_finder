@@ -20,10 +20,9 @@ import VerifiedIcon from "@mui/icons-material/Verified";
 import { NavLink } from "react-router";
 import { format } from "date-fns";
 import type { Job } from "../../../store/JobStore";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getSingleEmployerData } from "../../../helper/employerApiFunctions";
-import { useSingleEmployerStore } from "../../../store/EmployerStore";
 import { useProfileStore } from "../../../store/ProfileStore";
 import {
   doSaveJob,
@@ -31,17 +30,20 @@ import {
   undoSaveJob,
 } from "../../../helper/jobApiFunctions";
 import { useUserStore } from "../../../store/UserStore";
+import { getIndividualDataForJob } from "../../../helper/userApiFunctions";
 
 const JobCard = ({ job }: { job: Job }) => {
-  console.log(job);
-
   const queryClient = useQueryClient();
   const user = useUserStore((state) => state.user);
+
+  // const individualJobData = useIndividualJobStore(
+  //   (state) => state.individualJobData,
+  // );
+  // const setIndividualJobData = useIndividualJobStore(
+  //   (state) => state.setIndividualJobData,
+  // );
   const seekerData = useProfileStore((state) => state.seekerProfile);
-  const employerData = useSingleEmployerStore((state) => state.singleEmployer);
-  const setSingleEmployer = useSingleEmployerStore(
-    (state) => state.setSingleEmployer,
-  );
+  // const employerData = useSingleEmployerStore((state) => state.singleEmployer);
 
   const employerDataQuery = useQuery({
     enabled: job.employer_id != 0,
@@ -51,23 +53,33 @@ const JobCard = ({ job }: { job: Job }) => {
     },
   });
 
-  useEffect(() => {
-    if (employerDataQuery.data && employerDataQuery.isSuccess) {
-      setSingleEmployer(employerDataQuery.data.data[0]);
-    }
-  }, [employerDataQuery.data, employerDataQuery.isSuccess, setSingleEmployer]);
-
-  // const userDataQuery = useQuery({
-  //   enabled: !employerData?.company_name,
-  //   queryKey: ["userSingleData", job.employer_id],
-  //   queryFn: getSingleUserData,
-  // });
+  const employerData = employerDataQuery.data?.data[0];
 
   // useEffect(() => {
-  //   if (userDataQuery.data && userDataQuery.isSuccess) {
-  //     setUserData(userDataQuery.data.data);
+  //   if (employerDataQuery.data && employerDataQuery.isSuccess) {
+  //     setSingleEmployer(employerDataQuery.data.data[0]);
   //   }
-  // }, [userDataQuery.data, userDataQuery.isSuccess, setUserData]);
+  // }, [employerDataQuery.data, employerDataQuery.isSuccess, setSingleEmployer]);
+
+  const { data: IndividualData } = useQuery({
+    enabled: employerData?.created_at == null,
+    queryKey: ["individualJob", job.employer_id],
+    queryFn: () => {
+      return getIndividualDataForJob(job.employer_id);
+    },
+  });
+
+  const individualJobData = IndividualData?.data;
+
+  // useEffect(() => {
+  //   if (individualJobDataQuery.data && individualJobDataQuery.isSuccess) {
+  //     setIndividualJobData(individualJobDataQuery.data.data);
+  //   }
+  // }, [
+  //   individualJobDataQuery.data,
+  //   individualJobDataQuery.isSuccess,
+  //   setIndividualJobData,
+  // ]);
 
   const [open, setOpen] = useState(false);
   const [snackMessage, setSnackMessage] = useState("");
@@ -198,7 +210,17 @@ const JobCard = ({ job }: { job: Job }) => {
                   }}
                 />
               )}
-
+              {individualJobData?.profile_picture && (
+                <img
+                  src={`${import.meta.env.VITE_API_BASE_URL}/${individualJobData?.profile_picture}`}
+                  style={{
+                    backgroundColor: "primary.main",
+                    borderRadius: "12px",
+                    width: "50px",
+                    height: "50px",
+                  }}
+                />
+              )}
               {employerDataQuery.isLoading && (
                 <Skeleton variant="rounded" width={"50px"} height={"50px"} />
               )}

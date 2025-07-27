@@ -25,7 +25,7 @@ import {
   useJobTypeFilter,
 } from "../../../store/JobStore";
 import { Controller, useForm } from "react-hook-form";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { applyJob } from "../../../helper/jobApiFunctions";
 import { useProfileStore } from "../../../store/ProfileStore";
 import { getAllJobPosts } from "../../../helper/postJob";
@@ -50,6 +50,7 @@ const VisuallyHiddenInput = styled("input")({
 });
 
 const ApplyJob = () => {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { id } = useParams();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -100,6 +101,9 @@ const ApplyJob = () => {
     mutationFn: applyJob,
     onSuccess: (data) => {
       if (data.status == "success") {
+        queryClient.invalidateQueries({
+          queryKey: ["seekerAppliedJobs", seekerData.id],
+        });
         navigate(`/job/${id}/apply/confirm`);
       }
     },

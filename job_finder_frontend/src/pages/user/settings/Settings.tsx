@@ -21,7 +21,7 @@ const Settings = () => {
       </Typography>
       <Box sx={{ my: 4 }}>
         <Security />
-        <Bookmark />
+        {user?.user_type == "seeker" && <Bookmark />}
         {user?.user_type == "seeker" && <AppliedJobs />}
       </Box>
     </Container>
