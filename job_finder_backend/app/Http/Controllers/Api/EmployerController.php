@@ -121,14 +121,14 @@ class EmployerController extends Controller
 
     public function update(Request $request,string $id){
 
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(),[            
             "company_name" => "required",
             "company_address" => "required",
             "company_phone" => "required",
-            "company_email" => "required|email",
+            "company_email" => "required",
             "company_type" => "required",
             "verification" => "required",
-            "company_image" => "required",
+            "company_image" => "nullable",
             "company_description" => "required",
         ]);
 
@@ -167,8 +167,7 @@ class EmployerController extends Controller
         }
 
         $employer->save();
-
-        return $this->successResponseEmployer("Update success",null,null,$employer);
+        return $this->successResponseNewEmployer("Update success",$employer);
     }
 
     public function destroy(string $id){

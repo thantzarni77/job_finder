@@ -54,6 +54,14 @@ trait HttpResponseTrait
         ],$statuscode);
     }
 
+    public function successResponseNewEmployer($message,$data,$statuscode = 200){
+        return response()->json([
+            "message"=> $message,
+            "data"=> new EmployerResource($data),
+        ],$statuscode);
+    }
+    
+
     public function erorsResponse($message,$data,$statuscode = 500){
         return response()->json([
             "message"=> $message,
