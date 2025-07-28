@@ -17,7 +17,8 @@ class SaveJobController extends Controller
     //create save job
     public function store(Request $request)
     {
-        return $this->saveJobRepositoryInterface->store($request);
+        $data = $request->all();
+        return $this->saveJobRepositoryInterface->store($data);
     }
     //view save job
     public function view()

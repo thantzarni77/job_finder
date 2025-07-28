@@ -1,13 +1,15 @@
 <?php
 namespace Database\Seeders;
 
+use App\Models\Gender;
 use App\Models\Category;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Database\Seeders\RoleSeeder;
-use Database\Seeders\TalentSeeder;
-use Database\Seeders\TypeSeeder;
-use Database\Seeders\AdminAuthSeeder;
 use Illuminate\Database\Seeder;
+use Database\Seeders\RoleSeeder;
+use Database\Seeders\TypeSeeder;
+use Database\Seeders\GenderSeeder;
+use Database\Seeders\TalentSeeder;
+use Database\Seeders\AdminAuthSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -20,7 +22,8 @@ class DatabaseSeeder extends Seeder
             AdminAuthSeeder::class,
             TypeSeeder::class,
             TalentSeeder::class,
-            RoleSeeder::class
+            RoleSeeder::class,
+            GenderSeeder::class
         ]);
         Category::factory(10)->create();
     }

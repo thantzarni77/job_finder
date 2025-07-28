@@ -19,9 +19,9 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TalentController;
 use App\Http\Controllers\UserController;
+use App\Models\PostJob;
 
-
-    Route::post('/superadmin/login',[AdminAuthController::class,'login']);
+Route::post('/superadmin/login',[AdminAuthController::class,'login']);
 
 Route::middleware("AdminAuthMiddleware:superadmin")->group(function () {
     Route::post('/superadmin/logout',[AdminAuthController::class,'logout']);
@@ -39,7 +39,7 @@ Route::middleware("AdminAuthMiddleware:admin")->group(function () {
     Route::post('/admin/logout',[AdminAuthController::class,'logout']);
 
     Route::post('/admin/employerVerification/{id}', [EmployerVerficationController::class, 'updateStatus']);
-
+    Route::post('/admin/post-verification/{id}', [PostJobController::class, 'postVerification']);
     //job post
     Route::prefix('post-jobs')->group(function () {
         Route::get('/', [PostJobController::class, 'index'])->withoutMiddleware('AuthMiddleware');
@@ -130,7 +130,7 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
     //apply job module
     Route::prefix('apply-job')->group(function () {
         Route::post('/', [ApplyJobController::class, 'applyJob']);
-        Route::get('/', [ApplyJobController::class, 'applyJobData']);
+        Route::get('/{id}', [ApplyJobController::class, 'applyJobData']);
         //making shortlist
         Route::patch('/shortlist/{id}', [ApplyJobController::class, 'addShortlist']);
         //employer view his uploaded jobs
@@ -141,6 +141,8 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
         Route::get('/shortlist/employer/{id}', [ApplyJobController::class, 'employerShortlistJobs']);
         //mail send to seeker
         Route::post('/mail', [ApplyJobController::class, 'sendMail']);
+        //remove post
+        Route::delete('/{id}', [ApplyJobController::class, 'destroy']);
     });
 
     //job save module

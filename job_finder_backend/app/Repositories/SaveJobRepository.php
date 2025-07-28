@@ -2,6 +2,7 @@
 namespace App\Repositories;
 
 use App\Interfaces\SaveJobRepositoryInterface;
+use App\Models\JobDetail;
 use App\Models\Save_job;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -9,13 +10,18 @@ class SaveJobRepository implements SaveJobRepositoryInterface
 {
 
     //create save job
-    public function store($request)
+    public function store(array $data)
     {
-        $data = $request = [
-            'seeker_id'   => $request->seeker_id,
-            'post_job_id' => $request->post_job_id,
+        $saveData = [
+            'seeker_id'   => $data['seeker_id'],
+            'post_job_id' => $data['post_job_id'],
         ];
-        Save_job::create($data);
+        if(Save_job::where('seeker_id', $data['seeker_id'])->where('post_job_id', $data['post_job_id'])->exists()){
+            return response()->json(['status' => 'error', 'message' => 'You have already saved this job.'], 400);
+        }
+        JobDetail::where('post_job_id', $data['post_job_id'])->increment('save_count');
+        Save_job::create($saveData);
+
         return response()->json(['status' => 'success', 'message' => 'Save job successfully'], 201);
     }
 
@@ -29,7 +35,10 @@ class SaveJobRepository implements SaveJobRepositoryInterface
     //remove save job
     public function destroy($id)
     {
-        Save_job::findOrFail($id)->delete();
+        $save = Save_job::find($id);
+        // reduce save count
+        JobDetail::where('post_job_id', $save['post_job_id'])->decrement('save_count');
+        $save->delete();
         return response()->json(['status' => 'success', 'message' => 'Save job deleted successfully'], 200);
     }
 
