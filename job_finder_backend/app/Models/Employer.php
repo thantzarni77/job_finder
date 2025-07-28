@@ -26,4 +26,6 @@ class Employer extends Model
             'rejected'  => 'rejected'
         ];
     }
+
+    
 }

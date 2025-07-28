@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Contact;
+use App\Models\Employer;
 use App\Models\IndividualEmployer;
 use App\Models\User;
 use App\Traits\HttpResponseTrait;
@@ -83,7 +84,11 @@ class IndividualEmployerController extends Controller
             $user = User::UpdateOrCreate(['id' => $user_id], [
                 "password" => Hash::make($request->password)
             ]);
-    
+
+            Employer::Create([
+                "user_id" => $user_id
+            ]);
+
             $token = JWTAuth::fromUser($user);
             $individualemployer->save();
     
