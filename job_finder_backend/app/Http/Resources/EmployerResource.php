@@ -26,7 +26,7 @@ class EmployerResource extends JsonResource
             "company_type" => $this->company_type ,
             "verification" => $this->verification ,
             "user_id" => User::where('id', $this->user_id)->select('id','name','phone','address')->first(),
-            "individual" => Contact::select("id","user_id","title","message")->first()
+            // "individual" => Contact::select("id","user_id","title","message")->first()
         ];
     }
 }
