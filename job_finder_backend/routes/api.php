@@ -43,7 +43,6 @@ Route::middleware("AdminAuthMiddleware:admin")->group(function () {
         Route::delete('/{id}', [PostJobController::class, 'destroy']);
     });
 
-    
 });
 
 Route::post('/registerstepone', [AuthController::class, 'registerStepOne']);
@@ -97,7 +96,7 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
         //need to show seeker list on non-login user and employers
         Route::get('/seeker', [SeekerController::class, 'index'])->withoutMiddleware(['UserTypeMiddleware:seeker', "AuthMiddleware"]);
 
-        Route::get('/seeker/{id}', [SeekerController::class, 'getdata']);
+        Route::get('/seeker/{id}', [SeekerController::class, 'getdata'])->withoutMiddleware('UserTypeMiddleware:seeker');
 
         //need to show seeker data on non-login user and employers
         Route::get('/seeker-data/{id}', [SeekerController::class, 'getSeekerData'])->withoutMiddleware(['UserTypeMiddleware:seeker', "AuthMiddleware"]);
@@ -152,21 +151,25 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
 
     });
 
-    //apply job module
     Route::prefix('apply-job')->group(function () {
-        Route::post('/', [ApplyJobController::class, 'applyJob']);
-        Route::get('/{id}', [ApplyJobController::class, 'applyJobData']);
-        //making shortlist
-        Route::patch('/shortlist/{id}', [ApplyJobController::class, 'addShortlist']);
-        //employer view his uploaded jobs
-        Route::get('/employer', [ApplyJobController::class, 'employerPostedJobs']);
-        //seeker view his applied jobs
+
+        // seeker view his applied jobs
         Route::get('/seeker', [ApplyJobController::class, 'seekerAppliedJobs']);
-        //employer view shorlist his posted jobs
+        // employer view his uploaded jobs
+        Route::get('/employer', [ApplyJobController::class, 'employerPostedJobs']);
+        // employer view shorlist his posted jobs
         Route::get('/shortlist/employer/{id}', [ApplyJobController::class, 'employerShortlistJobs']);
-        //mail send to seeker
+
+        // mail send to seeker
         Route::post('/mail', [ApplyJobController::class, 'sendMail']);
-        //remove post
+        // apply job
+        Route::post('/', [ApplyJobController::class, 'applyJob']);
+
+        //get applied seekers on jobs
+        Route::get('/{id}', [ApplyJobController::class, 'applyJobData']);
+        // making shortlist
+        Route::patch('/shortlist/{id}', [ApplyJobController::class, 'addShortlist']);
+        // remove post
         Route::delete('/{id}', [ApplyJobController::class, 'destroy']);
     });
 

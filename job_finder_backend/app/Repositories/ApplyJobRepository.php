@@ -1,15 +1,15 @@
 <?php
 namespace App\Repositories;
 
-use App\Models\Seeker;
-use App\Models\Employer;
-use App\Models\Apply_job;
-use App\Models\JobDetail;
+use App\Interfaces\ApplyJobRepositoryInterface;
 use App\Mail\ShortlistContactMail;
-use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Models\Apply_job;
+use App\Models\Employer;
+use App\Models\JobDetail;
+use App\Models\Seeker;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
-use App\Interfaces\ApplyJobRepositoryInterface;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ApplyJobRepository implements ApplyJobRepositoryInterface
 {
@@ -17,9 +17,10 @@ class ApplyJobRepository implements ApplyJobRepositoryInterface
      * Create a new class instance.
      */
     //applyJobData
-    public function applyJobData(int $id){
-        $employerId = Employer::where('employer_id', JWTAuth::user()->id)->value('id');
-        $data = Apply_job::where('employer_id', $employerId)->where('post_job_id',$id)->get();
+    public function applyJobData(int $id)
+    {
+        $employerId = Employer::where('user_id', JWTAuth::user()->id)->value('id');
+        $data       = Apply_job::where('employer_id', $employerId)->where('post_job_id', $id)->get();
         return response()->json(['status' => 'success', 'message' => 'You have successfully fetch your job postings.', 'data' => $data], 200);
     }
 
@@ -99,7 +100,8 @@ class ApplyJobRepository implements ApplyJobRepositoryInterface
     }
 
     //remove post
-    public function destroy($id){
+    public function destroy($id)
+    {
         $data = Apply_job::find($id);
         JobDetail::where('post_job_id', $data['post_job_id'])->decrement('apply_count');
         $data->delete();

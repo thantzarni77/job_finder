@@ -24,7 +24,7 @@ class PostJobRepository implements PostJobRepositoryInterface
 
         if ($request->filled('job_code')) {
             $job = $this->postJob
-                ->with(['jobDetail', 'category'])
+                ->with(['jobDetail', 'employer', 'category'])
                 ->where('job_code', 'like', '%' . $request->job_code . '%')
                 ->first();
 
@@ -37,7 +37,7 @@ class PostJobRepository implements PostJobRepositoryInterface
         $filter = new Filters($jobFilterRequest->validated());
 
         $jobs = $this->postJob
-            ->with(['jobDetail', 'category'])
+            ->with(['jobDetail', 'employer', 'category'])
             ->filter($filter)
             ->get();
 
@@ -82,7 +82,7 @@ class PostJobRepository implements PostJobRepositoryInterface
 
     public function findOrFail($id)
     {
-        $data = $this->postJob->with('jobDetail')->findOrFail($id);
+        $data = $this->postJob->with(['jobDetail', 'employer'])->findOrFail($id);
         return response()->json(['status' => 'success', 'message' => 'Job fetched successfully', 'data' => $data], 200);
     }
 
@@ -117,8 +117,9 @@ class PostJobRepository implements PostJobRepositoryInterface
         return response()->json(['status' => 'success', 'message' => 'Job deleted successfully'], 200);
     }
 
-    public function postVerification(array $data ,$id){
-        $postJob = $this->postJob->with('jobDetail')->findOrFail($id)->update(['posting_status' => $data['status'],]);
+    public function postVerification(array $data, $id)
+    {
+        $postJob = $this->postJob->with('jobDetail')->findOrFail($id)->update(['posting_status' => $data['status']]);
         return response()->json(['status' => 'success', 'message' => 'Job status updated successfully', 'data' => $postJob], 200);
     }
 

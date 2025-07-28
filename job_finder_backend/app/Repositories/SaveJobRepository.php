@@ -4,6 +4,7 @@ namespace App\Repositories;
 use App\Interfaces\SaveJobRepositoryInterface;
 use App\Models\JobDetail;
 use App\Models\Save_job;
+use App\Models\Seeker;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class SaveJobRepository implements SaveJobRepositoryInterface
@@ -16,7 +17,7 @@ class SaveJobRepository implements SaveJobRepositoryInterface
             'seeker_id'   => $data['seeker_id'],
             'post_job_id' => $data['post_job_id'],
         ];
-        if(Save_job::where('seeker_id', $data['seeker_id'])->where('post_job_id', $data['post_job_id'])->exists()){
+        if (Save_job::where('seeker_id', $data['seeker_id'])->where('post_job_id', $data['post_job_id'])->exists()) {
             return response()->json(['status' => 'error', 'message' => 'You have already saved this job.'], 400);
         }
         JobDetail::where('post_job_id', $data['post_job_id'])->increment('save_count');
@@ -28,7 +29,8 @@ class SaveJobRepository implements SaveJobRepositoryInterface
     //view save job
     public function view()
     {
-        $data = Save_job::where('seeker_id', JWTAuth::user()->id)->get();
+        $seeker_id = Seeker::where("user_id", JWTAuth::user()->id)->value('id');
+        $data      = Save_job::where('seeker_id', $seeker_id)->get();
         return response()->json(['status' => 'success', 'message' => 'Seeker Save job fetched successfully', 'data' => $data], 200);
     }
 
