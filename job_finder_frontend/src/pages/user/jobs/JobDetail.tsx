@@ -38,6 +38,7 @@ import { useProfileStore } from "../../../store/ProfileStore";
 import JobCard from "../../../components/user/jobs/JobCard";
 import { getIndividualDataForJob } from "../../../helper/userApiFunctions";
 import IndividualCard from "../../../components/employer/IndividualCard";
+import type { SingleEmployer } from "../../../store/EmployerStore";
 
 const JobDetail = () => {
   const queryClient = useQueryClient();
@@ -156,10 +157,10 @@ const JobDetail = () => {
     },
   });
 
-  const employerData = employerDataQuery.data?.data[0];
+  const employerData: SingleEmployer = employerDataQuery.data?.data[0];
 
   const { data: IndividualData, isPending: individualPending } = useQuery({
-    enabled: employerData?.created_at == null,
+    enabled: !employerData?.company_name,
     queryKey: ["individualJob", jobDetails?.employer_id],
     queryFn: () => {
       return getIndividualDataForJob(jobDetails?.employer_id);
@@ -606,10 +607,10 @@ const JobDetail = () => {
 
         {/* employer card */}
         <Box sx={{ mt: { xs: 4, md: 4, lg: 0 } }}>
-          {employerData && employerData.created_at != null && (
+          {employerData && employerData.company_name && (
             <EmployerCard employerData={employerData} />
           )}
-          {employerData?.created_at == null && individualJobData && (
+          {employerData && !employerData?.company_name && individualJobData && (
             <IndividualCard individualData={individualJobData} />
           )}
         </Box>

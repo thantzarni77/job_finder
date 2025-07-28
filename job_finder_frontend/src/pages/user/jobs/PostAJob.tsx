@@ -17,13 +17,12 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
 
 import { useUserStore } from "../../../store/UserStore";
-import { postAJob } from "../../../helper/postJob";
+import { getJobTypes, postAJob } from "../../../helper/postJob";
 import { useEffect, useState } from "react";
 import type { Job } from "../../../store/JobStore";
 import {
   getAllCategories,
   getAllRoles,
-  getAllTypes,
 } from "../../../helper/talentTypeAndRoleApiFunctions";
 import { DatePicker } from "@mui/x-date-pickers";
 import { format } from "date-fns";
@@ -63,7 +62,7 @@ export default function PostAJob() {
 
   const typeQuery = useQuery({
     queryKey: ["jobTypes"],
-    queryFn: getAllTypes,
+    queryFn: getJobTypes,
   });
 
   const roleQuery = useQuery({
@@ -743,6 +742,7 @@ export default function PostAJob() {
             type="submit"
             variant="contained"
             fullWidth
+            loading={postAJobMutation.isPending}
             sx={{
               my: 3,
               borderRadius: 2,
