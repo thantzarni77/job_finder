@@ -82,4 +82,36 @@ class NewPasswordController extends Controller
             ]);
         }
     }
+
+    public function changePassword(Request $request,string $id){
+        try{
+            $validator = Validator::make($request->all(), [
+                'old_password' => 'required',
+                'password' => 'required' 
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
+
+            $user = User::findOrFail($id);
+            if (!$user) {
+                return response()->json(['message' => 'User not found.'], 404);
+            }
+
+            if (!Hash::check($request->old_password, $user->password)) {
+                return response()->json(['message' => 'Old password does not match.'], 403);
+            }
+
+            $user->password = Hash::make($request->password);
+            $user->save();
+
+            return response()->json(['message' => 'Password updated successfully.']);
+
+        }catch(\Exception $e){
+            return response()->json([
+                "message" => $e->getMessage()
+            ]);
+        }
+    }
 }
