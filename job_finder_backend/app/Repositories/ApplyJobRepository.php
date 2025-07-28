@@ -3,13 +3,14 @@
 namespace App\Repositories;
 
 use App\Models\Seeker;
+use App\Models\Employer;
 use App\Models\Apply_job;
+use App\Models\JobDetail;
 use App\Mail\ShortlistContactMail;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use App\Interfaces\ApplyJobRepositoryInterface;
-use App\Models\JobDetail;
 
 class ApplyJobRepository implements ApplyJobRepositoryInterface
 {
@@ -18,7 +19,8 @@ class ApplyJobRepository implements ApplyJobRepositoryInterface
      */
     //applyJobData
     public function applyJobData(int $id){
-        $data = Apply_job::where('employer_id', JWTAuth::user()->id)->where('post_job_id',$id)->get();
+        $employerId = Employer::where('employer_id', JWTAuth::user()->id)->value('id');
+        $data = Apply_job::where('employer_id', $employerId)->where('post_job_id',$id)->get();
         return response()->json(['status' => 'success', 'message' => 'You have successfully fetch your job postings.', 'data' => $data], 200);
     }
 
