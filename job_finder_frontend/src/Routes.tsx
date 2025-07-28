@@ -36,6 +36,7 @@ import SetUserDataMiddleware from "./protected_routes/SetUserDataMiddleware";
 import Bookmarks from "./components/user/settings/Bookmarks";
 import AppliedJobsList from "./components/user/settings/AppliedJobsList";
 import EditEmployerProfile from "./pages/employer/EditEmployerProfile";
+import ViewApplicantList from "./pages/employer/ViewApplicantList";
 
 export const router = createBrowserRouter([
   {
@@ -65,6 +66,14 @@ export const router = createBrowserRouter([
           <SetUserDataMiddleware>
             <JobDetail />
           </SetUserDataMiddleware>
+        ),
+      },
+      {
+        path: "/job/:id/applicant-list",
+        element: (
+          <IsLoginnedMiddleware>
+            <ViewApplicantList />
+          </IsLoginnedMiddleware>
         ),
       },
       {

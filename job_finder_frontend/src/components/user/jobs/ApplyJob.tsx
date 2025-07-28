@@ -104,6 +104,9 @@ const ApplyJob = () => {
         queryClient.invalidateQueries({
           queryKey: ["seekerAppliedJobs", seekerData.id],
         });
+        queryClient.invalidateQueries({
+          queryKey: ["jobDetail", id],
+        });
         navigate(`/job/${id}/apply/confirm`);
       }
     },

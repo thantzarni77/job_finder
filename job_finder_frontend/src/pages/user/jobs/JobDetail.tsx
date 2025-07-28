@@ -8,6 +8,7 @@ import {
   Typography,
   type SnackbarCloseReason,
 } from "@mui/material";
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
 import CloseIcon from "@mui/icons-material/Close";
@@ -39,6 +40,7 @@ import JobCard from "../../../components/user/jobs/JobCard";
 import { getIndividualDataForJob } from "../../../helper/userApiFunctions";
 import IndividualCard from "../../../components/employer/IndividualCard";
 import type { SingleEmployer } from "../../../store/EmployerStore";
+import JobCloseCard from "../../../components/user/jobs/JobCloseCard";
 
 const JobDetail = () => {
   const queryClient = useQueryClient();
@@ -255,129 +257,131 @@ const JobDetail = () => {
       </Box>
 
       {/* Job badge */}
-      <Box
-        sx={{
-          width: { xs: "100%", md: "80%" },
-          display: { xs: "none", md: "none", lg: "flex" },
-          alignItems: "center",
-          gap: 2,
-          my: 2,
-        }}
-      >
-        {/* verify icon */}
+      {employerData && employerData.user_id != user?.user_id && (
         <Box
           sx={{
-            display: "flex",
-            width: "fit-content",
+            width: { xs: "100%", md: "80%" },
+            display: { xs: "none", md: "none", lg: "flex" },
             alignItems: "center",
-            bgcolor: "primary.main",
-            border: 1,
-            color: "background.paper",
-            borderRadius: "4px",
-            height: "28px",
-            px: "5px",
-            py: "5px",
+            gap: 2,
+            my: 2,
           }}
         >
-          <VerifiedIcon sx={{ color: "success.main" }} />
-          <Typography variant="caption">
-            {jobDetails?.posting_status == "approved" && "Verified"}
-          </Typography>
-        </Box>
-
-        {/* bookmark icon */}
-        {user?.user_id && user.user_type == "seeker" && (
+          {/* verify icon */}
           <Box
             sx={{
               display: "flex",
-              alignItems: "center",
               width: "fit-content",
-              bgcolor: isJobSaved ? "primary.main" : "background.paper",
+              alignItems: "center",
+              bgcolor: "primary.main",
               border: 1,
-              color: isJobSaved ? "background.paper" : "text.primary",
-              borderColor: "primary.main",
+              color: "background.paper",
               borderRadius: "4px",
               height: "28px",
               px: "5px",
               py: "5px",
             }}
           >
-            <Checkbox
-              disableRipple
-              onClick={() => {
-                if (isJobSaved) {
-                  undoSaveJobHandler();
-                } else {
-                  saveJobHandler();
-                }
-              }}
-              disabled={
-                saveJobMutation.isPending || undoSaveJobMutation.isPending
-              }
-              checked={isJobSaved}
-              sx={{
-                "& .MuiSvgIcon-root": { fontSize: 22, ml: -1 },
-                color: "primary.main",
-                "&.Mui-checked": {
-                  color: "primary.main",
-                },
-              }}
-              icon={<BookmarkBorderOutlinedIcon />}
-              checkedIcon={
-                <BookmarkIcon
-                  sx={{
-                    color: isJobSaved ? "background.paper" : "text.primary",
-                  }}
-                />
-              }
-              name={"bookMark"}
-            />
+            <VerifiedIcon sx={{ color: "success.main" }} />
             <Typography variant="caption">
-              {isJobSaved ? "Saved" : "Save this"}
+              {jobDetails?.posting_status == "approved" && "Verified"}
             </Typography>
           </Box>
-        )}
 
-        {/* appilicant icon */}
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            bgcolor: "primary.main",
-            color: "background.paper",
-            borderRadius: "4px",
-            height: "28px",
-            px: "5px",
-            py: "5px",
-            gap: "5px",
-          }}
-        >
-          <GroupsOutlinedIcon />
-          <Typography variant="caption">
-            {jobDetails?.job_detail.apply_count} applicants
-          </Typography>
-        </Box>
+          {/* bookmark icon */}
+          {user?.user_id && user.user_type == "seeker" && (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                width: "fit-content",
+                bgcolor: isJobSaved ? "primary.main" : "background.paper",
+                border: 1,
+                color: isJobSaved ? "background.paper" : "text.primary",
+                borderColor: "primary.main",
+                borderRadius: "4px",
+                height: "28px",
+                px: "5px",
+                py: "5px",
+              }}
+            >
+              <Checkbox
+                disableRipple
+                onClick={() => {
+                  if (isJobSaved) {
+                    undoSaveJobHandler();
+                  } else {
+                    saveJobHandler();
+                  }
+                }}
+                disabled={
+                  saveJobMutation.isPending || undoSaveJobMutation.isPending
+                }
+                checked={isJobSaved}
+                sx={{
+                  "& .MuiSvgIcon-root": { fontSize: 22, ml: -1 },
+                  color: "primary.main",
+                  "&.Mui-checked": {
+                    color: "primary.main",
+                  },
+                }}
+                icon={<BookmarkBorderOutlinedIcon />}
+                checkedIcon={
+                  <BookmarkIcon
+                    sx={{
+                      color: isJobSaved ? "background.paper" : "text.primary",
+                    }}
+                  />
+                }
+                name={"bookMark"}
+              />
+              <Typography variant="caption">
+                {isJobSaved ? "Saved" : "Save this"}
+              </Typography>
+            </Box>
+          )}
 
-        {/* deadline icon */}
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            bgcolor: "primary.main",
-            color: "background.paper",
-            borderRadius: "4px",
-            height: "28px",
-            px: "5px",
-            py: "5px",
-            gap: "5px",
-          }}
-        >
-          <QueryBuilderIcon sx={{ fontSize: "20px" }} />
-          <Typography variant="caption">
-            Deadline {jobDetails?.job_detail.deadline}
-          </Typography>
+          {/* appilicant icon */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              bgcolor: "primary.main",
+              color: "background.paper",
+              borderRadius: "4px",
+              height: "28px",
+              px: "5px",
+              py: "5px",
+              gap: "5px",
+            }}
+          >
+            <GroupsOutlinedIcon />
+            <Typography variant="caption">
+              {jobDetails?.job_detail.apply_count} applicants
+            </Typography>
+          </Box>
+
+          {/* deadline icon */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              bgcolor: "primary.main",
+              color: "background.paper",
+              borderRadius: "4px",
+              height: "28px",
+              px: "5px",
+              py: "5px",
+              gap: "5px",
+            }}
+          >
+            <QueryBuilderIcon sx={{ fontSize: "20px" }} />
+            <Typography variant="caption">
+              Deadline {jobDetails?.job_detail.deadline}
+            </Typography>
+          </Box>
         </Box>
-      </Box>
+      )}
 
       {/* Job Contents and Employer Card */}
       <Box
@@ -412,6 +416,26 @@ const JobDetail = () => {
               sx={{ fontWeight: 400, color: "text.secondary" }}
             >
               {jobDetails?.job_title}
+            </Typography>
+          </Box>
+
+          {/* jobs code */}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 1,
+              mt: 3,
+            }}
+          >
+            <Typography variant="body1" sx={{ fontWeight: 600 }}>
+              Job Code
+            </Typography>
+            <Typography
+              variant="subtitle2"
+              sx={{ fontWeight: 400, color: "text.secondary" }}
+            >
+              {jobDetails?.job_code}
             </Typography>
           </Box>
 
@@ -604,12 +628,47 @@ const JobDetail = () => {
             {!user?.user_id && "Create an account or login to apply"}
           </Button>
         </Box>
-
         {/* employer card */}
         <Box sx={{ mt: { xs: 4, md: 4, lg: 0 } }}>
-          {employerData && employerData.company_name && (
-            <EmployerCard employerData={employerData} />
+          {employerData && employerData.user_id == user?.user_id && (
+            <>
+              <JobCloseCard
+                applicantCount={jobDetails?.job_detail.apply_count}
+                deadline={jobDetails?.job_detail.deadline}
+              />
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  width: "100%",
+                  gap: 2,
+                  my: 2,
+                }}
+              >
+                <Button
+                  endIcon={<AccountBoxIcon />}
+                  onClick={() => navigate("applicant-list")}
+                  variant="contained"
+                  sx={{
+                    textTransform: "none",
+                    boxShadow: "none",
+                    ":hover": {
+                      boxShadow: "none",
+                    },
+                    borderRadius: 2,
+                  }}
+                >
+                  View Applicant List
+                </Button>
+              </Box>
+            </>
           )}
+          {employerData &&
+            employerData.user_id != user?.user_id &&
+            employerData.company_name && (
+              <EmployerCard employerData={employerData} />
+            )}
           {employerData && !employerData?.company_name && individualJobData && (
             <IndividualCard individualData={individualJobData} />
           )}
@@ -617,39 +676,41 @@ const JobDetail = () => {
       </Box>
 
       {/* similar jobs */}
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          width: "100%",
-          gap: 2,
-          my: 5,
-        }}
-      >
-        <Typography variant="h5" sx={{ fontWeight: 600, mt: 1, mb: 3 }}>
-          Similar Jobs
-        </Typography>
+      {employerData && employerData.user_id != user?.user_id && (
         <Box
           sx={{
             display: "flex",
-            flexDirection: { xs: "column", md: "column", lg: "row" },
-            flexWrap: "wrap",
-            justifyContent: "center",
+            flexDirection: "column",
             alignItems: "center",
             width: "100%",
-            gap: 6,
+            gap: 2,
+            my: 5,
           }}
         >
-          {allJobs.map((single) => {
-            if (single.category_id == jobDetails?.category_id) {
-              if (single.id != Number(id)) {
-                return <JobCard key={single.id} job={single} />;
+          <Typography variant="h5" sx={{ fontWeight: 600, mt: 1, mb: 3 }}>
+            Similar Jobs
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", md: "column", lg: "row" },
+              flexWrap: "wrap",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+              gap: 6,
+            }}
+          >
+            {allJobs.map((single) => {
+              if (single.category_id == jobDetails?.category_id) {
+                if (single.id != Number(id)) {
+                  return <JobCard key={single.id} job={single} />;
+                }
               }
-            }
-          })}
+            })}
+          </Box>
         </Box>
-      </Box>
+      )}
     </Box>
   );
 };

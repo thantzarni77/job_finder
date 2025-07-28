@@ -103,6 +103,7 @@ export default function Header({
         "/": homeRef,
         "/jobs": jobsRef,
         "/job/:id": jobsRef,
+        "/job/:id/applicant-list": jobsRef,
         "/job/:id/apply": jobsRef,
         "/job/:id/apply/confirm": jobsRef,
         "/talents": talentRef,
@@ -214,17 +215,16 @@ export default function Header({
                 </Button>
               </NavLink>
 
-              {userRole == "seeker" && (
-                <NavLink to="/companies">
-                  <Button
-                    sx={{ fontWeight: "700", textTransform: "none" }}
-                    ref={companiesRef}
-                    color="inherit"
-                  >
-                    Companies
-                  </Button>
-                </NavLink>
-              )}
+              <NavLink to="/companies">
+                <Button
+                  sx={{ fontWeight: "700", textTransform: "none" }}
+                  ref={companiesRef}
+                  color="inherit"
+                >
+                  Companies
+                </Button>
+              </NavLink>
+
               {userRole === "employer" && (
                 <Button
                   onClick={() => navigate("/post/job")}
