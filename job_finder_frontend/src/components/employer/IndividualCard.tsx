@@ -1,12 +1,12 @@
 import { Box, Paper, Typography } from "@mui/material";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import { NavLink } from "react-router";
-import { type SingleEmployer } from "../../store/EmployerStore";
+import type { IndividualJob } from "../../store/UserDataStore";
 
-const EmployerCard = ({
-  employerData,
+const IndividualCard = ({
+  individualData,
 }: {
-  employerData: SingleEmployer | null;
+  individualData: IndividualJob | null;
 }) => {
   return (
     <Box
@@ -38,8 +38,8 @@ const EmployerCard = ({
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <img
-                src={`${import.meta.env.VITE_API_BASE_URL}/${employerData?.company_image}`}
-                alt={employerData?.company_name}
+                src={`${import.meta.env.VITE_API_BASE_URL}/${individualData?.profile_picture}`}
+                alt={individualData?.name}
                 style={{
                   backgroundColor: "primary.main",
                   borderRadius: "12px",
@@ -62,10 +62,7 @@ const EmployerCard = ({
                     ":hover": { cursor: "pointer", color: "primary.main" },
                   }}
                 >
-                  <NavLink to={"#"}>{employerData?.company_name}</NavLink>
-                </Typography>
-                <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                  {employerData?.company_type}
+                  <NavLink to={"#"}>{individualData?.name}</NavLink>
                 </Typography>
               </Box>
             </Box>
@@ -88,7 +85,7 @@ const EmployerCard = ({
                 variant="caption"
                 sx={{ color: "primary.light", width: "250px" }}
               >
-                {employerData?.company_address}
+                {individualData?.address}
               </Typography>
             </Box>
             {/* <Box
@@ -121,12 +118,12 @@ const EmployerCard = ({
           </Box>
         </Box>
 
-        <Typography
+        {/* <Typography
           variant="caption"
           sx={{ color: "primary.light", textAlign: "left" }}
         >
           {employerData?.company_description}
-        </Typography>
+        </Typography> */}
         {/* <Button
           variant="contained"
           sx={{
@@ -146,4 +143,4 @@ const EmployerCard = ({
   );
 };
 
-export default EmployerCard;
+export default IndividualCard;

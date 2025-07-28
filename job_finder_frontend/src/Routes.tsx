@@ -16,9 +16,6 @@ import Settings from "./pages/user/settings/Settings";
 import SecuritySetting from "./pages/user/security/SecuritySetting";
 import ChangeEmail from "./pages/user/settings/ChangeEmail";
 import ChangePassword from "./pages/user/settings/ChangePassword";
-import BookmarkMainLayout from "./layouts/user/BookmarkMainLayout";
-import BookmarkSavedJob from "./components/user/settings/BookmarkSavedJob";
-import BookmarkFollowing from "./components/user/settings/BookmarkFollowing";
 import EditProfile from "./pages/user/EditProfile";
 import AddNewProject from "./pages/user/AddNewProject";
 import PostAJob from "./pages/user/jobs/PostAJob";
@@ -36,6 +33,9 @@ import TalentProfile from "./pages/user/TalentProfile";
 import EmployerProfile from "./pages/employer/EmployerProfile";
 import IsLoginnedMiddleware from "./protected_routes/IsLoginnedMiddleware";
 import SetUserDataMiddleware from "./protected_routes/SetUserDataMiddleware";
+import Bookmarks from "./components/user/settings/Bookmarks";
+import AppliedJobsList from "./components/user/settings/AppliedJobsList";
+import EditEmployerProfile from "./pages/employer/EditEmployerProfile";
 
 export const router = createBrowserRouter([
   {
@@ -46,9 +46,9 @@ export const router = createBrowserRouter([
         path: "/",
         index: true,
         element: (
-          <IsLoginnedMiddleware>
+          <SetUserDataMiddleware>
             <Home />
-          </IsLoginnedMiddleware>
+          </SetUserDataMiddleware>
         ),
       },
       {
@@ -69,23 +69,43 @@ export const router = createBrowserRouter([
       },
       {
         path: "/job/:id/apply",
-        Component: ApplyJob,
+        element: (
+          <IsLoginnedMiddleware>
+            <ApplyJob />
+          </IsLoginnedMiddleware>
+        ),
       },
       {
         path: "/post/job",
-        element: <PostAJob />,
+        element: (
+          <IsLoginnedMiddleware>
+            <PostAJob />
+          </IsLoginnedMiddleware>
+        ),
       },
       {
         path: "/job/:id/apply/confirm",
-        Component: JobApplyConfirm,
+        element: (
+          <IsLoginnedMiddleware>
+            <JobApplyConfirm />
+          </IsLoginnedMiddleware>
+        ),
       },
       {
         path: "/talents",
-        Component: Talent,
+        element: (
+          <SetUserDataMiddleware>
+            <Talent />
+          </SetUserDataMiddleware>
+        ),
       },
       {
         path: "/talent/:id/profile",
-        Component: TalentProfile,
+        element: (
+          <SetUserDataMiddleware>
+            <TalentProfile />
+          </SetUserDataMiddleware>
+        ),
       },
       {
         path: "/companies",
@@ -97,19 +117,43 @@ export const router = createBrowserRouter([
       },
       {
         path: "/profile/:id",
-        element: <Profile />,
+        element: (
+          <IsLoginnedMiddleware>
+            <Profile />
+          </IsLoginnedMiddleware>
+        ),
       },
       {
         path: "/employer-profile/:id",
-        element: <EmployerProfile />,
+        element: (
+          <IsLoginnedMiddleware>
+            <EmployerProfile />
+          </IsLoginnedMiddleware>
+        ),
+      },
+      {
+        path: "/employer-profile/:id/edit",
+        element: (
+          <IsLoginnedMiddleware>
+            <EditEmployerProfile />
+          </IsLoginnedMiddleware>
+        ),
       },
       {
         path: "/profile/:id/edit",
-        Component: EditProfile,
+        element: (
+          <IsLoginnedMiddleware>
+            <EditProfile />
+          </IsLoginnedMiddleware>
+        ),
       },
       {
         path: "/project/add",
-        Component: AddNewProject,
+        element: (
+          <IsLoginnedMiddleware>
+            <AddNewProject />
+          </IsLoginnedMiddleware>
+        ),
       },
       {
         path: "/notifications/user/:id",
@@ -117,37 +161,51 @@ export const router = createBrowserRouter([
       },
       {
         path: "/settings/user/:id",
-        Component: Settings,
+        element: (
+          <IsLoginnedMiddleware>
+            <Settings />
+          </IsLoginnedMiddleware>
+        ),
       },
       {
         path: "/settings/user/:id/bookmarks",
-        Component: BookmarkMainLayout,
-        children: [
-          {
-            index: true,
-            element: <Navigate to="savedJobs" replace />,
-          },
-          {
-            path: "savedJobs",
-            Component: BookmarkSavedJob,
-          },
-          {
-            path: "following",
-            Component: BookmarkFollowing,
-          },
-        ],
+        element: (
+          <IsLoginnedMiddleware>
+            <Bookmarks />
+          </IsLoginnedMiddleware>
+        ),
       },
       {
         path: "/settings/user/:id/security",
-        Component: SecuritySetting,
+        element: (
+          <IsLoginnedMiddleware>
+            <SecuritySetting />
+          </IsLoginnedMiddleware>
+        ),
+      },
+      {
+        path: "/settings/user/:id/applied-jobs",
+        element: (
+          <IsLoginnedMiddleware>
+            <AppliedJobsList />
+          </IsLoginnedMiddleware>
+        ),
       },
       {
         path: "/settings/user/:id/security/changeEmail",
-        Component: ChangeEmail,
+        element: (
+          <IsLoginnedMiddleware>
+            <ChangeEmail />
+          </IsLoginnedMiddleware>
+        ),
       },
       {
         path: "/settings/user/:id/security/changePassword",
-        Component: ChangePassword,
+        element: (
+          <IsLoginnedMiddleware>
+            <ChangePassword />
+          </IsLoginnedMiddleware>
+        ),
       },
     ],
   },

@@ -24,8 +24,8 @@ class SeekerResource extends JsonResource
             "social_media_link" => json_decode($this->social_media_link),
             "image"             => $this->image,
             "bio"               => $this->bio,
-            "user_id"           => User::where('id', $this->user_id)->select('id', 'name', 'phone', 'address')->first(),
+            "user_id"           => User::where('id', $this->user_id)->select('id', 'email', 'name', 'phone', 'address')->first(),
+            "created_at"        => $this->created_at,
         ];
     }
-
 }

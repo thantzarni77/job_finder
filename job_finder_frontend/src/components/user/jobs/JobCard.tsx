@@ -3,11 +3,16 @@ import {
   Checkbox,
   Chip,
   Divider,
+  IconButton,
   Paper,
   Skeleton,
+  Snackbar,
+  SnackbarContent,
   Typography,
+  type SnackbarCloseReason,
 } from "@mui/material";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
+import CloseIcon from "@mui/icons-material/Close";
 import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
@@ -15,16 +20,30 @@ import VerifiedIcon from "@mui/icons-material/Verified";
 import { NavLink } from "react-router";
 import { format } from "date-fns";
 import type { Job } from "../../../store/JobStore";
-import { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getSingleEmployerData } from "../../../helper/employerApiFunctions";
-import { useSingleEmployerStore } from "../../../store/EmployerStore";
+import { useProfileStore } from "../../../store/ProfileStore";
+import {
+  doSaveJob,
+  isSaved,
+  undoSaveJob,
+} from "../../../helper/jobApiFunctions";
+import { useUserStore } from "../../../store/UserStore";
+import { getIndividualDataForJob } from "../../../helper/userApiFunctions";
 
 const JobCard = ({ job }: { job: Job }) => {
-  const employerData = useSingleEmployerStore((state) => state.singleEmployer);
-  const setSingleEmployer = useSingleEmployerStore(
-    (state) => state.setSingleEmployer,
-  );
+  const queryClient = useQueryClient();
+  const user = useUserStore((state) => state.user);
+
+  // const individualJobData = useIndividualJobStore(
+  //   (state) => state.individualJobData,
+  // );
+  // const setIndividualJobData = useIndividualJobStore(
+  //   (state) => state.setIndividualJobData,
+  // );
+  const seekerData = useProfileStore((state) => state.seekerProfile);
+  // const employerData = useSingleEmployerStore((state) => state.singleEmployer);
 
   const employerDataQuery = useQuery({
     enabled: job.employer_id != 0,
@@ -34,17 +53,130 @@ const JobCard = ({ job }: { job: Job }) => {
     },
   });
 
-  useEffect(() => {
-    if (employerDataQuery.data && employerDataQuery.isSuccess) {
-      setSingleEmployer(employerDataQuery.data.data[0]);
+  const employerData = employerDataQuery.data?.data[0];
+
+  // useEffect(() => {
+  //   if (employerDataQuery.data && employerDataQuery.isSuccess) {
+  //     setSingleEmployer(employerDataQuery.data.data[0]);
+  //   }
+  // }, [employerDataQuery.data, employerDataQuery.isSuccess, setSingleEmployer]);
+
+  const { data: IndividualData } = useQuery({
+    enabled: employerData?.created_at == null,
+    queryKey: ["individualJob", job.employer_id],
+    queryFn: () => {
+      return getIndividualDataForJob(job.employer_id);
+    },
+  });
+
+  const individualJobData = IndividualData?.data;
+
+  // useEffect(() => {
+  //   if (individualJobDataQuery.data && individualJobDataQuery.isSuccess) {
+  //     setIndividualJobData(individualJobDataQuery.data.data);
+  //   }
+  // }, [
+  //   individualJobDataQuery.data,
+  //   individualJobDataQuery.isSuccess,
+  //   setIndividualJobData,
+  // ]);
+
+  const [open, setOpen] = useState(false);
+  const [snackMessage, setSnackMessage] = useState("");
+
+  const handleClick = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (
+    event: React.SyntheticEvent | Event,
+    reason?: SnackbarCloseReason,
+  ) => {
+    if (reason === "clickaway") {
+      return;
     }
-  }, [employerDataQuery.data, employerDataQuery.isSuccess, setSingleEmployer]);
+
+    setOpen(false);
+  };
+
+  const savedCheckQuery = useQuery({
+    enabled: !!seekerData?.id && !!job?.id,
+    queryKey: ["savedCheck", seekerData.id, job?.id],
+    queryFn: () => {
+      return isSaved({
+        seeker_id: seekerData.id,
+        post_job_id: job.id,
+      });
+    },
+  });
+
+  const isJobSaved = savedCheckQuery.data?.data.status;
+  const savedJobRecordId = savedCheckQuery.data?.data?.data?.id;
+
+  const saveJobMutation = useMutation({
+    mutationFn: doSaveJob,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["savedCheck"] });
+      queryClient.invalidateQueries({ queryKey: ["savedJobs", seekerData.id] });
+      setSnackMessage("Bookmarked !");
+      handleClick();
+    },
+  });
+
+  const undoSaveJobMutation = useMutation({
+    mutationFn: undoSaveJob,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["savedCheck"] });
+      queryClient.invalidateQueries({
+        queryKey: ["savedJobs", seekerData.id],
+      });
+      setSnackMessage("Removed form Bookmark !");
+      handleClick();
+    },
+  });
+
+  const saveJobHandler = () => {
+    if (!seekerData.id || !job.id) return;
+    const payload = {
+      seeker_id: seekerData.id,
+      post_job_id: job.id,
+    };
+    saveJobMutation.mutate(payload);
+  };
+
+  const undoSaveJobHandler = () => {
+    if (!savedJobRecordId) return;
+    undoSaveJobMutation.mutate(savedJobRecordId);
+  };
+
   return (
     <Box
       sx={{
         textAlign: "center",
       }}
     >
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={open}
+        autoHideDuration={4000}
+        onClose={handleClose}
+        sx={{ marginTop: "50px" }}
+      >
+        <SnackbarContent
+          sx={{ backgroundColor: "success.main" }}
+          message={snackMessage}
+          action={
+            <IconButton
+              size="small"
+              aria-label="close"
+              color="inherit"
+              onClick={handleClose}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          }
+        />
+      </Snackbar>
       <Paper
         elevation={1}
         sx={{
@@ -70,6 +202,17 @@ const JobCard = ({ job }: { job: Job }) => {
               {employerData?.company_image && (
                 <img
                   src={`${import.meta.env.VITE_API_BASE_URL}/${employerData?.company_image}`}
+                  style={{
+                    backgroundColor: "primary.main",
+                    borderRadius: "12px",
+                    width: "50px",
+                    height: "50px",
+                  }}
+                />
+              )}
+              {individualJobData?.profile_picture && (
+                <img
+                  src={`${import.meta.env.VITE_API_BASE_URL}/${individualJobData?.profile_picture}`}
                   style={{
                     backgroundColor: "primary.main",
                     borderRadius: "12px",
@@ -111,20 +254,31 @@ const JobCard = ({ job }: { job: Job }) => {
                 </Box>
               </Box>
             </Box>
-            <Checkbox
-              defaultChecked
-              disableRipple
-              sx={{
-                "& .MuiSvgIcon-root": { fontSize: 26, mr: -2 },
-                color: "primary.main",
-                "&.Mui-checked": {
+            {user?.user_id && user.user_type == "seeker" && (
+              <Checkbox
+                onClick={() => {
+                  if (isJobSaved) {
+                    undoSaveJobHandler();
+                  } else {
+                    saveJobHandler();
+                  }
+                }}
+                disabled={
+                  saveJobMutation.isPending || undoSaveJobMutation.isPending
+                }
+                checked={isJobSaved}
+                sx={{
+                  "& .MuiSvgIcon-root": { fontSize: 26, mr: -2 },
                   color: "primary.main",
-                },
-              }}
-              icon={<BookmarkBorderOutlinedIcon />}
-              checkedIcon={<BookmarkIcon />}
-              name={"fullTime"}
-            />
+                  "&.Mui-checked": {
+                    color: "primary.main",
+                  },
+                }}
+                icon={<BookmarkBorderOutlinedIcon />}
+                checkedIcon={<BookmarkIcon />}
+                name={"bookmark"}
+              />
+            )}
           </Box>
           {/* location date */}
           <Box sx={{ my: 1 }}>

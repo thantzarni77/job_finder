@@ -1,9 +1,13 @@
 <?php
+
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\Filters;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\TalentFilterRequest;
 use App\Http\Resources\SeekerResource;
 use App\Models\Seeker;
+use App\Models\Talent;
 use App\Models\User;
 use App\Traits\HttpResponseTrait;
 use Illuminate\Http\Request;
@@ -17,14 +21,17 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 class SeekerController extends Controller
 {
     use HttpResponseTrait;
-    public function index(Request $request)
+    public function index(Request $request, TalentFilterRequest $talentRequest)
     {
-
-        $seekers = Seeker::all();
+        $talent = $talentRequest->validated();
+        $filter = new Filters($talent);
+        $seekers = Seeker::filter($filter)->get();
         return response()->json([
+            'talent' => $request->talent,
             "statusCode" => "200",
             "message"    => "passes",
             "data"       => SeekerResource::collection($seekers),
+
         ], 200);
     }
 
@@ -52,7 +59,6 @@ class SeekerController extends Controller
             }
 
             return SeekerResource::collection($data);
-
         } catch (\Exception $e) {
             return response()->json([
                 "message" => "An error occurred.",
@@ -110,9 +116,9 @@ class SeekerController extends Controller
 
             $token = JWTAuth::fromUser($user);
             $seeker->save();
-    
-            return $this->successResponseSeeker("Success created",$seeker,$token,201)->cookie('refresh_token', $refresh_token, 60 * 24 * 7, null, null, true, true);
-        }catch(\Exception $e) {
+
+            return $this->successResponseSeeker("Success created", $seeker, $token, 201)->cookie('refresh_token', $refresh_token, 60 * 24 * 7, null, null, true, true);
+        } catch (\Exception $e) {
             return response()->json(["message" => "Data not found"], 404);
         }
     }
@@ -167,7 +173,6 @@ class SeekerController extends Controller
         $seeker->save();
 
         return $this->successResponseSeeker("Success updated", $seeker, 200);
-
     }
 
     public function destroy(string $id)

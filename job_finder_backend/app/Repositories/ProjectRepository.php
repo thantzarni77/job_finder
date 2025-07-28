@@ -3,6 +3,7 @@ namespace App\Repositories;
 
 use App\Interfaces\ProjectRepositoryInterface;
 use App\Models\Project;
+use App\Models\Seeker;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ProjectRepository implements ProjectRepositoryInterface
@@ -10,10 +11,11 @@ class ProjectRepository implements ProjectRepositoryInterface
     /**
      * Create a new class instance.
      */
-    //index
+    //current seeker's project
     public function index()
     {
-        $data = Project::where('seeker_id', JWTAuth::user()->id)->get();
+        $seeker_id = Seeker::where('user_id', JWTAuth::user()->id)->value('id');
+        $data      = Project::where('seeker_id', $seeker_id)->get();
         return response()->json(['status' => 'success', 'message' => 'Projects fetched successfully', 'data' => $data], 200);
     }
     //store project
@@ -23,11 +25,13 @@ class ProjectRepository implements ProjectRepositoryInterface
         return response()->json(['status' => 'success', 'message' => 'Project created successfully', 'data' => $data], 201);
     }
 
-    //show
+    //each seeker's project
     public function show($id)
     {
-        $data = Project::findOrFail($id);
-        return response()->json(['status' => 'success', 'message' => 'Project Detail fetched successfully', 'data' => $data], 200);
+        $seeker_id = Seeker::where('user_id', $id)->value('id');
+        $data      = Project::where('seeker_id', $seeker_id)->get();
+
+        return response()->json(['status' => 'success', 'message' => 'Each Seeker Projects fetched successfully', 'data' => $data], 200);
     }
 
     //update
