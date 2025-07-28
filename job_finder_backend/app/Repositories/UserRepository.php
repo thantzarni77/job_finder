@@ -20,9 +20,9 @@ class UserRepository implements UserRepositoryInterface
     {
         $validatedData = $request->validate([
             "name"            => "required",
-            "email"           => "required",
-            'phone'           => "nullable",
-            'address'         => "nullable",
+            "email"           => "sometimes",
+            'phone'           => "sometimes",
+            'address'         => "sometimes",
             "profile_picture" => "image|mimes:jpeg,png,jpg,gif,svg",
         ]);
 
