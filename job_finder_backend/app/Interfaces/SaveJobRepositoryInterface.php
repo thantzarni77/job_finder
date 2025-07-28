@@ -9,5 +9,5 @@ interface SaveJobRepositoryInterface
     public function store(array $data);
     public function view();
     public function destroy($id);
-    public function checkSaveJob(Request $request);
+    public function checkIsSaved(Request $request);
 }

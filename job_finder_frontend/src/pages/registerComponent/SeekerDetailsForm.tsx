@@ -79,7 +79,7 @@ const SeekerDetailsFrom = () => {
   });
 
   const rolesQuery = useQuery({
-    queryKey: ["roles"],
+    queryKey: ["seekerRoles"],
     queryFn: getAllRoles,
   });
 

@@ -93,7 +93,7 @@ const IndividualCard = ({
                 variant="caption"
                 sx={{ color: "primary.light", width: "250px" }}
               >
-                {individualData?.address}
+                {individualData?.address ? individualData?.address : "No Data"}
               </Typography>
             </Box>
             {/* <Box

@@ -33,8 +33,8 @@ class SaveJobController extends Controller
     }
 
     //check save job
-    public function checkSaveJob(Request $request)
+    public function checkIsSaved(Request $request)
     {
-        return $this->saveJobRepositoryInterface->checkSaveJob($request);
+        return $this->saveJobRepositoryInterface->checkIsSaved($request);
     }
 }

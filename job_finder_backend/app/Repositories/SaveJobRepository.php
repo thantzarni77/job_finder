@@ -43,7 +43,7 @@ class SaveJobRepository implements SaveJobRepositoryInterface
     }
 
     //check save job
-    public function checkSaveJob($request)
+    public function checkIsSaved($request)
     {
         $post_job_id = $request['post_job_id'];
         $seeker_id   = $request['seeker_id'];

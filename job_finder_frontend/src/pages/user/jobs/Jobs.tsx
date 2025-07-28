@@ -94,8 +94,6 @@ const Jobs = () => {
     selectedJobType,
   ]);
 
-  console.log(jobTypes);
-
   // custom component for dropdown icon
   const CustomIcon = () => (
     <ArrowDropUpIcon
