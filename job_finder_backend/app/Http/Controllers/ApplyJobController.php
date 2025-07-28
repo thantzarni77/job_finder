@@ -12,6 +12,10 @@ class ApplyJobController extends Controller
     {
         $this->applyJobRepositoryInterface = $applyJobRepositoryInterface;
     }
+    //get data 
+    public function applyJobData($id){
+        return $this->applyJobRepositoryInterface->applyJobData($id);
+    }
     //create apply job
     public function applyJob(Request $request)
     {
@@ -64,5 +68,11 @@ class ApplyJobController extends Controller
     public function sendMail(Request $request)
     {
         return $this->applyJobRepositoryInterface->sendMail($request);
+    }
+
+    //remove post
+    public function destroy($id)
+    {
+        return $this->applyJobRepositoryInterface->destroy($id);
     }
 }

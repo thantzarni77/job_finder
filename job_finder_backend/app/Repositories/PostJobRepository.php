@@ -117,4 +117,9 @@ class PostJobRepository implements PostJobRepositoryInterface
         return response()->json(['status' => 'success', 'message' => 'Job deleted successfully'], 200);
     }
 
+    public function postVerification(array $data ,$id){
+        $postJob = $this->postJob->with('jobDetail')->findOrFail($id)->update(['posting_status' => $data['status'],]);
+        return response()->json(['status' => 'success', 'message' => 'Job status updated successfully', 'data' => $postJob], 200);
+    }
+
 }

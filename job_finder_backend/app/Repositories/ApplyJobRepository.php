@@ -1,25 +1,31 @@
 <?php
 namespace App\Repositories;
 
-use App\Interfaces\ApplyJobRepositoryInterface;
-use App\Mail\ShortlistContactMail;
-use App\Models\Apply_job;
 use App\Models\Seeker;
-use Illuminate\Support\Facades\App;
+use App\Models\Employer;
+use App\Models\Apply_job;
+use App\Models\JobDetail;
+use App\Mail\ShortlistContactMail;
+use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
-use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Interfaces\ApplyJobRepositoryInterface;
 
 class ApplyJobRepository implements ApplyJobRepositoryInterface
 {
     /**
      * Create a new class instance.
      */
+    //applyJobData
+    public function applyJobData(int $id){
+        $employerId = Employer::where('employer_id', JWTAuth::user()->id)->value('id');
+        $data = Apply_job::where('employer_id', $employerId)->where('post_job_id',$id)->get();
+        return response()->json(['status' => 'success', 'message' => 'You have successfully fetch your job postings.', 'data' => $data], 200);
+    }
 
     //seeker apply a job
     public function applyJob(array $applyData)
     {
-
         $data = [
             'post_job_id'     => $applyData['post_job_id'],
             'employer_id'     => $applyData['employer_id'],
@@ -29,8 +35,13 @@ class ApplyJobRepository implements ApplyJobRepositoryInterface
             'message'         => $applyData['message'],
             'expected_salary' => $applyData['expected_salary'],
         ];
+        //if seeker already applied for this job then do not count again
+        if (Apply_job::where('post_job_id', $applyData['post_job_id'])->where('seeker_id', $applyData['seeker_id'])->exists()) {
+            return response()->json(['status' => 'success', 'message' => 'You have already applied for this job.'], 400);
+        }
+        //increment apply count
+        JobDetail::where('post_job_id', $applyData['post_job_id'])->increment('apply_count');
         Apply_job::create($data);
-
         return response()->json(['status' => 'success', 'message' => 'Job applied successfully.Good luck for your interview.', 'data' => $data], 201);
     }
 
@@ -85,5 +96,13 @@ class ApplyJobRepository implements ApplyJobRepositoryInterface
         Mail::to('thantzarni83@gmail.com')->send(new ShortlistContactMail($validate));
 
         return response()->json(['status' => 'success', 'message' => 'You have successfully send mail to seeker.'], 200);
+    }
+
+    //remove post
+    public function destroy($id){
+        $data = Apply_job::find($id);
+        JobDetail::where('post_job_id', $data['post_job_id'])->decrement('apply_count');
+        $data->delete();
+        return response()->json(['status' => 'success', 'message' => 'You have successfully remove job postings.'], 200);
     }
 }
