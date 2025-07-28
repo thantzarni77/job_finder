@@ -1,4 +1,4 @@
-import { Box, Paper, Typography } from "@mui/material";
+import { Avatar, Box, Paper, Typography } from "@mui/material";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import { NavLink } from "react-router";
 import type { IndividualJob } from "../../store/UserDataStore";
@@ -37,16 +37,24 @@ const IndividualCard = ({
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <img
-                src={`${import.meta.env.VITE_API_BASE_URL}/${individualData?.profile_picture}`}
-                alt={individualData?.name}
-                style={{
-                  backgroundColor: "primary.main",
-                  borderRadius: "12px",
-                  width: "50px",
-                  height: "50px",
-                }}
-              />
+              {individualData?.profile_picture && (
+                <img
+                  src={`${import.meta.env.VITE_API_BASE_URL}/${individualData?.profile_picture}`}
+                  alt={individualData?.name}
+                  style={{
+                    backgroundColor: "primary.main",
+                    borderRadius: "12px",
+                    width: "50px",
+                    height: "50px",
+                  }}
+                />
+              )}
+              {!individualData?.profile_picture && (
+                <Avatar
+                  variant="rounded"
+                  sx={{ width: "45px", height: "45px" }}
+                />
+              )}
               <Box
                 sx={{
                   display: "flex",

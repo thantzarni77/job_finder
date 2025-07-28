@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   Checkbox,
   Chip,
@@ -62,7 +63,7 @@ const JobCard = ({ job }: { job: Job }) => {
   // }, [employerDataQuery.data, employerDataQuery.isSuccess, setSingleEmployer]);
 
   const { data: IndividualData } = useQuery({
-    enabled: employerData?.created_at == null,
+    enabled: employerData?.company_name == null,
     queryKey: ["individualJob", job.employer_id],
     queryFn: () => {
       return getIndividualDataForJob(job.employer_id);
@@ -199,28 +200,40 @@ const JobCard = ({ job }: { job: Job }) => {
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              {employerData?.company_image && (
-                <img
-                  src={`${import.meta.env.VITE_API_BASE_URL}/${employerData?.company_image}`}
-                  style={{
-                    backgroundColor: "primary.main",
-                    borderRadius: "12px",
-                    width: "50px",
-                    height: "50px",
-                  }}
-                />
-              )}
-              {individualJobData?.profile_picture && (
-                <img
-                  src={`${import.meta.env.VITE_API_BASE_URL}/${individualJobData?.profile_picture}`}
-                  style={{
-                    backgroundColor: "primary.main",
-                    borderRadius: "12px",
-                    width: "50px",
-                    height: "50px",
-                  }}
-                />
-              )}
+              {employerData &&
+                employerData.company_name &&
+                employerData?.company_image && (
+                  <img
+                    src={`${import.meta.env.VITE_API_BASE_URL}/${employerData?.company_image}`}
+                    style={{
+                      backgroundColor: "primary.main",
+                      borderRadius: "12px",
+                      width: "50px",
+                      height: "50px",
+                    }}
+                  />
+                )}
+              {employerData &&
+                !employerData.company_name &&
+                individualJobData?.profile_picture && (
+                  <img
+                    src={`${import.meta.env.VITE_API_BASE_URL}/${individualJobData?.profile_picture}`}
+                    style={{
+                      backgroundColor: "primary.main",
+                      borderRadius: "12px",
+                      width: "50px",
+                      height: "50px",
+                    }}
+                  />
+                )}
+              {employerData &&
+                !employerData.company_name &&
+                !individualJobData?.profile_picture && (
+                  <Avatar
+                    variant="rounded"
+                    sx={{ width: "45px", height: "45px" }}
+                  />
+                )}
               {employerDataQuery.isLoading && (
                 <Skeleton variant="rounded" width={"50px"} height={"50px"} />
               )}
