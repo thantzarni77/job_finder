@@ -54,6 +54,18 @@ Route::get('types', [JobDetailController::class, 'types']);
 Route::get('roles', [JobDetailController::class, 'roles']);
 Route::get('genders', [JobDetailController::class, 'genders']);
 
+//talent module
+Route::prefix('talent')->group(function () {
+    //save job list
+    Route::get('/', [TalentController::class, 'index']);
+    // create save job
+    Route::post('/', [TalentController::class, 'create']);
+    //view save job
+    Route::put('/{id}', [TalentController::class, 'update']);
+    //remove save job
+    Route::delete('/{id}', [TalentController::class, 'destroy']);
+});
+
 
 Route::group(["middleware" => "AuthMiddleware"], function () {
 
@@ -81,18 +93,6 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
         Route::delete('/seeker/{id}', [SeekerController::class, 'destroy']);
     });
 
-
-    //talent module
-    Route::prefix('talent')->group(function () {
-        //save job list
-        Route::get('/', [TalentController::class, 'index']);
-        // create save job
-        Route::post('/', [TalentController::class, 'create']);
-        //view save job
-        Route::put('/{id}', [TalentController::class, 'update']);
-        //remove save job
-        Route::delete('/{id}', [TalentController::class, 'destroy']);
-    });
 
     //employer post job
     //employer post job
