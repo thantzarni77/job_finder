@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->enum('admin_type', ['superadmin','admin'])->default('superadmin');
             $table->string('password');
             $table->string("refresh_token");
             $table->timestamps();

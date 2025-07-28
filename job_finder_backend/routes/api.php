@@ -20,13 +20,23 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TalentController;
 use App\Http\Controllers\UserController;
 
-Route::post('/admin/register',[AdminAuthController::class,'register']);
-Route::post('/admin/login',[AdminAuthController::class,'login']);
 
-Route::group(["middleware" => AdminAuthMiddleware::class],function(){
+    Route::post('/superadmin/login',[AdminAuthController::class,'login']);
 
-    Route::post('/admin/logout',[AdminAuthController::class,'logout']);
+Route::middleware("AdminAuthMiddleware:superadmin")->group(function () {
+    Route::post('/superadmin/logout',[AdminAuthController::class,'logout']);
+    Route::get('/superadmin/getprofile',[AdminAuthController::class,'profile']);
+   
+    Route::post('/admin/register',[AdminAuthController::class,'register']);
+    Route::post('/admin/login',[AdminAuthController::class,'login']);
+
+});
+
+
+Route::middleware("AdminAuthMiddleware:admin")->group(function () {
+
     Route::get('/admin/getprofile',[AdminAuthController::class,'profile']);
+    Route::post('/admin/logout',[AdminAuthController::class,'logout']);
 
     Route::post('/admin/employerVerification/{id}', [EmployerVerficationController::class, 'updateStatus']);
 
@@ -39,7 +49,9 @@ Route::group(["middleware" => AdminAuthMiddleware::class],function(){
         Route::delete('/{id}', [PostJobController::class, 'destroy']);
     });
 
+    
 });
+
 
 
 Route::post('/registerstepone',[AuthController::class,'registerStepOne']);
