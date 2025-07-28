@@ -5,8 +5,15 @@ export const getUserProfile = async () => {
   return data;
 };
 
-export const getSeekerProfile = async (userID: number | undefined) => {
+export const getSeekerProfile = async (userID: number | undefined | null) => {
   const data = await axiosClient.get(`/seeker-data/${userID}`);
+  return data;
+};
+
+export const getSeekerProfileWithSeekerID = async (
+  seekerID: number | undefined | null,
+) => {
+  const data = await axiosClient.get(`/seeker/${seekerID}`);
   return data;
 };
 

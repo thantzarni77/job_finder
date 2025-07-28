@@ -4,10 +4,12 @@ export type SeekerProfile = {
   id: number | null;
   skills: string[];
   education: { degree: string; year: string }[];
-  work_experience: {
-    workPos: string;
-    year: string;
-  }[];
+  work_experience:
+    | {
+        workPos: string;
+        year: string;
+      }[]
+    | null;
   role: string;
   talent: string;
   social_media_link: string[];
@@ -20,6 +22,7 @@ export type SeekerProfile = {
     phone: string;
     address: string;
   };
+  created_at: Date;
 };
 
 export type EmployerProfile = {
@@ -68,6 +71,7 @@ export const useProfileStore = create<
       phone: "",
       address: "",
     },
+    created_at: new Date(),
   },
   setSeekerProfile: (seekerProfileFromServer) => {
     set({ seekerProfile: seekerProfileFromServer });

@@ -15,8 +15,6 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { useNavigate } from "react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Controller, useForm } from "react-hook-form";
-
-import { useUserStore } from "../../../store/UserStore";
 import { getJobTypes, postAJob } from "../../../helper/postJob";
 import { useEffect, useState } from "react";
 import type { Job } from "../../../store/JobStore";
@@ -26,6 +24,7 @@ import {
 } from "../../../helper/talentTypeAndRoleApiFunctions";
 import { DatePicker } from "@mui/x-date-pickers";
 import { format } from "date-fns";
+import { useProfileStore } from "../../../store/ProfileStore";
 
 type JobTypeAndRole = {
   id: number;
@@ -43,7 +42,9 @@ const genders = ["Male", "Female", "Both"];
 
 export default function PostAJob() {
   const navigate = useNavigate();
-  const user = useUserStore((state) => state.user);
+  const employerProfile = useProfileStore((state) => state.employerProfile);
+
+  const employerID = employerProfile.id?.toString();
 
   const [jobTypes, setJobTypes] = useState<JobTypeAndRole[] | null>();
   const [roles, setRoles] = useState<JobTypeAndRole[] | null>();
@@ -187,7 +188,7 @@ export default function PostAJob() {
             <Box>
               <input
                 type="hidden"
-                value={user?.user_id}
+                value={employerID}
                 {...register("employer_id", { required: true })}
               />
               {errors.employer_id && (
@@ -568,6 +569,10 @@ export default function PostAJob() {
                   },
                 }}
                 type="number"
+                defaultValue={1}
+                inputProps={{
+                  min: 1,
+                }}
                 id="vacancy"
                 fullWidth
                 size="small"

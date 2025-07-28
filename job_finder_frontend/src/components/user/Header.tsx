@@ -104,6 +104,7 @@ export default function Header({
         "/jobs": jobsRef,
         "/job/:id": jobsRef,
         "/job/:id/applicant-list": jobsRef,
+        "/job/:id/applicant-list/:seekerID/view": jobsRef,
         "/job/:id/apply": jobsRef,
         "/job/:id/apply/confirm": jobsRef,
         "/talents": talentRef,

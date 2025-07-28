@@ -37,6 +37,7 @@ import Bookmarks from "./components/user/settings/Bookmarks";
 import AppliedJobsList from "./components/user/settings/AppliedJobsList";
 import EditEmployerProfile from "./pages/employer/EditEmployerProfile";
 import ViewApplicantList from "./pages/employer/ViewApplicantList";
+import ViewSingleApplicant from "./pages/employer/ViewSingleApplicant";
 
 export const router = createBrowserRouter([
   {
@@ -73,6 +74,14 @@ export const router = createBrowserRouter([
         element: (
           <IsLoginnedMiddleware>
             <ViewApplicantList />
+          </IsLoginnedMiddleware>
+        ),
+      },
+      {
+        path: "/job/:id/applicant-list/:seekerID/view",
+        element: (
+          <IsLoginnedMiddleware>
+            <ViewSingleApplicant />
           </IsLoginnedMiddleware>
         ),
       },

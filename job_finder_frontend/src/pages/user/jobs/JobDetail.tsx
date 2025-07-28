@@ -23,10 +23,9 @@ import { getSingleJob } from "../../../helper/postJob";
 import { useEffect, useState } from "react";
 import {
   useAppliedJobStore,
-  useJobDetailStore,
   useJobStore,
+  type JobWithJobDetail,
 } from "../../../store/JobStore";
-import { getSingleEmployerData } from "../../../helper/employerApiFunctions";
 import FullScreenLoader from "../../../components/FullScreenLoader";
 import { useUserStore } from "../../../store/UserStore";
 import {
@@ -39,7 +38,6 @@ import { useProfileStore } from "../../../store/ProfileStore";
 import JobCard from "../../../components/user/jobs/JobCard";
 import { getIndividualDataForJob } from "../../../helper/userApiFunctions";
 import IndividualCard from "../../../components/employer/IndividualCard";
-import type { SingleEmployer } from "../../../store/EmployerStore";
 import JobCloseCard from "../../../components/user/jobs/JobCloseCard";
 import type { IndividualJob } from "../../../store/UserDataStore";
 
@@ -51,13 +49,20 @@ const JobDetail = () => {
 
   const allJobs = useJobStore((state) => state.jobs);
   const seekerData = useProfileStore((state) => state.seekerProfile);
-  const jobDetails = useJobDetailStore((state) => state.jobDetails);
-  const setJobDetails = useJobDetailStore((state) => state.setJobDetails);
 
   const seekerAppliedJobs = useAppliedJobStore(
     (state) => state.seekerAppliedJobs,
   );
   const setAppliedJobs = useAppliedJobStore((state) => state.setAppliedJobs);
+
+  const jobDetailQuery = useQuery({
+    queryKey: ["jobDetail", id],
+    queryFn: () => {
+      return getSingleJob(id);
+    },
+  });
+
+  const jobDetails: JobWithJobDetail = jobDetailQuery.data?.data;
 
   const savedCheckQuery = useQuery({
     enabled: !!seekerData?.id && !!jobDetails?.id,
@@ -134,51 +139,19 @@ const JobDetail = () => {
     setOpen(false);
   };
 
-  const jobDetailQuery = useQuery({
-    queryKey: ["jobDetail", id],
-    queryFn: () => {
-      return getSingleJob(id);
-    },
-  });
-
-  useEffect(() => {
-    if (jobDetailQuery.data && jobDetailQuery.isSuccess) {
-      setJobDetails(jobDetailQuery.data.data);
-    }
-  }, [jobDetailQuery.data, jobDetailQuery.isSuccess, setJobDetails]);
-
-  const employerDataQuery = useQuery({
-    enabled: jobDetails?.employer_id != 0,
-    queryKey: ["employerDetail", jobDetails?.employer_id],
-    queryFn: () => {
-      return getSingleEmployerData(jobDetails?.employer_id);
-    },
-  });
-
-  const employerData: SingleEmployer = employerDataQuery.data?.data[0];
+  const userIdForIndividualQuery = jobDetailQuery.data?.data.employer.user_id;
+  const isIndividualJob =
+    jobDetailQuery.data?.data.employer.company_name === null;
 
   const { data: IndividualData, isPending: individualPending } = useQuery({
-    enabled: !employerData?.company_name,
-    queryKey: ["individualJob", jobDetails?.employer_id],
+    enabled: !!userIdForIndividualQuery && isIndividualJob,
+    queryKey: ["individualJob", userIdForIndividualQuery],
     queryFn: () => {
-      return getIndividualDataForJob(jobDetails?.employer_id);
+      return getIndividualDataForJob(userIdForIndividualQuery);
     },
   });
 
   const individualJobData: IndividualJob = IndividualData?.data;
-
-  if (
-    jobDetailQuery.isPending ||
-    employerDataQuery.isPending ||
-    individualPending
-  ) {
-    return (
-      <FullScreenLoader
-        open={jobDetailQuery.isPending}
-        message="Getting data..."
-      />
-    );
-  }
 
   const saveJobHandler = () => {
     if (!seekerData.id || !jobDetails?.id) return;
@@ -193,6 +166,24 @@ const JobDetail = () => {
     if (!savedJobRecordId) return;
     undoSaveJobMutation.mutate(savedJobRecordId);
   };
+
+  if (isIndividualJob && individualPending) {
+    return (
+      <FullScreenLoader
+        open={individualPending}
+        message="Getting employer data..."
+      />
+    );
+  }
+
+  if (jobDetailQuery.isPending) {
+    return (
+      <FullScreenLoader
+        open={jobDetailQuery.isPending}
+        message="Getting Job Details..."
+      />
+    );
+  }
 
   return (
     <Box sx={{ width: "90%", mx: "auto" }}>
@@ -247,131 +238,132 @@ const JobDetail = () => {
       </Box>
 
       {/* Job badge */}
-      {employerData && employerData.user_id != user?.user_id && (
-        <Box
-          sx={{
-            width: { xs: "100%", md: "80%" },
-            display: { xs: "none", md: "none", lg: "flex" },
-            alignItems: "center",
-            gap: 2,
-            my: 2,
-          }}
-        >
-          {/* verify icon */}
+      {jobDetails?.employer &&
+        jobDetails?.employer.user_id != user?.user_id && (
           <Box
             sx={{
-              display: "flex",
-              width: "fit-content",
+              width: { xs: "100%", md: "80%" },
+              display: { xs: "none", md: "none", lg: "flex" },
               alignItems: "center",
-              bgcolor: "primary.main",
-              border: 1,
-              color: "background.paper",
-              borderRadius: "4px",
-              height: "28px",
-              px: "5px",
-              py: "5px",
+              gap: 2,
+              my: 2,
             }}
           >
-            <VerifiedIcon sx={{ color: "success.main" }} />
-            <Typography variant="caption">
-              {jobDetails?.posting_status == "approved" && "Verified"}
-            </Typography>
-          </Box>
-
-          {/* bookmark icon */}
-          {user?.user_id && user.user_type == "seeker" && (
+            {/* verify icon */}
             <Box
               sx={{
                 display: "flex",
-                alignItems: "center",
                 width: "fit-content",
-                bgcolor: isJobSaved ? "primary.main" : "background.paper",
+                alignItems: "center",
+                bgcolor: "primary.main",
                 border: 1,
-                color: isJobSaved ? "background.paper" : "text.primary",
-                borderColor: "primary.main",
+                color: "background.paper",
                 borderRadius: "4px",
                 height: "28px",
                 px: "5px",
                 py: "5px",
               }}
             >
-              <Checkbox
-                disableRipple
-                onClick={() => {
-                  if (isJobSaved) {
-                    undoSaveJobHandler();
-                  } else {
-                    saveJobHandler();
-                  }
-                }}
-                disabled={
-                  saveJobMutation.isPending || undoSaveJobMutation.isPending
-                }
-                checked={isJobSaved}
-                sx={{
-                  "& .MuiSvgIcon-root": { fontSize: 22, ml: -1 },
-                  color: "primary.main",
-                  "&.Mui-checked": {
-                    color: "primary.main",
-                  },
-                }}
-                icon={<BookmarkBorderOutlinedIcon />}
-                checkedIcon={
-                  <BookmarkIcon
-                    sx={{
-                      color: isJobSaved ? "background.paper" : "text.primary",
-                    }}
-                  />
-                }
-                name={"bookMark"}
-              />
+              <VerifiedIcon sx={{ color: "success.main" }} />
               <Typography variant="caption">
-                {isJobSaved ? "Saved" : "Save this"}
+                {jobDetails?.posting_status == "approved" && "Verified"}
               </Typography>
             </Box>
-          )}
 
-          {/* appilicant icon */}
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              bgcolor: "primary.main",
-              color: "background.paper",
-              borderRadius: "4px",
-              height: "28px",
-              px: "5px",
-              py: "5px",
-              gap: "5px",
-            }}
-          >
-            <GroupsOutlinedIcon />
-            <Typography variant="caption">
-              {jobDetails?.job_detail.apply_count} applicants
-            </Typography>
-          </Box>
+            {/* bookmark icon */}
+            {user?.user_id && user.user_type == "seeker" && (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  width: "fit-content",
+                  bgcolor: isJobSaved ? "primary.main" : "background.paper",
+                  border: 1,
+                  color: isJobSaved ? "background.paper" : "text.primary",
+                  borderColor: "primary.main",
+                  borderRadius: "4px",
+                  height: "28px",
+                  px: "5px",
+                  py: "5px",
+                }}
+              >
+                <Checkbox
+                  disableRipple
+                  onClick={() => {
+                    if (isJobSaved) {
+                      undoSaveJobHandler();
+                    } else {
+                      saveJobHandler();
+                    }
+                  }}
+                  disabled={
+                    saveJobMutation.isPending || undoSaveJobMutation.isPending
+                  }
+                  checked={isJobSaved}
+                  sx={{
+                    "& .MuiSvgIcon-root": { fontSize: 22, ml: -1 },
+                    color: "primary.main",
+                    "&.Mui-checked": {
+                      color: "primary.main",
+                    },
+                  }}
+                  icon={<BookmarkBorderOutlinedIcon />}
+                  checkedIcon={
+                    <BookmarkIcon
+                      sx={{
+                        color: isJobSaved ? "background.paper" : "text.primary",
+                      }}
+                    />
+                  }
+                  name={"bookMark"}
+                />
+                <Typography variant="caption">
+                  {isJobSaved ? "Saved" : "Save this"}
+                </Typography>
+              </Box>
+            )}
 
-          {/* deadline icon */}
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              bgcolor: "primary.main",
-              color: "background.paper",
-              borderRadius: "4px",
-              height: "28px",
-              px: "5px",
-              py: "5px",
-              gap: "5px",
-            }}
-          >
-            <QueryBuilderIcon sx={{ fontSize: "20px" }} />
-            <Typography variant="caption">
-              Deadline {jobDetails?.job_detail.deadline}
-            </Typography>
+            {/* appilicant icon */}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                bgcolor: "primary.main",
+                color: "background.paper",
+                borderRadius: "4px",
+                height: "28px",
+                px: "5px",
+                py: "5px",
+                gap: "5px",
+              }}
+            >
+              <GroupsOutlinedIcon />
+              <Typography variant="caption">
+                {jobDetails?.job_detail.apply_count} applicants
+              </Typography>
+            </Box>
+
+            {/* deadline icon */}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                bgcolor: "primary.main",
+                color: "background.paper",
+                borderRadius: "4px",
+                height: "28px",
+                px: "5px",
+                py: "5px",
+                gap: "5px",
+              }}
+            >
+              <QueryBuilderIcon sx={{ fontSize: "20px" }} />
+              <Typography variant="caption">
+                Deadline {jobDetails?.job_detail.deadline}
+              </Typography>
+            </Box>
           </Box>
-        </Box>
-      )}
+        )}
 
       {/* Job Contents and Employer Card */}
       <Box
@@ -620,47 +612,48 @@ const JobDetail = () => {
         </Box>
         {/* employer card */}
         <Box sx={{ mt: { xs: 4, md: 4, lg: 0 } }}>
-          {employerData && employerData.user_id == user?.user_id && (
-            <>
-              <JobCloseCard
-                applicantCount={jobDetails?.job_detail.apply_count}
-                deadline={jobDetails?.job_detail.deadline}
-              />
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-start",
-                  width: "100%",
-                  gap: 2,
-                  my: 2,
-                }}
-              >
-                <Button
-                  endIcon={<AccountBoxIcon />}
-                  onClick={() => navigate("applicant-list")}
-                  variant="contained"
+          {jobDetails?.employer &&
+            jobDetails?.employer.user_id == user?.user_id && (
+              <>
+                <JobCloseCard
+                  applicantCount={jobDetails?.job_detail.apply_count}
+                  deadline={jobDetails?.job_detail.deadline}
+                />
+                <Box
                   sx={{
-                    textTransform: "none",
-                    boxShadow: "none",
-                    ":hover": {
-                      boxShadow: "none",
-                    },
-                    borderRadius: 2,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-start",
+                    width: "100%",
+                    gap: 2,
+                    my: 2,
                   }}
                 >
-                  View Applicant List
-                </Button>
-              </Box>
-            </>
-          )}
-          {employerData &&
-            employerData.user_id != user?.user_id &&
-            employerData.company_name && (
-              <EmployerCard employerData={employerData} />
+                  <Button
+                    endIcon={<AccountBoxIcon />}
+                    onClick={() => navigate("applicant-list")}
+                    variant="contained"
+                    sx={{
+                      textTransform: "none",
+                      boxShadow: "none",
+                      ":hover": {
+                        boxShadow: "none",
+                      },
+                      borderRadius: 2,
+                    }}
+                  >
+                    View Applicant List
+                  </Button>
+                </Box>
+              </>
             )}
-          {employerData &&
-            !employerData?.company_name &&
+          {jobDetails?.employer &&
+            jobDetails?.employer.user_id != user?.user_id &&
+            jobDetails?.employer.company_name && (
+              <EmployerCard employerData={jobDetails.employer} />
+            )}
+          {jobDetails?.employer &&
+            !jobDetails?.employer?.company_name &&
             individualJobData &&
             individualJobData.id != user?.user_id && (
               <IndividualCard individualData={individualJobData} />
@@ -669,7 +662,7 @@ const JobDetail = () => {
       </Box>
 
       {/* similar jobs */}
-      {employerData && employerData.user_id != user?.user_id && (
+      {jobDetails?.employer && (
         <Box
           sx={{
             display: "flex",

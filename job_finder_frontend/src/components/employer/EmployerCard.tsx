@@ -39,7 +39,9 @@ const EmployerCard = ({
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <img
                 src={`${import.meta.env.VITE_API_BASE_URL}/${employerData?.company_image}`}
-                alt={employerData?.company_name}
+                alt={
+                  employerData?.company_name ? employerData.company_name : ""
+                }
                 style={{
                   backgroundColor: "primary.main",
                   borderRadius: "12px",

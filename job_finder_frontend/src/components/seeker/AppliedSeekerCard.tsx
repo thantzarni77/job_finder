@@ -1,11 +1,12 @@
-import { Box, Chip, Paper, Typography } from "@mui/material";
+import { Box, Button, Chip, Paper, Typography } from "@mui/material";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import { format } from "date-fns";
 import type { SeekerType } from "../../helper/talentPage";
 
-const SeekerCard = ({ seeker }: { seeker: SeekerType }) => {
+const AppliedSeekerCard = ({ seeker }: { seeker: SeekerType }) => {
+  const navigate = useNavigate();
   return (
     <Box
       sx={{
@@ -33,38 +34,63 @@ const SeekerCard = ({ seeker }: { seeker: SeekerType }) => {
               justifyContent: "space-between",
             }}
           >
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <img
-                src={`${import.meta.env.VITE_API_BASE_URL}/${seeker.image}`}
-                style={{
-                  borderRadius: "12px",
-                  fontSize: "12px",
-                  fontWeight: "bold",
-                  width: "50px",
-                  height: "50px",
-                }}
-              />
-
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                width: "100%",
+                gap: 1,
+              }}
+            >
               <Box
                 sx={{
                   display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-start",
+                  alignItems: "center",
+                  gap: 1,
                 }}
               >
-                <Typography
-                  variant="body1"
-                  sx={{
-                    fontWeight: "700",
-                    color: "text.secondary",
-                    ":hover": { cursor: "pointer", color: "primary.main" },
+                <img
+                  src={`${import.meta.env.VITE_API_BASE_URL}/${seeker.image}`}
+                  style={{
+                    borderRadius: "12px",
+                    fontSize: "12px",
+                    fontWeight: "bold",
+                    width: "50px",
+                    height: "50px",
                   }}
-                >
-                  <NavLink to={`/talent/${seeker.user_id.id}/profile`}>
-                    {seeker.user_id.name}
-                  </NavLink>
-                </Typography>
+                />
+
+                <Box>
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      fontWeight: "700",
+                      color: "text.secondary",
+                      ":hover": { cursor: "pointer", color: "primary.main" },
+                    }}
+                  >
+                    <NavLink to={`/talent/${seeker.user_id.id}/profile`}>
+                      {seeker.user_id.name}
+                    </NavLink>
+                  </Typography>
+                </Box>
               </Box>
+
+              <Button
+                variant="contained"
+                sx={{
+                  boxShadow: "none",
+                  ":hover": {
+                    boxShadow: "none",
+                  },
+                  textTransform: "none",
+                  borderRadius: 2,
+                }}
+                onClick={() => navigate(`${seeker.id}/view`)}
+              >
+                View
+              </Button>
             </Box>
           </Box>
           {/* location date */}
@@ -140,4 +166,4 @@ const SeekerCard = ({ seeker }: { seeker: SeekerType }) => {
   );
 };
 
-export default SeekerCard;
+export default AppliedSeekerCard;

@@ -35,3 +35,8 @@ export const getSeekerSavedJobs = async () => {
   const { data } = await axiosClient.get("/save-job/seeker-save-list");
   return data;
 };
+
+export const getAppliedSeekers = async (postID: string | undefined) => {
+  const { data } = await axiosClient.get(`/apply-job/${postID}`);
+  return data;
+};

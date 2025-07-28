@@ -6,7 +6,6 @@ import {
   Divider,
   IconButton,
   Paper,
-  Skeleton,
   Snackbar,
   SnackbarContent,
   Typography,
@@ -23,7 +22,7 @@ import { format } from "date-fns";
 import type { Job } from "../../../store/JobStore";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getSingleEmployerData } from "../../../helper/employerApiFunctions";
+
 import { useProfileStore } from "../../../store/ProfileStore";
 import {
   doSaveJob,
@@ -32,55 +31,33 @@ import {
 } from "../../../helper/jobApiFunctions";
 import { useUserStore } from "../../../store/UserStore";
 import { getIndividualDataForJob } from "../../../helper/userApiFunctions";
+import type { IndividualJob } from "../../../store/UserDataStore";
 
 const JobCard = ({ job }: { job: Job }) => {
   const queryClient = useQueryClient();
   const user = useUserStore((state) => state.user);
 
-  // const individualJobData = useIndividualJobStore(
-  //   (state) => state.individualJobData,
-  // );
-  // const setIndividualJobData = useIndividualJobStore(
-  //   (state) => state.setIndividualJobData,
-  // );
   const seekerData = useProfileStore((state) => state.seekerProfile);
-  // const employerData = useSingleEmployerStore((state) => state.singleEmployer);
 
-  const employerDataQuery = useQuery({
-    enabled: job.employer_id != 0,
-    queryKey: ["employerDetail", job.employer_id],
-    queryFn: () => {
-      return getSingleEmployerData(job.employer_id);
-    },
-  });
+  // const employerDataQuery = useQuery({
+  //   enabled: job.employer_id != 0,
+  //   queryKey: ["employerDetail", job.employer.user_id],
+  //   queryFn: () => {
+  //     return getSingleEmployerData(job.employer.user_id);
+  //   },
+  // });
 
-  const employerData = employerDataQuery.data?.data[0];
-
-  // useEffect(() => {
-  //   if (employerDataQuery.data && employerDataQuery.isSuccess) {
-  //     setSingleEmployer(employerDataQuery.data.data[0]);
-  //   }
-  // }, [employerDataQuery.data, employerDataQuery.isSuccess, setSingleEmployer]);
+  // const employerData: EmployerProfile = employerDataQuery.data?.data[0];
 
   const { data: IndividualData } = useQuery({
-    enabled: employerData?.company_name == null,
-    queryKey: ["individualJob", job.employer_id],
+    enabled: !job.employer.company_name,
+    queryKey: ["individualJob", job.employer.user_id],
     queryFn: () => {
-      return getIndividualDataForJob(job.employer_id);
+      return getIndividualDataForJob(job.employer.user_id);
     },
   });
 
-  const individualJobData = IndividualData?.data;
-
-  // useEffect(() => {
-  //   if (individualJobDataQuery.data && individualJobDataQuery.isSuccess) {
-  //     setIndividualJobData(individualJobDataQuery.data.data);
-  //   }
-  // }, [
-  //   individualJobDataQuery.data,
-  //   individualJobDataQuery.isSuccess,
-  //   setIndividualJobData,
-  // ]);
+  const individualJobData: IndividualJob = IndividualData?.data;
 
   const [open, setOpen] = useState(false);
   const [snackMessage, setSnackMessage] = useState("");
@@ -200,11 +177,11 @@ const JobCard = ({ job }: { job: Job }) => {
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              {employerData &&
-                employerData.company_name &&
-                employerData?.company_image && (
+              {job.employer &&
+                job.employer.company_name &&
+                job.employer?.company_image && (
                   <img
-                    src={`${import.meta.env.VITE_API_BASE_URL}/${employerData?.company_image}`}
+                    src={`${import.meta.env.VITE_API_BASE_URL}/${job.employer?.company_image}`}
                     style={{
                       backgroundColor: "primary.main",
                       borderRadius: "12px",
@@ -213,8 +190,8 @@ const JobCard = ({ job }: { job: Job }) => {
                     }}
                   />
                 )}
-              {employerData &&
-                !employerData.company_name &&
+              {job.employer &&
+                !job.employer.company_name &&
                 individualJobData?.profile_picture && (
                   <img
                     src={`${import.meta.env.VITE_API_BASE_URL}/${individualJobData?.profile_picture}`}
@@ -226,17 +203,14 @@ const JobCard = ({ job }: { job: Job }) => {
                     }}
                   />
                 )}
-              {employerData &&
-                !employerData.company_name &&
+              {job.employer &&
+                !job.employer.company_name &&
                 !individualJobData?.profile_picture && (
                   <Avatar
                     variant="rounded"
                     sx={{ width: "45px", height: "45px" }}
                   />
                 )}
-              {employerDataQuery.isLoading && (
-                <Skeleton variant="rounded" width={"50px"} height={"50px"} />
-              )}
               <Box
                 sx={{
                   display: "flex",

@@ -21,6 +21,35 @@ export type Job = {
   job_code: string;
   created_at: string;
   updated_at: string;
+  job_detail: {
+    id: number;
+    post_job_id: number;
+    requirements: string;
+    description: string;
+    deadline: string;
+    vacancy: number;
+    note: string;
+    gender: string;
+    save_count: number;
+    apply_count: number;
+    benefits: string;
+    created_at: string;
+    updated_at: string;
+  };
+  employer: {
+    id: number;
+    user_id: number;
+    company_name: string | null;
+    company_address: string | null;
+    company_phone: string | null;
+    company_email: string | null;
+    company_image: string | null;
+    company_type: string | null;
+    company_description: string | null;
+    verification: string;
+    created_at: string;
+    updated_at: string;
+  };
   category: { id: number; name: string; created_at: Date; updated_at: Date };
 };
 
@@ -53,6 +82,20 @@ export type JobWithJobDetail = {
   job_code: string;
   created_at: string;
   updated_at: string;
+  employer: {
+    id: number;
+    user_id: number;
+    company_name: string | null;
+    company_address: string | null;
+    company_phone: string | null;
+    company_email: string | null;
+    company_image: string | null;
+    company_type: string | null;
+    company_description: string | null;
+    verification: string;
+    created_at: string;
+    updated_at: string;
+  };
   job_detail: {
     id: number;
     post_job_id: number;
@@ -88,6 +131,20 @@ const initialValues = {
   job_code: "",
   created_at: "",
   updated_at: "",
+  employer: {
+    id: 0,
+    user_id: 0,
+    company_name: "",
+    company_address: "",
+    company_phone: "",
+    company_email: "",
+    company_image: "",
+    company_type: "",
+    company_description: "",
+    verification: "",
+    created_at: "",
+    updated_at: "",
+  },
   job_detail: {
     id: 0,
     post_job_id: 0,
@@ -218,3 +275,16 @@ export const useAppliedJobStore = create<
     set({ seekerAppliedJobs: value });
   },
 }));
+
+export type AppliedSeeker = {
+  id: number;
+  seeker_id: number;
+  employer_id: number;
+  post_job_id: number;
+  document: string[];
+  message: string;
+  shortlist: number;
+  expected_salary: number;
+  created_at: string;
+  updated_at: string;
+};

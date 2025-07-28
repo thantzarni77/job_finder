@@ -96,56 +96,8 @@ const IndividualCard = ({
                 {individualData?.address ? individualData?.address : "No Data"}
               </Typography>
             </Box>
-            {/* <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                textAlign: "left",
-                gap: 1,
-              }}
-            >
-              <GroupsOutlinedIcon />
-              <Typography variant="caption" sx={{ color: "primary.light" }}>
-                5,000 employees on site
-              </Typography>
-            </Box> */}
-
-            {/* <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                textAlign: "left",
-                gap: 1,
-              }}
-            >
-              <ApartmentIcon sx={{ color: "primary.light" }} />
-              <Typography variant="caption" sx={{ color: "primary.light" }}>
-                Parent company
-              </Typography>
-            </Box> */}
           </Box>
         </Box>
-
-        {/* <Typography
-          variant="caption"
-          sx={{ color: "primary.light", textAlign: "left" }}
-        >
-          {employerData?.company_description}
-        </Typography> */}
-        {/* <Button
-          variant="contained"
-          sx={{
-            my: 2,
-            p: 1,
-            borderRadius: "10px",
-            boxShadow: "none",
-            ":hover": {
-              boxShadow: "none",
-            },
-          }}
-        >
-          Search Jobs
-        </Button> */}
       </Paper>
     </Box>
   );
