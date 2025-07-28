@@ -323,7 +323,7 @@ export default function Header({
                     )}
                   {!isLoading &&
                     user?.user_type == "employer" &&
-                    employerProfile?.created_at == null &&
+                    !employerProfile?.company_name &&
                     userData?.profile_picture && (
                       <img
                         src={`${import.meta.env.VITE_API_BASE_URL}/${userData.profile_picture}`}

@@ -41,6 +41,7 @@ import { getIndividualDataForJob } from "../../../helper/userApiFunctions";
 import IndividualCard from "../../../components/employer/IndividualCard";
 import type { SingleEmployer } from "../../../store/EmployerStore";
 import JobCloseCard from "../../../components/user/jobs/JobCloseCard";
+import type { IndividualJob } from "../../../store/UserDataStore";
 
 const JobDetail = () => {
   const queryClient = useQueryClient();
@@ -57,11 +58,6 @@ const JobDetail = () => {
     (state) => state.seekerAppliedJobs,
   );
   const setAppliedJobs = useAppliedJobStore((state) => state.setAppliedJobs);
-
-  // const employerData = useSingleEmployerStore((state) => state.singleEmployer);
-  // const setSingleEmployer = useSingleEmployerStore(
-  //   (state) => state.setSingleEmployer,
-  // );
 
   const savedCheckQuery = useQuery({
     enabled: !!seekerData?.id && !!jobDetails?.id,
@@ -169,13 +165,7 @@ const JobDetail = () => {
     },
   });
 
-  const individualJobData = IndividualData?.data;
-
-  // useEffect(() => {
-  //   if (employerDataQuery.data && employerDataQuery.isSuccess) {
-  //     setSingleEmployer(employerDataQuery.data.data[0]);
-  //   }
-  // }, [employerDataQuery.data, employerDataQuery.isSuccess, setSingleEmployer]);
+  const individualJobData: IndividualJob = IndividualData?.data;
 
   if (
     jobDetailQuery.isPending ||
@@ -669,9 +659,12 @@ const JobDetail = () => {
             employerData.company_name && (
               <EmployerCard employerData={employerData} />
             )}
-          {employerData && !employerData?.company_name && individualJobData && (
-            <IndividualCard individualData={individualJobData} />
-          )}
+          {employerData &&
+            !employerData?.company_name &&
+            individualJobData &&
+            individualJobData.id != user?.user_id && (
+              <IndividualCard individualData={individualJobData} />
+            )}
         </Box>
       </Box>
 

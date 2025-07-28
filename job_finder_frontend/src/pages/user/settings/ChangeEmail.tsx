@@ -156,6 +156,7 @@ const ChangeEmail = () => {
                 message: "Please enter a valid email",
               },
             })}
+            disabled
             id="currentEmail"
             variant="outlined"
             fullWidth

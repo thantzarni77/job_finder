@@ -92,7 +92,7 @@ export default function EditProfile() {
   });
 
   const rolesQuery = useQuery({
-    queryKey: ["roles"],
+    queryKey: ["userRoles"],
     queryFn: getAllRoles,
   });
 
@@ -117,6 +117,8 @@ export default function EditProfile() {
 
   useEffect(() => {
     if (rolesQuery.data && rolesQuery.isSuccess) {
+      console.log(rolesQuery.data);
+
       setRoles(rolesQuery.data.data.data);
     }
   }, [rolesQuery.data, rolesQuery.isSuccess]);
