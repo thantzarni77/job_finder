@@ -67,12 +67,12 @@ const Jobs = () => {
       ),
   });
 
-  const { data: jobTypes, isPending: isJobTypesPending } = useQuery({
+  const { data: jobTypes, isFetching: isJobTypesPending } = useQuery({
     queryKey: ["jobTypes"],
     queryFn: getJobTypes,
   });
 
-  const { data: roles, isPending: isRolesPending } = useQuery({
+  const { data: roles, isFetching: isRolesPending } = useQuery({
     queryKey: ["roles"],
     queryFn: getRoles,
   });
@@ -93,6 +93,8 @@ const Jobs = () => {
     selectedJobRole,
     selectedJobType,
   ]);
+
+  console.log(jobTypes);
 
   // custom component for dropdown icon
   const CustomIcon = () => (
@@ -177,6 +179,16 @@ const Jobs = () => {
         {!isJobTypesPending && !isRolesPending && (
           <Box sx={{ display: { xs: "none", md: "block" } }}>
             <JobFilter filterType={"Job"} jobTypes={jobTypes} roles={roles} />
+          </Box>
+        )}
+        {isJobTypesPending && isRolesPending && (
+          <Box sx={{ display: { xs: "none", md: "block" } }}>
+            <Skeleton
+              variant="rounded"
+              width={"320px"}
+              height={"500px"}
+              sx={{ borderRadius: 2 }}
+            />
           </Box>
         )}
 
@@ -318,39 +330,21 @@ const Jobs = () => {
             >
               {allJobsQuery.isFetching && (
                 <>
-                  <Skeleton
-                    variant="rounded"
-                    width={375}
-                    height={150}
-                    sx={{ borderRadius: "20px" }}
-                  />
-                  <Skeleton
-                    variant="rounded"
-                    width={375}
-                    height={150}
-                    sx={{ borderRadius: "20px" }}
-                  />
-                  <Skeleton
-                    variant="rounded"
-                    width={375}
-                    height={150}
-                    sx={{ borderRadius: "20px" }}
-                  />
-                  <Skeleton
-                    variant="rounded"
-                    width={375}
-                    height={150}
-                    sx={{ borderRadius: "20px" }}
-                  />
-                  <Skeleton
-                    variant="rounded"
-                    width={325}
-                    height={150}
-                    sx={{ borderRadius: "20px" }}
-                  />
+                  {[...Array(10)].map((_, index) => {
+                    return (
+                      <Skeleton
+                        variant="rounded"
+                        width={375}
+                        height={150}
+                        sx={{ borderRadius: "20px" }}
+                        key={index}
+                      />
+                    );
+                  })}
                 </>
               )}
-              {allJobsQuery.isSuccess &&
+
+              {allJobsQuery.data &&
                 allJobs.map((job) => {
                   if (job.posting_status == "approved") {
                     return <JobCard key={job.id} job={job} />;

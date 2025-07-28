@@ -15,19 +15,23 @@ import {
   SettingsOutlined as SettingIcon,
   NotificationsActiveOutlined as NotiIcon,
   Menu as MenuIcon,
-  LightMode as LightModeIcon,
-  DarkMode as DarkModeIcon,
+  // LightMode as LightModeIcon,
+  // DarkMode as DarkModeIcon,
 } from "@mui/icons-material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { NavLink, useLocation, matchPath } from "react-router";
 import { useAppStore } from "../../store/Appstore";
 import { useState, useRef, useEffect, useMemo, type RefObject } from "react";
 import { useNavigate } from "react-router";
-import { useThemeStore } from "../../store/Appstore";
+
 import { useUserStore } from "../../store/UserStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { logoutUser } from "../../helper/authApiFunctions";
-import { useProfileStore } from "../../store/ProfileStore";
+import {
+  type EmployerProfile,
+  type SeekerProfile,
+} from "../../store/ProfileStore";
+import type { UserData } from "../../store/UserDataStore";
 
 function findRefForPath(
   pathname: string,
@@ -41,11 +45,24 @@ function findRefForPath(
   return null;
 }
 
-export default function Header({ isLoading }: { isLoading: boolean }) {
+interface HeaderProps {
+  isLoading: boolean;
+  seekerProfile?: SeekerProfile;
+  employerProfile?: EmployerProfile;
+  userData?: UserData;
+}
+
+export default function Header({
+  isLoading,
+  seekerProfile,
+  employerProfile,
+  userData,
+}: HeaderProps) {
   const queryClient = useQueryClient();
   const user = useUserStore((state) => state.user);
-  const seekerProfile = useProfileStore((state) => state.seekerProfile);
-  const employerProfile = useProfileStore((state) => state.employerProfile);
+  // const userData = useUserDataStore((state) => state.userData);
+  // const seekerProfile = useProfileStore((state) => state.seekerProfile);
+  // const employerProfile = useProfileStore((state) => state.employerProfile);
   const setUserData = useUserStore((state) => state.setUserData);
   const removeToken = useUserStore((state) => state.removeToken);
   const accessToken = localStorage.getItem("token");
@@ -58,8 +75,8 @@ export default function Header({ isLoading }: { isLoading: boolean }) {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const mode = useThemeStore((state) => state.mode);
-  const setMode = useThemeStore((state) => state.setMode);
+  // const mode = useThemeStore((state) => state.mode);
+  // const setMode = useThemeStore((state) => state.setMode);
   const navigate = useNavigate();
   const userRole = user?.user_type;
 
@@ -96,12 +113,12 @@ export default function Header({ isLoading }: { isLoading: boolean }) {
         "/profile/:id": profileRef,
         "/profile/:id/edit": profileRef,
         "/employer-profile/:id": profileRef,
+        "/employer-profile/:id/edit": profileRef,
         "/project/add": profileRef,
         "/notifications/user/:id": notificationsRef,
         "/settings/user/:id": settingsRef,
         "/settings/user/:id/bookmarks": settingsRef,
-        "/settings/user/:id/bookmarks/savedJobs": settingsRef,
-        "/settings/user/:id/bookmarks/following": settingsRef,
+        "/settings/user/:id/applied-jobs": settingsRef,
         "/settings/user/:id/security": settingsRef,
         "/settings/user/:id/security/changeEmail": settingsRef,
         "/settings/user/:id/security/changePassword": settingsRef,
@@ -130,6 +147,7 @@ export default function Header({ isLoading }: { isLoading: boolean }) {
       if (data.status == 200) {
         setUserData(null);
         removeToken();
+        queryClient.clear();
       }
     },
   });
@@ -211,8 +229,8 @@ export default function Header({ isLoading }: { isLoading: boolean }) {
                 <Button
                   onClick={() => navigate("/post/job")}
                   disabled={
-                    employerProfile.verification == "pending" ||
-                    employerProfile.verification == "rejected"
+                    employerProfile?.verification == "pending" ||
+                    employerProfile?.verification == "rejected"
                   }
                   sx={{
                     fontWeight: "700",
@@ -238,12 +256,12 @@ export default function Header({ isLoading }: { isLoading: boolean }) {
               <Box
                 sx={{ gap: 1, display: { md: "flex", sm: "none", xs: "none" } }}
               >
-                <IconButton
+                {/* <IconButton
                   color="inherit"
                   onClick={() => setMode(mode === "light" ? "dark" : "light")}
                 >
                   {mode === "light" ? <LightModeIcon /> : <DarkModeIcon />}
-                </IconButton>
+                </IconButton> */}
                 <IconButton
                   color="inherit"
                   ref={notificationsRef}
@@ -270,15 +288,45 @@ export default function Header({ isLoading }: { isLoading: boolean }) {
                 >
                   {isLoading && (
                     <Skeleton
-                      variant="rounded"
+                      variant="circular"
                       width={"32px"}
                       height={"32px"}
                     />
                   )}
                   {!isLoading &&
-                    (seekerProfile.image || employerProfile.company_image) && (
+                    user?.user_type == "seeker" &&
+                    seekerProfile?.image && (
                       <img
-                        src={`${import.meta.env.VITE_API_BASE_URL}/${user?.user_type == "seeker" ? seekerProfile.image : employerProfile.company_image}`}
+                        src={`${import.meta.env.VITE_API_BASE_URL}/${seekerProfile.image}`}
+                        alt={"SeekerProfile"}
+                        style={{
+                          width: "32px",
+                          height: "32px",
+                          borderRadius: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    )}
+                  {!isLoading &&
+                    user?.user_type == "employer" &&
+                    employerProfile?.company_image && (
+                      <img
+                        src={`${import.meta.env.VITE_API_BASE_URL}/${employerProfile.company_image}`}
+                        alt={"SeekerProfile"}
+                        style={{
+                          width: "32px",
+                          height: "32px",
+                          borderRadius: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    )}
+                  {!isLoading &&
+                    user?.user_type == "employer" &&
+                    employerProfile?.created_at == null &&
+                    userData?.profile_picture && (
+                      <img
+                        src={`${import.meta.env.VITE_API_BASE_URL}/${userData.profile_picture}`}
                         alt={"SeekerProfile"}
                         style={{
                           width: "32px",
@@ -290,8 +338,17 @@ export default function Header({ isLoading }: { isLoading: boolean }) {
                     )}
 
                   {!isLoading &&
-                    !seekerProfile.image &&
-                    !employerProfile.company_image && (
+                    user?.user_type == "employer" &&
+                    employerProfile?.user_id == user?.user_id &&
+                    !employerProfile?.company_image &&
+                    !userData?.profile_picture && (
+                      <Avatar sx={{ width: 32, height: 32 }} />
+                    )}
+
+                  {!isLoading &&
+                    user?.user_type == "seeker" &&
+                    seekerProfile?.user_id.id == user?.user_id &&
+                    !seekerProfile?.image && (
                       <Avatar sx={{ width: 32, height: 32 }} />
                     )}
                 </Button>

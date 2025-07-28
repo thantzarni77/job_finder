@@ -21,4 +21,9 @@ class UserController extends Controller
     {
         return $this->userRepositoryInterface->getSingleUserData();
     }
+
+    public function getIndividualEmployerData($id)
+    {
+        return $this->userRepositoryInterface->getIndividualEmployerData($id);
+    }
 }

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-type UserData = {
+export type UserData = {
   id: number;
   name: string;
   email: string;
@@ -36,3 +36,40 @@ export const useUserDataStore = create<UserDataValue & UserDataActions>(
     },
   }),
 );
+
+export type IndividualJob = {
+  id: number;
+  name: string;
+  email: string;
+  phone: null | string;
+  address: null | string;
+  user_type: string;
+  profile_picture: null | string;
+};
+
+type IndividualJobData = {
+  individualJobData: IndividualJob;
+};
+
+type EmployerJobActions = {
+  setIndividualJobData: (value: IndividualJob) => void;
+};
+
+const initialValueForEmp = {
+  id: 0,
+  name: "",
+  email: "",
+  phone: null,
+  address: null,
+  user_type: "",
+  profile_picture: null,
+};
+
+export const useIndividualJobStore = create<
+  IndividualJobData & EmployerJobActions
+>((set) => ({
+  individualJobData: initialValueForEmp,
+  setIndividualJobData: (dataFromServer: IndividualJob) => {
+    set({ individualJobData: dataFromServer });
+  },
+}));

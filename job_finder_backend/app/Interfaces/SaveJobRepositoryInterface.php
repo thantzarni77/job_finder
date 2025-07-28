@@ -5,9 +5,8 @@ use Illuminate\Http\Request;
 
 interface SaveJobRepositoryInterface
 {
-    public function index();
     public function store(Request $request);
     public function view();
     public function destroy($id);
-    public function checkIsSaved(Request $request);
+    public function checkSaveJob(Request $request);
 }

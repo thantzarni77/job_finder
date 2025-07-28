@@ -17,40 +17,52 @@ import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlin
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import { useNavigate, useParams } from "react-router";
 import EmployerCard from "../../../components/employer/EmployerCard";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getSingleJob } from "../../../helper/postJob";
 import { useEffect, useState } from "react";
-import { useJobDetailStore } from "../../../store/JobStore";
-import { useSingleEmployerStore } from "../../../store/EmployerStore";
+import {
+  useAppliedJobStore,
+  useJobDetailStore,
+  useJobStore,
+} from "../../../store/JobStore";
 import { getSingleEmployerData } from "../../../helper/employerApiFunctions";
 import FullScreenLoader from "../../../components/FullScreenLoader";
 import { useUserStore } from "../../../store/UserStore";
 import {
   doSaveJob,
+  getSeekerAppliedJobs,
   isSaved,
   undoSaveJob,
 } from "../../../helper/jobApiFunctions";
 import { useProfileStore } from "../../../store/ProfileStore";
-import { useSavedSingleJobStore } from "../../../store/SavedJobStore";
+import JobCard from "../../../components/user/jobs/JobCard";
+import { getIndividualDataForJob } from "../../../helper/userApiFunctions";
+import IndividualCard from "../../../components/employer/IndividualCard";
 
 const JobDetail = () => {
+  const queryClient = useQueryClient();
+  const { id } = useParams();
+
   const user = useUserStore((state) => state.user);
+
+  const allJobs = useJobStore((state) => state.jobs);
   const seekerData = useProfileStore((state) => state.seekerProfile);
   const jobDetails = useJobDetailStore((state) => state.jobDetails);
   const setJobDetails = useJobDetailStore((state) => state.setJobDetails);
 
-  const savedJob = useSavedSingleJobStore((state) => state.saveJob);
-  const setSingleSavedJob = useSavedSingleJobStore(
-    (state) => state.setSingleSavedJob,
+  const seekerAppliedJobs = useAppliedJobStore(
+    (state) => state.seekerAppliedJobs,
   );
+  const setAppliedJobs = useAppliedJobStore((state) => state.setAppliedJobs);
 
-  const employerData = useSingleEmployerStore((state) => state.singleEmployer);
-  const setSingleEmployer = useSingleEmployerStore(
-    (state) => state.setSingleEmployer,
-  );
+  // const employerData = useSingleEmployerStore((state) => state.singleEmployer);
+  // const setSingleEmployer = useSingleEmployerStore(
+  //   (state) => state.setSingleEmployer,
+  // );
 
   const savedCheckQuery = useQuery({
-    queryKey: ["savedCheckQuery", seekerData.id, jobDetails?.id],
+    enabled: !!seekerData?.id && !!jobDetails?.id,
+    queryKey: ["savedCheck", seekerData.id, jobDetails?.id],
     queryFn: () => {
       return isSaved({
         seeker_id: seekerData.id,
@@ -59,28 +71,54 @@ const JobDetail = () => {
     },
   });
 
-  const [isJobSaved, setIsSaved] = useState(
-    savedCheckQuery.isSuccess ? true : false,
-  );
+  const isJobSaved = savedCheckQuery.data?.data.status;
+  const savedJobRecordId = savedCheckQuery.data?.data?.data?.id;
 
   const saveJobMutation = useMutation({
     mutationFn: doSaveJob,
     onSuccess: () => {
-      setIsSaved(true);
+      queryClient.invalidateQueries({ queryKey: ["savedCheck"] });
+      queryClient.invalidateQueries({ queryKey: ["savedJobs", seekerData.id] });
+      setSnackMessage("Bookmarked !");
+      handleClick();
     },
   });
 
   const undoSaveJobMutation = useMutation({
     mutationFn: undoSaveJob,
     onSuccess: () => {
-      setIsSaved(false);
+      queryClient.invalidateQueries({ queryKey: ["savedCheck"] });
+      queryClient.invalidateQueries({
+        queryKey: ["savedJobs", seekerData.id],
+      });
+      setSnackMessage("Removed form Bookmark !");
+      handleClick();
     },
   });
 
+  const seekerAppliedJobsQuery = useQuery({
+    queryKey: ["seekerAppliedJobs", seekerData.id],
+    queryFn: getSeekerAppliedJobs,
+  });
+
+  useEffect(() => {
+    if (seekerAppliedJobsQuery.data && seekerAppliedJobsQuery.isSuccess) {
+      setAppliedJobs(seekerAppliedJobsQuery.data.data);
+    }
+  }, [
+    seekerAppliedJobsQuery.data,
+    seekerAppliedJobsQuery.isSuccess,
+    setAppliedJobs,
+  ]);
+
+  const alreadyAppliedCheck = seekerAppliedJobs.filter(
+    (job) => job.post_job_id == Number(id),
+  );
+
   const navigate = useNavigate();
-  const { id } = useParams();
 
   const [open, setOpen] = useState(false);
+  const [snackMessage, setSnackMessage] = useState("");
 
   const handleClick = () => {
     setOpen(true);
@@ -118,20 +156,29 @@ const JobDetail = () => {
     },
   });
 
-  useEffect(() => {
-    if (employerDataQuery.data && employerDataQuery.isSuccess) {
-      setSingleEmployer(employerDataQuery.data.data[0]);
-    }
-  }, [employerDataQuery.data, employerDataQuery.isSuccess, setSingleEmployer]);
+  const employerData = employerDataQuery.data?.data[0];
 
-  useEffect(() => {
-    if ((savedCheckQuery.isSuccess, savedCheckQuery.data)) {
-      setIsSaved(true);
-      setSingleSavedJob(savedCheckQuery.data.data.data);
-    }
-  }, [savedCheckQuery.isSuccess, savedCheckQuery.data, setSingleSavedJob]);
+  const { data: IndividualData, isPending: individualPending } = useQuery({
+    enabled: employerData?.created_at == null,
+    queryKey: ["individualJob", jobDetails?.employer_id],
+    queryFn: () => {
+      return getIndividualDataForJob(jobDetails?.employer_id);
+    },
+  });
 
-  if (jobDetailQuery.isPending) {
+  const individualJobData = IndividualData?.data;
+
+  // useEffect(() => {
+  //   if (employerDataQuery.data && employerDataQuery.isSuccess) {
+  //     setSingleEmployer(employerDataQuery.data.data[0]);
+  //   }
+  // }, [employerDataQuery.data, employerDataQuery.isSuccess, setSingleEmployer]);
+
+  if (
+    jobDetailQuery.isPending ||
+    employerDataQuery.isPending ||
+    individualPending
+  ) {
     return (
       <FullScreenLoader
         open={jobDetailQuery.isPending}
@@ -141,8 +188,7 @@ const JobDetail = () => {
   }
 
   const saveJobHandler = () => {
-    console.log("clicked");
-
+    if (!seekerData.id || !jobDetails?.id) return;
     const payload = {
       seeker_id: seekerData.id,
       post_job_id: jobDetails?.id,
@@ -151,7 +197,8 @@ const JobDetail = () => {
   };
 
   const undoSaveJobHandler = () => {
-    undoSaveJobMutation.mutate(savedJob?.id);
+    if (!savedJobRecordId) return;
+    undoSaveJobMutation.mutate(savedJobRecordId);
   };
 
   return (
@@ -165,7 +212,7 @@ const JobDetail = () => {
       >
         <SnackbarContent
           sx={{ backgroundColor: "success.main" }}
-          message={isJobSaved ? "Bookmarked" : "Removed from Bookmark"}
+          message={snackMessage}
           action={
             <IconButton
               size="small"
@@ -238,53 +285,57 @@ const JobDetail = () => {
         </Box>
 
         {/* bookmark icon */}
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            width: "fit-content",
-            bgcolor: isJobSaved ? "primary.main" : "background.paper",
-            border: 1,
-            color: isJobSaved ? "background.paper" : "text.primary",
-            borderColor: "primary.main",
-            borderRadius: "4px",
-            height: "28px",
-            px: "5px",
-            py: "5px",
-          }}
-        >
-          <Checkbox
-            disableRipple
-            onClick={() => {
-              if (!isJobSaved) {
-                saveJobHandler();
-                handleClick();
-              } else {
-                undoSaveJobHandler();
-                handleClick();
-              }
-            }}
+        {user?.user_id && user.user_type == "seeker" && (
+          <Box
             sx={{
-              "& .MuiSvgIcon-root": { fontSize: 22, ml: -1 },
-              color: "primary.main",
-              "&.Mui-checked": {
-                color: "primary.main",
-              },
+              display: "flex",
+              alignItems: "center",
+              width: "fit-content",
+              bgcolor: isJobSaved ? "primary.main" : "background.paper",
+              border: 1,
+              color: isJobSaved ? "background.paper" : "text.primary",
+              borderColor: "primary.main",
+              borderRadius: "4px",
+              height: "28px",
+              px: "5px",
+              py: "5px",
             }}
-            icon={<BookmarkBorderOutlinedIcon />}
-            checkedIcon={
-              <BookmarkIcon
-                sx={{
-                  color: isJobSaved ? "background.paper" : "text.primary",
-                }}
-              />
-            }
-            name={"bookMark"}
-          />
-          <Typography variant="caption">
-            {isJobSaved ? "Saved" : "Save this"}
-          </Typography>
-        </Box>
+          >
+            <Checkbox
+              disableRipple
+              onClick={() => {
+                if (isJobSaved) {
+                  undoSaveJobHandler();
+                } else {
+                  saveJobHandler();
+                }
+              }}
+              disabled={
+                saveJobMutation.isPending || undoSaveJobMutation.isPending
+              }
+              checked={isJobSaved}
+              sx={{
+                "& .MuiSvgIcon-root": { fontSize: 22, ml: -1 },
+                color: "primary.main",
+                "&.Mui-checked": {
+                  color: "primary.main",
+                },
+              }}
+              icon={<BookmarkBorderOutlinedIcon />}
+              checkedIcon={
+                <BookmarkIcon
+                  sx={{
+                    color: isJobSaved ? "background.paper" : "text.primary",
+                  }}
+                />
+              }
+              name={"bookMark"}
+            />
+            <Typography variant="caption">
+              {isJobSaved ? "Saved" : "Save this"}
+            </Typography>
+          </Box>
+        )}
 
         {/* appilicant icon */}
         <Box
@@ -458,25 +509,6 @@ const JobDetail = () => {
             </Typography>
           </Box>
 
-          {/* <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 1,
-              mt: 3,
-            }}
-          >
-            <Typography variant="body1" sx={{ fontWeight: 600 }}>
-              Working hour
-            </Typography>
-            <Typography
-              variant="subtitle2"
-              sx={{ fontWeight: 400, color: "text.secondary" }}
-            >
-              9:00 am to 5:00 pm
-            </Typography>
-          </Box> */}
-
           <Box
             sx={{
               display: "flex",
@@ -523,8 +555,35 @@ const JobDetail = () => {
             </Typography>
           </Box>
 
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 1,
+              mb: 3,
+            }}
+          >
+            <Typography variant="body1" sx={{ fontWeight: 600 }}>
+              Benefits
+            </Typography>
+            <Typography
+              variant="subtitle2"
+              sx={{
+                fontWeight: 400,
+                color: "text.secondary",
+                width: { xs: "100%", md: "100%", lg: "100%" },
+              }}
+            >
+              {jobDetails?.job_detail.benefits}
+            </Typography>
+          </Box>
+
           <Button
-            disabled={user?.user_type == "employer"}
+            disabled={
+              user?.user_type == "employer" ||
+              alreadyAppliedCheck.length != 0 ||
+              !user?.user_id
+            }
             onClick={() => navigate(`/job/${id}/apply`)}
             variant="contained"
             sx={{
@@ -539,13 +598,20 @@ const JobDetail = () => {
               },
             }}
           >
-            Apply Now
+            {user?.user_id &&
+              (alreadyAppliedCheck.length != 0 ? "Applied" : "Apply Now")}
+            {!user?.user_id && "Create an account or login to apply"}
           </Button>
         </Box>
 
         {/* employer card */}
         <Box sx={{ mt: { xs: 4, md: 4, lg: 0 } }}>
-          <EmployerCard employerData={employerData} />
+          {employerData && employerData.created_at != null && (
+            <EmployerCard employerData={employerData} />
+          )}
+          {employerData?.created_at == null && individualJobData && (
+            <IndividualCard individualData={individualJobData} />
+          )}
         </Box>
       </Box>
 
@@ -574,9 +640,13 @@ const JobDetail = () => {
             gap: 6,
           }}
         >
-          {/* <JobCard />
-          <JobCard />
-          <JobCard /> */}
+          {allJobs.map((single) => {
+            if (single.category_id == jobDetails?.category_id) {
+              if (single.id != Number(id)) {
+                return <JobCard key={single.id} job={single} />;
+              }
+            }
+          })}
         </Box>
       </Box>
     </Box>

@@ -1,15 +1,12 @@
 <?php
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Category;
-use App\Models\PostJob;
-use Illuminate\Database\Seeder;
+// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Database\Seeders\RoleSeeder;
-use Database\Seeders\TypeSeeder;
-use Database\Seeders\GenderSeeder;
 use Database\Seeders\TalentSeeder;
+use Database\Seeders\TypeSeeder;
+use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,19 +15,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(10)->create();
-
         $this->call([
-            AuthSeeder::class,
             TypeSeeder::class,
             TalentSeeder::class,
             RoleSeeder::class,
-            GenderSeeder::class,
 
         ]);
         Category::factory(10)->create();
-
-    PostJob::factory(50)->create();
-
     }
 }

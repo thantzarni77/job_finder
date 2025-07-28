@@ -125,7 +125,7 @@ export default function PostAJob() {
 
   useEffect(() => {
     if (typeQuery.data && typeQuery.isSuccess) {
-      setJobTypes(typeQuery.data.original.data);
+      setJobTypes(typeQuery.data);
     }
   }, [typeQuery.data, typeQuery.isSuccess]);
 

@@ -1,19 +1,11 @@
-import {
-  Avatar,
-  Box,
-  Checkbox,
-  Chip,
-  Divider,
-  Paper,
-  Typography,
-} from "@mui/material";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
+import { Box, Chip, Paper, Typography } from "@mui/material";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
 import { NavLink } from "react-router";
+import { format } from "date-fns";
+import type { SeekerType } from "../../helper/talentPage";
 
-const SeekerCard = () => {
+const SeekerCard = ({ seeker }: { seeker: SeekerType }) => {
   return (
     <Box
       sx={{
@@ -42,17 +34,17 @@ const SeekerCard = () => {
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Avatar
-                sx={{
-                  bgcolor: "primary.main",
+              <img
+                src={`${import.meta.env.VITE_API_BASE_URL}/${seeker.image}`}
+                style={{
                   borderRadius: "12px",
                   fontSize: "12px",
                   fontWeight: "bold",
+                  width: "50px",
+                  height: "50px",
                 }}
-                variant="square"
-              >
-                F
-              </Avatar>
+              />
+
               <Box
                 sx={{
                   display: "flex",
@@ -68,13 +60,13 @@ const SeekerCard = () => {
                     ":hover": { cursor: "pointer", color: "primary.main" },
                   }}
                 >
-                  <NavLink to={"/talent/1/profile"}>
-                    Full Stack Developer
+                  <NavLink to={`/talent/${seeker.user_id.id}/profile`}>
+                    {seeker.user_id.name}
                   </NavLink>
                 </Typography>
               </Box>
             </Box>
-            <Checkbox
+            {/* <Checkbox
               disableRipple
               sx={{
                 "& .MuiSvgIcon-root": { fontSize: 26, mr: -2 },
@@ -86,7 +78,7 @@ const SeekerCard = () => {
               icon={<AddCircleIcon />}
               checkedIcon={<CheckCircleIcon sx={{ color: "#75C149" }} />}
               name={"fullTime"}
-            />
+            /> */}
           </Box>
           {/* location date */}
           <Box sx={{ my: 1 }}>
@@ -104,7 +96,7 @@ const SeekerCard = () => {
               />
 
               <Typography variant="caption" sx={{ color: "primary.light" }}>
-                Yangon
+                {seeker.user_id.address ? seeker.user_id.address : "No Data"}
               </Typography>
             </Box>
             <Box
@@ -118,7 +110,7 @@ const SeekerCard = () => {
             >
               <QueryBuilderIcon sx={{ color: "primary.light", fontSize: 22 }} />
               <Typography variant="caption" sx={{ color: "primary.light" }}>
-                posted on 1 day ago
+                joined on {format(new Date(seeker.created_at), "PPP")}
               </Typography>
             </Box>
           </Box>
@@ -132,7 +124,7 @@ const SeekerCard = () => {
                 width: "fit-content",
                 height: "28px",
               }}
-              label="Chip Filled"
+              label={seeker.talent}
             />
             <Chip
               sx={{
@@ -142,7 +134,7 @@ const SeekerCard = () => {
                 width: "fit-content",
                 height: "28px",
               }}
-              label="Chip Filled"
+              label={seeker.skills[0]}
             />
             <Chip
               sx={{
@@ -152,30 +144,8 @@ const SeekerCard = () => {
                 width: "fit-content",
                 height: "28px",
               }}
-              label="Chip Filled"
+              label={seeker.education[0].degree}
             />
-          </Box>
-          <Divider flexItem />
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              mt: 1,
-            }}
-          >
-            <Typography
-              variant="body1"
-              sx={{ fontWeight: "bold", color: "text.secondary" }}
-            >
-              Salary
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{ fontWeight: "bold", color: "text.secondary" }}
-            >
-              800000MMK
-            </Typography>
           </Box>
         </Box>
       </Paper>

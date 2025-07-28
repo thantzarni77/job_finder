@@ -1,10 +1,11 @@
-import { Avatar, Box, Typography } from "@mui/material";
+import { Avatar, Box, Button, Typography } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import PhoneInTalkIcon from "@mui/icons-material/PhoneInTalk";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import { useProfileStore } from "../../store/ProfileStore";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { getEmployerProfile } from "../../helper/profileApiFunctions";
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -14,6 +15,7 @@ import { useUserDataStore } from "../../store/UserDataStore";
 import FullScreenLoader from "../../components/FullScreenLoader";
 
 export default function EmployerProfile() {
+  const navigate = useNavigate();
   const { id } = useParams();
   const user_id = Number(id);
 
@@ -75,8 +77,8 @@ export default function EmployerProfile() {
             mt: 2,
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            {!employerData.company_image && (
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            {!employerData.company_image && !userData.profile_picture && (
               <Avatar
                 sx={{ width: { xs: 50, md: 80 }, height: { xs: 50, md: 80 } }}
               />
@@ -85,6 +87,18 @@ export default function EmployerProfile() {
             {employerData.company_image && (
               <img
                 src={`${import.meta.env.VITE_API_BASE_URL}/${employerData.company_image}`}
+                alt="employerProfile"
+                style={{
+                  width: "80px",
+                  height: "80px",
+                  borderRadius: "100%",
+                  objectFit: "cover",
+                }}
+              />
+            )}
+            {userData.profile_picture && (
+              <img
+                src={`${import.meta.env.VITE_API_BASE_URL}/${userData.profile_picture}`}
                 alt="employerProfile"
                 style={{
                   width: "80px",
@@ -104,8 +118,49 @@ export default function EmployerProfile() {
                 {employerData.company_type}
               </Typography>
             </Box>
+
+            <Box
+              sx={{ display: "flex", gap: 2, flexDirection: "column", mx: 2 }}
+            >
+              <Button
+                disabled={
+                  employerData.verification == "pending" ||
+                  employerData.verification == "rejected"
+                }
+                variant="outlined"
+                sx={{
+                  width: { xs: "20px", sm: " 150px", md: "150px" },
+                  height: "30px",
+                }}
+                onClick={() => navigate(`/employer-profile/${user_id}/edit`)}
+              >
+                <EditIcon sx={{ fontSize: "20px" }} />
+                <Typography
+                  variant="subtitle2"
+                  sx={{
+                    mx: 1,
+                    textTransform: "none",
+                    display: {
+                      xs: "none",
+                      sm: "inline-flex",
+                      md: "inline-flex",
+                    },
+                  }}
+                >
+                  Edit Profile
+                </Typography>
+              </Button>
+            </Box>
           </Box>
         </Box>
+        {employerData.company_name && (
+          <Box sx={{ mt: 4 }}>
+            <Typography sx={{ fontWeight: 600 }}>User Name</Typography>
+            <Typography variant="body2" sx={{ mt: 1, color: "text.secondary" }}>
+              {userData.name}
+            </Typography>
+          </Box>
+        )}
         {employerData.company_description && (
           <Box sx={{ mt: 4 }}>
             <Typography sx={{ fontWeight: 600 }}>Description</Typography>
@@ -122,6 +177,8 @@ export default function EmployerProfile() {
               {employerData.company_address
                 ? employerData.company_address
                 : userData.address}
+
+              {!employerData.company_address && !userData.address && "No Data"}
             </Typography>
           </Box>
         </Box>
@@ -171,6 +228,7 @@ export default function EmployerProfile() {
                 {employerData.company_phone
                   ? employerData.company_phone
                   : userData.phone}
+                {!employerData.company_phone && !userData.phone && "No Data"}
               </Typography>
             </Box>
           </Box>

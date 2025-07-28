@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Talent;
 use Illuminate\Http\Request;
 use App\Interfaces\TalentRepositoryInterface;
+use Illuminate\Validation\Rule;
 
 class TalentController extends Controller
 {
@@ -30,7 +31,7 @@ class TalentController extends Controller
     public function update(Request $request,$id)
     {
         $data = $request->validate([
-            'name' => 'required'
+            'name' => ['sometimes', Rule::unique('talents')->ignore($id)]
         ]);
         return $this->talentRepo->update($data,$id);
     }
