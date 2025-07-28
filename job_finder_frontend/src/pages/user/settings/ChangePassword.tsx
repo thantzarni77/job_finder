@@ -1,4 +1,5 @@
 import {
+  Alert,
   Box,
   Button,
   FormHelperText,
@@ -7,8 +8,12 @@ import {
   Typography,
 } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useForm } from "react-hook-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { changePassword } from "../../../helper/changeSecurityApiFunctions";
+import { useState } from "react";
+import { isAxiosError } from "axios";
 
 type ChangePasswordForm = {
   currentPassword: string;
@@ -18,17 +23,47 @@ type ChangePasswordForm = {
 
 const ChangePassword = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const [wrongOldPasswordErr, setWrongOldPasswordErr] = useState<string | null>(
+    null,
+  );
+
+  const { id } = useParams();
+
+  const user_id = Number(id);
 
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<ChangePasswordForm>({
     mode: "onBlur",
   });
 
+  const changePasswordMutation = useMutation({
+    mutationFn: changePassword,
+    onSuccess: () => {
+      queryClient.invalidateQueries();
+      navigate(-1);
+    },
+    onError: (err) => {
+      if (isAxiosError(err)) {
+        setWrongOldPasswordErr(err.response?.data.message);
+      }
+    },
+  });
+
   const changePasswordHandler = (data: ChangePasswordForm) => {
-    console.log(data);
+    const { currentPassword, newPassword } = data;
+    changePasswordMutation.mutate({
+      payload: {
+        old_password: currentPassword,
+        password: newPassword,
+      },
+      userID: user_id,
+    });
   };
   return (
     <Box sx={{ width: "90%", mx: "auto", p: 2, mt: 5, mb: 10 }}>
@@ -95,24 +130,6 @@ const ChangePassword = () => {
           <TextField
             {...register("currentPassword", {
               required: "Current password is required.",
-              minLength: {
-                value: 8,
-                message: "Password must be at least 8 characters long.",
-              },
-              validate: {
-                hasNumber: (value) =>
-                  /[0-9]/.test(value) ||
-                  "Password must contain at least one number",
-                hasUpperCase: (value) =>
-                  /[A-Z]/.test(value) ||
-                  "Password must contain at least one uppercase letter.",
-                hasLowerCase: (value) =>
-                  /[a-z]/.test(value) ||
-                  "Password must contain at least one lowercase letter.",
-                hasSpecialChar: (value) =>
-                  /[!@#$%^&*(),.?":{}|<>]/.test(value) ||
-                  "Password must contain at least one special character.",
-              },
             })}
             id="currentPassword"
             variant="outlined"
@@ -254,6 +271,11 @@ const ChangePassword = () => {
                 message: "Password must be at least 8 characters long.",
               },
               validate: {
+                isSamePassword: (val: string) => {
+                  if (val != watch("newPassword")) {
+                    return "Passwords must be same";
+                  }
+                },
                 hasNumber: (value) =>
                   /[0-9]/.test(value) ||
                   "Password must contain at least one number",
@@ -302,11 +324,24 @@ const ChangePassword = () => {
               {errors.confirmNewPassword.message}
             </FormHelperText>
           )}
+          {wrongOldPasswordErr && (
+            <Alert
+              sx={{ borderRadius: 3, mt: 2 }}
+              variant="outlined"
+              severity="error"
+              onClose={() => {
+                setWrongOldPasswordErr(null);
+              }}
+            >
+              {wrongOldPasswordErr}
+            </Alert>
+          )}
         </Box>
 
         <Button
           type="submit"
           variant="contained"
+          loading={changePasswordMutation.isPending}
           sx={{
             width: "100%",
             my: 2,

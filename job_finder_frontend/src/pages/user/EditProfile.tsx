@@ -764,9 +764,7 @@ export default function EditProfile() {
                         Position
                       </InputLabel>
                       <OutlinedInput
-                        {...register(`experience.${index}.workPos`, {
-                          required: "Position is required",
-                        })}
+                        {...register(`experience.${index}.workPos`)}
                         fullWidth
                         size="small"
                         sx={{ bgcolor: "background.paper" }}
@@ -786,9 +784,7 @@ export default function EditProfile() {
                         Year
                       </InputLabel>
                       <OutlinedInput
-                        {...register(`experience.${index}.year`, {
-                          required: "year is required",
-                        })}
+                        {...register(`experience.${index}.year`)}
                         fullWidth
                         size="small"
                         sx={{ bgcolor: "background.paper" }}

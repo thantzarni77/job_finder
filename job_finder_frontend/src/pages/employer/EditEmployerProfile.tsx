@@ -32,7 +32,6 @@ import { isAxiosError } from "axios";
 
 type Inputs = {
   name: string;
-  email: string | undefined;
   phone?: string;
   address?: string;
   profile_picture?: File | string;
@@ -141,7 +140,6 @@ export default function EditEmployerProfile() {
   const onSubmit = (data: Inputs) => {
     const {
       name,
-      email,
       phone,
       address,
       profile_picture,
@@ -157,7 +155,6 @@ export default function EditEmployerProfile() {
     const userForm = new FormData();
 
     if (name) userForm.append("name", name);
-    if (email) userForm.append("email", email);
     if (phone) userForm.append("phone", phone);
     if (address) userForm.append("address", address);
     if (profile_picture) userForm.append("profile_picture", profile_picture);
@@ -192,7 +189,6 @@ export default function EditEmployerProfile() {
   useEffect(() => {
     if (employerData && employerData.id) {
       if (userData.name) setValue("name", userData.name);
-      if (userData?.email) setValue("email", userData?.email);
       if (userData?.phone) setValue("phone", userData?.phone);
       if (userData?.address) setValue("address", userData?.address);
       if (userData.profile_picture) {
@@ -407,29 +403,6 @@ export default function EditEmployerProfile() {
                 />
                 {errors.name && (
                   <FormHelperText error>{errors.name.message}</FormHelperText>
-                )}
-              </Box>
-
-              {/* --- email --- */}
-              <Box>
-                <InputLabel
-                  htmlFor="email"
-                  sx={{ color: "text.secondary", mb: 0.5 }}
-                >
-                  Email Address
-                </InputLabel>
-                <OutlinedInput
-                  type="email"
-                  {...register("email", { required: "Email is required" })}
-                  id="email"
-                  placeholder="Please Enter Your Email Address"
-                  size="small"
-                  fullWidth
-                  sx={{ bgcolor: "background.paper" }}
-                  error={!!errors.email}
-                />
-                {errors.email && (
-                  <FormHelperText error>{errors.email.message}</FormHelperText>
                 )}
               </Box>
 
