@@ -6,6 +6,7 @@ use App\Models\Category;
 use Database\Seeders\RoleSeeder;
 use Database\Seeders\TalentSeeder;
 use Database\Seeders\TypeSeeder;
+use Database\Seeders\AdminAuthSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -14,13 +15,12 @@ class DatabaseSeeder extends Seeder
      * Seed the application's database.
      */
     public function run(): void
-    {
-      
+    { 
         $this->call([
+            AdminAuthSeeder::class,
             TypeSeeder::class,
             TalentSeeder::class,
-            RoleSeeder::class,
-
+            RoleSeeder::class
         ]);
         Category::factory(10)->create();
     }

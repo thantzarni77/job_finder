@@ -21,6 +21,7 @@ class AdminAuthController extends Controller
                 "name" => "required",
                 "email" => "required",
                 "password"=> "required",
+                "admin_type" => "nullable|in:superadmin,admin",
             ]);
 
             if ($validator->fails()){
@@ -34,6 +35,7 @@ class AdminAuthController extends Controller
             $admin = Admin::create([
                 "name" => $request->name,
                 "email"=> $request->email,
+                "admin_type" => $request->admin_type ?? "superadmin",
                 "refresh_token" => hash('sha256', $refresh_token),
                 "password" => Hash::make($request->password)
             ]);
@@ -42,9 +44,10 @@ class AdminAuthController extends Controller
             return response()->json([
                 "message" => "Admin registered successfully",
                 "data" => [
-                    'admin_name' => $admin->name,
-                    'admin_email' => $admin->email,
-                    'admin_id' => $admin->id,
+                    'name' => $admin->name,
+                    'email' => $admin->email,
+                    'id' => $admin->id,
+                    'admin_type' => $admin->admin_type,
                     'token' => $token,
                 ]
             ],201)->cookie('refresh_token', $refresh_token, 60 * 24 * 7, null, null, true, true);
@@ -85,9 +88,10 @@ class AdminAuthController extends Controller
             return response()->json([
                 "message" => "Login successfully",
                 "data" => [
-                    'admin_name' => $admin->name,
-                    'admin_email' => $admin->email,
-                    'admin_id' => $admin->id,
+                    'name' => $admin->name,
+                    'email' => $admin->email,
+                    'admin_type' => $admin->admin_type,
+                    'id' => $admin->id,
                     'token' => $token,
                 ]
             ],200)->cookie('refresh_token', $refresh_token, 60 * 24 * 7, null, null, true, true);
@@ -109,8 +113,9 @@ class AdminAuthController extends Controller
             }
     
             return response()->json([
-                'admin_name' => $admin->name,
-                'admin_email' => $admin->email,
+                'name' => $admin->name,
+                'email' => $admin->email,
+                'admin_type' => $admin->admin_type,
                 'id' => $admin->id,
             ], 200);
     
@@ -122,7 +127,6 @@ class AdminAuthController extends Controller
 
     public function logout(){
         try{
-            // auth()->guard("admin")->logout();
             JWTAuth::invalidate(JWTAuth::getToken());
             return response()->json([
                 "message" => "logout successfully"

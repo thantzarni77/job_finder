@@ -16,7 +16,7 @@ class AdminAuthMiddleware
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next,$admin_type): Response
     {
         try {
 
@@ -30,6 +30,10 @@ class AdminAuthMiddleware
 
             if (!$admin) {
                 return response()->json(['message' => 'Admin not found'], 401);
+            }
+
+            if ($admin->admin_type !== $admin_type) {
+                return response()->json(['message' => 'Unauthorized - admin_type is wrong'], 403);
             }
 
         } catch (TokenExpiredException $e) {
