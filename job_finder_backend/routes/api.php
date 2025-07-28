@@ -47,6 +47,7 @@ Route::post('/registersteptwo/{id}',[AuthController::class,'registerStepTwo']);
 Route::post('/login',[AuthController::class,'login']);
 Route::post('/forgot-password',[NewPasswordController::class,'forgotPassword']);
 Route::post('/reset-password',[NewPasswordController::class,'resetPassword']);
+Route::post('/change-password/{id}',[NewPasswordController::class,'changePassword']);
 
 //types
 Route::get('types', [JobDetailController::class, 'types']);
