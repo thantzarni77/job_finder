@@ -1,15 +1,14 @@
 <?php
-
 namespace App\Repositories;
 
-use App\Models\Apply_job;
+use App\Interfaces\ApplyJobRepositoryInterface;
 use App\Mail\ShortlistContactMail;
-use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Models\Apply_job;
+use App\Models\Seeker;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
-use App\Interfaces\ApplyJobRepositoryInterface;
-use App\Models\Contact;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class ApplyJobRepository implements ApplyJobRepositoryInterface
 {
@@ -21,14 +20,13 @@ class ApplyJobRepository implements ApplyJobRepositoryInterface
     public function applyJob(array $applyData)
     {
 
-
         $data = [
-            'post_job_id' => $applyData['post_job_id'],
-            'employer_id' => $applyData['employer_id'],
-            'seeker_id' => $applyData['seeker_id'],
-            'shortlist' => false,
-            'document' => $applyData['document'],
-            'message' => $applyData['message'],
+            'post_job_id'     => $applyData['post_job_id'],
+            'employer_id'     => $applyData['employer_id'],
+            'seeker_id'       => $applyData['seeker_id'],
+            'shortlist'       => false,
+            'document'        => $applyData['document'],
+            'message'         => $applyData['message'],
             'expected_salary' => $applyData['expected_salary'],
         ];
         Apply_job::create($data);
@@ -37,41 +35,47 @@ class ApplyJobRepository implements ApplyJobRepositoryInterface
     }
 
     //add to shortlist
-    public function addShortlist($id){
+    public function addShortlist($id)
+    {
         Apply_job::where('id', $id)->update(['shortlist' => true]);
         return response()->json(['status' => 'success', 'message' => 'Short List Added successfully'], 200);
     }
 
     //employer view his create job data
-    public function employerPostedJobs(){
+    public function employerPostedJobs()
+    {
 
         $data = Apply_job::where('employer_id', JWTAuth::user()->id)->get();
-        if(!$data){
-            return response()->json(['status' => 'success', 'message' => 'You have not posted any job postings yet.', 'data' => $data],400);
+        if (! $data) {
+            return response()->json(['status' => 'success', 'message' => 'You have not posted any job postings yet.', 'data' => $data], 400);
         }
         return response()->json(['status' => 'success', 'message' => 'You have successfully fetch your posted job postings.', 'data' => $data], 200);
     }
 
     //seeeker view his applied jobs
-    public function seekerAppliedJobs(){
-        $data = Apply_job::where('seeker_id', JWTAuth::user()->id)->get();
-        if(!$data){
-            return response()->json(['status' => 'success', 'message' => 'You have not applied any job postings yet.', 'data' => $data],400);
+    public function seekerAppliedJobs()
+    {
+        $seeker_id = Seeker::where("user_id", JWTAuth::user()->id)->value('id');
+        $data      = Apply_job::where('seeker_id', $seeker_id)->get();
+        if (! $data) {
+            return response()->json(['status' => 'success', 'message' => 'You have not applied any job postings yet.', 'data' => $data], 400);
         }
         return response()->json(['status' => 'success', 'message' => 'You have successfully fetch your applied job.', 'data' => $data], 200);
     }
 
     //emoyer view his shortlisted jobs
-    public function employerShortlistJobs(){
+    public function employerShortlistJobs()
+    {
         $data = Apply_job::where('employer_id', JWTAuth::user()->id)->where('shortlist', true)->get();
         return response()->json(['status' => 'success', 'message' => 'You have successfully fetch your shortlisted job postings.', 'data' => $data], 200);
     }
 
     //mail send to seeker
-    public function sendMail($request){
+    public function sendMail($request)
+    {
         $validate = Validator::make($request->all(), [
             'seeker_id' => 'required',
-            'message' => 'required',
+            'message'   => 'required',
         ]);
 
         if ($validate->fails()) {
