@@ -10,12 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Seeker extends Model
 {
     use HasFactory;
-    protected $casts = [
-        'skills' => 'array',
-        'education' => 'array',
-        'work_experience' => 'array',
-        'social_media_link' => 'array',
-    ];
+
 
     protected $fillable = [
         'user_id',
