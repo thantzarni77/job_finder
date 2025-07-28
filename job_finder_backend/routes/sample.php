@@ -1,19 +1,16 @@
 <?php
 
-
-
 use App\Http\Controllers\Api\EmployerController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Api\IndividualEmployerController;
 use App\Http\Controllers\Api\NewPasswordController;
+use App\Http\Controllers\Api\SeekerController;
 use App\Http\Middleware\AdminAuthMiddleware;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SaveJobController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\ApplyJobController;
 use App\Http\Controllers\JobDetailController;
-use App\Http\Controllers\Api\SeekerController;
 use App\Http\Controllers\Api\SocialLoginController;
 use App\Http\Controllers\EmployerVerficationController;
 use App\Http\Controllers\JobCategoryController;
@@ -50,12 +47,24 @@ Route::post('/registersteptwo/{id}',[AuthController::class,'registerStepTwo']);
 Route::post('/login',[AuthController::class,'login']);
 Route::post('/forgot-password',[NewPasswordController::class,'forgotPassword']);
 Route::post('/reset-password',[NewPasswordController::class,'resetPassword']);
+Route::post('/change-password/{id}',[NewPasswordController::class,'changePassword']);
 
 //types
 Route::get('types', [JobDetailController::class, 'types']);
 Route::get('roles', [JobDetailController::class, 'roles']);
 Route::get('genders', [JobDetailController::class, 'genders']);
 
+//talent module
+Route::prefix('talent')->group(function () {
+    //save job list
+    Route::get('/', [TalentController::class, 'index']);
+    // create save job
+    Route::post('/', [TalentController::class, 'create']);
+    //view save job
+    Route::put('/{id}', [TalentController::class, 'update']);
+    //remove save job
+    Route::delete('/{id}', [TalentController::class, 'destroy']);
+});
 
 
 Route::group(["middleware" => "AuthMiddleware"], function () {
@@ -84,20 +93,6 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
         Route::delete('/seeker/{id}', [SeekerController::class, 'destroy']);
     });
 
-
-    //talent module
-    Route::prefix('talent')->group(function () {
-        //save job list
-        Route::get('/', [TalentController::class, 'index']);
-        // create save job
-        Route::post('/', [TalentController::class, 'create']);
-        //view save job
-        Route::put('/{id}', [TalentController::class, 'update']);
-        //remove save job
-        Route::delete('/{id}', [TalentController::class, 'destroy']);
-    });
-
-    //employer post job
     //employer post job
 
 
