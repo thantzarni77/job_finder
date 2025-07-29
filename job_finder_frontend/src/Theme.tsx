@@ -1,6 +1,20 @@
-import { createTheme, GlobalStyles, ThemeProvider } from "@mui/material";
+import {
+  createTheme,
+  CssBaseline,
+  GlobalStyles,
+  ThemeProvider,
+} from "@mui/material";
+
 import { RouterProvider } from "react-router";
 import { router } from "./Routes.tsx";
+import { useThemeStore } from "./store/Appstore";
+import { useMemo } from "react";
+
+declare module "@mui/material/styles" {
+  interface TypeBackground {
+    hover?: string;
+  }
+}
 
 //remove green box on input auto fill
 const inputGlobalStyles = (
@@ -15,44 +29,72 @@ const inputGlobalStyles = (
 );
 
 export default function Theme() {
-  const mode = "light";
-  const theme = createTheme({
-    palette: {
-      mode,
-      primary: {
-        main: mode === "light" ? "#5f6caf" : "#1976d2",
-        light: "#898989",
+  const mode = useThemeStore((state) => state.mode);
+
+  const theme = useMemo(() => {
+    return createTheme({
+      palette: {
+        mode,
+        ...(mode === "light" && {
+          primary: {
+            main: "#5f6caf", //purple
+            light: "#898989", //light gray
+          },
+          background: {
+            default: "#f5f5f5",
+            paper: "#ffffff",
+            hover: "#5F6CAF3D",
+          },
+          text: {
+            primary: "#000000",
+            secondary: "#33373B",
+          },
+          error: {
+            main: "#EA4335",
+          },
+          success: {
+            main: "#75C149",
+          },
+        }),
       },
-      secondary: {
-        main: mode === "light" ? "#33373B" : "#ffffff",
-      },
-    },
-    components: {
-      MuiButtonBase: {
-        defaultProps: {
-          disableRipple: true,
+      components: {
+        MuiInput: {
+          defaultProps: {
+            disableUnderline: true,
+          },
         },
-      },
-      MuiInput: {
-        defaultProps: {
-          disableUnderline: true,
+        MuiInputBase: {
+          styleOverrides: {
+            input: {
+              "&::placeholder": {
+                color: "#5f6caf",
+                opacity: 1,
+                fontWeight: "400",
+                fontSize: "12px",
+              },
+            },
+          },
         },
-      },
-      MuiInputBase: {
-        styleOverrides: {
-          input: {
-            "&::placeholder": {
-              color: "#5f6caf",
-              opacity: 1,
-              fontWeight: "400",
+        MuiOutlinedInput: {
+          styleOverrides: {
+            root: {
+              borderRadius: "10px",
+              "&:hover .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#5f6caf",
+              },
+              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#5f6caf",
+              },
             },
           },
         },
       },
-    },
-  });
+    });
+  }, [mode]);
+
   return (
     <ThemeProvider theme={theme}>
+      <CssBaseline />
       {inputGlobalStyles}
       <RouterProvider router={router}></RouterProvider>
     </ThemeProvider>

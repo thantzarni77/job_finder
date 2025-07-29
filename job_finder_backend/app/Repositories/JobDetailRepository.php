@@ -2,43 +2,33 @@
 
 namespace App\Repositories;
 
+use App\Models\Role;
+use App\Models\Type;
+use App\Models\Gender;
 use App\Models\Job_detail;
-use App\Interfaces\JobDetailRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
+use App\Interfaces\JobDetailRepositoryInterface;
 
 class JobDetailRepository implements JobDetailRepositoryInterface
 {
-    protected $model;
 
-    public function __construct(Job_detail $model)
+    //type
+    public function jobType()
     {
-        $this->model = $model;
+        $data = Type::get(['id','name']);
+        return response()->json(['status' => 'success', 'message' => 'Job type fetched successfully', 'data' => $data], 200);
     }
 
-    public function all(): Collection
+    //role
+    public function jobRole()
     {
-        return $this->model->all();
+        $data = Role::get(['id','name']);
+        return response()->json(['status' => 'success', 'message' => 'Job role fetched successfully', 'data' => $data], 200);
     }
 
-    public function find(int $id)
+    public function gender()
     {
-        return $this->model->findOrFail($id);
-    }
-
-    public function create(array $data)
-    {
-        return $this->model->create($data);
-    }
-
-    public function update(int $id, array $data)
-    {
-        $record = $this->find($id);
-        $record->update($data);
-        return $record;
-    }
-
-    public function delete(int $id): bool
-    {
-        return $this->find($id)->delete();
+        $gender = Gender::get(['id','type']);
+        return response()->json(['status' => 'success', 'message' => 'Gender fetched successfully', 'data' => $gender], 200);
     }
 }

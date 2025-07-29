@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Helpers\Filters;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Employer extends Model
@@ -13,17 +15,23 @@ class Employer extends Model
         'company_phone',
         'company_email',
         'company_image',
-        'company_description',
         'company_type',
-        'verification',
+        'company_description',
+        'verification'
     ];
 
     //verification status
-    public static function getVerificationStatus() {
+    public static function getVerificationStatus()
+    {
         return [
             'pending' => 'pending',
             'verified' => 'verified',
             'rejected'  => 'rejected'
         ];
+    }
+
+    public function scopeFilter(Builder $builder, Filters $filter)
+    {
+        return $filter->filter($builder);
     }
 }

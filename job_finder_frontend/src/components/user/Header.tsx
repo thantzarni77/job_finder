@@ -6,23 +6,38 @@ import {
   Button,
   IconButton,
   Avatar,
+  Menu,
+  MenuItem,
+  Skeleton,
 } from "@mui/material";
 import {
-  ChatBubbleOutline as MessageIcon,
+  // ChatBubbleOutline as MessageIcon,
   SettingsOutlined as SettingIcon,
   NotificationsActiveOutlined as NotiIcon,
   Menu as MenuIcon,
+  // LightMode as LightModeIcon,
+  // DarkMode as DarkModeIcon,
 } from "@mui/icons-material";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { NavLink, useLocation, matchPath } from "react-router";
 import { useAppStore } from "../../store/Appstore";
 import { useState, useRef, useEffect, useMemo, type RefObject } from "react";
+import { useNavigate } from "react-router";
+
+import { useUserStore } from "../../store/UserStore";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { logoutUser } from "../../helper/authApiFunctions";
+import {
+  type EmployerProfile,
+  type SeekerProfile,
+} from "../../store/ProfileStore";
+import type { UserData } from "../../store/UserDataStore";
 
 function findRefForPath(
   pathname: string,
   pathMap: { [key: string]: RefObject<HTMLButtonElement | null> },
 ): RefObject<HTMLButtonElement | null> | null {
   for (const pattern in pathMap) {
-    // Check if the current URL pathname matches the pattern from the map
     if (matchPath({ path: pattern, end: true }, pathname)) {
       return pathMap[pattern];
     }
@@ -30,9 +45,40 @@ function findRefForPath(
   return null;
 }
 
-export default function Header() {
-  //sample role test
-  const [userRole] = useState("");
+interface HeaderProps {
+  isLoading: boolean;
+  seekerProfile?: SeekerProfile;
+  employerProfile?: EmployerProfile;
+  userData?: UserData;
+}
+
+export default function Header({
+  isLoading,
+  seekerProfile,
+  employerProfile,
+  userData,
+}: HeaderProps) {
+  const queryClient = useQueryClient();
+  const user = useUserStore((state) => state.user);
+  // const userData = useUserDataStore((state) => state.userData);
+  // const seekerProfile = useProfileStore((state) => state.seekerProfile);
+  // const employerProfile = useProfileStore((state) => state.employerProfile);
+  const setUserData = useUserStore((state) => state.setUserData);
+  const removeToken = useUserStore((state) => state.removeToken);
+  const accessToken = localStorage.getItem("token");
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  // const mode = useThemeStore((state) => state.mode);
+  // const setMode = useThemeStore((state) => state.setMode);
+  const navigate = useNavigate();
+  const userRole = user?.user_type;
 
   const showDrawer = useAppStore((state) => state.showDrawer);
   const setShowDrawer = useAppStore((state) => state.setShowDrawer);
@@ -40,12 +86,15 @@ export default function Header() {
   const [underlineStyle, setUnderlineStyle] = useState({});
   const location = useLocation();
 
-  //  ref for each nav button
+  // Refs for all navigation elements
   const homeRef = useRef<HTMLButtonElement>(null);
   const jobsRef = useRef<HTMLButtonElement>(null);
   const talentRef = useRef<HTMLButtonElement>(null);
   const companiesRef = useRef<HTMLButtonElement>(null);
   const postJobRef = useRef<HTMLButtonElement>(null);
+  const profileRef = useRef<HTMLButtonElement>(null);
+  const notificationsRef = useRef<HTMLButtonElement>(null);
+  const settingsRef = useRef<HTMLButtonElement>(null);
 
   // memo map to link paths to their refs
   const pathRefMap: { [key: string]: RefObject<HTMLButtonElement | null> } =
@@ -54,17 +103,32 @@ export default function Header() {
         "/": homeRef,
         "/jobs": jobsRef,
         "/job/:id": jobsRef,
+        "/job/:id/applicant-list": jobsRef,
+        "/job/:id/applicant-list/:seekerID/view": jobsRef,
         "/job/:id/apply": jobsRef,
         "/job/:id/apply/confirm": jobsRef,
-        "/talent": talentRef,
+        "/talents": talentRef,
+        "/talent/:id/profile": talentRef,
         "/companies": companiesRef,
+        "/companies/:id": companiesRef,
         "/post/job": postJobRef,
+        "/profile/:id": profileRef,
+        "/profile/:id/edit": profileRef,
+        "/employer-profile/:id": profileRef,
+        "/employer-profile/:id/edit": profileRef,
+        "/project/add": profileRef,
+        "/notifications/user/:id": notificationsRef,
+        "/settings/user/:id": settingsRef,
+        "/settings/user/:id/bookmarks": settingsRef,
+        "/settings/user/:id/applied-jobs": settingsRef,
+        "/settings/user/:id/security": settingsRef,
+        "/settings/user/:id/security/changeEmail": settingsRef,
+        "/settings/user/:id/security/changePassword": settingsRef,
       }),
       [],
     );
 
   useEffect(() => {
-    // get active ref  from  map using the current path
     const activeTabRef = findRefForPath(location.pathname, pathRefMap);
 
     if (activeTabRef && activeTabRef.current) {
@@ -79,52 +143,62 @@ export default function Header() {
     }
   }, [location.pathname, pathRefMap]);
 
+  const logoutMutate = useMutation({
+    mutationFn: logoutUser,
+    onSuccess: ({ data }) => {
+      if (data.status == 200) {
+        setUserData(null);
+        removeToken();
+        queryClient.clear();
+      }
+    },
+  });
+
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" sx={{ px: 5, boxShadow: "none" }}>
-        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+      <AppBar
+        position="static"
+        sx={{ px: { xs: 2, md: 5 }, boxShadow: "none" }}
+      >
+        <Toolbar
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
           <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
-            <IconButton
-              onClick={() => setShowDrawer(!showDrawer)}
-              color="inherit"
-              sx={{ display: { md: "none" } }}
-            >
-              <MenuIcon />
-            </IconButton>
-
             <Typography
+              onClick={() => navigate("/")}
               component="h1"
-              sx={{ fontSize: "36px", fontWeight: "700" }}
+              sx={{
+                fontSize: { xs: "24px", sm: "30px", md: "36px" },
+                fontWeight: "700",
+                cursor: "pointer",
+                flexShrink: 0,
+              }}
             >
               LOGO
             </Typography>
 
+            {/* Desktop Navigation */}
             <Box
               sx={{
                 pl: 5,
-                display: { md: "flex", sm: "none", xs: "none" },
-                position: "relative",
+                display: { md: "flex", sm: "flex", xs: "none" },
               }}
             >
               <NavLink to="/">
                 <Button
-                  sx={{
-                    fontWeight: "700",
-                    textTransform: "none",
-                  }}
+                  sx={{ fontWeight: "700", textTransform: "none" }}
                   ref={homeRef}
                   color="inherit"
                 >
                   Home
                 </Button>
               </NavLink>
-
               <NavLink to="/jobs">
                 <Button
-                  sx={{
-                    fontWeight: "700",
-                    textTransform: "none",
-                  }}
+                  sx={{ fontWeight: "700", textTransform: "none" }}
                   ref={jobsRef}
                   color="inherit"
                 >
@@ -132,25 +206,19 @@ export default function Header() {
                 </Button>
               </NavLink>
 
-              <NavLink to="/talent">
+              <NavLink to="/talents">
                 <Button
-                  sx={{
-                    fontWeight: "700",
-                    textTransform: "none",
-                  }}
+                  sx={{ fontWeight: "700", textTransform: "none" }}
                   ref={talentRef}
                   color="inherit"
                 >
-                  Talent
+                  Talents
                 </Button>
               </NavLink>
 
               <NavLink to="/companies">
                 <Button
-                  sx={{
-                    fontWeight: "700",
-                    textTransform: "none",
-                  }}
+                  sx={{ fontWeight: "700", textTransform: "none" }}
                   ref={companiesRef}
                   color="inherit"
                 >
@@ -158,60 +226,196 @@ export default function Header() {
                 </Button>
               </NavLink>
 
-              {userRole == "employer" && (
-                <NavLink to="/post/job">
-                  <Button
-                    sx={{
-                      fontWeight: "700",
-                      textTransform: "none",
-                    }}
-                    ref={postJobRef}
-                    color="inherit"
-                  >
-                    Post A Job
-                  </Button>
-                </NavLink>
+              {userRole === "employer" && (
+                <Button
+                  onClick={() => navigate("/post/job")}
+                  disabled={
+                    employerProfile?.verification == "pending" ||
+                    employerProfile?.verification == "rejected"
+                  }
+                  sx={{
+                    fontWeight: "700",
+                    textTransform: "none",
+                  }}
+                  ref={postJobRef}
+                  color="inherit"
+                >
+                  Post A Job
+                </Button>
               )}
-
-              {/* The Sliding Underline*/}
-              <Box
-                sx={{
-                  position: "absolute",
-                  bottom: 0,
-                  height: "3px",
-                  backgroundColor: "white",
-                  borderRadius: "2px",
-                  transition: "left 0.2s ease-out, width 0.2s ease-out",
-                  ...underlineStyle,
-                }}
-              />
             </Box>
           </Box>
-
-          {/* left side of header  */}
-          <Box sx={{ display: "flex", gap: 1 }}>
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <IconButton color="inherit">
-                <MessageIcon />
-              </IconButton>
-              <Typography
-                sx={{
-                  display: { sm: "none", xs: "none", md: "none", lg: "inline" },
-                }}
+          {user || accessToken ? (
+            <Box>
+              <IconButton
+                onClick={() => setShowDrawer(!showDrawer)}
+                color="inherit"
+                sx={{ display: { md: "none" }, ml: -2, mr: 1 }}
               >
-                In Box
-              </Typography>
+                <MenuIcon />
+              </IconButton>
+              <Box
+                sx={{ gap: 1, display: { md: "flex", sm: "none", xs: "none" } }}
+              >
+                {/* <IconButton
+                  color="inherit"
+                  onClick={() => setMode(mode === "light" ? "dark" : "light")}
+                >
+                  {mode === "light" ? <LightModeIcon /> : <DarkModeIcon />}
+                </IconButton> */}
+                <IconButton
+                  color="inherit"
+                  ref={notificationsRef}
+                  onClick={() => navigate("/notifications/user/1")}
+                >
+                  <NotiIcon sx={{ fontSize: 27 }} />
+                </IconButton>
+
+                <IconButton
+                  color="inherit"
+                  ref={settingsRef}
+                  onClick={() => navigate(`/settings/user/${user?.user_id}`)}
+                >
+                  <SettingIcon />
+                </IconButton>
+                <Button
+                  ref={profileRef}
+                  endIcon={<ArrowDropDownIcon sx={{ color: "white" }} />}
+                  id="basic-button"
+                  aria-controls={open ? "basic-menu" : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={open ? "true" : undefined}
+                  onClick={handleClick}
+                >
+                  {isLoading && (
+                    <Skeleton
+                      variant="circular"
+                      width={"32px"}
+                      height={"32px"}
+                    />
+                  )}
+                  {!isLoading &&
+                    user?.user_type == "seeker" &&
+                    seekerProfile?.image && (
+                      <img
+                        src={`${import.meta.env.VITE_API_BASE_URL}/${seekerProfile.image}`}
+                        alt={"SeekerProfile"}
+                        style={{
+                          width: "32px",
+                          height: "32px",
+                          borderRadius: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    )}
+                  {!isLoading &&
+                    user?.user_type == "employer" &&
+                    employerProfile?.company_image && (
+                      <img
+                        src={`${import.meta.env.VITE_API_BASE_URL}/${employerProfile.company_image}`}
+                        alt={"SeekerProfile"}
+                        style={{
+                          width: "32px",
+                          height: "32px",
+                          borderRadius: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    )}
+                  {!isLoading &&
+                    user?.user_type == "employer" &&
+                    !employerProfile?.company_name &&
+                    userData?.profile_picture && (
+                      <img
+                        src={`${import.meta.env.VITE_API_BASE_URL}/${userData.profile_picture}`}
+                        alt={"SeekerProfile"}
+                        style={{
+                          width: "32px",
+                          height: "32px",
+                          borderRadius: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    )}
+
+                  {!isLoading &&
+                    user?.user_type == "employer" &&
+                    employerProfile?.user_id == user?.user_id &&
+                    !employerProfile?.company_image &&
+                    !userData?.profile_picture && (
+                      <Avatar sx={{ width: 32, height: 32 }} />
+                    )}
+
+                  {!isLoading &&
+                    user?.user_type == "seeker" &&
+                    seekerProfile?.user_id.id == user?.user_id &&
+                    !seekerProfile?.image && (
+                      <Avatar sx={{ width: 32, height: 32 }} />
+                    )}
+                </Button>
+                <Menu
+                  id="basic-menu"
+                  anchorEl={anchorEl}
+                  open={open}
+                  onClose={handleClose}
+                  onClick={handleClose}
+                  slotProps={{
+                    list: {
+                      "aria-labelledby": "basic-button",
+                    },
+                  }}
+                >
+                  <MenuItem
+                    onClick={() => {
+                      if (user?.user_type == "seeker") {
+                        navigate(`/profile/${user?.user_id}`);
+                      }
+                      if (user?.user_type == "employer") {
+                        navigate(`/employer-profile/${user?.user_id}`);
+                      }
+                    }}
+                  >
+                    Profile
+                  </MenuItem>
+
+                  <MenuItem
+                    onClick={() => {
+                      logoutMutate.mutate();
+                      queryClient.invalidateQueries();
+                    }}
+                  >
+                    Logout
+                  </MenuItem>
+                </Menu>
+              </Box>
             </Box>
-            <IconButton color="inherit">
-              <NotiIcon sx={{ fontSize: 27 }} />
-            </IconButton>
-            <IconButton color="inherit">
-              <SettingIcon />
-            </IconButton>
-            <IconButton>
-              <Avatar sx={{ width: 32, height: 32 }} />
-            </IconButton>
-          </Box>
+          ) : (
+            <Button
+              sx={{
+                color: "#ffffff",
+                textTransform: "none",
+                borderRadius: "5px",
+                boxShadow: "none",
+              }}
+              onClick={() => navigate("/login")}
+            >
+              <Typography fontWeight={600}>Login</Typography>
+            </Button>
+          )}
+
+          {/* Sliding underline*/}
+          <Box
+            sx={{
+              position: "absolute",
+              bottom: 10,
+              height: "3px",
+              backgroundColor: "white",
+              borderRadius: "2px",
+              transition: "left 0.3s ease-in-out, width 0.3s ease-in-out",
+              ...underlineStyle,
+              display: { md: "block", sm: "none", xs: "none" },
+            }}
+          />
         </Toolbar>
       </AppBar>
     </Box>

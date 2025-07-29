@@ -2,11 +2,17 @@
 
 namespace App\Models;
 
+use App\Helpers\Filters;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Seeker extends Model
 {
-    protected $fillable = [  
+    use HasFactory;
+
+
+    protected $fillable = [
         'user_id',
         'skills',
         'education',
@@ -14,11 +20,12 @@ class Seeker extends Model
         'role',
         'talent',
         'social_media_link',
-        'seeker_image',
+        'image',
         'bio'
     ];
 
-    public static function getRole() {
+    public static function getRole()
+    {
         return [
             'junior' => 'junior',
             'mid-level' => 'mid-level',
@@ -26,7 +33,8 @@ class Seeker extends Model
         ];
     }
 
-    public static function getTalent() {
+    public static function getTalent()
+    {
         return [
             'Developer' => 'Developer',
             'Designer' => 'Designer',
@@ -40,13 +48,24 @@ class Seeker extends Model
         ];
     }
 
-    public function user(){
-        return $this->hasOne(User::class);
+    // public function user()
+    // {
+    //     return $this->hasOne(User::class);
+    // }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function clean($value)
     {
         $decoded = json_decode($value, true);
         return $decoded !== null ? $decoded : trim($value, '"');
+    }
+
+    public function scopeFilter(Builder $builder, Filters $filter)
+    {
+        return $filter->filter($builder);
     }
 }
