@@ -18,13 +18,13 @@ use App\Http\Controllers\TalentController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/superadmin/login', [AdminAuthController::class, 'login']);
+// Route::post('/superadmin/login', [AdminAuthController::class, 'login']);
 
 Route::middleware("AdminAuthMiddleware:superadmin")->group(function () {
-    Route::post('/superadmin/logout', [AdminAuthController::class, 'logout']);
-    Route::get('/superadmin/getprofile', [AdminAuthController::class, 'profile']);
+    // Route::post('/superadmin/logout', [AdminAuthController::class, 'logout']);
+    // Route::get('/superadmin/getprofile', [AdminAuthController::class, 'profile']);
 
-    Route::prefix('admin')->group(function(){
+    Route::prefix('admin')->group(function () {
         Route::get('/', [AdminAuthController::class, 'index']);
         Route::post('/', [AdminAuthController::class, 'store']);
         Route::get('/{id}', [AdminAuthController::class, 'show']);
@@ -36,8 +36,8 @@ Route::middleware("AdminAuthMiddleware:superadmin")->group(function () {
 
 Route::middleware("AdminAuthMiddleware:admin")->group(function () {
 
-    Route::get('/admin/getprofile', [AdminAuthController::class, 'profile']);
-    Route::post('/admin/logout', [AdminAuthController::class, 'logout']);
+    // Route::get('/admin/getprofile', [AdminAuthController::class, 'profile']);
+    // Route::post('/admin/logout', [AdminAuthController::class, 'logout']);
     Route::post('/admin/employerVerification/{id}', [EmployerVerficationController::class, 'updateStatus']);
     Route::post('/admin/post-verification/{id}', [PostJobController::class, 'postVerification']);
     // //job post
