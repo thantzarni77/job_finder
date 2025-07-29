@@ -11,23 +11,23 @@ import {
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import FilterListIcon from "@mui/icons-material/FilterList";
 
-import JobFilter from "../../../components/user/jobs/JobFilter";
-
 import { useState } from "react";
 import SearchBox from "../../../components/user/SearchBox";
 import CompanyCard from "../../../components/employer/CompanyCard";
 import CompanyFilterDrawer from "../../../components/user/CompanyFilterDrawer";
 import { useCompanyFilterStore } from "../../../store/Appstore";
-
-const companyType = [
-  "public",
-  "private",
-  "government",
-  "non-profit",
-  "startup",
-];
+import { useQuery } from "@tanstack/react-query";
+import FullScreenLoader from "../../../components/FullScreenLoader";
+import { getCompanies, type CompanyType } from "../../../helper/companyPageApi";
 
 const Companies = () => {
+  const { data: companies, isPending: isCompaniesPending } = useQuery<
+    CompanyType[]
+  >({
+    queryKey: ["companies"],
+    queryFn: getCompanies,
+  });
+
   const showCompanyFilterDrawer = useCompanyFilterStore(
     (state) => state.showCompanyFilterDrawer,
   );
@@ -57,6 +57,10 @@ const Companies = () => {
       }}
     />
   );
+
+  if (isCompaniesPending) {
+    return <FullScreenLoader open={true} message={"loading"} />;
+  }
 
   return (
     <Box
@@ -122,9 +126,6 @@ const Companies = () => {
           gap: 6,
         }}
       >
-        <Box sx={{ display: { xs: "none", md: "block" } }}>
-          <JobFilter filterType={"Company"} filterTypeArray={companyType} />
-        </Box>
         <Box
           sx={{
             display: "flex",
@@ -261,13 +262,9 @@ const Companies = () => {
                 flexWrap: "wrap",
               }}
             >
-              <CompanyCard />
-              <CompanyCard />
-              <CompanyCard />
-              <CompanyCard />
-              <CompanyCard />
-              <CompanyCard />
-              <CompanyCard />
+              {companies?.map((company) => {
+                return <CompanyCard company={company} key={company.id} />;
+              })}
             </Box>
             {/* pagination */}
             <Box
