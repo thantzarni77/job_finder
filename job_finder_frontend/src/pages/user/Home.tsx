@@ -126,7 +126,9 @@ export default function Home() {
 
         <Box className="flex flex-wrap items-center gap-3 md:justify-center">
           {allJobs.map((single) => {
-            return <JobCard key={single.id} job={single} />;
+            if (single.id < 10) {
+              return <JobCard key={single.id} job={single} />;
+            }
           })}
         </Box>
         <Box sx={{ display: "flex", justifyContent: "center", mt: 5, mb: 10 }}>

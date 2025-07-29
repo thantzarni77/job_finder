@@ -209,7 +209,10 @@ const Jobs = () => {
             }}
           >
             <Typography variant="caption" sx={{ color: "primary.light" }}>
-              {allJobs.length}+ jobs are found
+              {allJobsQuery.data &&
+                allJobs.filter((job) => job.posting_status == "approved")
+                  .length}
+              + jobs are found
             </Typography>
             {/* filter box */}
             <Select

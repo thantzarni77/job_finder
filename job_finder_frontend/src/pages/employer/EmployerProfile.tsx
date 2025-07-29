@@ -1,4 +1,11 @@
-import { Avatar, Box, Button, Typography } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Button,
+  Pagination,
+  Stack,
+  Typography,
+} from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
@@ -7,12 +14,21 @@ import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import { useProfileStore } from "../../store/ProfileStore";
 import { useNavigate, useParams } from "react-router";
 import { getEmployerProfile } from "../../helper/profileApiFunctions";
-import { useEffect } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useUserStore } from "../../store/UserStore";
 import { getSingleUserData } from "../../helper/userApiFunctions";
 import { useUserDataStore } from "../../store/UserDataStore";
 import FullScreenLoader from "../../components/FullScreenLoader";
+import {
+  useJobCategoryFilter,
+  useJobRoleFilter,
+  useJobSalaryFilter,
+  useJobStore,
+  useJobTypeFilter,
+} from "../../store/JobStore";
+import JobCard from "../../components/user/jobs/JobCard";
+import { getAllJobPosts } from "../../helper/postJob";
 
 export default function EmployerProfile() {
   const navigate = useNavigate();
@@ -28,6 +44,60 @@ export default function EmployerProfile() {
   const setEmployerProfile = useProfileStore(
     (state) => state.setEmployerProfile,
   );
+
+  const allJobs = useJobStore((state) => state.jobs);
+  const setJobs = useJobStore((state) => state.setJobs);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 5;
+
+  const pageCount = Math.ceil(allJobs.length / ITEMS_PER_PAGE);
+
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+
+  const currentJobs = allJobs
+    .filter((job) => job.employer_id == employerData.id)
+    .slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  const handlePageChange = (event: ChangeEvent<unknown>, value: number) => {
+    setCurrentPage(value);
+  };
+
+  const { selectedJobRole } = useJobRoleFilter();
+  const { selectedJobType } = useJobTypeFilter();
+  const { selectedJobCategory } = useJobCategoryFilter();
+  const { selectedSalary } = useJobSalaryFilter();
+
+  const allJobsQuery = useQuery({
+    enabled: allJobs.length == 0 || !allJobs,
+    queryKey: [
+      "jobPosts",
+      selectedJobRole,
+      selectedJobType,
+      selectedJobCategory,
+      selectedSalary,
+    ],
+    queryFn: () =>
+      getAllJobPosts(
+        selectedJobRole,
+        selectedJobType,
+        selectedJobCategory,
+        selectedSalary,
+      ),
+  });
+
+  useEffect(() => {
+    if (allJobsQuery.data && allJobsQuery.isSuccess) {
+      setJobs(allJobsQuery.data);
+    }
+  }, [
+    allJobsQuery.data,
+    allJobsQuery.isSuccess,
+    setJobs,
+    allJobs,
+    selectedJobRole,
+    selectedJobType,
+  ]);
 
   const employerProfileQuery = useQuery({
     queryKey: ["employerProfile", user_id],
@@ -112,7 +182,7 @@ export default function EmployerProfile() {
               <Typography sx={{ fontWeight: 600 }}>
                 {employerData.company_name
                   ? employerData.company_name
-                  : user?.user_name}
+                  : userData.name}
               </Typography>
               <Typography variant="body2" sx={{ color: "primary.light" }}>
                 {employerData.company_type}
@@ -194,16 +264,6 @@ export default function EmployerProfile() {
           </Box>
         )}
 
-        {/* <Box sx={{ mt: 4 }}>
-          <Typography sx={{ fontWeight: 600 }}> Number of Employees</Typography>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
-            <GroupsIcon color="primary" />
-            <Typography variant="body2" sx={{ color: "text.secondary" }}>
-              1000+
-            </Typography>
-          </Box>
-        </Box> */}
-
         <Box sx={{ mt: 4 }}>
           <Typography sx={{ fontWeight: 600 }}>Contact Us</Typography>
           <Box
@@ -233,15 +293,62 @@ export default function EmployerProfile() {
             </Box>
           </Box>
         </Box>
-        {/* <Box sx={{ mt: 4 }}>
-          <Typography sx={{ fontWeight: 600 }}>Company Website</Typography>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
-            <LanguageOutlinedIcon color="primary" />
-            <Typography variant="body2" sx={{ color: "text.secondary" }}>
-              https://www.companywebsite.com
-            </Typography>
+
+        {/* employer posted jobs */}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            width: "100%",
+            gap: 2,
+            my: 5,
+          }}
+        >
+          <Typography variant="h5" sx={{ fontWeight: 600, mt: 1, mb: 3 }}>
+            Open Vacancies
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", md: "column", lg: "row" },
+              flexWrap: "wrap",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+              gap: 6,
+            }}
+          >
+            {currentJobs.map((single) => {
+              return <JobCard job={single} />;
+            })}
           </Box>
-        </Box> */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              mt: 5,
+              mb: 20,
+            }}
+          >
+            <Stack>
+              <Pagination
+                count={pageCount}
+                page={currentPage}
+                onChange={handlePageChange}
+                shape="rounded"
+                variant="outlined"
+                color="primary"
+                sx={{
+                  "& .MuiPaginationItem-root": {
+                    color: "#5f6caf",
+                    borderColor: "#5f6caf",
+                  },
+                }}
+              />
+            </Stack>
+          </Box>
+        </Box>
       </Box>
     </>
   );

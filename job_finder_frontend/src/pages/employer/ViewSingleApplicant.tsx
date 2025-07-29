@@ -7,21 +7,32 @@ import {
   Fade,
   useTheme,
   Tooltip,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@mui/material";
+import { type SystemStyleObject } from "@mui/system";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import CloseIcon from "@mui/icons-material/Close";
 import DownloadForOfflineIcon from "@mui/icons-material/DownloadForOffline";
-import BrokenImageIcon from "@mui/icons-material/BrokenImage";
 import { useNavigate, useParams } from "react-router";
-import { useQuery } from "@tanstack/react-query";
-import { getAppliedSeekers } from "../../helper/jobApiFunctions";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  addToShortlist,
+  getAppliedSeekers,
+} from "../../helper/jobApiFunctions";
 import type { AppliedSeeker } from "../../store/JobStore";
 import { useMemo, useState, useEffect, useCallback, useRef } from "react";
+import { getSeekerProfileWithSeekerID } from "../../helper/profileApiFunctions";
+import type { SeekerProfile } from "../../store/ProfileStore";
 
 // --- Style for the lightbox modal ---
-const modalStyle = {
-  position: "absolute" as "absolute",
+const modalStyle: SystemStyleObject = {
+  position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
@@ -37,12 +48,23 @@ const modalStyle = {
 
 const ViewSingleApplicant = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const theme = useTheme();
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const { id, seekerID } = useParams();
 
   // --- State Management ---
   const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(0); // This now controls the main carousel view
+  const [activeIndex, setActiveIndex] = useState(0); // controls the main carousel view
   const thumbnailRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   // --- Data Fetching and Derivation ---
@@ -51,17 +73,28 @@ const ViewSingleApplicant = () => {
     queryFn: () => getAppliedSeekers(id),
   });
 
-  const seekerData = useMemo(() => {
+  const applyJobData = useMemo(() => {
     const seekersList: AppliedSeeker[] | undefined =
       appliedSeekersQuery.data?.data;
     if (!seekersList) return null;
     return seekersList.find((seeker) => seeker.seeker_id == Number(seekerID));
   }, [appliedSeekersQuery.data, seekerID]);
 
-  const documentList = seekerData?.document ?? [];
+  const seekerProfileQuery = useQuery({
+    queryKey: ["seekerProfile", applyJobData?.seeker_id],
+    queryFn: () => {
+      return getSeekerProfileWithSeekerID(applyJobData?.seeker_id);
+    },
+  });
+
+  const seekerProfile: SeekerProfile = seekerProfileQuery.data?.data.data;
+
+  const documentList = applyJobData?.document ?? [];
 
   // --- Carousel & Lightbox Navigation ---
-  const handleCloseLightbox = () => setLightboxOpen(false);
+  const handleCloseLightbox = useCallback(() => {
+    setLightboxOpen(false);
+  }, []);
   const handleOpenLightbox = () => {
     if (documentList.length > 0) {
       setLightboxOpen(true);
@@ -140,6 +173,22 @@ const ViewSingleApplicant = () => {
     });
   }, [activeIndex]);
 
+  const addShortListMutation = useMutation({
+    mutationFn: addToShortlist,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["seekerProfilesForJob"] });
+      queryClient.invalidateQueries({ queryKey: ["appliedSeekers"] });
+      navigate(`/job/${id}/applicant-list`);
+    },
+    onError: (err) => {
+      console.log(err);
+    },
+  });
+
+  const addToShortlistHandler = () => {
+    addShortListMutation.mutate(applyJobData?.id);
+  };
+
   // --- Loading/Error/Not Found States ---
   if (appliedSeekersQuery.isPending) {
     return (
@@ -157,7 +206,23 @@ const ViewSingleApplicant = () => {
     );
   }
 
-  if (!seekerData) {
+  if (seekerProfileQuery.isPending) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "80vh",
+        }}
+      >
+        <CircularProgress />
+        <Typography sx={{ ml: 2 }}>Loading Applicant Info...</Typography>
+      </Box>
+    );
+  }
+
+  if (!applyJobData) {
     return (
       <Typography sx={{ textAlign: "center", mt: 5 }}>
         Applicant not found.
@@ -167,6 +232,55 @@ const ViewSingleApplicant = () => {
 
   return (
     <Box sx={{ width: { xs: "100%", md: "90%" }, mx: "auto" }}>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="shorlist-confirmation"
+      >
+        <DialogTitle id="shorlist-confirmation">{"Are you sure?"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to add this seeker to shortlist ?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            sx={{
+              bgcolor: "primary.light",
+              boxShadow: "none",
+              ":hover": {
+                boxShadow: "none",
+              },
+              textTransform: "none",
+              borderRadius: 1,
+            }}
+            autoFocus
+            onClick={handleClose}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            sx={{
+              bgcolor: "primary.main",
+              boxShadow: "none",
+              ":hover": {
+                boxShadow: "none",
+              },
+              textTransform: "none",
+              borderRadius: 1,
+            }}
+            onClick={() => {
+              addToShortlistHandler();
+              handleClose();
+            }}
+            autoFocus
+          >
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
       {/* Title & Back Button */}
       <Box
         sx={{
@@ -192,151 +306,199 @@ const ViewSingleApplicant = () => {
         </Typography>
       </Box>
 
-      {/* --- Main Carousel Gallery --- */}
-      <Box sx={{ my: 4, maxWidth: 500, mx: "auto" }}>
-        {/* Main Image Viewer */}
-        <Box
-          sx={{
-            position: "relative",
-            bgcolor: "grey.200",
-            borderRadius: 4,
-            overflow: "hidden",
-            aspectRatio: "16/9",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          {documentList.length > 1 && (
-            <IconButton
-              onClick={handlePrev}
-              sx={{
-                position: "absolute",
-                left: 16,
-                zIndex: 2,
-                color: "white",
-                bgcolor: "rgba(0,0,0,0.4)",
-                "&:hover": { bgcolor: "rgba(0,0,0,0.7)" },
-              }}
-            >
-              <ArrowBackIosNewIcon />
-            </IconButton>
-          )}
-          <Fade key={activeIndex} in={true} timeout={300}>
-            <Box
-              component="img"
-              src={`${import.meta.env.VITE_API_BASE_URL}/document/${documentList[activeIndex]}`}
-              onClick={handleOpenLightbox}
-              sx={{
-                width: "100%",
-                height: "100%",
-                objectFit: "contain",
-                cursor: "zoom-in",
-              }}
-            />
-          </Fade>
-          {documentList.length > 1 && (
-            <IconButton
-              onClick={handleNext}
-              sx={{
-                position: "absolute",
-                right: 16,
-                zIndex: 2,
-                color: "white",
-                bgcolor: "rgba(0,0,0,0.4)",
-                "&:hover": { bgcolor: "rgba(0,0,0,0.7)" },
-              }}
-            >
-              <ArrowForwardIosIcon />
-            </IconButton>
-          )}
+      <Box
+        sx={{
+          width: { xs: "70%", md: "50%" },
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          mx: "auto",
+        }}
+      >
+        <Typography variant="body1" sx={{ mb: 1 }}>
+          Name - {seekerProfile.user_id.name}
+        </Typography>
+        <Typography variant="body1" sx={{ mb: 1 }}>
+          Email - {seekerProfile.user_id.email}
+        </Typography>
+        <Typography variant="body1" sx={{ mb: 1 }}>
+          Expected Salary - {applyJobData.expected_salary}
+        </Typography>
+        <Typography variant="body1">
+          Message - {applyJobData.message}
+        </Typography>
+        {/* --- Main Carousel Gallery --- */}
+        <Box sx={{ my: 2 }}>
+          {/* Main Image Viewer */}
+          <Typography variant="body1" sx={{ mb: 1 }}>
+            Documents
+          </Typography>
           <Box
             sx={{
-              position: "absolute",
-              top: 16,
-              right: 16,
+              position: "relative",
+              bgcolor: "grey.200",
+              borderRadius: 4,
+              overflow: "hidden",
+              aspectRatio: "16/9",
               display: "flex",
-              gap: 2,
-              zIndex: 2,
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            <Typography
+            {documentList.length > 1 && (
+              <IconButton
+                onClick={handlePrev}
+                sx={{
+                  position: "absolute",
+                  left: 16,
+                  zIndex: 2,
+                  color: "white",
+                  bgcolor: "rgba(0,0,0,0.4)",
+                  "&:hover": { bgcolor: "rgba(0,0,0,0.7)" },
+                }}
+              >
+                <ArrowBackIosNewIcon />
+              </IconButton>
+            )}
+            <Fade key={activeIndex} in={true} timeout={300}>
+              <Box
+                component="img"
+                src={`${import.meta.env.VITE_API_BASE_URL}/document/${documentList[activeIndex]}`}
+                onClick={handleOpenLightbox}
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "contain",
+                  cursor: "zoom-in",
+                }}
+              />
+            </Fade>
+            {documentList.length > 1 && (
+              <IconButton
+                onClick={handleNext}
+                sx={{
+                  position: "absolute",
+                  right: 16,
+                  zIndex: 2,
+                  color: "white",
+                  bgcolor: "rgba(0,0,0,0.4)",
+                  "&:hover": { bgcolor: "rgba(0,0,0,0.7)" },
+                }}
+              >
+                <ArrowForwardIosIcon />
+              </IconButton>
+            )}
+            <Box
               sx={{
-                color: "white",
-                bgcolor: "rgba(0,0,0,0.6)",
-                p: 1,
-                borderRadius: 2,
-                fontSize: "0.875rem",
+                position: "absolute",
+                top: 16,
+                right: 16,
+                display: "flex",
+                gap: 2,
+                zIndex: 2,
               }}
             >
-              {activeIndex + 1} / {documentList.length}
-            </Typography>
-            <Tooltip title="Download">
-              <IconButton
-                onClick={() =>
-                  handleDownload(
-                    `${import.meta.env.VITE_API_BASE_URL}/document/${documentList[activeIndex]}`,
-                    documentList[activeIndex],
-                  )
-                }
+              <Typography
                 sx={{
                   color: "white",
                   bgcolor: "rgba(0,0,0,0.6)",
-                  "&:hover": { bgcolor: "rgba(0,0,0,0.9)" },
+                  p: 1,
+                  borderRadius: 2,
+                  fontSize: "0.875rem",
                 }}
               >
-                <DownloadForOfflineIcon />
-              </IconButton>
-            </Tooltip>
-          </Box>
-        </Box>
-
-        {/* Thumbnail Strip */}
-        {documentList.length > 1 && (
-          <Box
-            sx={{
-              mt: 2,
-              p: 1,
-              "&::-webkit-scrollbar": { height: 8 },
-              "&::-webkit-scrollbar-thumb": {
-                bgcolor: "grey.400",
-                borderRadius: 4,
-              },
-            }}
-          >
-            <Box sx={{ display: "flex", gap: 1.5, overflowX: "auto", pb: 1 }}>
-              {documentList.map((docName, index) => (
-                <Box
-                  key={docName + index}
-                  ref={(el) => (thumbnailRefs.current[index] = el)}
-                  onClick={() => goToIndex(index)}
+                {activeIndex + 1} / {documentList.length}
+              </Typography>
+              <Tooltip title="Download">
+                <IconButton
+                  onClick={() =>
+                    handleDownload(
+                      `${import.meta.env.VITE_API_BASE_URL}/document/${documentList[activeIndex]}`,
+                      documentList[activeIndex],
+                    )
+                  }
                   sx={{
-                    flexShrink: 0,
-                    width: 100,
-                    height: 75,
-                    borderRadius: 1.5,
-                    overflow: "hidden",
-                    cursor: "pointer",
-                    border: `3px solid ${activeIndex === index ? theme.palette.primary.main : "transparent"}`,
-                    opacity: activeIndex === index ? 1 : 0.6,
-                    transition: "all 0.3s ease",
-                    "&:hover": { opacity: 1 },
+                    color: "white",
+                    bgcolor: "rgba(0,0,0,0.6)",
+                    "&:hover": { bgcolor: "rgba(0,0,0,0.9)" },
                   }}
                 >
-                  <img
-                    src={`${import.meta.env.VITE_API_BASE_URL}/document/${docName}`}
-                    alt={`Thumbnail ${index + 1}`}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-                </Box>
-              ))}
+                  <DownloadForOfflineIcon />
+                </IconButton>
+              </Tooltip>
             </Box>
           </Box>
-        )}
+
+          {/* Thumbnail Strip */}
+          {documentList.length > 1 && (
+            <Box
+              sx={{
+                mt: 2,
+                p: 1,
+                "&::-webkit-scrollbar": { height: 8 },
+                "&::-webkit-scrollbar-thumb": {
+                  bgcolor: "grey.400",
+                  borderRadius: 4,
+                },
+              }}
+            >
+              <Box sx={{ display: "flex", gap: 1.5, overflowX: "auto", pb: 1 }}>
+                {documentList.map((docName, index) => (
+                  <Box
+                    key={docName + index}
+                    ref={(el: HTMLDivElement | null) => {
+                      thumbnailRefs.current[index] = el;
+                    }}
+                    onClick={() => goToIndex(index)}
+                    sx={{
+                      flexShrink: 0,
+                      width: 100,
+                      height: 75,
+                      borderRadius: 1.5,
+                      overflow: "hidden",
+                      cursor: "pointer",
+                      border: `3px solid ${activeIndex === index ? theme.palette.primary.main : "transparent"}`,
+                      opacity: activeIndex === index ? 1 : 0.6,
+                      transition: "all 0.3s ease",
+                      "&:hover": { opacity: 1 },
+                    }}
+                  >
+                    <img
+                      src={`${import.meta.env.VITE_API_BASE_URL}/document/${docName}`}
+                      alt={`Thumbnail ${index + 1}`}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  </Box>
+                ))}
+              </Box>
+            </Box>
+          )}
+        </Box>
+
+        <Box>
+          <Button
+            onClick={handleClickOpen}
+            variant="contained"
+            loading={addShortListMutation.isPending}
+            disabled={applyJobData.shortlist == 1}
+            sx={{
+              boxShadow: "none",
+              ":hover": {
+                boxShadow: "none",
+              },
+              textTransform: "none",
+              borderRadius: 1,
+            }}
+          >
+            {applyJobData.shortlist == 1
+              ? "Shortlist Added"
+              : "Add to Shortlist"}
+          </Button>
+        </Box>
       </Box>
 
       {/* Lightbox Modal for Fullscreen View */}

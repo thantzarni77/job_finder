@@ -40,3 +40,8 @@ export const getAppliedSeekers = async (postID: string | undefined) => {
   const { data } = await axiosClient.get(`/apply-job/${postID}`);
   return data;
 };
+
+export const addToShortlist = async (postJobID: number | undefined) => {
+  const { data } = await axiosClient.patch(`/apply-job/shortlist/${postJobID}`);
+  return data;
+};

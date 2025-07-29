@@ -318,8 +318,9 @@ const SeekerDetailsFrom = () => {
             }}
           >
             <Typography component="label" sx={{ fontWeight: 300 }}>
-              Work Experience
+              Work Experience <span style={{ color: "gray" }}>(optional)</span>
             </Typography>
+
             <IconButton
               type="button"
               aria-label="add education"

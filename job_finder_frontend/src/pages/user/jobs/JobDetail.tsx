@@ -40,6 +40,7 @@ import { getIndividualDataForJob } from "../../../helper/userApiFunctions";
 import IndividualCard from "../../../components/employer/IndividualCard";
 import JobCloseCard from "../../../components/user/jobs/JobCloseCard";
 import type { IndividualJob } from "../../../store/UserDataStore";
+import { isBefore, isSameDay } from "date-fns";
 
 const JobDetail = () => {
   const queryClient = useQueryClient();
@@ -166,6 +167,19 @@ const JobDetail = () => {
     if (!savedJobRecordId) return;
     undoSaveJobMutation.mutate(savedJobRecordId);
   };
+
+  let isSameDate = false;
+  let isOlderDate = false;
+  if (jobDetails) {
+    isSameDate = isSameDay(
+      new Date(jobDetails.job_detail.deadline),
+      new Date(Date.now()).setHours(0, 0, 0, 0),
+    );
+    isOlderDate = isBefore(
+      new Date(jobDetails.job_detail.deadline),
+      new Date(Date.now()).setHours(0, 0, 0, 0),
+    );
+  }
 
   if (isIndividualJob && individualPending) {
     return (
@@ -589,7 +603,9 @@ const JobDetail = () => {
             disabled={
               user?.user_type == "employer" ||
               alreadyAppliedCheck.length != 0 ||
-              !user?.user_id
+              !user?.user_id ||
+              isSameDate ||
+              isOlderDate
             }
             onClick={() => navigate(`/job/${id}/apply`)}
             variant="contained"
@@ -606,7 +622,13 @@ const JobDetail = () => {
             }}
           >
             {user?.user_id &&
+              !isOlderDate &&
+              !isSameDate &&
               (alreadyAppliedCheck.length != 0 ? "Applied" : "Apply Now")}
+            {user?.user_id &&
+              alreadyAppliedCheck.length == 0 &&
+              (isOlderDate || isSameDate) &&
+              "Job has excedded deadline date"}
             {!user?.user_id && "Create an account or login to apply"}
           </Button>
         </Box>
