@@ -2,11 +2,12 @@
 namespace App\Models;
 
 use App\Helpers\Filters;
+use App\Models\ApplyJob;
 use App\Models\Employer;
 use App\Models\JobDetail;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 class PostJob extends Model
 {
@@ -39,6 +40,11 @@ class PostJob extends Model
     public function employer()
     {
         return $this->belongsTo(Employer::class);
+    }
+
+    public function applyJob()
+    {
+        return $this->hasMany(ApplyJob::class);
     }
 
     public function scopeFilter(Builder $builder, Filters $filter)

@@ -3,10 +3,14 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Seeker;
+use App\Models\ApplyJob;
+use App\Models\Employer;
+use App\Models\Apply_job;
+use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -75,5 +79,19 @@ class User extends Authenticatable implements JWTSubject
         ];
     }
 
+    public function seeker()
+    {
+        return $this->hasOne(Seeker::class , 'user_id');
+    }
+
+    public function employer()
+    {
+        return $this->hasOne(Employer::class , 'user_id');
+    }
+
+    public function applyJob()
+    {
+        return $this->hasMany(ApplyJob::class);
+    }
    
 }

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\Filters;
+use App\Models\ApplyJob;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -24,38 +25,14 @@ class Seeker extends Model
         'bio'
     ];
 
-    public static function getRole()
-    {
-        return [
-            'junior' => 'junior',
-            'mid-level' => 'mid-level',
-            'senior' => 'senior'
-        ];
-    }
-
-    public static function getTalent()
-    {
-        return [
-            'Developer' => 'Developer',
-            'Designer' => 'Designer',
-            'Marketer' => 'Marketer',
-            'Writer' => 'Writer',
-            'Manager' => 'Manager',
-            'Coordinator' => 'Coordinator',
-            'Architect' => 'Architect',
-            'Analyst' => 'Analyst',
-            'Other' => 'Other'
-        ];
-    }
-
-    // public function user()
-    // {
-    //     return $this->hasOne(User::class);
-    // }
-
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->hasOne(User::class , 'id', 'user_id');
+    }
+
+    public function applyJob()
+    {
+        return $this->hasMany(ApplyJob::class);
     }
 
     public function clean($value)
@@ -63,6 +40,7 @@ class Seeker extends Model
         $decoded = json_decode($value, true);
         return $decoded !== null ? $decoded : trim($value, '"');
     }
+
 
     public function scopeFilter(Builder $builder, Filters $filter)
     {
