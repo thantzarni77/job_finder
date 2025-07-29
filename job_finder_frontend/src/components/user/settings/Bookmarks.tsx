@@ -7,14 +7,8 @@ import { useProfileStore } from "../../../store/ProfileStore";
 import { getSeekerSavedJobs } from "../../../helper/jobApiFunctions";
 import { useEffect, useState } from "react";
 import { useSeekerSavedJobs } from "../../../store/SavedJobStore";
-import {
-  useJobCategoryFilter,
-  useJobRoleFilter,
-  useJobSalaryFilter,
-  useJobTypeFilter,
-  type Job,
-} from "../../../store/JobStore";
-import { getAllJobPosts } from "../../../helper/postJob";
+import { type Job } from "../../../store/JobStore";
+import { getAllJobs } from "../../../helper/postJob";
 
 const Bookmarks = () => {
   const { id } = useParams();
@@ -28,26 +22,9 @@ const Bookmarks = () => {
     (state) => state.setSeekerSavedJobs,
   );
 
-  const { selectedJobRole } = useJobRoleFilter();
-  const { selectedJobType } = useJobTypeFilter();
-  const { selectedJobCategory } = useJobCategoryFilter();
-  const { selectedSalary } = useJobSalaryFilter();
-
   const allJobsQuery = useQuery({
-    queryKey: [
-      "jobPosts",
-      selectedJobRole,
-      selectedJobType,
-      selectedJobCategory,
-      selectedSalary,
-    ],
-    queryFn: () =>
-      getAllJobPosts(
-        selectedJobRole,
-        selectedJobType,
-        selectedJobCategory,
-        selectedSalary,
-      ),
+    queryKey: ["pureJobPosts"],
+    queryFn: getAllJobs,
   });
 
   const savedJobsQuery = useQuery({
@@ -59,7 +36,7 @@ const Bookmarks = () => {
     const foundJobs: Job[] = [];
     if (savedJobsQuery.data && savedJobsQuery.isSuccess) {
       if (allJobsQuery.data) {
-        for (const job of allJobsQuery.data) {
+        for (const job of allJobsQuery.data.data) {
           for (const saved of savedJobsQuery.data.data) {
             if (saved.post_job_id == job.id) {
               setIsLoading(true);

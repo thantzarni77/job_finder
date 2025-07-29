@@ -1,5 +1,10 @@
 import axiosClient from "./axiosClient";
 
+export const getAllJobs = async () => {
+  const { data } = await axiosClient.get("/post-jobs/all");
+  return data;
+};
+
 export const getAllJobPosts = async (
   selectedJobRole: string[],
   selectedJobType: string[],
