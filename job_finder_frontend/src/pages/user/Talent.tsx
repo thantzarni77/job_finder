@@ -24,7 +24,6 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import TalentFilter from "../../components/seeker/TalentFilter";
 import { useSeekerFilterStore } from "../../store/SeekerStore";
-import { useUserDataStore } from "../../store/UserDataStore";
 import {
   useSearchTalentsByName,
   useSeekerParentStore,
@@ -34,8 +33,6 @@ export default function Talent() {
   const { selectedTalents } = useSeekerFilterStore();
   const [sortBy, setSortBy] = useState<string>("recent");
   const [open, setOpen] = useState<boolean>(false);
-
-  const userProfile = useUserDataStore((state) => state.userData);
 
   const showTalentFilterDrawer = useTalentFilterStore(
     (state) => state.showTalentFilterDrawer,
@@ -69,7 +66,6 @@ export default function Talent() {
 
   // to find with name
   const talentName = useSearchTalentsByName((state) => state.talentName);
-  const setTalentName = useSearchTalentsByName((state) => state.setTalentName);
 
   const stateSeekers = useSeekerParentStore((state) => state.stateSeekers);
   const setStateSeekers = useSeekerParentStore(
@@ -87,7 +83,14 @@ export default function Talent() {
     if (!seekerPending && seekers) {
       setStateSeekers(seekers);
     }
-  }, [seekers, seekerPending, talentName, page, selectedTalents]);
+  }, [
+    seekers,
+    seekerPending,
+    talentName,
+    page,
+    selectedTalents,
+    setStateSeekers,
+  ]);
 
   // to handle paginated pages
   const handlePageChange = (_event: ChangeEvent<unknown>, value: number) => {

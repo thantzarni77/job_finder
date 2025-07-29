@@ -66,7 +66,8 @@ const JobDetail = () => {
   const jobDetails: JobWithJobDetail = jobDetailQuery.data?.data;
 
   const savedCheckQuery = useQuery({
-    enabled: !!seekerData?.id && !!jobDetails?.id,
+    enabled:
+      !!seekerData?.id && !!jobDetails?.id && user?.user_type != "employer",
     queryKey: ["savedCheck", seekerData.id, jobDetails?.id],
     queryFn: () => {
       return isSaved({
@@ -622,8 +623,7 @@ const JobDetail = () => {
             }}
           >
             {user?.user_id &&
-              !isOlderDate &&
-              !isSameDate &&
+              (!isOlderDate || !isSameDate) &&
               (alreadyAppliedCheck.length != 0 ? "Applied" : "Apply Now")}
             {user?.user_id &&
               alreadyAppliedCheck.length == 0 &&

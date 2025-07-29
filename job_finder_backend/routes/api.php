@@ -121,7 +121,7 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
 
     Route::middleware("UserTypeMiddleware:employer")->group(function () {
 
-        Route::get('/employer', [EmployerController::class, 'index']);
+        Route::get('/employer', [EmployerController::class, 'index'])->withoutMiddleware(["AuthMiddleware", "UserTypeMiddleware:employer"]);
         Route::get('/employer/{id}', [EmployerController::class, 'getdata']);
 
         //need to show employer data on non-login user and seekers

@@ -1,23 +1,22 @@
 <?php
-
 namespace App\Http\Controllers\Api;
 
-use App\Models\User;
+use App\Helpers\Filters;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\TalentFilterRequest;
+use App\Http\Resources\SeekerCollection;
+use App\Http\Resources\SeekerResource;
 use App\Models\Seeker;
 use App\Models\Talent;
-use App\Helpers\Filters;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
+use App\Models\User;
 use App\Traits\HttpResponseTrait;
-use Tymon\JWTAuth\Facades\JWTAuth;
-use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Resources\SeekerResource;
-use App\Http\Resources\SeekerCollection;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Requests\TalentFilterRequest;
+use Illuminate\Support\Str;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class SeekerController extends Controller
 {
@@ -33,7 +32,7 @@ class SeekerController extends Controller
 
         if ($request->query('talentName')) {
             $talentName = $request->query('talentName');
-            $seekers = Seeker::whereHas('user', function ($query) use ($talentName) {
+            $seekers    = Seeker::whereHas('user', function ($query) use ($talentName) {
                 $query->where('name', 'LIKE', "%{$talentName}%")->where('user_type', 'seeker');
             })
                 ->orWhere('role', 'LIKE', "%{$talentName}%")
@@ -44,8 +43,8 @@ class SeekerController extends Controller
                 )
                 ->paginate(10);
         } else {
-            $talent = $talentRequest->validated();
-            $filter = new Filters($talent);
+            $talent  = $talentRequest->validated();
+            $filter  = new Filters($talent);
             $seekers = Seeker::filter($filter)->paginate(10);
         }
         return new SeekerCollection($seekers);

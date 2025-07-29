@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import type { Seeker } from "../../helper/talentPage";
 
 const SeekerCard = ({ seeker }: { seeker: Seeker }) => {
-  console.log(seeker);
+  // console.log(seeker);
   return (
     <Box
       sx={{
