@@ -3,7 +3,6 @@ namespace App\Models;
 
 use App\Helpers\Filters;
 use App\Models\ApplyJob;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -33,7 +32,7 @@ class Seeker extends Model
 
     public function user()
     {
-        return $this->hasOne(User::class , 'id', 'user_id');
+        return $this->hasOne(User::class, 'id', 'user_id');
     }
 
     public function applyJob()
@@ -46,7 +45,6 @@ class Seeker extends Model
         $decoded = json_decode($value, true);
         return $decoded !== null ? $decoded : trim($value, '"');
     }
-
 
     public function scopeFilter(Builder $builder, Filters $filter)
     {
