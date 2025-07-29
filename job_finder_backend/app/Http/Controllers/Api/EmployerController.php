@@ -1,31 +1,40 @@
 <?php
+
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\EmployerResource;
-use App\Models\Employer;
 use App\Models\User;
-use App\Traits\HttpResponseTrait;
+use App\Models\Employer;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Traits\HttpResponseTrait;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Resources\EmployerResource;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
-use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Http\Resources\EmployerCollection;
 
 class EmployerController extends Controller
 {
     use HttpResponseTrait;
 
-    public function index()
+    public function index(Request $request)
     {
-        $employer = Employer::all();
-        return response()->json([
-            "statusCode" => "200",
-            "message"    => "passes",
-            "data"       => EmployerResource::collection($employer),
-        ], 200);
+        if ($request->query('companyName')) {
+            $companyName = $request->query('companyName');
+            $employer = Employer::where('company_name', 'LIKE', "%{$companyName}%")->paginate(10);
+        } else {
+            $employer = Employer::paginate(10);
+        }
+
+        return new EmployerCollection($employer);
+        // return response()->json([
+        //     "statusCode" => "200",
+        //     "message"    => "passes",
+        //     "data"       => EmployerResource::collection($employer),
+        // ], 200);
     }
 
     public function getdata(string $id)
@@ -112,7 +121,6 @@ class EmployerController extends Controller
             $employer->save();
 
             return $this->successResponseEmployer("Success created", $employer, $token, 201)->cookie('refresh_token', $refresh_token, 60 * 24 * 7, null, null, true, true);
-
         } catch (\Exception $e) {
             return response()->json([
                 'status'  => 'error',

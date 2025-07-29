@@ -20,7 +20,7 @@ class TalentRepository implements TalentRepositoryInterface
         return response()->json([
             'data' => $data,
             'message' => 'Talents fetched successfully'
-        ],200);
+        ], 200);
     }
 
     public function create(array $data)
@@ -29,10 +29,10 @@ class TalentRepository implements TalentRepositoryInterface
         return response()->json([
             'data' => $data,
             'message' => 'Talents created successfully'
-        ],200);
+        ], 200);
     }
 
-    public function update(array $data,$id)
+    public function update(array $data, $id)
     {
         $talent = Talent::FindOrFail($id);
         $data['id'] = $talent->id;
@@ -40,7 +40,7 @@ class TalentRepository implements TalentRepositoryInterface
         return response()->json([
             'data' => $data,
             'message' => 'Talents updated successfully'
-        ],200);
+        ], 200);
     }
 
     public function destroy($id)
@@ -49,7 +49,6 @@ class TalentRepository implements TalentRepositoryInterface
         return response()->json([
             'data' => $data,
             'message' => 'Talent delete successfully'
-        ],200);
+        ], 200);
     }
-
 }

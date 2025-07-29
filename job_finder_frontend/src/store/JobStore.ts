@@ -232,6 +232,18 @@ export const useJobSalaryFilter = create<jobSalaryFilter>((set) => ({
   },
 }));
 
+// search with job title
+type SearchJobTitleType = {
+  jobTitle: string;
+  setJobTitle: (jobTitle: string) => void;
+};
+export const useSearchJobTitle = create<SearchJobTitleType>((set) => ({
+  jobTitle: "",
+  setJobTitle: (jobTitle: string) => {
+    set({ jobTitle });
+  },
+}));
+
 //seeker applied jobs
 type AppliedJob = {
   id: number;
@@ -288,3 +300,14 @@ export type AppliedSeeker = {
   created_at: string;
   updated_at: string;
 };
+
+type JobPaginateType = {
+  page: number;
+  setPage: (page: number) => void;
+};
+export const useCompanyPaginateStore = create<JobPaginateType>((set) => ({
+  page: 1,
+  setPage: (page: number) => {
+    set({ page });
+  },
+}));

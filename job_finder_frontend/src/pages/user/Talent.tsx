@@ -11,16 +11,24 @@ import {
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import FilterListIcon from "@mui/icons-material/FilterList";
 
-import { useState } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import SearchBox from "../../components/user/SearchBox";
 import TalentFilterDrawer from "../../components/user/TalentFilterDrawer";
 import { useTalentFilterStore } from "../../store/Appstore";
 import SeekerCard from "../../components/seeker/SeekerCard";
-import { getSeekerList, type SeekerType } from "../../helper/talentPage";
+import {
+  getSeekerList,
+  type SeekerApiResponse,
+  type Seeker,
+} from "../../helper/talentPage";
 import { useQuery } from "@tanstack/react-query";
 import TalentFilter from "../../components/seeker/TalentFilter";
 import { useSeekerFilterStore } from "../../store/SeekerStore";
 import { useUserDataStore } from "../../store/UserDataStore";
+import {
+  useSearchTalentsByName,
+  useSeekerParentStore,
+} from "../../store/SeekerStore";
 
 export default function Talent() {
   const { selectedTalents } = useSeekerFilterStore();
@@ -56,10 +64,35 @@ export default function Talent() {
     />
   );
 
-  const { data: seekers, isPending: seekerPending } = useQuery<SeekerType[]>({
-    queryKey: ["seekers", selectedTalents],
-    queryFn: () => getSeekerList(selectedTalents),
-  });
+  // state for pagination
+  const [page, setPage] = useState(1);
+
+  // to find with name
+  const talentName = useSearchTalentsByName((state) => state.talentName);
+  const setTalentName = useSearchTalentsByName((state) => state.setTalentName);
+
+  const stateSeekers = useSeekerParentStore((state) => state.stateSeekers);
+  const setStateSeekers = useSeekerParentStore(
+    (state) => state.setStateSeekers,
+  );
+
+  const { data: seekers, isPending: seekerPending } =
+    useQuery<SeekerApiResponse>({
+      queryKey: ["seekers", selectedTalents, page, talentName],
+      queryFn: () => getSeekerList(selectedTalents, page, talentName),
+    });
+
+  // to store in parent state
+  useEffect(() => {
+    if (!seekerPending && seekers) {
+      setStateSeekers(seekers);
+    }
+  }, [seekers, seekerPending, talentName, page, selectedTalents]);
+
+  // to handle paginated pages
+  const handlePageChange = (_event: ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+  };
 
   return (
     <Box
@@ -148,7 +181,7 @@ export default function Talent() {
             }}
           >
             <Typography variant="caption" sx={{ color: "primary.light" }}>
-              {seekers?.length}+ talents are found
+              {seekers?.data.length}+ talents are found
             </Typography>
             {/* filter box */}
             <Select
@@ -266,10 +299,10 @@ export default function Talent() {
               }}
             >
               {!seekerPending &&
-                seekers?.map((seeker: SeekerType) => {
-                  if (seeker.user_id.id != userProfile.id) {
-                    return <SeekerCard key={seeker.id} seeker={seeker} />;
-                  }
+                stateSeekers?.data.map((seeker: Seeker) => {
+                  // if (seeker.user_id.id != userProfile.id) {
+                  return <SeekerCard key={seeker.id} seeker={seeker} />;
+                  // }
                 })}
             </Box>
             {/* pagination */}
@@ -278,7 +311,9 @@ export default function Talent() {
             >
               <Stack>
                 <Pagination
-                  count={10}
+                  count={seekers?.meta.last_page}
+                  page={seekers?.meta.current_page ?? 1}
+                  onChange={handlePageChange}
                   shape="rounded"
                   variant="outlined"
                   color="primary"

@@ -19,51 +19,63 @@ import {
   useJobSalaryFilter,
   useJobStore,
   useJobTypeFilter,
+  type Job,
 } from "../../store/JobStore";
 import JobCard from "../../components/user/jobs/JobCard";
 import { useQuery } from "@tanstack/react-query";
 import { getAllJobPosts } from "../../helper/postJob";
-import { useEffect } from "react";
+import { useState, type ChangeEvent } from "react";
 
 export default function Home() {
   const navigate = useNavigate();
   const allJobs = useJobStore((state) => state.jobs);
   const setJobs = useJobStore((state) => state.setJobs);
 
-  const { selectedJobRole } = useJobRoleFilter();
-  const { selectedJobType } = useJobTypeFilter();
-  const { selectedJobCategory } = useJobCategoryFilter();
-  const { selectedSalary } = useJobSalaryFilter();
+  // const { selectedJobRole } = useJobRoleFilter();
+  // const { selectedJobType } = useJobTypeFilter();
+  // const { selectedJobCategory } = useJobCategoryFilter();
+  // const { selectedSalary } = useJobSalaryFilter();
+  // const [page, setPage] = useState(1);
 
-  const allJobsQuery = useQuery({
-    queryKey: [
-      "jobPosts",
-      selectedJobRole,
-      selectedJobType,
-      selectedJobCategory,
-      selectedSalary,
-    ],
-    queryFn: () =>
-      getAllJobPosts(
-        selectedJobRole,
-        selectedJobType,
-        selectedJobCategory,
-        selectedSalary,
-      ),
-  });
+  // const { data: jobs, isPending: isJobsPending } = useQuery({
+  //   queryKey: [
+  //     "jobPosts",
+  //     selectedJobRole,
+  //     selectedJobType,
+  //     selectedJobCategory,
+  //     selectedSalary,
+  //     page,
+  //   ],
+  //   queryFn: () =>
+  //     getAllJobPosts(
+  //       selectedJobRole,
+  //       selectedJobType,
+  //       selectedJobCategory,
+  //       selectedSalary,
+  //       page,
+  //     ),
+  // });
 
-  useEffect(() => {
-    if (allJobsQuery.data && allJobsQuery.isSuccess) {
-      setJobs(allJobsQuery.data);
-    }
-  }, [
-    allJobsQuery.data,
-    allJobsQuery.isSuccess,
-    setJobs,
-    allJobs,
-    selectedJobRole,
-    selectedJobType,
-  ]);
+  // to handle paginated pages
+  // const handlePageChange = (_event: ChangeEvent<unknown>, value: number) => {
+  //   setPage(value);
+  // };
+
+  // useEffect(() => {
+  //   if (allJobsQuery.data && allJobsQuery.isSuccess) {
+  //     setJobs(allJobsQuery.data);
+  //   }
+  // }, [
+  //   allJobsQuery.data,
+  //   allJobsQuery.isSuccess,
+  //   setJobs,
+  //   allJobs,
+  //   selectedJobRole,
+  //   selectedJobType,
+  // ]);
+  // if (isJobsPending) {
+  //   return;
+  // }
 
   return (
     <Box>
@@ -124,17 +136,19 @@ export default function Home() {
           Recommeded Jobs For You
         </Typography>
 
-        <Box className="flex flex-wrap items-center gap-3 md:justify-center">
+        {/* <Box className="flex flex-wrap items-center gap-3 md:justify-center">
           {allJobs.map((single) => {
             if (single.id < 10) {
               return <JobCard key={single.id} job={single} />;
             }
           })}
-        </Box>
+        </Box> */}
         <Box sx={{ display: "flex", justifyContent: "center", mt: 5, mb: 10 }}>
-          <Stack>
+          {/* <Stack>
             <Pagination
-              count={10}
+              count={jobs.last_page}
+              page={jobs.current_page ?? 1}
+              onChange={handlePageChange}
               shape="rounded"
               variant="outlined"
               color="primary"
@@ -145,7 +159,7 @@ export default function Home() {
                 },
               }}
             />
-          </Stack>
+          </Stack> */}
         </Box>
 
         <Typography sx={{ textAlign: "center", mb: 3, fontWeight: 600 }}>
@@ -185,7 +199,7 @@ export default function Home() {
         >
           <Stack>
             <Pagination
-              count={10}
+              count={5}
               shape="rounded"
               variant="outlined"
               color="primary"

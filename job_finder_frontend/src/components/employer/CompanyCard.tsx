@@ -5,8 +5,10 @@ import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
 import { NavLink } from "react-router";
 import CustomSuitCase from "../custom_svg/CustomSuitCase";
+import { type CompanyType } from "../../helper/companyPageApi";
+import { format } from "date-fns";
 
-const CompanyCard = () => {
+const CompanyCard = ({ company }: { company: CompanyType }) => {
   return (
     <Box
       sx={{
@@ -61,7 +63,7 @@ const CompanyCard = () => {
                     ":hover": { cursor: "pointer", color: "primary.main" },
                   }}
                 >
-                  <NavLink to={"/companies/1"}>KBZ Bank</NavLink>
+                  <NavLink to={"/companies/1"}>{company.company_name}</NavLink>
                 </Typography>
               </Box>
             </Box>
@@ -98,7 +100,7 @@ const CompanyCard = () => {
                 variant="caption"
                 sx={{ color: "primary.light", width: "250px" }}
               >
-                N0.123, Yadanar St, Marchart Road, Yangon
+                {company.company_address}
               </Typography>
             </Box>
             <Box
@@ -112,7 +114,7 @@ const CompanyCard = () => {
             >
               <QueryBuilderIcon sx={{ color: "primary.light", fontSize: 22 }} />
               <Typography variant="caption" sx={{ color: "primary.light" }}>
-                posted on 1 day ago
+                posted on {format(new Date(company.created_at), "PPP")}
               </Typography>
             </Box>
             <Box
@@ -126,7 +128,7 @@ const CompanyCard = () => {
             >
               <CustomSuitCase />
               <Typography variant="caption" sx={{ color: "primary.light" }}>
-                30 opened vacancies
+                {company.company_phone}
               </Typography>
             </Box>
           </Box>

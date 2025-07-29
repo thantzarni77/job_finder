@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Helpers\Filters;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Employer extends Model
@@ -19,7 +21,8 @@ class Employer extends Model
     ];
 
     //verification status
-    public static function getVerificationStatus() {
+    public static function getVerificationStatus()
+    {
         return [
             'pending' => 'pending',
             'verified' => 'verified',
@@ -27,5 +30,8 @@ class Employer extends Model
         ];
     }
 
-    
+    public function scopeFilter(Builder $builder, Filters $filter)
+    {
+        return $filter->filter($builder);
+    }
 }
