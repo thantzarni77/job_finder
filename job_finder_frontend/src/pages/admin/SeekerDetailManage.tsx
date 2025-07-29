@@ -26,7 +26,6 @@ import { useNavigate } from "react-router";
 import { Link as MuiLink } from "@mui/material";
 import { Link as RouterLink } from "react-router";
 import { useState } from "react";
-import JobCard from "../../components/user/jobs/JobCard";
 
 const SeekerDetailManage = () => {
   const navigate = useNavigate();
@@ -48,9 +47,8 @@ const SeekerDetailManage = () => {
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <IconButton>
+          <IconButton onClick={() => navigate(-1)}>
             <ArrowBackIosIcon
-              onClick={() => navigate(-1)}
               sx={{
                 color: "primary.main",
                 fontSize: 32,
@@ -349,8 +347,8 @@ const SeekerDetailManage = () => {
                 flexWrap: "wrap",
               }}
             >
-              <JobCard />
-              <JobCard />
+              {/* <JobCard />
+              <JobCard /> */}
             </Box>
           )}
           {activeTab === 1 && (
@@ -362,7 +360,7 @@ const SeekerDetailManage = () => {
                 flexWrap: "wrap",
               }}
             >
-              <JobCard />
+              {/* <JobCard /> */}
             </Box>
           )}
         </Box>

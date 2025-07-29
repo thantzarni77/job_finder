@@ -10,8 +10,10 @@ import {
 import FilterListIcon from "@mui/icons-material/FilterList";
 import SearchIcon from "@mui/icons-material/Search";
 import AdminJobCard from "../../components/admin/AdminJobCard";
+import { useNavigate } from "react-router";
 
 const JobManagement = () => {
+  const navigate = useNavigate();
   return (
     <Box
       sx={{
@@ -40,12 +42,17 @@ const JobManagement = () => {
           }}
         >
           <Box
+            onClick={() => navigate("/admin/jobs/manage/pending")}
             sx={{
               backgroundColor: "background.paper",
               width: "200px",
               p: 3,
               height: "fit-content",
               borderRadius: "15px",
+              ":hover": {
+                cursor: "pointer",
+                bgcolor: "background.hover",
+              },
             }}
           >
             <Typography
@@ -65,6 +72,10 @@ const JobManagement = () => {
               p: 3,
               height: "fit-content",
               borderRadius: "15px",
+              ":hover": {
+                cursor: "pointer",
+                bgcolor: "background.hover",
+              },
             }}
           >
             <Typography
@@ -84,6 +95,10 @@ const JobManagement = () => {
               p: 3,
               height: "fit-content",
               borderRadius: "15px",
+              ":hover": {
+                cursor: "pointer",
+                bgcolor: "background.hover",
+              },
             }}
           >
             <Typography

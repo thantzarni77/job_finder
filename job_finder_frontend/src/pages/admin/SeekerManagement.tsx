@@ -54,51 +54,13 @@ const SeekerManagement = () => {
               variant="subtitle2"
               sx={{ fontWeight: 400, color: "primary.main" }}
             >
-              Total Users
+              Total Seekers
             </Typography>
             <Typography variant="h6" sx={{ fontWeight: 600 }}>
               5,300
             </Typography>
           </Box>
-          <Box
-            sx={{
-              backgroundColor: "background.paper",
-              width: "200px",
-              p: 3,
-              height: "fit-content",
-              borderRadius: "15px",
-            }}
-          >
-            <Typography
-              variant="subtitle2"
-              sx={{ fontWeight: 400, color: "primary.main" }}
-            >
-              Employers
-            </Typography>
-            <Typography variant="h6" sx={{ fontWeight: 600 }}>
-              2,000
-            </Typography>
-          </Box>
-          <Box
-            sx={{
-              backgroundColor: "background.paper",
-              width: "200px",
-              p: 3,
-              height: "fit-content",
-              borderRadius: "15px",
-            }}
-          >
-            <Typography
-              variant="subtitle2"
-              sx={{ fontWeight: 400, color: "primary.main" }}
-            >
-              Seekers
-            </Typography>
-            <Typography variant="h6" sx={{ fontWeight: 600 }}>
-              3,300
-            </Typography>
-          </Box>
-          <Box
+          {/* <Box
             sx={{
               backgroundColor: "background.paper",
               width: "200px",
@@ -154,7 +116,7 @@ const SeekerManagement = () => {
             <Typography variant="h6" sx={{ fontWeight: 600 }}>
               20
             </Typography>
-          </Box>
+          </Box> */}
         </Box>
       </Box>
       {/* search users*/}

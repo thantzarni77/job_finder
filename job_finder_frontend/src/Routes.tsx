@@ -38,6 +38,7 @@ import AppliedJobsList from "./components/user/settings/AppliedJobsList";
 import EditEmployerProfile from "./pages/employer/EditEmployerProfile";
 import ViewApplicantList from "./pages/employer/ViewApplicantList";
 import ViewSingleApplicant from "./pages/employer/ViewSingleApplicant";
+import PendingJobs from "./pages/admin/PendingJobs";
 
 export const router = createBrowserRouter([
   {
@@ -244,6 +245,10 @@ export const router = createBrowserRouter([
         Component: JobManagement,
       },
       {
+        path: "jobs/manage/pending",
+        Component: PendingJobs,
+      },
+      {
         path: "jobs/detail/:id",
         Component: JobDetailManage,
       },
@@ -263,7 +268,6 @@ export const router = createBrowserRouter([
         path: "job/:id/edit",
         Component: EditJob,
       },
-
       {
         path: "employer/:id/manage",
         Component: EmployerDetail,

@@ -6,7 +6,6 @@ import {
   ListItemText,
   ListItemIcon,
 } from "@mui/material";
-import DashboardIcon from "@mui/icons-material/Dashboard";
 import TableChartIcon from "@mui/icons-material/TableChart";
 import WorkIcon from "@mui/icons-material/Work";
 import PersonIcon from "@mui/icons-material/Person";
@@ -21,12 +20,18 @@ const SidePanel = () => {
   // paths for each route
   const overviewPath = "/admin/overview";
   const jobsPath = "/admin/jobs/manage";
+  const jobsPendingPath = "/admin/jobs/manage/pending";
+  const jobsDetailPath = "/admin/jobs/detail/:id";
   const usersPath = "/admin/seekers/manage";
   const userDetailPath = "/admin/seeker/:id/manage";
-  const employerPath = "/admin/employer/1/manage";
+  const employerPath = "/admin/employer/:id/manage";
 
   const isOverviewActive = useMatch(overviewPath);
-  const isJobsActive = useMatch(jobsPath);
+  const isJobAllActive = useMatch(jobsPath);
+  const isJobPendingActive = useMatch(jobsPendingPath);
+  const isJobDetailActive = useMatch(jobsDetailPath);
+  const isJobsActive =
+    isJobAllActive || isJobDetailActive || isJobPendingActive;
   const isUsersListActive = useMatch(usersPath);
   const isUserDetailActive = useMatch(userDetailPath);
   const isUserManagementActive = isUsersListActive || isUserDetailActive;
@@ -64,28 +69,6 @@ const SidePanel = () => {
       >
         LOGO
       </Typography>
-      <ListItem disableGutters sx={{ listItemContainerSx }}>
-        <ListItemButton
-          sx={{
-            ...baseButtonSx,
-            backgroundColor: "transparent",
-            color: "#ffffff",
-            "&:hover": {
-              bgcolor: "rgba(255, 255, 255, 0.08)",
-            },
-          }}
-        >
-          <ListItemIcon
-            sx={{
-              ...baseButtonSx,
-              color: "#ffffff",
-            }}
-          >
-            <DashboardIcon />
-          </ListItemIcon>
-          {showMenu && <ListItemText primary="DashBoard" />}
-        </ListItemButton>
-      </ListItem>
 
       <ListItem disableGutters sx={{ listItemContainerSx }}>
         <ListItemButton

@@ -6,7 +6,11 @@ import { format } from "date-fns";
 import type { Seeker } from "../../helper/talentPage";
 
 const SeekerCard = ({ seeker }: { seeker: Seeker }) => {
-  // console.log(seeker);
+  const encoded = '[{"degree":"B.S.D","year":"2016-2023"}]';
+  const educationArray = JSON.parse(encoded);
+
+  console.log(educationArray);
+  // Output: [ { degree: 'B.S.D', year: '2016-2023' } ]
   return (
     <Box
       sx={{

@@ -6,8 +6,10 @@ import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import BusinessIcon from "@mui/icons-material/Business";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
+import { useNavigate } from "react-router";
 
 const AdminJobCard = () => {
+  const navigate = useNavigate();
   return (
     <Box
       sx={{
@@ -97,6 +99,7 @@ const AdminJobCard = () => {
             </Typography>
           </Button>
           <Button
+            onClick={() => navigate("/admin/jobs/detail/1")}
             sx={{
               display: "flex",
               alignItems: "center",

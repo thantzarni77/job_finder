@@ -13,6 +13,7 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import SearchIcon from "@mui/icons-material/Search";
 import AdminSeekerCard from "../../components/admin/AdminSeekerCard";
 import AdminJobCard from "../../components/admin/AdminJobCard";
+import { useNavigate } from "react-router";
 
 const Overview = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -20,6 +21,8 @@ const Overview = () => {
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
   };
+
+  const navigate = useNavigate();
   return (
     <Box
       sx={{
@@ -53,12 +56,17 @@ const Overview = () => {
           }}
         >
           <Box
+            onClick={() => navigate("/admin/jobs/manage/pending")}
             sx={{
               backgroundColor: "background.paper",
               width: "200px",
               p: 3,
               height: "fit-content",
               borderRadius: "15px",
+              ":hover": {
+                cursor: "pointer",
+                bgcolor: "background.hover",
+              },
             }}
           >
             <Typography

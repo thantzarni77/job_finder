@@ -2,16 +2,12 @@ import {
   Box,
   Button,
   Divider,
-  FormControl,
-  MenuItem,
-  Select,
   Typography,
   Tooltip,
   Stack,
   Paper,
   IconButton,
 } from "@mui/material";
-import type { SelectChangeEvent } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import BusinessIcon from "@mui/icons-material/Business";
@@ -20,30 +16,21 @@ import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
 import SettingsRemoteIcon from "@mui/icons-material/SettingsRemote";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CampaignIcon from "@mui/icons-material/Campaign";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { useNavigate } from "react-router";
-import { useState } from "react";
 
 export default function JobDetailManage() {
   const navigate = useNavigate();
-  const [selectedApplicant, setSelectedApplicant] = useState(
-    "1. Mr.Jhon (pending)",
-  );
-
-  const handleApplicantChange = (event: SelectChangeEvent) => {
-    setSelectedApplicant(event.target.value);
-  };
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#f3f4f6" }}>
+    <Box
+      sx={{ display: "flex", minHeight: "100vh", width: "94%", mx: 6, py: 2 }}
+    >
       <Box
         component="main"
         sx={{
           flexGrow: 1,
-          p: { xs: 2, sm: 4 },
           maxWidth: "100%",
-          bgcolor: "#f7f7f9",
           minHeight: "100vh",
           display: "flex",
           flexDirection: "column",
@@ -56,23 +43,26 @@ export default function JobDetailManage() {
             mb: 3,
           }}
         >
+          <Box component="span">
+            <IconButton onClick={() => navigate(-1)}>
+              <ArrowBackIosIcon
+                sx={{
+                  color: "primary.main",
+                  fontSize: 32,
+                  ":hover": {
+                    color: "text.primary",
+                    cursor: "pointer",
+                  },
+                }}
+              />
+            </IconButton>
+          </Box>
           <Typography
-            variant="body1"
+            variant="h6"
             sx={{
-              display: "flex",
-              alignItems: "center",
               fontWeight: 600,
-              color: "#0f172a",
-              cursor: "default",
-              userSelect: "none",
-              fontSize: "1rem",
             }}
           >
-            <Box component="span">
-              <IconButton sx={{ mr: 3 }} onClick={() => navigate(-1)}>
-                <ArrowBackIosIcon />
-              </IconButton>
-            </Box>
             Job detail view
           </Typography>
 
@@ -266,7 +256,7 @@ export default function JobDetailManage() {
           </Paper>
 
           {/* Applicants */}
-          <Box>
+          {/* <Box>
             <Typography
               variant="subtitle2"
               fontWeight={600}
@@ -307,7 +297,7 @@ export default function JobDetailManage() {
                 </MenuItem>
               </Select>
             </FormControl>
-          </Box>
+          </Box> */}
 
           {/* Benefit Section */}
           <Box>
@@ -415,12 +405,7 @@ export default function JobDetailManage() {
           <Box
             sx={{
               display: "flex",
-              justifyContent: {
-                xs: "center",
-                sm: "flex-start",
-                md: "space-between",
-              },
-              gap: 2,
+              gap: 4,
               mt: 3,
               flexWrap: "wrap",
               maxWidth: "600px",

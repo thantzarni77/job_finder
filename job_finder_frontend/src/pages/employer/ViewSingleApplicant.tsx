@@ -316,10 +316,10 @@ const ViewSingleApplicant = () => {
         }}
       >
         <Typography variant="body1" sx={{ mb: 1 }}>
-          Name - {seekerProfile.user_id.name}
+          Name - {seekerProfile && seekerProfile.user_id.name}
         </Typography>
         <Typography variant="body1" sx={{ mb: 1 }}>
-          Email - {seekerProfile.user_id.email}
+          Email - {seekerProfile && seekerProfile.user_id.email}
         </Typography>
         <Typography variant="body1" sx={{ mb: 1 }}>
           Expected Salary - {applyJobData.expected_salary}

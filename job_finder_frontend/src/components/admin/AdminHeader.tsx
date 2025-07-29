@@ -1,6 +1,5 @@
 import { AppBar, Toolbar, Box, IconButton, Avatar } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import { useAdminMenuStore } from "../../store/AdminAppStore";
 
 export default function AdminHeader() {
@@ -18,9 +17,6 @@ export default function AdminHeader() {
         </IconButton>
         <Box sx={{ flexGrow: 1 }}></Box>
         <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-          <IconButton>
-            <NotificationsIcon sx={{ fontSize: 32 }} />
-          </IconButton>
           <Avatar sx={{ width: 32, height: 32 }} />
         </Box>
       </Toolbar>
