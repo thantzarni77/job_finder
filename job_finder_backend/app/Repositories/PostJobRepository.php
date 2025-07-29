@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Repositories;
 
 use App\Helpers\Filters;
@@ -20,6 +19,14 @@ class PostJobRepository implements PostJobRepositoryInterface
         $this->postJob = $postJob;
     }
 
+    public function getAllPosts()
+    {
+        $posts = $this->postJob->with(['jobDetail', 'employer', 'category'])->get();
+        return response()->json([
+            "status" => "success",
+            "data"   => $posts,
+        ], 200);
+    }
     public function index(Request $request, JobFilterRequest $jobFilterRequest)
     {
 
@@ -39,7 +46,7 @@ class PostJobRepository implements PostJobRepositoryInterface
 
         if ($request->query('Job')) {
             $job_title = $request->query('Job');
-            $jobs = $this->postJob->where('job_title', 'LIKE', $job_title)->with(['jobDetail', 'employer', 'category'])->paginate(10);
+            $jobs      = $this->postJob->where('job_title', 'LIKE', $job_title)->with(['jobDetail', 'employer', 'category'])->paginate(10);
         } else {
             $jobs = $this->postJob
                 ->with(['jobDetail', 'employer', 'category'])

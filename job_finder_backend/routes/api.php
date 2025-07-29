@@ -35,14 +35,14 @@ Route::middleware("AdminAuthMiddleware:admin")->group(function () {
     Route::post('/admin/logout', [AdminAuthController::class, 'logout']);
     Route::post('/admin/employerVerification/{id}', [EmployerVerficationController::class, 'updateStatus']);
     Route::post('/admin/post-verification/{id}', [PostJobController::class, 'postVerification']);
-    //job post
-    Route::prefix('post-jobs')->group(function () {
-        Route::get('/', [PostJobController::class, 'index'])->withoutMiddleware('AuthMiddleware');
-        Route::post('/', [PostJobController::class, 'store']);
-        Route::get('/{id}', [PostJobController::class, 'show']);
-        Route::post('/{id}', [PostJobController::class, 'update']);
-        Route::delete('/{id}', [PostJobController::class, 'destroy']);
-    });
+    // //job post
+    // Route::prefix('post-jobs')->group(function () {
+    //     Route::get('/', [PostJobController::class, 'index'])->withoutMiddleware('AuthMiddleware');
+    //     Route::post('/', [PostJobController::class, 'store']);
+    //     Route::get('/{id}', [PostJobController::class, 'show']);
+    //     Route::post('/{id}', [PostJobController::class, 'update']);
+    //     Route::delete('/{id}', [PostJobController::class, 'destroy']);
+    // });
 
 });
 
@@ -137,6 +137,7 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
 
         //job post
         Route::prefix('post-jobs')->group(function () {
+            Route::get('/all', [PostJobController::class, 'getAllPosts'])->withoutMiddleware(['AuthMiddleware', 'UserTypeMiddleware:employer']);
 
             //need to show job post list on non-login user and seekers
             Route::get('/', [PostJobController::class, 'index'])->withoutMiddleware(['AuthMiddleware', 'UserTypeMiddleware:employer']);
@@ -192,10 +193,8 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
     Route::apiResource('job-details', JobDetailController::class);
 
 //job category route
-Route::apiResource('job-categories', JobCategoryController::class);
+    Route::apiResource('job-categories', JobCategoryController::class);
 
-Route::get('/deadline-alerts', [DeadlineController::class, 'alertNearDeadline']);
+    Route::get('/deadline-alerts', [DeadlineController::class, 'alertNearDeadline']);
 
 });
-
-
