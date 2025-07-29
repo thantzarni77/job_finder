@@ -54,7 +54,7 @@ const Companies = () => {
     if (!isCompaniesPending && !isError) {
       setCompaniesData(companies.data);
     }
-  }, [isCompaniesPending, isError, companies]);
+  }, [isCompaniesPending, isError, companies, setCompaniesData]);
 
   // to handle paginated pages
   const handlePageChange = (_event: ChangeEvent<unknown>, value: number) => {
@@ -178,7 +178,10 @@ const Companies = () => {
             }}
           >
             <Typography variant="caption" sx={{ color: "primary.light" }}>
-              500+ companies are found
+              {companies &&
+                companiesData.filter((company) => company.company_name != null)
+                  .length}
+              + companies are found
             </Typography>
             {/* filter box */}
             <Select
@@ -296,7 +299,9 @@ const Companies = () => {
               }}
             >
               {companiesData?.map((company) => {
-                return <CompanyCard company={company} key={company.id} />;
+                if (company.company_name) {
+                  return <CompanyCard company={company} key={company.id} />;
+                }
               })}
             </Box>
             {/* pagination */}
