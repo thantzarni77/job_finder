@@ -1,7 +1,11 @@
 import { Box, Button, Typography } from "@mui/material";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
+import { useJobStore } from "../../../store/JobStore";
 
 const JobApplyConfirm = () => {
+  const { id } = useParams();
+  const allJobs = useJobStore((state) => state.jobs);
+  const currentJob = allJobs.filter((single) => single.id == Number(id));
   const navigate = useNavigate();
   return (
     <Box
@@ -31,8 +35,8 @@ const JobApplyConfirm = () => {
             width: { xs: "100%", md: "50%" },
           }}
         >
-          Thank you for applying. Your application for [Job Title] has been
-          received. We’ll be in touch soon.
+          Thank you for applying. Your application for {currentJob[0].job_title}{" "}
+          has been received. We'll be in touch soon.
         </Typography>
         <Box sx={{ width: "30%" }}>
           <img src="/images/job_apply_confirm/job_apply_confirm.png" />

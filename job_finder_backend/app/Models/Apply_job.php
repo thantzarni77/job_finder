@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -13,11 +12,11 @@ class Apply_job extends Model
         'document',
         'message',
         'shortlist',
-        'expected_salary'
+        'expected_salary',
     ];
 
     //for multiple document store in array type
     protected $casts = [
-        'document' => 'array'
+        'document' => 'array',
     ];
 }

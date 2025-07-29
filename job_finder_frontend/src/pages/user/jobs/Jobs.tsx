@@ -27,16 +27,9 @@ import {
   useJobStore,
   useJobTypeFilter,
   useJobCategoryFilter,
+  useJobSalaryFilter,
 } from "../../../store/JobStore";
-
-const jobType = {
-  "Full Time": "full-time",
-  "Part Time": "part-time",
-  Internship: "internship",
-  volunteer: "volunteer",
-  Freelancer: "freelancer",
-  Remote: "remote",
-};
+import { getJobTypes, getRoles } from "../../../helper/postJob";
 
 const Jobs = () => {
   const [sortBy, setSortBy] = useState<string>("recent");
@@ -55,6 +48,7 @@ const Jobs = () => {
   const { selectedJobRole } = useJobRoleFilter();
   const { selectedJobType } = useJobTypeFilter();
   const { selectedJobCategory } = useJobCategoryFilter();
+  const { selectedSalary } = useJobSalaryFilter();
 
   const allJobsQuery = useQuery({
     queryKey: [
@@ -62,9 +56,25 @@ const Jobs = () => {
       selectedJobRole,
       selectedJobType,
       selectedJobCategory,
+      selectedSalary,
     ],
     queryFn: () =>
-      getAllJobPosts(selectedJobRole, selectedJobType, selectedJobCategory),
+      getAllJobPosts(
+        selectedJobRole,
+        selectedJobType,
+        selectedJobCategory,
+        selectedSalary,
+      ),
+  });
+
+  const { data: jobTypes, isFetching: isJobTypesPending } = useQuery({
+    queryKey: ["jobTypes"],
+    queryFn: getJobTypes,
+  });
+
+  const { data: roles, isFetching: isRolesPending } = useQuery({
+    queryKey: ["roles"],
+    queryFn: getRoles,
   });
 
   const handleChange = (event: SelectChangeEvent<string>) => {
@@ -74,7 +84,6 @@ const Jobs = () => {
   useEffect(() => {
     if (allJobsQuery.data && allJobsQuery.isSuccess) {
       setJobs(allJobsQuery.data);
-      console.log(allJobs);
     }
   }, [
     allJobsQuery.data,
@@ -165,9 +174,21 @@ const Jobs = () => {
           gap: 6,
         }}
       >
-        <Box sx={{ display: { xs: "none", md: "block" } }}>
-          <JobFilter filterType={"Job"} filterTypeArray={jobType} />
-        </Box>
+        {!isJobTypesPending && !isRolesPending && (
+          <Box sx={{ display: { xs: "none", md: "block" } }}>
+            <JobFilter filterType={"Job"} jobTypes={jobTypes} roles={roles} />
+          </Box>
+        )}
+        {isJobTypesPending && isRolesPending && (
+          <Box sx={{ display: { xs: "none", md: "block" } }}>
+            <Skeleton
+              variant="rounded"
+              width={"320px"}
+              height={"500px"}
+              sx={{ borderRadius: 2 }}
+            />
+          </Box>
+        )}
 
         <Box
           sx={{
@@ -188,7 +209,10 @@ const Jobs = () => {
             }}
           >
             <Typography variant="caption" sx={{ color: "primary.light" }}>
-              {allJobs.length}+ jobs are found
+              {allJobsQuery.data &&
+                allJobs.filter((job) => job.posting_status == "approved")
+                  .length}
+              + jobs are found
             </Typography>
             {/* filter box */}
             <Select
@@ -307,39 +331,21 @@ const Jobs = () => {
             >
               {allJobsQuery.isFetching && (
                 <>
-                  <Skeleton
-                    variant="rounded"
-                    width={375}
-                    height={150}
-                    sx={{ borderRadius: "20px" }}
-                  />
-                  <Skeleton
-                    variant="rounded"
-                    width={375}
-                    height={150}
-                    sx={{ borderRadius: "20px" }}
-                  />
-                  <Skeleton
-                    variant="rounded"
-                    width={375}
-                    height={150}
-                    sx={{ borderRadius: "20px" }}
-                  />
-                  <Skeleton
-                    variant="rounded"
-                    width={375}
-                    height={150}
-                    sx={{ borderRadius: "20px" }}
-                  />
-                  <Skeleton
-                    variant="rounded"
-                    width={325}
-                    height={150}
-                    sx={{ borderRadius: "20px" }}
-                  />
+                  {[...Array(10)].map((_, index) => {
+                    return (
+                      <Skeleton
+                        variant="rounded"
+                        width={375}
+                        height={150}
+                        sx={{ borderRadius: "20px" }}
+                        key={index}
+                      />
+                    );
+                  })}
                 </>
               )}
-              {allJobsQuery.isSuccess &&
+
+              {allJobsQuery.data &&
                 allJobs.map((job) => {
                   if (job.posting_status == "approved") {
                     return <JobCard key={job.id} job={job} />;
@@ -368,7 +374,9 @@ const Jobs = () => {
           </Box>
         </Box>
       </Box>
-      <JobFilterDrawer />
+      {!isJobTypesPending && !isRolesPending && (
+        <JobFilterDrawer jobTypes={jobTypes} roles={roles} />
+      )}
     </Box>
   );
 };

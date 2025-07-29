@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Contact;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -24,7 +25,8 @@ class EmployerResource extends JsonResource
             "company_image" => $this->company_image ,
             "company_type" => $this->company_type ,
             "verification" => $this->verification ,
-            "user_id" => User::where('id', $this->user_id)->select('id','name','phone','address')->first()
+            "user_id" => User::where('id', $this->user_id)->select('id','name','phone','address')->first(),
+            // "individual" => Contact::select("id","user_id","title","message")->first()
         ];
     }
 }

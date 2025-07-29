@@ -9,10 +9,11 @@ import {
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { useNavigate, useParams } from "react-router";
 import { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useUserStore } from "../../../store/UserStore";
 import { useForm } from "react-hook-form";
 import { getUserProfile } from "../../../helper/profileApiFunctions";
+import { changeEmail } from "../../../helper/changeSecurityApiFunctions";
 
 type ChangeEmailForm = {
   currentEmail: string;
@@ -21,13 +22,12 @@ type ChangeEmailForm = {
 };
 
 const ChangeEmail = () => {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { id } = useParams();
 
   const user = useUserStore((state) => state.user);
   const setUserData = useUserStore((state) => state.setUserData);
-
-  // const [email, setEmail] = useState<string | null>(null);
 
   const profileQuery = useQuery({
     enabled: !user?.user_id,
@@ -45,13 +45,38 @@ const ChangeEmail = () => {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<ChangeEmailForm>({
     mode: "onBlur",
   });
 
+  const newEmail = watch("newEmail");
+
+  const changeEmailMutation = useMutation({
+    mutationFn: changeEmail,
+    onSuccess: (res) => {
+      const { id, name, email, user_type } = res.data;
+      setUserData({
+        user_id: id,
+        user_name: name,
+        user_email: email,
+        user_type: user_type,
+      });
+      queryClient.invalidateQueries();
+      navigate(-1);
+    },
+    onError: (err) => {
+      console.log(err);
+    },
+  });
+
   const changeEmailHandler = (data: ChangeEmailForm) => {
-    console.log(data);
+    const { newEmail } = data;
+
+    changeEmailMutation.mutate({
+      email: newEmail,
+    });
   };
 
   useEffect(() => {
@@ -131,6 +156,7 @@ const ChangeEmail = () => {
                 message: "Please enter a valid email",
               },
             })}
+            disabled
             id="currentEmail"
             variant="outlined"
             fullWidth
@@ -254,6 +280,11 @@ const ChangeEmail = () => {
                 value: /^\S+@\S+\.\S+$/,
                 message: "Please enter a valid email",
               },
+              validate: (val: string) => {
+                if (val != newEmail) {
+                  return "Emails do not match";
+                }
+              },
             })}
             id="confirmNewEmail"
             variant="outlined"
@@ -292,6 +323,7 @@ const ChangeEmail = () => {
         </Box>
 
         <Button
+          loading={changeEmailMutation.isPending}
           type="submit"
           variant="contained"
           sx={{

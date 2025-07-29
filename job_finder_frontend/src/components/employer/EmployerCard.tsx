@@ -39,30 +39,16 @@ const EmployerCard = ({
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <img
                 src={`${import.meta.env.VITE_API_BASE_URL}/${employerData?.company_image}`}
-                alt={employerData?.company_name}
+                alt={
+                  employerData?.company_name ? employerData.company_name : ""
+                }
                 style={{
                   backgroundColor: "primary.main",
                   borderRadius: "12px",
-                  fontSize: "14px",
-                  fontWeight: "bold",
                   width: "50px",
                   height: "50px",
                 }}
               />
-              {/* <Avatar
-                sx={{
-                  bgcolor: "primary.main",
-                  borderRadius: "12px",
-                  fontSize: "14px",
-                  fontWeight: "bold",
-                  width: "50px",
-                  height: "50px",
-                }}
-                variant="square"
-              >
-                KBZ <br />
-                Pay
-              </Avatar> */}
               <Box
                 sx={{
                   display: "flex",

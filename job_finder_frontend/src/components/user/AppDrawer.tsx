@@ -10,10 +10,11 @@ import { useAppStore } from "../../store/Appstore";
 import { Link } from "react-router";
 import { useUserStore } from "../../store/UserStore";
 import { useProfileStore } from "../../store/ProfileStore";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { logoutUser } from "../../helper/authApiFunctions";
 
 export default function AppDrawer() {
+  const queryClient = useQueryClient();
   const showDrawer = useAppStore((state) => state.showDrawer);
   const setShowDrawer = useAppStore((state) => state.setShowDrawer);
 
@@ -128,7 +129,12 @@ export default function AppDrawer() {
           </ListItem>
 
           <ListItem>
-            <ListItemButton onClick={() => logoutMutate.mutate()}>
+            <ListItemButton
+              onClick={() => {
+                logoutMutate.mutate();
+                queryClient.invalidateQueries();
+              }}
+            >
               <Typography>Logout</Typography>
             </ListItemButton>
           </ListItem>

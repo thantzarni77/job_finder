@@ -1,8 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\EmployerController;
-use App\Http\Controllers\Api\IndividualEmployerController;
 use App\Http\Controllers\Api\NewPasswordController;
 use App\Http\Controllers\Api\SeekerController;
 use App\Http\Controllers\Api\SocialLoginController;
@@ -18,23 +18,47 @@ use App\Http\Controllers\TalentController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
+Route::post('/superadmin/login', [AdminAuthController::class, 'login']);
+
+Route::middleware("AdminAuthMiddleware:superadmin")->group(function () {
+    Route::post('/superadmin/logout', [AdminAuthController::class, 'logout']);
+    Route::get('/superadmin/getprofile', [AdminAuthController::class, 'profile']);
+
+    Route::post('/admin/register', [AdminAuthController::class, 'register']);
+    Route::post('/admin/login', [AdminAuthController::class, 'login']);
+
+});
+
+Route::middleware("AdminAuthMiddleware:admin")->group(function () {
+
+    Route::get('/admin/getprofile', [AdminAuthController::class, 'profile']);
+    Route::post('/admin/logout', [AdminAuthController::class, 'logout']);
+    Route::post('/admin/employerVerification/{id}', [EmployerVerficationController::class, 'updateStatus']);
+    Route::post('/admin/post-verification/{id}', [PostJobController::class, 'postVerification']);
+    //job post
+    Route::prefix('post-jobs')->group(function () {
+        Route::get('/', [PostJobController::class, 'index'])->withoutMiddleware('AuthMiddleware');
+        Route::post('/', [PostJobController::class, 'store']);
+        Route::get('/{id}', [PostJobController::class, 'show']);
+        Route::post('/{id}', [PostJobController::class, 'update']);
+        Route::delete('/{id}', [PostJobController::class, 'destroy']);
+    });
+
+});
+
 Route::post('/registerstepone', [AuthController::class, 'registerStepOne']);
 Route::post('/registersteptwo/{id}', [AuthController::class, 'registerStepTwo']);
-
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/forgot-password', [NewPasswordController::class, 'forgotPassword']);
 Route::post('/reset-password', [NewPasswordController::class, 'resetPassword']);
 
-Route::post('/admin/employerVerification/{id}', [EmployerVerficationController::class, 'updateStatus']);
+//types
+Route::get('types', [JobDetailController::class, 'types']);
+Route::get('roles', [JobDetailController::class, 'roles']);
+Route::get('genders', [JobDetailController::class, 'genders']);
 
-//job post
-Route::prefix('post-jobs')->group(function () {
-    Route::get('/', [PostJobController::class, 'index'])->withoutMiddleware('AuthMiddleware');
-    Route::post('/', [PostJobController::class, 'store']);
-    Route::get('/{id}', [PostJobController::class, 'show']);
-    Route::post('/{id}', [PostJobController::class, 'update']);
-    Route::delete('/{id}', [PostJobController::class, 'destroy']);
-});
+//job category route
+Route::apiResource('job-categories', JobCategoryController::class);
 
 //talent module
 Route::prefix('talent')->group(function () {
@@ -47,13 +71,19 @@ Route::prefix('talent')->group(function () {
     //remove save job
     Route::delete('/{id}', [TalentController::class, 'destroy']);
 });
-//types
-Route::get('types', [JobDetailController::class, 'types']);
-Route::get('roles', [JobDetailController::class, 'roles']);
-Route::get('genders', [JobDetailController::class, 'genders']);
 
 Route::group(["middleware" => "AuthMiddleware"], function () {
-    Route::post('/user/update/{id}', [UserController::class, 'updateUser']);
+
+    Route::post('/change-password/{id}', [NewPasswordController::class, 'changePassword']);
+
+    Route::prefix("user")->group(function () {
+        Route::get('/get', [UserController::class, 'getSingleUserData']);
+        Route::post('/update/{id}', [UserController::class, 'updateUser']);
+
+        //need to show individual employer profile pic etc on non-login user
+        Route::get('/individual-employer/{id}', [UserController::class, "getIndividualEmployerData"])->withoutMiddleware("AuthMiddleware");
+    });
+
     Route::get('/profile', [AuthController::class, 'profile']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/refresh', [AuthController::class, 'refresh']);
@@ -61,60 +91,87 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
     Route::delete('/removeuser', [AuthController::class, 'removeUser']);
     Route::post('/admin-account-creation', [AuthController::class, 'adminAccountCreation']);
     Route::post('/auth/{provider}/call-back', [SocialLoginController::class, 'socialLogin']);
-    Route::get('/employer-data/{id}', [EmployerController::class, 'getEmployerData']);
-
-    Route::middleware("UserTypeMiddleware:superadmin")->group(function () {});
-
-    Route::middleware("UserTypeMiddleware:admin")->group(function () {});
-
-    Route::middleware("UserTypeMiddleware:admin")->group(function () {
-
-    });
 
     Route::middleware("UserTypeMiddleware:seeker")->group(function () {
-        Route::get('/seeker', [SeekerController::class, 'index']);
-        Route::get('/seeker/{id}', [SeekerController::class, 'getdata']);
-        Route::get('/seeker-data/{id}', [SeekerController::class, 'getSeekerData']);
+
+        //need to show seeker list on non-login user and employers
+        Route::get('/seeker', [SeekerController::class, 'index'])->withoutMiddleware(['UserTypeMiddleware:seeker', "AuthMiddleware"]);
+
+        Route::get('/seeker/{id}', [SeekerController::class, 'getdata'])->withoutMiddleware('UserTypeMiddleware:seeker');
+
+        //need to show seeker data on non-login user and employers
+        Route::get('/seeker-data/{id}', [SeekerController::class, 'getSeekerData'])->withoutMiddleware(['UserTypeMiddleware:seeker', "AuthMiddleware"]);
+
         Route::post('/seeker', [SeekerController::class, 'store']);
         Route::post('/seeker/{id}', [SeekerController::class, 'update']);
         Route::delete('/seeker/{id}', [SeekerController::class, 'destroy']);
-    });
 
-    //employer post job
+        Route::prefix("project")->group(function () {
+            Route::get("/", [ProjectController::class, 'index']);
+            Route::post("/", [ProjectController::class, 'store']);
+
+            //need to show user projects on non-login user and employers
+            Route::get("/{userID}", [ProjectController::class, 'show'])->withoutMiddleware(["AuthMiddleware", "UserTypeMiddleware:seeker"]);
+
+            Route::post("/{userID}", [ProjectController::class, 'update']);
+            Route::post("/{userID}", [ProjectController::class, 'destroy']);
+        });
+
+    });
 
     Route::middleware("UserTypeMiddleware:employer")->group(function () {
 
         Route::get('/employer', [EmployerController::class, 'index']);
         Route::get('/employer/{id}', [EmployerController::class, 'getdata']);
+
+        //need to show employer data on non-login user and seekers
+        Route::get('/employer-data/{id}', [EmployerController::class, 'getEmployerData'])->withoutMiddleware(["AuthMiddleware", "UserTypeMiddleware:employer"]);
+
         Route::post('/employer', [EmployerController::class, 'store']);
         Route::post('/employer/{id}', [EmployerController::class, 'update']);
         Route::delete('/employer/{id}', [EmployerController::class, 'destroy']);
 
-        Route::get('/employer', [EmployerController::class, 'index']);
-        Route::get('/employer/{id}', [EmployerController::class, 'getdata']);
-        Route::post('/employer', [EmployerController::class, 'store']);
-        Route::post('/employer/{id}', [EmployerController::class, 'update']);
-        Route::delete('/employer/{id}', [EmployerController::class, 'destroy']);
+        // Route::get('/indi_employer', [IndividualEmployerController::class, 'index']);
+        // Route::get('/indi_employer/{id}', [IndividualEmployerController::class, 'getData']);
+        // Route::get('/indi_data_employer/{id}', [IndividualEmployerController::class, 'getIndiEmployerData']);
 
-        Route::get('/indi_employer', [IndividualEmployerController::class, 'index']);
-        Route::get('/indi_employer/{id}', [IndividualEmployerController::class, 'getData']);
-        Route::get('/indi_data_employer/{id}', [IndividualEmployerController::class, 'getIndiEmployerData']);
+        //job post
+        Route::prefix('post-jobs')->group(function () {
+
+            //need to show job post list on non-login user and seekers
+            Route::get('/', [PostJobController::class, 'index'])->withoutMiddleware(['AuthMiddleware', 'UserTypeMiddleware:employer']);
+
+            Route::post('/', [PostJobController::class, 'store']);
+
+            //need to show job details on non-login user and seekers
+            Route::get('/{id}', [PostJobController::class, 'show'])->withoutMiddleware(['AuthMiddleware', 'UserTypeMiddleware:employer']);
+
+            Route::post('/{id}', [PostJobController::class, 'update']);
+            Route::delete('/{id}', [PostJobController::class, 'destroy']);
+        });
+
     });
 
-    //apply job module
     Route::prefix('apply-job')->group(function () {
-        Route::post('/', [ApplyJobController::class, 'applyJob']);
-        Route::get('/', [ApplyJobController::class, 'applyJobData']);
-        //making shortlist
-        Route::patch('/shortlist/{id}', [ApplyJobController::class, 'addShortlist']);
-        //employer view his uploaded jobs
-        Route::get('/employer', [ApplyJobController::class, 'employerPostedJobs']);
-        //seeker view his applied jobs
+
+        // seeker view his applied jobs
         Route::get('/seeker', [ApplyJobController::class, 'seekerAppliedJobs']);
-        //employer view shorlist his posted jobs
+        // employer view his uploaded jobs
+        Route::get('/employer', [ApplyJobController::class, 'employerPostedJobs']);
+        // employer view shorlist his posted jobs
         Route::get('/shortlist/employer/{id}', [ApplyJobController::class, 'employerShortlistJobs']);
-        //mail send to seeker
+
+        // mail send to seeker
         Route::post('/mail', [ApplyJobController::class, 'sendMail']);
+        // apply job
+        Route::post('/', [ApplyJobController::class, 'applyJob']);
+
+        //get applied seekers on jobs
+        Route::get('/{id}', [ApplyJobController::class, 'applyJobData']);
+        // making shortlist
+        Route::patch('/shortlist/{id}', [ApplyJobController::class, 'addShortlist']);
+        // remove post
+        Route::delete('/{id}', [ApplyJobController::class, 'destroy']);
     });
 
     //job save module
@@ -127,13 +184,18 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
         Route::get('/seeker-save-list', [SaveJobController::class, 'view']);
         //remove save job
         Route::delete('/{id}', [SaveJobController::class, 'destroy']);
+        //check if job is saved
+        Route::post("/check", [SaveJobController::class, 'checkIsSaved']);
     });
 
-    Route::apiResource('project', ProjectController::class);
-});
+    //job detail route
+    Route::apiResource('job-details', JobDetailController::class);
 
 //job category route
 Route::apiResource('job-categories', JobCategoryController::class);
 
 Route::get('/deadline-alerts', [DeadlineController::class, 'alertNearDeadline']);
+
+});
+
 

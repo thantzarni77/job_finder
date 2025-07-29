@@ -17,6 +17,7 @@ class ContactFormController extends Controller
     }
     public function storeMail(Request $request){
         $data = $request->validate([
+            'user_id' => 'required',
             'title' => 'required',
             'message' => 'required',
         ]);

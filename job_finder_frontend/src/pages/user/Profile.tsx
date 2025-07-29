@@ -22,17 +22,14 @@ import { getSeekerProfile } from "../../helper/profileApiFunctions";
 import { useEffect } from "react";
 import { useProfileStore } from "../../store/ProfileStore";
 import FullScreenLoader from "../../components/FullScreenLoader";
-import { useUserStore } from "../../store/UserStore";
-import { getSeekerProjects } from "../../helper/SeekerProjectApiFunctions";
 import { useSeekerProject } from "../../store/SeekerStore";
+import { seekerGetProject } from "../../helper/seekerProjectApiFunctions";
 
 export default function Profile() {
   const navigate = useNavigate();
 
   const { id } = useParams();
   const user_id = Number(id);
-
-  const userData = useUserStore((state) => state.user);
   const seekerProfile = useProfileStore((state) => state.seekerProfile);
   const setSeekerProfile = useProfileStore((state) => state.setSeekerProfile);
 
@@ -43,7 +40,7 @@ export default function Profile() {
 
   const seekerProjectQuery = useQuery({
     queryKey: ["seekerProject", user_id],
-    queryFn: getSeekerProjects,
+    queryFn: seekerGetProject,
   });
 
   useEffect(() => {
@@ -314,7 +311,7 @@ export default function Profile() {
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <EmailOutlinedIcon color="primary" />
                 <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                  {userData?.user_email}
+                  {seekerProfile.user_id.email}
                 </Typography>
               </Box>
             </Box>
@@ -362,51 +359,56 @@ export default function Profile() {
           <Typography variant="h6" sx={{ mt: 5, mb: 3, textAlign: "center" }}>
             Projects
           </Typography>
-          <Box className="grid grid-cols-1 place-items-center gap-3 md:grid-cols-2 lg:grid-cols-4">
-            {seekerProjectQuery.isSuccess &&
-              seekerProjects.map((single) => {
-                return (
-                  <Card
-                    sx={{
-                      borderTopRadius: "20px",
-                      backgroundColor: "transparent",
-                      boxShadow: "none",
-                      maxWidth: "95%",
-                    }}
-                    key={single.id}
-                  >
-                    <img
-                      src={`${import.meta.env.VITE_API_BASE_URL}/image/${single.image}`}
-                      alt=""
-                      style={{
-                        objectFit: "cover",
-                        width: "100%",
-                        height: "200px",
-                        borderRadius: "10px",
+          {seekerProjects.length > 0 && (
+            <Box className="grid grid-cols-1 place-items-center gap-3 md:grid-cols-2 lg:grid-cols-4">
+              {seekerProjectQuery.data &&
+                seekerProjects.map((single) => {
+                  return (
+                    <Card
+                      sx={{
+                        borderTopRadius: "20px",
+                        backgroundColor: "transparent",
+                        boxShadow: "none",
+                        maxWidth: "95%",
                       }}
-                    />
-                    <CardContent>
-                      <Typography variant="h6">{single.title}</Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{ color: "text.secondary" }}
-                      >
-                        {single.description}
-                      </Typography>
-                    </CardContent>
-                    <CardActions>
-                      <Button
-                        variant="outlined"
-                        fullWidth
-                        href={`../${single.link}`}
-                      >
-                        View Project
-                      </Button>
-                    </CardActions>
-                  </Card>
-                );
-              })}
-          </Box>
+                      key={single.id}
+                    >
+                      <img
+                        src={`${import.meta.env.VITE_API_BASE_URL}/image/${single.image}`}
+                        alt=""
+                        style={{
+                          objectFit: "cover",
+                          width: "100%",
+                          height: "200px",
+                          borderRadius: "10px",
+                        }}
+                      />
+                      <CardContent>
+                        <Typography variant="h6">{single.title}</Typography>
+                        <Typography
+                          variant="body2"
+                          sx={{ color: "text.secondary" }}
+                        >
+                          {single.description}
+                        </Typography>
+                      </CardContent>
+                      <CardActions>
+                        <Button
+                          variant="outlined"
+                          fullWidth
+                          href={`../${single.link}`}
+                        >
+                          View Project
+                        </Button>
+                      </CardActions>
+                    </Card>
+                  );
+                })}
+            </Box>
+          )}
+          {seekerProjects.length == 0 && (
+            <Typography>No Projects Added</Typography>
+          )}
         </Box>
       </Box>
 

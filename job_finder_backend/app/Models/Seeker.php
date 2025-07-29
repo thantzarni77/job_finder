@@ -2,11 +2,22 @@
 
 namespace App\Models;
 
+use App\Helpers\Filters;
 use Illuminate\Database\Eloquent\Model;
-use Tymon\JWTAuth\Contracts\JWTSubject;
-class Seeker extends Model implements JWTSubject
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+class Seeker extends Model
 {
-    protected $fillable = [  
+    use HasFactory;
+    protected $casts = [
+        'skills' => 'array',
+        'education' => 'array',
+        'work_experience' => 'array',
+        'social_media_link' => 'array',
+    ];
+
+    protected $fillable = [
         'user_id',
         'skills',
         'education',
@@ -18,17 +29,8 @@ class Seeker extends Model implements JWTSubject
         'bio'
     ];
 
-    public function getJWTIdentifier()
+    public static function getRole()
     {
-        return $this->getKey();
-    }
-
-    public function getJWTCustomClaims()
-    {
-        return [];
-    }
-
-    public static function getRole() {
         return [
             'junior' => 'junior',
             'mid-level' => 'mid-level',
@@ -36,7 +38,8 @@ class Seeker extends Model implements JWTSubject
         ];
     }
 
-    public static function getTalent() {
+    public static function getTalent()
+    {
         return [
             'Developer' => 'Developer',
             'Designer' => 'Designer',
@@ -50,7 +53,8 @@ class Seeker extends Model implements JWTSubject
         ];
     }
 
-    public function user(){
+    public function user()
+    {
         return $this->hasOne(User::class);
     }
 
@@ -58,5 +62,10 @@ class Seeker extends Model implements JWTSubject
     {
         $decoded = json_decode($value, true);
         return $decoded !== null ? $decoded : trim($value, '"');
+    }
+
+    public function scopeFilter(Builder $builder, Filters $filter)
+    {
+        return $filter->filter($builder);
     }
 }

@@ -1,13 +1,15 @@
 import { create } from "zustand";
 
-type SeekerProfile = {
+export type SeekerProfile = {
   id: number | null;
   skills: string[];
   education: { degree: string; year: string }[];
-  work_experience: {
-    workPos: string;
-    year: string;
-  }[];
+  work_experience:
+    | {
+        workPos: string;
+        year: string;
+      }[]
+    | null;
   role: string;
   talent: string;
   social_media_link: string[];
@@ -16,12 +18,14 @@ type SeekerProfile = {
   user_id: {
     id: number | null;
     name: string;
+    email: string;
     phone: string;
     address: string;
   };
+  created_at: Date;
 };
 
-type EmployerProfile = {
+export type EmployerProfile = {
   id: number | null;
   user_id: number | null;
   company_name: string | null;
@@ -63,9 +67,11 @@ export const useProfileStore = create<
     user_id: {
       id: null,
       name: "",
+      email: "",
       phone: "",
       address: "",
     },
+    created_at: new Date(),
   },
   setSeekerProfile: (seekerProfileFromServer) => {
     set({ seekerProfile: seekerProfileFromServer });

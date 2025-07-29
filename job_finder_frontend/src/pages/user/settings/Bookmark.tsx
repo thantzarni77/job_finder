@@ -1,12 +1,13 @@
 import { Box, Container, Typography } from "@mui/material";
 import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 const Bookmark = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   return (
     <Container
-      onClick={() => navigate("/settings/user/1/bookmarks")}
+      onClick={() => navigate(`/settings/user/${id}/bookmarks`)}
       sx={{
         display: "flex",
         alignItems: "flex-start",
@@ -36,7 +37,7 @@ const Bookmark = () => {
           variant="subtitle2"
           sx={{ fontWeight: 400, color: "text.secondary" }}
         >
-          View your saved jobs & following
+          View your saved jobs
         </Typography>
       </Box>
     </Container>

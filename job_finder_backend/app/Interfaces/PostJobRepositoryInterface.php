@@ -11,4 +11,5 @@ interface PostJobRepositoryInterface
     public function findOrFail($id);
     public function update(array $data, $id);
     public function delete($id);
+    public function postVerification(array $data ,$id);
 }

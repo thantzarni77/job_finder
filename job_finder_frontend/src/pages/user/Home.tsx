@@ -13,9 +13,57 @@ import Meta from "../../assets/meta.png";
 import AyaBank from "../../assets/ayabank.jpeg";
 import Xiaomi from "../../assets/Xiaomi.png";
 import { useNavigate } from "react-router";
+import {
+  useJobCategoryFilter,
+  useJobRoleFilter,
+  useJobSalaryFilter,
+  useJobStore,
+  useJobTypeFilter,
+} from "../../store/JobStore";
+import JobCard from "../../components/user/jobs/JobCard";
+import { useQuery } from "@tanstack/react-query";
+import { getAllJobPosts } from "../../helper/postJob";
+import { useEffect } from "react";
 
 export default function Home() {
   const navigate = useNavigate();
+  const allJobs = useJobStore((state) => state.jobs);
+  const setJobs = useJobStore((state) => state.setJobs);
+
+  const { selectedJobRole } = useJobRoleFilter();
+  const { selectedJobType } = useJobTypeFilter();
+  const { selectedJobCategory } = useJobCategoryFilter();
+  const { selectedSalary } = useJobSalaryFilter();
+
+  const allJobsQuery = useQuery({
+    queryKey: [
+      "jobPosts",
+      selectedJobRole,
+      selectedJobType,
+      selectedJobCategory,
+      selectedSalary,
+    ],
+    queryFn: () =>
+      getAllJobPosts(
+        selectedJobRole,
+        selectedJobType,
+        selectedJobCategory,
+        selectedSalary,
+      ),
+  });
+
+  useEffect(() => {
+    if (allJobsQuery.data && allJobsQuery.isSuccess) {
+      setJobs(allJobsQuery.data);
+    }
+  }, [
+    allJobsQuery.data,
+    allJobsQuery.isSuccess,
+    setJobs,
+    allJobs,
+    selectedJobRole,
+    selectedJobType,
+  ]);
 
   return (
     <Box>
@@ -77,10 +125,11 @@ export default function Home() {
         </Typography>
 
         <Box className="flex flex-wrap items-center gap-3 md:justify-center">
-          {/* {!isPending &&
-            data?.map((job) => {
-              return <JobCard key={job.id} job={job} />;
-            })} */}
+          {allJobs.map((single) => {
+            if (single.id < 10) {
+              return <JobCard key={single.id} job={single} />;
+            }
+          })}
         </Box>
         <Box sx={{ display: "flex", justifyContent: "center", mt: 5, mb: 10 }}>
           <Stack>

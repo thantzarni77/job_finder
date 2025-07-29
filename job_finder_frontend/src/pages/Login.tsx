@@ -59,6 +59,7 @@ export default function Login() {
     onSuccess: ({ data }: LoginUserWithToken) => {
       setUserData(data);
       setToken(data.token);
+      removeErrMessage();
       navigate("/");
     },
     onError: (err) => {

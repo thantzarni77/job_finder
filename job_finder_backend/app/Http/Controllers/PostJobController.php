@@ -55,6 +55,10 @@ class PostJobController extends Controller
         return $this->postJobRepository->delete($id);
     }
 
+    public function postVerification(Request $request,$id){
+        $status = $request->all();
+        return $this->postJobRepository->postVerification($status,$id);
+    }
+
 }
 
-?>
