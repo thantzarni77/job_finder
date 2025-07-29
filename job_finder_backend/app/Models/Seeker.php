@@ -1,16 +1,21 @@
 <?php
-
 namespace App\Models;
 
 use App\Helpers\Filters;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Seeker extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'skills'            => 'array',
+        'education'         => 'array',
+        'work_experience'   => 'array',
+        'social_media_link' => 'array',
+    ];
 
     protected $fillable = [
         'user_id',
@@ -21,30 +26,30 @@ class Seeker extends Model
         'talent',
         'social_media_link',
         'image',
-        'bio'
+        'bio',
     ];
 
     public static function getRole()
     {
         return [
-            'junior' => 'junior',
+            'junior'    => 'junior',
             'mid-level' => 'mid-level',
-            'senior' => 'senior'
+            'senior'    => 'senior',
         ];
     }
 
     public static function getTalent()
     {
         return [
-            'Developer' => 'Developer',
-            'Designer' => 'Designer',
-            'Marketer' => 'Marketer',
-            'Writer' => 'Writer',
-            'Manager' => 'Manager',
+            'Developer'   => 'Developer',
+            'Designer'    => 'Designer',
+            'Marketer'    => 'Marketer',
+            'Writer'      => 'Writer',
+            'Manager'     => 'Manager',
             'Coordinator' => 'Coordinator',
-            'Architect' => 'Architect',
-            'Analyst' => 'Analyst',
-            'Other' => 'Other'
+            'Architect'   => 'Architect',
+            'Analyst'     => 'Analyst',
+            'Other'       => 'Other',
         ];
     }
 
