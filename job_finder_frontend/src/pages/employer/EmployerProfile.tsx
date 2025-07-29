@@ -20,15 +20,9 @@ import { useUserStore } from "../../store/UserStore";
 import { getSingleUserData } from "../../helper/userApiFunctions";
 import { useUserDataStore } from "../../store/UserDataStore";
 import FullScreenLoader from "../../components/FullScreenLoader";
-import {
-  useJobCategoryFilter,
-  useJobRoleFilter,
-  useJobSalaryFilter,
-  useJobStore,
-  useJobTypeFilter,
-} from "../../store/JobStore";
+import { useJobStore } from "../../store/JobStore";
 import JobCard from "../../components/user/jobs/JobCard";
-import { getAllJobPosts } from "../../helper/postJob";
+import { getAllJobs } from "../../helper/postJob";
 
 export default function EmployerProfile() {
   const navigate = useNavigate();
@@ -59,45 +53,20 @@ export default function EmployerProfile() {
     .filter((job) => job.employer_id == employerData.id)
     .slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
-  const handlePageChange = (event: ChangeEvent<unknown>, value: number) => {
+  const handlePageChange = (_event: ChangeEvent<unknown>, value: number) => {
     setCurrentPage(value);
   };
 
-  const { selectedJobRole } = useJobRoleFilter();
-  const { selectedJobType } = useJobTypeFilter();
-  const { selectedJobCategory } = useJobCategoryFilter();
-  const { selectedSalary } = useJobSalaryFilter();
-
   const allJobsQuery = useQuery({
-    enabled: allJobs.length == 0 || !allJobs,
-    queryKey: [
-      "jobPosts",
-      selectedJobRole,
-      selectedJobType,
-      selectedJobCategory,
-      selectedSalary,
-    ],
-    queryFn: () =>
-      getAllJobPosts(
-        selectedJobRole,
-        selectedJobType,
-        selectedJobCategory,
-        selectedSalary,
-      ),
+    queryKey: ["pureJobPosts"],
+    queryFn: getAllJobs,
   });
 
   useEffect(() => {
     if (allJobsQuery.data && allJobsQuery.isSuccess) {
-      setJobs(allJobsQuery.data);
+      setJobs(allJobsQuery.data.data);
     }
-  }, [
-    allJobsQuery.data,
-    allJobsQuery.isSuccess,
-    setJobs,
-    allJobs,
-    selectedJobRole,
-    selectedJobType,
-  ]);
+  }, [allJobsQuery.data, allJobsQuery.isSuccess, setJobs, allJobs]);
 
   const employerProfileQuery = useQuery({
     queryKey: ["employerProfile", user_id],
