@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\NewPasswordController;
 use App\Http\Controllers\Api\SeekerController;
 use App\Http\Controllers\Api\SocialLoginController;
 use App\Http\Controllers\ApplyJobController;
+use App\Http\Controllers\DeadlineController;
 use App\Http\Controllers\EmployerVerficationController;
 use App\Http\Controllers\JobCategoryController;
 use App\Http\Controllers\JobDetailController;
@@ -190,4 +191,11 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
     //job detail route
     Route::apiResource('job-details', JobDetailController::class);
 
+//job category route
+Route::apiResource('job-categories', JobCategoryController::class);
+
+Route::get('/deadline-alerts', [DeadlineController::class, 'alertNearDeadline']);
+
 });
+
+
