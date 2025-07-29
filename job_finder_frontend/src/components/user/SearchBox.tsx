@@ -1,7 +1,6 @@
-import { Box, Button, Divider, TextField, Typography } from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
 import CustomSearchIcon from "../custom_svg/CustomSearchIcon";
 import SearchIcon from "@mui/icons-material/Search";
-import MapPin from "../custom_svg/MapPin";
 import { useSearchByCompanyName } from "../../store/CompanyStore";
 import { useSearchTalentsByName } from "../../store/SeekerStore";
 import { useSearchJobTitle } from "../../store/JobStore";
@@ -36,7 +35,7 @@ const SearchBox = ({ searchType }: Props) => {
   return (
     <Box
       sx={{
-        width: { xs: "100%", sm: "80%", md: "70%", lg: "70%" },
+        width: { xs: "70%", sm: "60%", md: "50%", lg: "50%" },
         height: { xs: "50px", md: "100px" },
         backgroundColor: "background.paper",
         mx: "auto",
@@ -77,7 +76,7 @@ const SearchBox = ({ searchType }: Props) => {
         />
       </Box>
 
-      <Divider
+      {/* <Divider
         orientation="vertical"
         sx={{ mx: 1, borderColor: "primary.main", alignSelf: "stretch" }}
       />
@@ -106,7 +105,7 @@ const SearchBox = ({ searchType }: Props) => {
             },
           }}
         />
-      </Box>
+      </Box> */}
 
       <Button
         variant="contained"

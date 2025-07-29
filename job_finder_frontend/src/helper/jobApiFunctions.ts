@@ -45,3 +45,11 @@ export const addToShortlist = async (postJobID: number | undefined) => {
   const { data } = await axiosClient.patch(`/apply-job/shortlist/${postJobID}`);
   return data;
 };
+
+export const sendMail = async (payload: {
+  post_job_id: number | undefined;
+  seeker_id: string | undefined;
+}) => {
+  const { data } = await axiosClient.post("/apply-job/mail", payload);
+  return data;
+};

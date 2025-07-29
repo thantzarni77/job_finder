@@ -37,7 +37,7 @@ export default function TalentFilter() {
     }
   }
   const { data: talents, isPending: isTalentPending } = useQuery({
-    queryKey: ["talents"],
+    queryKey: ["getTalents"],
     queryFn: getTalents,
   });
   return (

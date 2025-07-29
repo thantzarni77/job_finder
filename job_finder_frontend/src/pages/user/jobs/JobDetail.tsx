@@ -623,7 +623,8 @@ const JobDetail = () => {
             }}
           >
             {user?.user_id &&
-              (!isOlderDate || !isSameDate) &&
+              !isOlderDate &&
+              !isSameDate &&
               (alreadyAppliedCheck.length != 0 ? "Applied" : "Apply Now")}
             {user?.user_id &&
               alreadyAppliedCheck.length == 0 &&

@@ -17,18 +17,12 @@ import JobCard from "./JobCard";
 import CustomFIleUpload from "../../custom_svg/CustomFIleUpload";
 import { useEffect, useRef, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
-import {
-  useJobCategoryFilter,
-  useJobRoleFilter,
-  useJobSalaryFilter,
-  useJobStore,
-  useJobTypeFilter,
-} from "../../../store/JobStore";
+import { useJobStore } from "../../../store/JobStore";
 import { Controller, useForm } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { applyJob } from "../../../helper/jobApiFunctions";
 import { useProfileStore } from "../../../store/ProfileStore";
-import { getAllJobPosts } from "../../../helper/postJob";
+import { getAllJobs } from "../../../helper/postJob";
 import { isAxiosError } from "axios";
 
 type ApplyFormData = {
@@ -57,28 +51,11 @@ const ApplyJob = () => {
   const allJobs = useJobStore((state) => state.jobs);
   const setJobs = useJobStore((state) => state.setJobs);
 
-  const { selectedJobRole } = useJobRoleFilter();
-  const { selectedJobType } = useJobTypeFilter();
-  const { selectedJobCategory } = useJobCategoryFilter();
-  const { selectedSalary } = useJobSalaryFilter();
-
   const [serverErrors, setServerErrors] = useState<string | null>(null);
 
   const allJobsQuery = useQuery({
-    queryKey: [
-      "jobPosts",
-      selectedJobRole,
-      selectedJobType,
-      selectedJobCategory,
-      selectedSalary,
-    ],
-    queryFn: () =>
-      getAllJobPosts(
-        selectedJobRole,
-        selectedJobType,
-        selectedJobCategory,
-        selectedSalary,
-      ),
+    queryKey: ["pureJobPosts"],
+    queryFn: getAllJobs,
   });
 
   const currentJob = allJobs.filter((single) => single.id == Number(id));
@@ -137,16 +114,9 @@ const ApplyJob = () => {
 
   useEffect(() => {
     if (allJobsQuery.data && allJobsQuery.isSuccess) {
-      setJobs(allJobsQuery.data);
+      setJobs(allJobsQuery.data.data);
     }
-  }, [
-    allJobsQuery.data,
-    allJobsQuery.isSuccess,
-    setJobs,
-    allJobs,
-    selectedJobRole,
-    selectedJobType,
-  ]);
+  }, [allJobsQuery.data, allJobsQuery.isSuccess, setJobs]);
 
   return (
     <Box sx={{ width: "90%", mx: "auto", mb: 15 }}>

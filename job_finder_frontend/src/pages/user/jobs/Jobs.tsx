@@ -138,7 +138,7 @@ const Jobs = () => {
       {/* search input && filter button*/}
       <Box
         sx={{
-          display: { xs: "block", sm: "flex" },
+          display: { xs: "flex", sm: "flex" },
           alignItems: "center",
           width: "95%",
           mx: "auto",

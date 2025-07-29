@@ -24,6 +24,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   addToShortlist,
   getAppliedSeekers,
+  sendMail,
 } from "../../helper/jobApiFunctions";
 import type { AppliedSeeker } from "../../store/JobStore";
 import { useMemo, useState, useEffect, useCallback, useRef } from "react";
@@ -81,7 +82,7 @@ const ViewSingleApplicant = () => {
   }, [appliedSeekersQuery.data, seekerID]);
 
   const seekerProfileQuery = useQuery({
-    queryKey: ["seekerProfile", applyJobData?.seeker_id],
+    queryKey: ["seekerProfileSeekerID", applyJobData?.seeker_id],
     queryFn: () => {
       return getSeekerProfileWithSeekerID(applyJobData?.seeker_id);
     },
@@ -178,6 +179,15 @@ const ViewSingleApplicant = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["seekerProfilesForJob"] });
       queryClient.invalidateQueries({ queryKey: ["appliedSeekers"] });
+    },
+    onError: (err) => {
+      console.log(err);
+    },
+  });
+
+  const sendMailMutaion = useMutation({
+    mutationFn: sendMail,
+    onSuccess: () => {
       navigate(`/job/${id}/applicant-list`);
     },
     onError: (err) => {
@@ -187,6 +197,10 @@ const ViewSingleApplicant = () => {
 
   const addToShortlistHandler = () => {
     addShortListMutation.mutate(applyJobData?.id);
+    sendMailMutaion.mutate({
+      post_job_id: applyJobData?.post_job_id,
+      seeker_id: seekerID,
+    });
   };
 
   // --- Loading/Error/Not Found States ---
@@ -483,7 +497,9 @@ const ViewSingleApplicant = () => {
           <Button
             onClick={handleClickOpen}
             variant="contained"
-            loading={addShortListMutation.isPending}
+            loading={
+              addShortListMutation.isPending || sendMailMutaion.isPending
+            }
             disabled={applyJobData.shortlist == 1}
             sx={{
               boxShadow: "none",

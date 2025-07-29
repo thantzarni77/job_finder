@@ -55,7 +55,7 @@ const salary = {
 const JobFilter = ({ filterType, jobTypes, roles }: Props) => {
   // getting job categories
 
-  const { data: categories, isPending } = useQuery({
+  const { data: categories } = useQuery({
     queryKey: ["job-categories"],
     queryFn: getCategories,
   });
@@ -375,7 +375,7 @@ const JobFilter = ({ filterType, jobTypes, roles }: Props) => {
               Job Categories
             </Typography>
             <FormGroup>
-              {!isPending &&
+              {categories &&
                 categories.map((cate: categoryType) => {
                   return (
                     <FormControlLabel

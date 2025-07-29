@@ -7,15 +7,8 @@ import { useProfileStore } from "../../../store/ProfileStore";
 import { getSeekerAppliedJobs } from "../../../helper/jobApiFunctions";
 import { useEffect, useState } from "react";
 import { useSeekerSavedJobs } from "../../../store/SavedJobStore";
-import {
-  useAppliedJobStore,
-  useJobCategoryFilter,
-  useJobRoleFilter,
-  useJobSalaryFilter,
-  useJobTypeFilter,
-  type Job,
-} from "../../../store/JobStore";
-import { getAllJobPosts } from "../../../helper/postJob";
+import { useAppliedJobStore, type Job } from "../../../store/JobStore";
+import { getAllJobs } from "../../../helper/postJob";
 
 const AppliedJobsList = () => {
   const { id } = useParams();
@@ -29,27 +22,9 @@ const AppliedJobsList = () => {
   const setSeekerSavedJobs = useSeekerSavedJobs(
     (state) => state.setSeekerSavedJobs,
   );
-
-  const { selectedJobRole } = useJobRoleFilter();
-  const { selectedJobType } = useJobTypeFilter();
-  const { selectedJobCategory } = useJobCategoryFilter();
-  const { selectedSalary } = useJobSalaryFilter();
-
   const allJobsQuery = useQuery({
-    queryKey: [
-      "jobPosts",
-      selectedJobRole,
-      selectedJobType,
-      selectedJobCategory,
-      selectedSalary,
-    ],
-    queryFn: () =>
-      getAllJobPosts(
-        selectedJobRole,
-        selectedJobType,
-        selectedJobCategory,
-        selectedSalary,
-      ),
+    queryKey: ["pureJobPosts"],
+    queryFn: getAllJobs,
   });
 
   const seekerAppliedJobsQuery = useQuery({
@@ -71,7 +46,7 @@ const AppliedJobsList = () => {
     const foundJobs: Job[] = [];
     if (seekerAppliedJobsQuery.data && seekerAppliedJobsQuery.isSuccess) {
       if (allJobsQuery.data) {
-        for (const job of allJobsQuery.data) {
+        for (const job of allJobsQuery.data.data) {
           for (const saved of seekerAppliedJobsQuery.data.data) {
             if (saved.post_job_id == job.id) {
               foundJobs.push(job);
