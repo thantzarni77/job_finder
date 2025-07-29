@@ -4,6 +4,9 @@ namespace App\Models;
 
 use App\Helpers\Filters;
 use Illuminate\Database\Eloquent\Builder;
+use App\Models\User;
+use App\Models\PostJob;
+use App\Models\ApplyJob;
 use Illuminate\Database\Eloquent\Model;
 
 class Employer extends Model
@@ -20,6 +23,20 @@ class Employer extends Model
         'verification'
     ];
 
+    public function user()
+    {
+        return $this->belongsTo(User::class ,'user_id');
+    }
+
+    public function postJob()
+    {
+        return $this->hasMany(PostJob::class);
+    }
+
+    public function applyJob()
+    {
+        return $this->hasMany(ApplyJob::class);
+    }
     //verification status
     public static function getVerificationStatus()
     {
