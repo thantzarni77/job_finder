@@ -3,29 +3,30 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
 class ShortlistContactMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    private $data;
-
+    public $seeker;
+    public $job;
+    public $employer;
     /**
      * Create a new message instance.
      */
-    public function __construct($data)
+    public function __construct($seeker, $job, $employer)
     {
-        $this->data = $data;
+        $this->seeker = $seeker;
+        $this->job = $job;
+        $this->employer = $employer;
     }
 
     public function build()
     {
-        return $this->subject('Thank you for Applied Job')
+        return $this->from($this->employer->user->email)
+                    ->subject('Thank you for Applied Job')
                     ->view('email.mail_template');
     }
 
