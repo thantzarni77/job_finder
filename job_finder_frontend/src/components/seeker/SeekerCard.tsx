@@ -3,9 +3,10 @@ import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
 import { NavLink } from "react-router";
 import { format } from "date-fns";
-import type { SeekerType } from "../../helper/talentPage";
+import type { Seeker } from "../../helper/talentPage";
 
-const SeekerCard = ({ seeker }: { seeker: SeekerType }) => {
+const SeekerCard = ({ seeker }: { seeker: Seeker }) => {
+  console.log(seeker);
   return (
     <Box
       sx={{

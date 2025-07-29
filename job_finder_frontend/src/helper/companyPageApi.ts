@@ -1,16 +1,66 @@
 import axiosClient from "./axiosClient";
 
-export type CompanyType = {
+type User = {
+  id: number;
+  name: string;
+  phone: string;
+  address: string;
+};
+
+type Employer = {
   id: number;
   company_name: string;
   company_address: string;
-  company_phone: number;
+  company_phone: string;
   company_email: string;
+  company_image: string;
   company_type: string;
-  created_at: Date;
+  verification: string;
+  created_at: string; // ISO date string
+  user_id: User;
 };
 
-export async function getCompanies(): Promise<CompanyType[]> {
-  const { data } = await axiosClient.get("/employer");
-  return data.data;
+type LinkItem = {
+  url: string | null;
+  label: string;
+  active: boolean;
+};
+
+type Links = {
+  first: string;
+  last: string;
+  prev: string | null;
+  next: string | null;
+};
+
+type Meta = {
+  current_page: number;
+  from: number;
+  last_page: number;
+  links: LinkItem[];
+  path: string;
+  per_page: number;
+  to: number;
+  total: number;
+};
+
+export type EmployerApiResponse = {
+  data: Employer[];
+  links: Links;
+  meta: Meta;
+  statusCode: number;
+  message: string;
+};
+
+export async function getCompanies(
+  page: number,
+  searchCompanyName: string,
+): Promise<EmployerApiResponse> {
+  const { data } = await axiosClient.get("/employer", {
+    params: {
+      page: page,
+      companyName: searchCompanyName,
+    },
+  });
+  return data;
 }

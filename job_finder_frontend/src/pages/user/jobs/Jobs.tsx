@@ -15,21 +15,26 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import JobFilter from "../../../components/user/jobs/JobFilter";
 import JobCard from "../../../components/user/jobs/JobCard";
 
-import { useEffect, useState } from "react";
+import { useState, type ChangeEvent, useEffect } from "react";
 import SearchBox from "../../../components/user/SearchBox";
 import { useJobFilterStore } from "../../../store/Appstore";
 import JobFilterDrawer from "../../../components/user/JobFilterDrawer";
-
+import { useJobStore } from "../../../store/JobStore";
 import { getAllJobPosts } from "../../../helper/postJob";
 import { useQuery } from "@tanstack/react-query";
 import {
   useJobRoleFilter,
-  useJobStore,
   useJobTypeFilter,
   useJobCategoryFilter,
   useJobSalaryFilter,
 } from "../../../store/JobStore";
 import { getJobTypes, getRoles } from "../../../helper/postJob";
+import FullScreenLoader from "../../../components/FullScreenLoader";
+import {
+  useCompanyPaginateStore,
+  type Job,
+  useSearchJobTitle,
+} from "../../../store/JobStore";
 
 const Jobs = () => {
   const [sortBy, setSortBy] = useState<string>("recent");
@@ -50,13 +55,20 @@ const Jobs = () => {
   const { selectedJobCategory } = useJobCategoryFilter();
   const { selectedSalary } = useJobSalaryFilter();
 
-  const allJobsQuery = useQuery({
+  // for pagination
+  const { page, setPage } = useCompanyPaginateStore();
+
+  const jobTitle = useSearchJobTitle((state) => state.jobTitle);
+
+  const { data: jobs, isPending: isJobsPending } = useQuery({
     queryKey: [
       "jobPosts",
       selectedJobRole,
       selectedJobType,
       selectedJobCategory,
       selectedSalary,
+      page,
+      jobTitle,
     ],
     queryFn: () =>
       getAllJobPosts(
@@ -64,6 +76,8 @@ const Jobs = () => {
         selectedJobType,
         selectedJobCategory,
         selectedSalary,
+        page,
+        jobTitle,
       ),
   });
 
@@ -81,18 +95,16 @@ const Jobs = () => {
     setSortBy(event.target.value);
   };
 
+  // to handle paginated pages
+  const handlePageChange = (_event: ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+  };
+
   useEffect(() => {
-    if (allJobsQuery.data && allJobsQuery.isSuccess) {
-      setJobs(allJobsQuery.data);
+    if (jobs && !isJobsPending) {
+      setJobs(jobs.data);
     }
-  }, [
-    allJobsQuery.data,
-    allJobsQuery.isSuccess,
-    setJobs,
-    allJobs,
-    selectedJobRole,
-    selectedJobType,
-  ]);
+  }, [jobs, isJobsPending, setJobs, allJobs, selectedJobRole, selectedJobType]);
 
   // custom component for dropdown icon
   const CustomIcon = () => (
@@ -109,6 +121,10 @@ const Jobs = () => {
       }}
     />
   );
+
+  if (isJobsPending) {
+    return <FullScreenLoader open={true} message={"Loading"} />;
+  }
 
   return (
     <Box
@@ -128,7 +144,7 @@ const Jobs = () => {
           mx: "auto",
         }}
       >
-        <SearchBox searchType={"Jobs"} />
+        <SearchBox searchType={"Job"} />
         <Button
           variant="contained"
           onClick={() => setShowJobFilterDrawer(!showJobFilterDrawer)}
@@ -209,7 +225,7 @@ const Jobs = () => {
             }}
           >
             <Typography variant="caption" sx={{ color: "primary.light" }}>
-              {allJobsQuery.data &&
+              {allJobs &&
                 allJobs.filter((job) => job.posting_status == "approved")
                   .length}
               + jobs are found
@@ -329,7 +345,7 @@ const Jobs = () => {
                 flexWrap: "wrap",
               }}
             >
-              {allJobsQuery.isFetching && (
+              {isJobsPending && (
                 <>
                   {[...Array(10)].map((_, index) => {
                     return (
@@ -345,8 +361,8 @@ const Jobs = () => {
                 </>
               )}
 
-              {allJobsQuery.data &&
-                allJobs.map((job) => {
+              {!isJobsPending &&
+                allJobs.map((job: Job) => {
                   if (job.posting_status == "approved") {
                     return <JobCard key={job.id} job={job} />;
                   }
@@ -358,7 +374,9 @@ const Jobs = () => {
             >
               <Stack>
                 <Pagination
-                  count={10}
+                  count={jobs.last_page}
+                  page={jobs.current_page ?? 1}
+                  onChange={handlePageChange}
                   shape="rounded"
                   variant="outlined"
                   color="primary"

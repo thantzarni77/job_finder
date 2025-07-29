@@ -17,13 +17,17 @@ import { useQuery } from "@tanstack/react-query";
 import { getTalents } from "../../helper/talentPage";
 import { useSeekerFilterStore } from "../../store/SeekerStore";
 import type { ChangeEvent } from "react";
+import { useSearchTalentsByName } from "../../store/SeekerStore";
 
 export default function TalentFilter() {
   const { selectedTalents, setSelectedTalents } = useSeekerFilterStore();
+
+  const setTalentName = useSearchTalentsByName((state) => state.setTalentName);
   function checkBoxHandleChange(
     event: ChangeEvent<HTMLInputElement>,
     checked: boolean,
   ) {
+    setTalentName("");
     if (event.target.name === "talent") {
       const value = event.target.value;
       const updated = checked

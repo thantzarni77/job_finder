@@ -75,4 +75,9 @@ class Filters
     {
         return $this->builder->whereIn('talent', $talent);
     }
+
+    public function companyName($name): Builder
+    {
+        return $this->builder->where('company_name', 'LIKE', "%{$name}%");
+    }
 }

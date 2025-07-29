@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repositories;
 
 use App\Helpers\Filters;
@@ -36,17 +37,21 @@ class PostJobRepository implements PostJobRepositoryInterface
         }
         $filter = new Filters($jobFilterRequest->validated());
 
-        $jobs = $this->postJob
-            ->with(['jobDetail', 'employer', 'category'])
-            ->filter($filter)
-            ->get();
+        if ($request->query('Job')) {
+            $job_title = $request->query('Job');
+            $jobs = $this->postJob->where('job_title', 'LIKE', $job_title)->with(['jobDetail', 'employer', 'category'])->paginate(10);
+        } else {
+            $jobs = $this->postJob
+                ->with(['jobDetail', 'employer', 'category'])
+                ->filter($filter)
+                ->paginate(10);
+        }
 
         return response()->json([
             'status'  => 'success',
             'message' => 'Jobs fetched successfully filter',
             'data'    => $jobs,
         ], 200);
-
     }
 
     public function store(array $data)
@@ -122,5 +127,4 @@ class PostJobRepository implements PostJobRepositoryInterface
         $postJob = $this->postJob->with('jobDetail')->findOrFail($id)->update(['posting_status' => $data['status']]);
         return response()->json(['status' => 'success', 'message' => 'Job status updated successfully', 'data' => $postJob], 200);
     }
-
 }

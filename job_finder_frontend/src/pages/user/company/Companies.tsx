@@ -11,22 +11,55 @@ import {
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import FilterListIcon from "@mui/icons-material/FilterList";
 
-import { useState } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import SearchBox from "../../../components/user/SearchBox";
 import CompanyCard from "../../../components/employer/CompanyCard";
 import CompanyFilterDrawer from "../../../components/user/CompanyFilterDrawer";
 import { useCompanyFilterStore } from "../../../store/Appstore";
 import { useQuery } from "@tanstack/react-query";
 import FullScreenLoader from "../../../components/FullScreenLoader";
-import { getCompanies, type CompanyType } from "../../../helper/companyPageApi";
+import {
+  getCompanies,
+  type EmployerApiResponse,
+} from "../../../helper/companyPageApi";
+import {
+  useCompanyPaginateStore,
+  useCompanyStore,
+  useSearchByCompanyName,
+} from "../../../store/CompanyStore";
 
 const Companies = () => {
-  const { data: companies, isPending: isCompaniesPending } = useQuery<
-    CompanyType[]
-  >({
-    queryKey: ["companies"],
-    queryFn: getCompanies,
+  const page = useCompanyPaginateStore((state) => state.page);
+  const setPage = useCompanyPaginateStore((state) => state.setPage);
+
+  const searchCompanyName = useSearchByCompanyName(
+    (state) => state.searchCompanyName,
+  );
+
+  // getting companies data
+  const {
+    data: companies,
+    isPending: isCompaniesPending,
+    isError,
+  } = useQuery<EmployerApiResponse>({
+    queryKey: ["companies", page, searchCompanyName],
+    queryFn: () => getCompanies(page, searchCompanyName),
   });
+
+  // store data to parent state
+  const companiesData = useCompanyStore((state) => state.companiesData);
+  const setCompaniesData = useCompanyStore((state) => state.setCompaniesData);
+
+  useEffect(() => {
+    if (!isCompaniesPending && !isError) {
+      setCompaniesData(companies.data);
+    }
+  }, [isCompaniesPending, isError, companies]);
+
+  // to handle paginated pages
+  const handlePageChange = (_event: ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+  };
 
   const showCompanyFilterDrawer = useCompanyFilterStore(
     (state) => state.showCompanyFilterDrawer,
@@ -262,7 +295,7 @@ const Companies = () => {
                 flexWrap: "wrap",
               }}
             >
-              {companies?.map((company) => {
+              {companiesData?.map((company) => {
                 return <CompanyCard company={company} key={company.id} />;
               })}
             </Box>
@@ -272,7 +305,9 @@ const Companies = () => {
             >
               <Stack>
                 <Pagination
-                  count={10}
+                  count={companies?.meta.last_page}
+                  page={companies?.meta.current_page}
+                  onChange={handlePageChange}
                   shape="rounded"
                   variant="outlined"
                   color="primary"

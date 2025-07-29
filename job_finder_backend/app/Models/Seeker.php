@@ -48,9 +48,14 @@ class Seeker extends Model
         ];
     }
 
+    // public function user()
+    // {
+    //     return $this->hasOne(User::class);
+    // }
+
     public function user()
     {
-        return $this->hasOne(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function clean($value)

@@ -23,7 +23,7 @@ import { useJobRoleFilter } from "../../../store/JobStore";
 import { useJobCategoryFilter } from "../../../store/JobStore";
 import { getCategories } from "../../../helper/postJob";
 import { useQuery } from "@tanstack/react-query";
-
+import { useSearchJobTitle } from ".././../../store/JobStore";
 type JobTypes = {
   id: number;
   name: string;
@@ -59,7 +59,7 @@ const JobFilter = ({ filterType, jobTypes, roles }: Props) => {
     queryKey: ["job-categories"],
     queryFn: getCategories,
   });
-
+  const setJobTitle = useSearchJobTitle((state) => state.setJobTitle);
   const { selectedJobType, setSelectedJobType } = useJobTypeFilter();
   const { selectedJobRole, setSelectedJobRole } = useJobRoleFilter();
   const { selectedJobCategory, setSelectedJobCategory } =
@@ -71,6 +71,7 @@ const JobFilter = ({ filterType, jobTypes, roles }: Props) => {
     event: ChangeEvent<HTMLInputElement>,
     checked: boolean,
   ) => {
+    setJobTitle("");
     if (event.target.name === "type") {
       const value = event?.target.value;
       const updated = checked

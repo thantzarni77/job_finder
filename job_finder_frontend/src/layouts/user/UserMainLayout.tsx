@@ -97,7 +97,10 @@ export default function UserMainLayout() {
           </Alert>
         )}
       <AppDrawer />
-      <Outlet />
+      <Box sx={{ minHeight: 500 }}>
+        <Outlet />
+      </Box>
+
       <Footer />
     </Box>
   );

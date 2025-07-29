@@ -2,37 +2,60 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Helpers\Filters;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\TalentFilterRequest;
-use App\Http\Resources\SeekerResource;
+use App\Models\User;
 use App\Models\Seeker;
 use App\Models\Talent;
-use App\Models\User;
-use App\Traits\HttpResponseTrait;
+use App\Helpers\Filters;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Traits\HttpResponseTrait;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Resources\SeekerResource;
+use App\Http\Resources\SeekerCollection;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
-use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Http\Requests\TalentFilterRequest;
 
 class SeekerController extends Controller
 {
     use HttpResponseTrait;
     public function index(Request $request, TalentFilterRequest $talentRequest)
     {
-        $talent = $talentRequest->validated();
-        $filter = new Filters($talent);
-        $seekers = Seeker::filter($filter)->get();
-        return response()->json([
-            'talent' => $request->talent,
-            "statusCode" => "200",
-            "message"    => "passes",
-            "data"       => SeekerResource::collection($seekers),
+        // $talent = $talentRequest->validated();
+        // $filter = new Filters($talent);
+        // $seekers = Seeker::filter($filter)->paginate(1);
+        // if ($request->query('talentName')) {
+        //     $talentName = $request->query('talentName');
+        // }
 
-        ], 200);
+        if ($request->query('talentName')) {
+            $talentName = $request->query('talentName');
+            $seekers = Seeker::whereHas('user', function ($query) use ($talentName) {
+                $query->where('name', 'LIKE', "%{$talentName}%")->where('user_type', 'seeker');
+            })
+                ->orWhere('role', 'LIKE', "%{$talentName}%")
+                ->orWhere(
+                    'talent',
+                    'LIKE',
+                    "%{$talentName}%"
+                )
+                ->paginate(10);
+        } else {
+            $talent = $talentRequest->validated();
+            $filter = new Filters($talent);
+            $seekers = Seeker::filter($filter)->paginate(10);
+        }
+        return new SeekerCollection($seekers);
+        // return response()->json([
+        //     'talent' => $request->talent,
+        //     "statusCode" => "200",
+        //     "message"    => "passes",
+        //     "data"       => SeekerResource::collection($seekers),
+
+        // ], 200);
     }
 
     public function getdata(Request $request, string $id)
