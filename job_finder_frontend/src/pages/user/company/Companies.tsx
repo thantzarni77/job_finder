@@ -14,7 +14,6 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import { useEffect, useState, type ChangeEvent } from "react";
 import SearchBox from "../../../components/user/SearchBox";
 import CompanyCard from "../../../components/employer/CompanyCard";
-import CompanyFilterDrawer from "../../../components/user/CompanyFilterDrawer";
 import { useCompanyFilterStore } from "../../../store/Appstore";
 import { useQuery } from "@tanstack/react-query";
 import FullScreenLoader from "../../../components/FullScreenLoader";
@@ -114,37 +113,6 @@ const Companies = () => {
         }}
       >
         <SearchBox searchType={"Company"} />
-        <Button
-          variant="contained"
-          onClick={() => setShowCompanyFilterDrawer(!showCompanyFilterDrawer)}
-          sx={{
-            mx: { xs: "auto", sm: "none" },
-            display: { xs: "block", md: "none" },
-            color: "primary.main",
-            boxShadow: "none",
-            p: "5px",
-            my: 2,
-            ":hover": {
-              boxShadow: "none",
-            },
-          }}
-        >
-          <Typography
-            sx={{
-              display: { xs: "none", sm: "inline" },
-              color: "white",
-              mx: 1,
-              textTransform: "none",
-              boxShadow: "none",
-              ":hover": {
-                boxShadow: "none",
-              },
-            }}
-          >
-            Filter
-          </Typography>
-          <FilterListIcon sx={{ color: "white" }} />
-        </Button>
       </Box>
 
       {/* companies and filter */}
@@ -328,7 +296,6 @@ const Companies = () => {
           </Box>
         </Box>
       </Box>
-      <CompanyFilterDrawer />
     </Box>
   );
 };

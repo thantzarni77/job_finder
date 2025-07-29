@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use App\Helpers\Filters;
@@ -11,12 +12,12 @@ class Seeker extends Model
 {
     use HasFactory;
 
-    protected $casts = [
-        'skills'            => 'array',
-        'education'         => 'array',
-        'work_experience'   => 'array',
-        'social_media_link' => 'array',
-    ];
+    // <!-- protected $casts = [
+    //     'skills'            => 'array',
+    //     'education'         => 'array',
+    //     'work_experience'   => 'array',
+    //     'social_media_link' => 'array',
+    // ]; -->
 
     protected $fillable = [
         'user_id',

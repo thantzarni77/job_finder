@@ -1,6 +1,6 @@
 import { Drawer } from "@mui/material";
 import { useTalentFilterStore } from "../../store/Appstore";
-import JobFilter from "./jobs/JobFilter";
+import TalentFilter from "../seeker/TalentFilter";
 
 const jobs = [
   "full Time",
@@ -24,7 +24,7 @@ export default function TalentFilterDrawer() {
       open={showTalentFilterDrawer}
       onClose={() => setShowTalentFilterDrawer(false)}
     >
-      <JobFilter filterType={"Job"} filterTypeArray={jobs} />
+      <TalentFilter />
     </Drawer>
   );
 }

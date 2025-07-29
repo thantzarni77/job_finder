@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repositories;
 
 use App\Helpers\Filters;
@@ -30,23 +31,25 @@ class PostJobRepository implements PostJobRepositoryInterface
     public function index(Request $request, JobFilterRequest $jobFilterRequest)
     {
 
-        if ($request->filled('job_code')) {
-            $job = $this->postJob
-                ->with(['jobDetail', 'employer', 'category'])
-                ->where('job_code', 'like', '%' . $request->job_code . '%')
-                ->first();
+        // if ($request->filled('job_code')) {
+        //     $job = $this->postJob
+        //         ->with(['jobDetail', 'employer', 'category'])
+        //         ->where('job_code', 'like', '%' . $request->job_code . '%')
+        //         ->first();
 
-            return response()->json([
-                'status'  => 'success',
-                'message' => 'Job fetched successfully job code ',
-                'data'    => $job,
-            ], 200);
-        }
+        //     return response()->json([
+        //         'status'  => 'success',
+        //         'message' => 'Job fetched successfully job code ',
+        //         'data'    => $job,
+        //     ], 200);
+        // }
         $filter = new Filters($jobFilterRequest->validated());
 
         if ($request->query('Job')) {
             $job_title = $request->query('Job');
-            $jobs      = $this->postJob->where('job_title', 'LIKE', $job_title)->with(['jobDetail', 'employer', 'category'])->paginate(10);
+            $jobs      = $this->postJob->orWhere('job_title', 'LIKE', $job_title)
+                ->orWhere('job_code', 'LIKE', $job_title)
+                ->with(['jobDetail', 'employer', 'category'])->paginate(10);
         } else {
             $jobs = $this->postJob
                 ->with(['jobDetail', 'employer', 'category'])

@@ -1,14 +1,13 @@
-import { Avatar, Box, Checkbox, Paper, Typography } from "@mui/material";
-import TurnedInIcon from "@mui/icons-material/TurnedIn";
-import TurnedInNotIcon from "@mui/icons-material/TurnedInNot";
+import { Box, Paper, Typography } from "@mui/material";
+
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
 import { NavLink } from "react-router";
-import CustomSuitCase from "../custom_svg/CustomSuitCase";
-import { type CompanyType } from "../../helper/companyPageApi";
+import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
+import { type Employer } from "../../helper/companyPageApi";
 import { format } from "date-fns";
 
-const CompanyCard = ({ company }: { company: CompanyType }) => {
+const CompanyCard = ({ company }: { company: Employer }) => {
   return (
     <Box
       sx={{
@@ -37,17 +36,11 @@ const CompanyCard = ({ company }: { company: CompanyType }) => {
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Avatar
-                sx={{
-                  bgcolor: "primary.main",
-                  borderRadius: "12px",
-                  fontSize: "12px",
-                  fontWeight: "bold",
-                }}
-                variant="square"
-              >
-                K
-              </Avatar>
+              <img
+                src={`${import.meta.env.VITE_API_BASE_URL}/${company.company_image}`}
+                alt=""
+                style={{ width: 60, height: 60, borderRadius: 10 }}
+              />
               <Box
                 sx={{
                   display: "flex",
@@ -67,19 +60,6 @@ const CompanyCard = ({ company }: { company: CompanyType }) => {
                 </Typography>
               </Box>
             </Box>
-            <Checkbox
-              disableRipple
-              sx={{
-                "& .MuiSvgIcon-root": { fontSize: 26, mr: -2 },
-                color: "primary.main",
-                "&.Mui-checked": {
-                  color: "primary.main",
-                },
-              }}
-              icon={<TurnedInNotIcon />}
-              checkedIcon={<TurnedInIcon />}
-              name={"fullTime"}
-            />
           </Box>
           {/* location date */}
           <Box sx={{ my: 1 }}>
@@ -126,7 +106,7 @@ const CompanyCard = ({ company }: { company: CompanyType }) => {
                 ml: "1px",
               }}
             >
-              <CustomSuitCase />
+              <LocalPhoneOutlinedIcon sx={{ color: "primary.light" }} />
               <Typography variant="caption" sx={{ color: "primary.light" }}>
                 {company.company_phone}
               </Typography>

@@ -7,7 +7,7 @@ type User = {
   address: string;
 };
 
-type Employer = {
+export type Employer = {
   id: number;
   company_name: string;
   company_address: string;
@@ -15,6 +15,7 @@ type Employer = {
   company_email: string;
   company_image: string;
   company_type: string;
+
   verification: string;
   created_at: string; // ISO date string
   user_id: User;
