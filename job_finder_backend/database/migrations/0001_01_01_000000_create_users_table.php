@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('address')->nullable();
             $table->string('password')->nullable();
-            $table->enum('user_type', ['seeker', 'employer'])->default('seeker');
+            $table->string('user_type')->default('seeker');
             $table->string('profile_picture')->nullable();
             $table->string('refresh_token')->nullable();
             $table->string('provider')->nullable();

@@ -3,139 +3,65 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Admin;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
-use Tymon\JWTAuth\Exceptions\JWTException;
-use Tymon\JWTAuth\Facades\JWTAuth;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Validation\Rule;
 
 class AdminAuthController extends Controller
 {
-    public function register(Request $request){
-        try{
-            $validator = Validator::make($request->all(),[
-                "name" => "required",
-                "email" => "required",
-                "password"=> "required",
-                "admin_type" => "nullable|in:superadmin,admin",
-            ]);
-
-            if ($validator->fails()){
-                return response()->json([
-                    "message" => $validator->errors()
-                ]);
-            }
-
-            $refresh_token = Str::random(60);
-
-            $admin = Admin::create([
-                "name" => $request->name,
-                "email"=> $request->email,
-                "admin_type" => $request->admin_type ?? "superadmin",
-                "refresh_token" => hash('sha256', $refresh_token),
-                "password" => Hash::make($request->password)
-            ]);
-
-            $token = JWTAuth::fromUser($admin);
-            return response()->json([
-                "message" => "Admin registered successfully",
-                "data" => [
-                    'name' => $admin->name,
-                    'email' => $admin->email,
-                    'id' => $admin->id,
-                    'admin_type' => $admin->admin_type,
-                    'token' => $token,
-                ]
-            ],201)->cookie('refresh_token', $refresh_token, 60 * 24 * 7, null, null, true, true);
-
-        }catch(\Exception $e){
-            return response()->json([
-                "message" => $e->getMessage()
-            ]);
-        }
-    }
-
-    public function login(Request $request){
-
-        try{
-
-            $cre = $request->only("email","password");
-            if (!$token = auth('admin')->attempt($cre)) {
-                return response()->json([
-                    'statusCode' => 401,
-                    'message' => 'Wrong email or password'
-                ], 401);
-            }
-
-            if(!$token){
-                return response()->json([
-                    'statusCode' => 401,
-                    "message" => "wrong email or password"
-                ],401);
-            };
-
-            $admin = auth('admin')->user();
-            $refresh_token = Str::random(60);
-
-            $admin->update([
-                'refresh_token' => hash('sha256', $refresh_token),
-            ]);
-
-            return response()->json([
-                "message" => "Login successfully",
-                "data" => [
-                    'name' => $admin->name,
-                    'email' => $admin->email,
-                    'admin_type' => $admin->admin_type,
-                    'id' => $admin->id,
-                    'token' => $token,
-                ]
-            ],200)->cookie('refresh_token', $refresh_token, 60 * 24 * 7, null, null, true, true);
-
-        }catch(\Exception $e){
-            return response()->json([
-                "message" => $e->getMessage()
-            ]);
+    public function index()
+    {
+        $admin = User::where('user_type', 'admin')->get();
+        if(empty($admin) || !$admin) {
+            return response()->json(['status' => 'error', 'message' => 'Admin not found.'], 404);
         }
 
+        return response()->json(['status' => 'success', 'message' => 'You have successfully fetch admin data.', 'data' => $admin], 200);
     }
 
-    public function profile(){
-        try {
-            $admin = auth('admin')->user();
-    
-            if (!$admin) {
-                return response()->json(['message' => 'Unauthorized'], 401);
-            }
-    
-            return response()->json([
-                'name' => $admin->name,
-                'email' => $admin->email,
-                'admin_type' => $admin->admin_type,
-                'id' => $admin->id,
-            ], 200);
-    
-        } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 500);
-        }    
- 
+    public function store(Request $request)
+    {
+        $this->validateData($request);
+        $admin = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+        $admin["user_type"] = "admin";
+        return response()->json(['status' => 'success', 'message' => 'You have successfully create admin.', 'data' => $admin], 200);
     }
 
-    public function logout(){
-        try{
-            JWTAuth::invalidate(JWTAuth::getToken());
-            return response()->json([
-                "message" => "logout successfully"
-            ]);
-        }catch(\Exception $e){
-            return response()->json([
-                "message" => $e->getMessage()
-            ]);
-        }
+    public function show($id)
+    {
+        $admin = User::where('user_type', 'admin')->find($id);
+        return response()->json(['status' => 'success', 'message' => 'You have successfully fetch admin data.', 'data' => $admin], 200);
     }
 
+    public function update(Request $request, $id)
+    {   
+        // dd($request->all());
+        $this->validateData($request);
+        $admin = User::find($id);
+        $admin->name = $request->name;
+        $admin->email = $request->email;
+        $admin->save();
+        return response()->json(['status' => 'success', 'message' => 'You have successfully update admin.', 'data' => $admin], 200);
+    }
+
+    public function destroy($id)
+    {
+        $admin = User::find($id);
+        $admin->delete();
+        return response()->json(['status' => 'success', 'message' => 'You have successfully delete admin.'], 200);
+    }
+
+    private function validateData($request)
+    {
+        $request->validate([
+            'name' => ['sometimes', 'string', 'max:255', Rule::unique('users')->ignore($request->id)],
+            'email' => 'sometimes',
+            'password' => 'sometimes',
+        ]);
+    }
 }

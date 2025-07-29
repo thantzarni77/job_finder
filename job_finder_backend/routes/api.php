@@ -24,8 +24,13 @@ Route::middleware("AdminAuthMiddleware:superadmin")->group(function () {
     Route::post('/superadmin/logout', [AdminAuthController::class, 'logout']);
     Route::get('/superadmin/getprofile', [AdminAuthController::class, 'profile']);
 
-    Route::post('/admin/register', [AdminAuthController::class, 'register']);
-    Route::post('/admin/login', [AdminAuthController::class, 'login']);
+    Route::prefix('admin')->group(function(){
+        Route::get('/', [AdminAuthController::class, 'index']);
+        Route::post('/', [AdminAuthController::class, 'store']);
+        Route::get('/{id}', [AdminAuthController::class, 'show']);
+        Route::post('/{id}', [AdminAuthController::class, 'update']);
+        Route::delete('/{id}', [AdminAuthController::class, 'destroy']);
+    });
 
 });
 
