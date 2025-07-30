@@ -12,6 +12,8 @@ import {
   type SnackbarCloseReason,
 } from "@mui/material";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
+import PendingOutlinedIcon from "@mui/icons-material/PendingOutlined";
+import DoDisturbAltOutlinedIcon from "@mui/icons-material/DoDisturbAltOutlined";
 import CloseIcon from "@mui/icons-material/Close";
 import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
@@ -228,17 +230,33 @@ const JobCard = ({ job }: { job: Job }) => {
                 >
                   <NavLink to={`/job/${job.id}`}>{job.job_title}</NavLink>
                 </Typography>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <VerifiedIcon
-                    sx={{ fontSize: "22px", color: "success.main" }}
-                  />
-                  <Typography
-                    variant="body2"
-                    sx={{ fontWeight: 400, fontSize: "14px" }}
-                  >
-                    {job.posting_status}
-                  </Typography>
-                </Box>
+                {user?.user_type == "employer" && (
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    {job.posting_status == "pending" && (
+                      <PendingOutlinedIcon
+                        sx={{ fontSize: "22px", color: "text.primary" }}
+                      />
+                    )}
+
+                    {job.posting_status == "approved" && (
+                      <VerifiedIcon
+                        sx={{ fontSize: "22px", color: "success.main" }}
+                      />
+                    )}
+                    {job.posting_status == "rejected" && (
+                      <DoDisturbAltOutlinedIcon
+                        sx={{ fontSize: "22px", color: "error.main" }}
+                      />
+                    )}
+
+                    <Typography
+                      variant="body2"
+                      sx={{ fontWeight: 400, fontSize: "14px" }}
+                    >
+                      {job.posting_status}
+                    </Typography>
+                  </Box>
+                )}
               </Box>
             </Box>
             {user?.user_id && user.user_type == "seeker" && (

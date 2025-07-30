@@ -94,7 +94,7 @@ const CompanyCard = ({ company }: { company: Employer }) => {
             >
               <QueryBuilderIcon sx={{ color: "primary.light", fontSize: 22 }} />
               <Typography variant="caption" sx={{ color: "primary.light" }}>
-                posted on {format(new Date(company.created_at), "PPP")}
+                joined on {format(new Date(company.created_at), "PPP")}
               </Typography>
             </Box>
             <Box

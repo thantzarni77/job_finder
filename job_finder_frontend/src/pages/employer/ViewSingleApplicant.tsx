@@ -18,7 +18,6 @@ import { type SystemStyleObject } from "@mui/system";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import CloseIcon from "@mui/icons-material/Close";
-import DownloadForOfflineIcon from "@mui/icons-material/DownloadForOffline";
 import { useNavigate, useParams } from "react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -118,28 +117,6 @@ const ViewSingleApplicant = () => {
   const handlePrev = useCallback(
     () => goToIndex(activeIndex - 1),
     [activeIndex, goToIndex],
-  );
-
-  // --- Download Handler ---
-  const handleDownload = useCallback(
-    async (imageUrl: string, docName: string) => {
-      try {
-        const response = await fetch(imageUrl);
-        if (!response.ok) throw new Error("Network response was not ok.");
-        const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = docName || "document.jpg";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      } catch (error) {
-        console.error("Download failed:", error);
-      }
-    },
-    [],
   );
 
   // --- Keyboard Navigation ---
@@ -423,7 +400,7 @@ const ViewSingleApplicant = () => {
               >
                 {activeIndex + 1} / {documentList.length}
               </Typography>
-              <Tooltip title="Download">
+              {/* <Tooltip title="Download">
                 <IconButton
                   onClick={() =>
                     handleDownload(
@@ -439,7 +416,7 @@ const ViewSingleApplicant = () => {
                 >
                   <DownloadForOfflineIcon />
                 </IconButton>
-              </Tooltip>
+              </Tooltip> */}
             </Box>
           </Box>
 
@@ -536,7 +513,7 @@ const ViewSingleApplicant = () => {
                 zIndex: 10,
               }}
             >
-              <Tooltip title="Download Image">
+              {/* <Tooltip title="Download Image">
                 <IconButton
                   onClick={() =>
                     handleDownload(
@@ -552,7 +529,7 @@ const ViewSingleApplicant = () => {
                 >
                   <DownloadForOfflineIcon fontSize="large" />
                 </IconButton>
-              </Tooltip>
+              </Tooltip> */}
               <Tooltip title="Close (Esc)">
                 <IconButton
                   onClick={handleCloseLightbox}

@@ -60,7 +60,12 @@ export default function Login() {
       setUserData(data);
       setToken(data.token);
       removeErrMessage();
-      navigate("/");
+
+      if (data.user_type != "admin" && data.user_type != "superadmin") {
+        navigate("/");
+      } else {
+        navigate("/admin");
+      }
     },
     onError: (err) => {
       if (isAxiosError(err)) {

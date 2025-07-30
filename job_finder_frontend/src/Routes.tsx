@@ -39,6 +39,10 @@ import EditEmployerProfile from "./pages/employer/EditEmployerProfile";
 import ViewApplicantList from "./pages/employer/ViewApplicantList";
 import ViewSingleApplicant from "./pages/employer/ViewSingleApplicant";
 import PendingJobs from "./pages/admin/PendingJobs";
+import IsLoginnedAndAdminMiddleware from "./protected_routes/IsLoginnedAdminMiddleware";
+import AdminList from "./pages/admin/AdminList";
+import AddAdmin from "./pages/admin/AddAdmin";
+import CategoryList from "./pages/admin/CategoryList";
 
 export const router = createBrowserRouter([
   {
@@ -238,7 +242,35 @@ export const router = createBrowserRouter([
       },
       {
         path: "overview",
-        Component: Overview,
+        element: (
+          <IsLoginnedAndAdminMiddleware>
+            <Overview />
+          </IsLoginnedAndAdminMiddleware>
+        ),
+      },
+      {
+        path: "list/admins",
+        element: (
+          <IsLoginnedAndAdminMiddleware>
+            <AdminList />
+          </IsLoginnedAndAdminMiddleware>
+        ),
+      },
+      {
+        path: "add",
+        element: (
+          <IsLoginnedAndAdminMiddleware>
+            <AddAdmin />
+          </IsLoginnedAndAdminMiddleware>
+        ),
+      },
+      {
+        path: "categories",
+        element: (
+          <IsLoginnedAndAdminMiddleware>
+            <CategoryList />
+          </IsLoginnedAndAdminMiddleware>
+        ),
       },
       {
         path: "jobs/manage",

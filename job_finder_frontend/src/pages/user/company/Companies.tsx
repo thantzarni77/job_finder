@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   MenuItem,
   Pagination,
   Select,
@@ -9,12 +8,10 @@ import {
   type SelectChangeEvent,
 } from "@mui/material";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
-import FilterListIcon from "@mui/icons-material/FilterList";
 
 import { useEffect, useState, type ChangeEvent } from "react";
 import SearchBox from "../../../components/user/SearchBox";
 import CompanyCard from "../../../components/employer/CompanyCard";
-import { useCompanyFilterStore } from "../../../store/Appstore";
 import { useQuery } from "@tanstack/react-query";
 import FullScreenLoader from "../../../components/FullScreenLoader";
 import {
@@ -59,13 +56,6 @@ const Companies = () => {
   const handlePageChange = (_event: ChangeEvent<unknown>, value: number) => {
     setPage(value);
   };
-
-  const showCompanyFilterDrawer = useCompanyFilterStore(
-    (state) => state.showCompanyFilterDrawer,
-  );
-  const setShowCompanyFilterDrawer = useCompanyFilterStore(
-    (state) => state.setShowCompanyFilterDrawer,
-  );
 
   const [sortBy, setSortBy] = useState<string>("recent");
   const [open, setOpen] = useState<boolean>(false);
@@ -140,9 +130,10 @@ const Companies = () => {
             sx={{
               width: { xs: "82%", sm: "90%", md: "90%" },
               display: "flex",
-              alignItems: { xs: "center", md: "start" },
-              justifyContent: "space-between",
+              alignItems: "center",
+              justifyContent: "center",
               mb: 2,
+              gap: 5,
             }}
           >
             <Typography variant="caption" sx={{ color: "primary.light" }}>

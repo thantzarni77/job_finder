@@ -288,6 +288,9 @@ export default function EmployerProfile() {
               gap: 6,
             }}
           >
+            {currentJobs.length == 0 && (
+              <Typography variant="h6">No Job Posted Currently</Typography>
+            )}
             {currentJobs.map((single) => {
               return <JobCard job={single} />;
             })}

@@ -210,7 +210,7 @@ const Overview = () => {
               100
             </Typography>
           </Box>
-          <Box
+          {/* <Box
             sx={{
               backgroundColor: "background.paper",
               width: "200px",
@@ -247,7 +247,7 @@ const Overview = () => {
             <Typography variant="h6" sx={{ fontWeight: 600 }}>
               20
             </Typography>
-          </Box>
+          </Box> */}
         </Box>
       </Box>
       {/* jobs and users */}

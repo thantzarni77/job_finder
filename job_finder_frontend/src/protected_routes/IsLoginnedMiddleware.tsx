@@ -17,6 +17,9 @@ const IsLoginnedMiddleware = ({ children }: { children: React.ReactNode }) => {
   const accessToken = localStorage.getItem("token");
 
   if (user) {
+    if (user.user_type == "admin" || user?.user_type == "superadmin") {
+      return <Navigate to={"/admin"} />;
+    }
     return children;
   } else if (!user && accessToken) {
     axiosClient
@@ -46,6 +49,9 @@ const IsLoginnedMiddleware = ({ children }: { children: React.ReactNode }) => {
             .then(() => {
               return children;
             });
+        }
+        if (user.user_type == "admin" || user.user_type == "superadmin") {
+          return <Navigate to={"/admin"} />;
         }
       })
       .catch((err) => {

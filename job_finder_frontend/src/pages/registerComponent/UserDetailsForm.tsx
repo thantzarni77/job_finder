@@ -8,6 +8,8 @@ import {
 } from "@mui/material";
 import { useFormContext } from "react-hook-form";
 import { useRegisterStore } from "../../store/RegisterStore";
+import { Link } from "react-router";
+import { Link as MuiLink } from "@mui/material";
 
 const UserDetailsForm = () => {
   const {
@@ -203,6 +205,13 @@ const UserDetailsForm = () => {
           </FormHelperText>
         )}
       </Box>
+      <Typography variant="body1">
+        Already have an account ? Click{" "}
+        <MuiLink component={Link} to="/login">
+          here
+        </MuiLink>{" "}
+        to Login{" "}
+      </Typography>
     </Box>
   );
 };
