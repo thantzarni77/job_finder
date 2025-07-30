@@ -13,7 +13,7 @@ class AdminAuthController extends Controller
     public function index()
     {
         $admin = User::where('user_type', 'admin')->get();
-        if(empty($admin) || !$admin) {
+        if (empty($admin) || !$admin) {
             return response()->json(['status' => 'error', 'message' => 'Admin not found.'], 404);
         }
 
@@ -27,8 +27,9 @@ class AdminAuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'user_type' => "admin"
         ]);
-        $admin["user_type"] = "admin";
+
         return response()->json(['status' => 'success', 'message' => 'You have successfully create admin.', 'data' => $admin], 200);
     }
 
@@ -39,7 +40,7 @@ class AdminAuthController extends Controller
     }
 
     public function update(Request $request, $id)
-    {   
+    {
         // dd($request->all());
         $this->validateData($request);
         $admin = User::find($id);
@@ -60,7 +61,7 @@ class AdminAuthController extends Controller
     {
         $request->validate([
             'name' => ['sometimes', 'string', 'max:255', Rule::unique('users')->ignore($request->id)],
-            'email' => 'sometimes',
+            'email' => ['sometimes', Rule::unique('users')],
             'password' => 'sometimes',
         ]);
     }

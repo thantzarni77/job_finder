@@ -20,20 +20,6 @@ use Illuminate\Support\Facades\Route;
 
 // Route::post('/superadmin/login', [AdminAuthController::class, 'login']);
 
-Route::middleware("AdminAuthMiddleware:superadmin")->group(function () {
-    // Route::post('/superadmin/logout', [AdminAuthController::class, 'logout']);
-    // Route::get('/superadmin/getprofile', [AdminAuthController::class, 'profile']);
-
-    Route::prefix('admin')->group(function () {
-        Route::get('/', [AdminAuthController::class, 'index']);
-        Route::post('/', [AdminAuthController::class, 'store']);
-        Route::get('/{id}', [AdminAuthController::class, 'show']);
-        Route::post('/{id}', [AdminAuthController::class, 'update']);
-        Route::delete('/{id}', [AdminAuthController::class, 'destroy']);
-    });
-
-});
-
 Route::middleware("AdminAuthMiddleware:admin")->group(function () {
 
     // Route::get('/admin/getprofile', [AdminAuthController::class, 'profile']);
@@ -62,9 +48,6 @@ Route::get('types', [JobDetailController::class, 'types']);
 Route::get('roles', [JobDetailController::class, 'roles']);
 Route::get('genders', [JobDetailController::class, 'genders']);
 
-//job category route
-Route::apiResource('job-categories', JobCategoryController::class);
-
 //talent module
 Route::prefix('talent')->group(function () {
     //save job list
@@ -78,6 +61,21 @@ Route::prefix('talent')->group(function () {
 });
 
 Route::group(["middleware" => "AuthMiddleware"], function () {
+
+    Route::middleware("UserTypeMiddleware:superadmin")->group(function () {
+        Route::prefix('admin')->group(function () {
+            Route::get('/', [AdminAuthController::class, 'index']);
+            Route::post('/', [AdminAuthController::class, 'store']);
+            Route::get('/{id}', [AdminAuthController::class, 'show']);
+            Route::post('/{id}', [AdminAuthController::class, 'update']);
+            Route::delete('/{id}', [AdminAuthController::class, 'destroy']);
+        });
+    });
+
+    Route::middleware("AdminSuperMiddleware")->group(function () {
+        //job category route
+        Route::apiResource('job-categories', JobCategoryController::class);
+    });
 
     Route::post('/change-password/{id}', [NewPasswordController::class, 'changePassword']);
 
@@ -121,7 +119,6 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
             Route::post("/{userID}", [ProjectController::class, 'update']);
             Route::post("/{userID}", [ProjectController::class, 'destroy']);
         });
-
     });
 
     Route::middleware("UserTypeMiddleware:employer")->group(function () {
@@ -155,7 +152,6 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
             Route::post('/{id}', [PostJobController::class, 'update']);
             Route::delete('/{id}', [PostJobController::class, 'destroy']);
         });
-
     });
 
     Route::prefix('apply-job')->group(function () {
@@ -197,9 +193,8 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
     //job detail route
     Route::apiResource('job-details', JobDetailController::class);
 
-//job category route
+    //job category route
     Route::apiResource('job-categories', JobCategoryController::class);
 
     Route::get('/deadline-alerts', [DeadlineController::class, 'alertNearDeadline']);
-
 });
