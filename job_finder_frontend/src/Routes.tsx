@@ -43,6 +43,7 @@ import IsLoginnedAndAdminMiddleware from "./protected_routes/IsLoginnedAdminMidd
 import AdminList from "./pages/admin/AdminList";
 import AddAdmin from "./pages/admin/AddAdmin";
 import CategoryList from "./pages/admin/CategoryList";
+import EmployerManagement from "./pages/admin/EmployerManagement";
 
 export const router = createBrowserRouter([
   {
@@ -299,6 +300,10 @@ export const router = createBrowserRouter([
       {
         path: "job/:id/edit",
         Component: EditJob,
+      },
+      {
+        path: "employers/manage",
+        Component: EmployerManagement,
       },
       {
         path: "employer/:id/manage",

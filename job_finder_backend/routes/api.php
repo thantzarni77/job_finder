@@ -197,4 +197,6 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
     Route::apiResource('job-categories', JobCategoryController::class);
 
     Route::get('/deadline-alerts', [DeadlineController::class, 'alertNearDeadline']);
+
+    Route::post('/employer/verify/{id}', [EmployerController::class, 'verifyByAdmin']);
 });

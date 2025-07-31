@@ -52,9 +52,9 @@ class EmployerController extends Controller
     public function getEmployerData(string $id)
     {
         try {
-            $data = Employer::where("user_id", $id)->get();
+            $data = Employer::with('user')->find($id);
 
-            if ($data->isEmpty()) {
+            if (!$data) {
                 return response()->json([
                     "message" => "Employer data not found.",
                 ], 404);
@@ -193,6 +193,18 @@ class EmployerController extends Controller
         return response()->json([
             "statusCode" => "200",
             "message"    => "Success deleted",
+        ]);
+    }
+
+    public function verifyByAdmin(Request $request,  $id)
+    {
+        $employer = Employer::find($id);
+        $employer->verification = $request->status;
+        $employer->save();
+
+        return response()->json([
+            'status_code' => 200,
+            'message' => 'success',
         ]);
     }
 }
