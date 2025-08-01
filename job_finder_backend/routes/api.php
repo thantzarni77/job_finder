@@ -20,22 +20,6 @@ use Illuminate\Support\Facades\Route;
 
 // Route::post('/superadmin/login', [AdminAuthController::class, 'login']);
 
-Route::middleware("AdminAuthMiddleware:admin")->group(function () {
-
-    // Route::get('/admin/getprofile', [AdminAuthController::class, 'profile']);
-    // Route::post('/admin/logout', [AdminAuthController::class, 'logout']);
-    Route::post('/admin/employerVerification/{id}', [EmployerVerficationController::class, 'updateStatus']);
-    Route::post('/admin/post-verification/{id}', [PostJobController::class, 'postVerification']);
-    // //job post
-    // Route::prefix('post-jobs')->group(function () {
-    //     Route::get('/', [PostJobController::class, 'index'])->withoutMiddleware('AuthMiddleware');
-    //     Route::post('/', [PostJobController::class, 'store']);
-    //     Route::get('/{id}', [PostJobController::class, 'show']);
-    //     Route::post('/{id}', [PostJobController::class, 'update']);
-    //     Route::delete('/{id}', [PostJobController::class, 'destroy']);
-    // });
-
-});
 
 Route::post('/registerstepone', [AuthController::class, 'registerStepOne']);
 Route::post('/registersteptwo/{id}', [AuthController::class, 'registerStepTwo']);
@@ -75,11 +59,15 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
     Route::middleware("AdminSuperMiddleware")->group(function () {
         //job category route
         Route::apiResource('job-categories', JobCategoryController::class);
+
+        Route::post('/admin/employerVerification/{id}', [EmployerVerficationController::class, 'updateStatus']);
+        Route::post('/admin/post-verification/{id}', [PostJobController::class, 'postVerification']);
     });
 
     Route::post('/change-password/{id}', [NewPasswordController::class, 'changePassword']);
 
     Route::prefix("user")->group(function () {
+        Route::get("/all", [UserController::class, 'getAllUsers']);
         Route::get('/get', [UserController::class, 'getSingleUserData']);
         Route::post('/update/{id}', [UserController::class, 'updateUser']);
 

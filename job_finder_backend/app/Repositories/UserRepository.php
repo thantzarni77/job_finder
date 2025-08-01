@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repositories;
 
 use App\Http\Resources\UserResource;
@@ -9,6 +10,16 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UserRepository implements UserRepositoryInterface
 {
+
+    public function getAllUsers()
+    {
+        $users = User::with("employer")->get();
+
+        return response()->json([
+            "message" => "success",
+            "data" => $users
+        ], 200);
+    }
 
     public function getSingleUserData()
     {
@@ -50,7 +61,6 @@ class UserRepository implements UserRepositoryInterface
             "message" => "User Updated Successfully",
             "data"    => $updatedUser,
         ], 200);
-
     }
 
     public function getIndividualEmployerData($id)
@@ -58,6 +68,5 @@ class UserRepository implements UserRepositoryInterface
 
         $user = User::where('id', $id)->first();
         return new UserResource($user);
-
     }
 }

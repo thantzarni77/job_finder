@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Interfaces\UserRepositoryInterface;
@@ -10,6 +11,11 @@ class UserController extends Controller
     public function __construct(UserRepositoryInterface $userRepositoryInterface)
     {
         $this->userRepositoryInterface = $userRepositoryInterface;
+    }
+
+    public function getAllUsers()
+    {
+        return $this->userRepositoryInterface->getAllUsers();
     }
 
     public function updateUser(Request $request, $id)
