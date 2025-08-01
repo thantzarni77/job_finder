@@ -65,3 +65,8 @@ export async function getCompanies(
   });
   return data;
 }
+
+export async function getCompanyDetail(id: number) {
+  const { data } = await axiosClient.get(`/employer-data/${id}`);
+  return data.data;
+}
