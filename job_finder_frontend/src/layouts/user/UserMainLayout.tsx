@@ -46,7 +46,7 @@ export default function UserMainLayout() {
     queryFn: getSingleUserData,
   });
 
-  const employerData = employerProfileQuery.data?.data.data[0];
+  const employerData = employerProfileQuery.data;
   const seekerData = seekerProfileQuery.data?.data.data[0];
   const userData = userDataQuery.data?.data;
 

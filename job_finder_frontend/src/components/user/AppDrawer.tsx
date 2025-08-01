@@ -23,6 +23,7 @@ export default function AppDrawer() {
   const removeToken = useUserStore((state) => state.removeToken);
 
   const employerProfile = useProfileStore((state) => state.employerProfile);
+  console.log(employerProfile);
 
   const logoutMutate = useMutation({
     mutationFn: logoutUser,
@@ -87,8 +88,8 @@ export default function AppDrawer() {
             <ListItem sx={{ display: { xs: "inline-flex", sm: "none" } }}>
               <ListItemButton
                 disabled={
-                  employerProfile.verification == "pending" ||
-                  employerProfile.verification == "rejected"
+                  employerProfile?.verification == "pending" ||
+                  employerProfile?.verification == "rejected"
                 }
               >
                 <Link to="/post/job">

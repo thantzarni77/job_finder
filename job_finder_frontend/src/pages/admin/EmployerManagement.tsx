@@ -17,21 +17,20 @@ import FullScreenLoader from "../../components/FullScreenLoader";
 import type { ChangeEvent } from "react";
 
 export default function EmployerManagement() {
-  const [page, setPage] = useState();
+  const [page, setPage] = useState(1);
   const { data: employers, isPending: isEmployersPending } = useQuery({
-    queryKey: ["adminEmployers"],
+    queryKey: ["adminEmployers", page],
     queryFn: () => getAdminEmployers(page),
   });
 
   if (isEmployersPending) {
     return <FullScreenLoader open={true} message={"Loading"} />;
   }
-
   // to handle paginated pages
   const handlePageChange = (_event: ChangeEvent<unknown>, value: number) => {
     setPage(value);
   };
-  console.log(employers);
+
   return (
     <Box
       sx={{
@@ -46,9 +45,7 @@ export default function EmployerManagement() {
       <Typography variant="h4" sx={{ fontWeight: 700 }}>
         Employers Management
       </Typography>
-      <Typography variant="subtitle1" sx={{ fontWeight: 400, mb: 2 }}>
-        15 Jul 2025
-      </Typography>
+
       {/* users */}
       <Box>
         <Box
@@ -77,7 +74,7 @@ export default function EmployerManagement() {
               Total Seekers
             </Typography>
             <Typography variant="h6" sx={{ fontWeight: 600 }}>
-              5,300
+              {employers.data.length}
             </Typography>
           </Box>
           {/* <Box
@@ -205,8 +202,8 @@ export default function EmployerManagement() {
       <Stack>
         <Pagination
           count={employers.meta.last_page}
-          page={employers.current_page}
-          onClick={handlePageChange}
+          page={employers.meta.current_page}
+          onChange={handlePageChange}
           shape="rounded"
           variant="outlined"
           color="primary"

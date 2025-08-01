@@ -11,9 +11,38 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import SearchIcon from "@mui/icons-material/Search";
 import AdminJobCard from "../../components/admin/AdminJobCard";
 import { useNavigate } from "react-router";
+import { adminGetJobs } from "../../helper/postJob";
+import { useQuery } from "@tanstack/react-query";
+import FullScreenLoader from "../../components/FullScreenLoader";
+import { useState, type ChangeEvent } from "react";
 
 const JobManagement = () => {
   const navigate = useNavigate();
+  const [page, setPage] = useState(1);
+
+  const { data: jobs, isPending } = useQuery({
+    queryKey: ["adminJobs", page],
+    queryFn: () => adminGetJobs(page),
+  });
+
+  const handleChange = (_event: ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+  };
+
+  if (isPending) {
+    return <FullScreenLoader open={true} message={"Loading"} />;
+  }
+  const approvedJobsCount = jobs.data.filter(
+    (job) => job.posting_status === "approved",
+  ).length;
+
+  const pendingJobsCount = jobs.data.filter(
+    (job) => job.posting_status === "pending",
+  ).length;
+
+  const rejectedJobsCount = jobs.data.filter(
+    (job) => job.posting_status === "rejected",
+  ).length;
   return (
     <Box
       sx={{
@@ -62,7 +91,7 @@ const JobManagement = () => {
               Pending Jobs
             </Typography>
             <Typography variant="h6" sx={{ fontWeight: 600 }}>
-              100
+              {pendingJobsCount}
             </Typography>
           </Box>
           <Box
@@ -85,7 +114,7 @@ const JobManagement = () => {
               Verified Jobs
             </Typography>
             <Typography variant="h6" sx={{ fontWeight: 600 }}>
-              100
+              {approvedJobsCount}
             </Typography>
           </Box>
           <Box
@@ -108,7 +137,7 @@ const JobManagement = () => {
               Rejected Jobs
             </Typography>
             <Typography variant="h6" sx={{ fontWeight: 600 }}>
-              2
+              {rejectedJobsCount}
             </Typography>
           </Box>
         </Box>
@@ -169,16 +198,17 @@ const JobManagement = () => {
               flexWrap: "wrap",
             }}
           >
-            <AdminJobCard />
-            <AdminJobCard />
-            <AdminJobCard />
-            <AdminJobCard />
+            {jobs?.data.map((job: any) => {
+              return <AdminJobCard key={job.id} job={job} />;
+            })}
           </Box>
         </Box>
       </Box>
       <Stack>
         <Pagination
-          count={5}
+          count={jobs.last_page}
+          page={jobs.current_page ?? 1}
+          onChange={handleChange}
           shape="rounded"
           variant="outlined"
           color="primary"

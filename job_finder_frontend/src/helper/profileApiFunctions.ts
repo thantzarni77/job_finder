@@ -29,8 +29,8 @@ export const updateSeekerProfile = async ({
 };
 
 export const getEmployerProfile = async (userID: number | undefined) => {
-  const data = await axiosClient.get(`/employer-data/${userID}`);
-  return data;
+  const { data } = await axiosClient.get(`/employer-data/${userID}`);
+  return data.data;
 };
 
 export const updateEmployerProfile = async ({

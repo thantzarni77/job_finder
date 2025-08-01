@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
@@ -6,6 +7,7 @@ use App\Http\Requests\JobFilterRequest;
 use App\Http\Requests\Postjob\CreateRequest;
 use App\Http\Requests\Postjob\UpdateRequest;
 use App\Interfaces\PostJobRepositoryInterface;
+use App\Models\PostJob;
 use Illuminate\Http\Request;
 
 class PostJobController extends Controller
@@ -60,5 +62,4 @@ class PostJobController extends Controller
         $status = $request->all();
         return $this->postJobRepository->postVerification($status, $id);
     }
-
 }

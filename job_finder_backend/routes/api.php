@@ -16,11 +16,12 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SaveJobController;
 use App\Http\Controllers\TalentController;
 use App\Http\Controllers\UserController;
+use App\Models\Employer;
 use Illuminate\Support\Facades\Route;
 
 // Route::post('/superadmin/login', [AdminAuthController::class, 'login']);
 
-Route::middleware("AdminAuthMiddleware:admin")->group(function () {
+Route::group(["middleware" => "AuthMiddleware"], function () {
 
     // Route::get('/admin/getprofile', [AdminAuthController::class, 'profile']);
     // Route::post('/admin/logout', [AdminAuthController::class, 'logout']);
@@ -198,5 +199,5 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
 
     Route::get('/deadline-alerts', [DeadlineController::class, 'alertNearDeadline']);
 
-    Route::post('/employer/verify/{id}', [EmployerController::class, 'verifyByAdmin']);
+    Route::post('/employer/verify/{id}', [EmployerController::class, 'verifyByAdmin']);;
 });

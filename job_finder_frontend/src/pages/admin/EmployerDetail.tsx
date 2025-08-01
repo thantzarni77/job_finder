@@ -27,6 +27,7 @@ import FullScreenLoader from "../../components/FullScreenLoader";
 import { format } from "date-fns";
 import { useQueryClient } from "@tanstack/react-query";
 import { getStatusColor } from "../../components/admin/AdminEmployerCard";
+import AdminJobCard from "../../components/admin/AdminJobCard";
 
 export default function EmployerDetail() {
   const navigate = useNavigate();
@@ -56,6 +57,8 @@ export default function EmployerDetail() {
 
   if (isPending) {
     return <FullScreenLoader open={true} message={"Loading"} />;
+  } else {
+    console.log(data);
   }
 
   return (
@@ -140,7 +143,8 @@ export default function EmployerDetail() {
         <Grid container spacing={2}>
           <Grid item xs={6}>
             <Typography variant="body2">
-              <strong>Uploaded jobs</strong> : 20 &nbsp;
+              <strong>Uploaded jobs</strong> : {data.data.post_job.length}{" "}
+              &nbsp;
             </Typography>
           </Grid>
         </Grid>
@@ -158,10 +162,15 @@ export default function EmployerDetail() {
         </Box>
       )}
 
-      <Box sx={{ mt: 3 }}>
+      <Box sx={{ mt: 3, mb: 5 }}>
         <Typography sx={{ textAlign: "center" }} variant="h6">
           Uploaded Job
         </Typography>
+        <Box sx={{ display: "flex", justifyContent: "space-around" }}>
+          {data.data.post_job?.map((job: any) => {
+            return <AdminJobCard job={job} key={job.id} />;
+          })}
+        </Box>
       </Box>
     </Box>
   );

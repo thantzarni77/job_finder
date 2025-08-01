@@ -64,3 +64,24 @@ export const getRoles = async () => {
   const { data } = await axiosClient.get("/roles");
   return data.data;
 };
+
+export const adminGetJobs = async (page: number) => {
+  const { data } = await axiosClient.get("/post-jobs", {
+    params: {
+      page,
+    },
+  });
+  return data.data;
+};
+
+export const adminGetAJob = async (id: number) => {
+  const { data } = await axiosClient.get(`/post-jobs/${id}`);
+  return data.data;
+};
+
+export const verifyJobPost = async (id: number, status: string) => {
+  const { data } = await axiosClient.post(`/admin/post-verification/${id}`, {
+    status,
+  });
+  return data;
+};

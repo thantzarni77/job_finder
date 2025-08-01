@@ -8,7 +8,7 @@ import {
   Paper,
   IconButton,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
+
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import BusinessIcon from "@mui/icons-material/Business";
 import WorkIcon from "@mui/icons-material/Work";
@@ -17,10 +17,44 @@ import SettingsRemoteIcon from "@mui/icons-material/SettingsRemote";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
+import { adminGetAJob, verifyJobPost } from "../../helper/postJob";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import FullScreenLoader from "../../components/FullScreenLoader";
+import { format } from "date-fns";
 
 export default function JobDetailManage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const { id } = useParams();
+  const jobId = Number(id);
+
+  const { data: job, isPending } = useQuery({
+    queryKey: ["adminJob", jobId],
+    queryFn: () => adminGetAJob(jobId),
+  });
+
+  const jobMutate = useMutation({
+    mutationFn: ({ id, status }: { id: number; status: string }) =>
+      verifyJobPost(id, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["adminJob", jobId] });
+    },
+  });
+  const handleApprove = () => {
+    jobMutate.mutate({ id: jobId, status: "approved" });
+  };
+
+  const handleReject = () => {
+    jobMutate.mutate({ id: jobId, status: "rejected" });
+  };
+
+  if (isPending) {
+    return <FullScreenLoader open={true} message="Loading" />;
+  } else {
+    console.log(job);
+  }
 
   return (
     <Box
@@ -67,29 +101,6 @@ export default function JobDetailManage() {
           </Typography>
 
           <Box sx={{ flexGrow: 1 }} />
-
-          <Tooltip title="Edit">
-            <Button
-              startIcon={<EditIcon />}
-              variant="outlined"
-              sx={{
-                textTransform: "none",
-                borderRadius: 1.5,
-                borderColor: "#d1d5db",
-                fontWeight: 600,
-                px: 2,
-                fontSize: "0.875rem",
-                color: "#334155",
-                minWidth: "90px",
-                "&:hover": {
-                  borderColor: "#5f68d7",
-                  backgroundColor: "rgba(95, 104, 215, 0.1)",
-                },
-              }}
-            >
-              Edit
-            </Button>
-          </Tooltip>
         </Box>
 
         <Stack spacing={2} sx={{ flexGrow: 1, overflowY: "auto" }}>
@@ -109,7 +120,7 @@ export default function JobDetailManage() {
               variant="subtitle1"
               sx={{ fontWeight: 700, color: "#0f172a", flexBasis: "100%" }}
             >
-              Frontend Developer
+              {job.job_title}
             </Typography>
 
             <Stack
@@ -140,7 +151,7 @@ export default function JobDetailManage() {
                 >
                   Status :
                 </Typography>
-                <Typography component="span">Pending</Typography>
+                <Typography component="span">{job.posting_status}</Typography>
               </Box>
 
               <Box
@@ -159,7 +170,9 @@ export default function JobDetailManage() {
                 >
                   Posted :
                 </Typography>
-                <Typography component="span">13 JUL 2025</Typography>
+                <Typography component="span">
+                  {format(new Date(job.created_at), "PPP")}
+                </Typography>
               </Box>
 
               <Box
@@ -178,7 +191,9 @@ export default function JobDetailManage() {
                 >
                   Applicants :
                 </Typography>
-                <Typography component="span">20</Typography>
+                <Typography component="span">
+                  {job.job_detail.apply_count}
+                </Typography>
               </Box>
             </Stack>
           </Paper>
@@ -210,7 +225,7 @@ export default function JobDetailManage() {
               }}
             >
               <BusinessIcon sx={{ fontSize: 18, color: "#5f68d7" }} />
-              <Typography>Company : Meta</Typography>
+              <Typography>Job Code : {job.job_code}</Typography>
             </Box>
 
             <Box
@@ -224,7 +239,7 @@ export default function JobDetailManage() {
               }}
             >
               <WorkIcon sx={{ fontSize: 18, color: "#5f68d7" }} />
-              <Typography>Position : Senior</Typography>
+              <Typography>Position : {job.role}</Typography>
             </Box>
 
             <Box
@@ -238,7 +253,7 @@ export default function JobDetailManage() {
               }}
             >
               <SettingsRemoteIcon sx={{ fontSize: 18, color: "#5f68d7" }} />
-              <Typography>Working type : Remote</Typography>
+              <Typography>Working type : {job.type}</Typography>
             </Box>
 
             <Box
@@ -247,11 +262,12 @@ export default function JobDetailManage() {
                 alignItems: "center",
                 gap: 0.75,
                 whiteSpace: "nowrap",
-                minWidth: 180,
+                minWidth: 140,
+                flexShrink: 0,
               }}
             >
               <AccessTimeIcon sx={{ fontSize: 18, color: "#5f68d7" }} />
-              <Typography>Working hour : 9:00am to 5:00pm</Typography>
+              <Typography>Dead Line : {job.job_detail.deadline}</Typography>
             </Box>
           </Paper>
 
@@ -322,10 +338,7 @@ export default function JobDetailManage() {
                 wordBreak: "break-word",
               }}
             >
-              Lorem ipsum dolor sit amet consectetur. Mauris sed in quis nulla.
-              Suspendisse risus nibh pharetra tempor scelerisque amet orci
-              aliquet. Phasellus lectus eleifend sed pharetra dictum dolor. In
-              ac ut scelerisque purus amet sed morbi nam montes. Arcu.
+              {job.job_detail.benefits}
             </Paper>
           </Box>
 
@@ -351,17 +364,7 @@ export default function JobDetailManage() {
                 wordBreak: "break-word",
               }}
             >
-              Lorem ipsum dolor sit amet consectetur. Nec quis nec sagittis
-              ultrices egestas nunc urna cursus at. Lectus varius a libero
-              pulvinar et cursus mi pharetra. Dictum urna tortor amet lectus
-              dolor. Tellus at aenean dignissim in commodo dolor leo. Pulvinar
-              eget et eu accumsan odio sed. Cum volutpat sit ac rhoncus porta.
-              Sagittis morbi malesuada feugiat arcu cras aliquam lacus. Id
-              bibendum bibendum diam pretium auctor vitae odio. Ac et cum eget
-              risus. Magnis odio facilisi morbi mattis sed faucibus. Feugiat
-              nunc ultrices vulputate lectus urna diam nec. Volutpat ipsum
-              aliquet ut sit augue id in. In lacus neque sit eget arcu quis ut
-              ornare augue. Aliquet non malesuada lobortis euismod duis aliquam.
+              {job.job_detail.description}
             </Paper>
           </Box>
 
@@ -387,17 +390,7 @@ export default function JobDetailManage() {
                 wordBreak: "break-word",
               }}
             >
-              Lorem ipsum dolor sit amet consectetur. Nec quis nec sagittis
-              ultrices egestas nunc urna cursus at. Lectus varius a libero
-              pulvinar et cursus mi pharetra. Dictum urna tortor amet lectus
-              dolor. Tellus at aenean dignissim in commodo dolor leo. Pulvinar
-              eget et eu accumsan odio sed. Cum volutpat sit ac rhoncus porta.
-              Sagittis morbi malesuada feugiat arcu cras aliquam lacus. Id
-              bibendum bibendum diam pretium auctor vitae odio. Ac et cum eget
-              risus. Magnis odio facilisi morbi mattis sed faucibus. Feugiat
-              nunc ultrices vulputate lectus urna diam nec. Volutpat ipsum
-              aliquet ut sit augue id in. In lacus neque sit eget arcu quis ut
-              ornare augue. Aliquet non malesuada lobortis euismod duis aliquam.
+              {job.job_detail.requirements}
             </Paper>
           </Box>
 
@@ -428,6 +421,7 @@ export default function JobDetailManage() {
                   backgroundColor: "rgba(239,68,68,0.1)",
                 },
               }}
+              onClick={handleReject}
             >
               Reject
             </Button>
@@ -441,6 +435,7 @@ export default function JobDetailManage() {
                 textTransform: "none",
                 minWidth: 140,
               }}
+              onClick={handleApprove}
             >
               Approve
             </Button>

@@ -49,10 +49,10 @@ class PostJobRepository implements PostJobRepositoryInterface
             $job_title = $request->query('Job');
             $jobs      = $this->postJob->orWhere('job_title', 'LIKE', $job_title)
                 ->orWhere('job_code', 'LIKE', $job_title)
-                ->with(['jobDetail', 'employer', 'category'])->paginate(10);
+                ->with(['jobDetail', 'employer', 'category', 'jobDetail'])->paginate(10);
         } else {
             $jobs = $this->postJob
-                ->with(['jobDetail', 'employer', 'category'])
+                ->with(['jobDetail', 'employer', 'category', 'jobDetail'])
                 ->filter($filter)
                 ->paginate(10);
         }

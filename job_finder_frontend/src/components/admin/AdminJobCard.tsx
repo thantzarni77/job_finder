@@ -1,14 +1,14 @@
 import { Box, Button, Divider, Typography } from "@mui/material";
 import CircleIcon from "@mui/icons-material/Circle";
 import WatchLaterOutlinedIcon from "@mui/icons-material/WatchLaterOutlined";
-import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRenameOutlineOutlined";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
-import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
+
 import BusinessIcon from "@mui/icons-material/Business";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import { useNavigate } from "react-router";
+import { format } from "date-fns";
 
-const AdminJobCard = () => {
+const AdminJobCard = ({ job }: { job: any }) => {
   const navigate = useNavigate();
   return (
     <Box
@@ -26,18 +26,18 @@ const AdminJobCard = () => {
     >
       {/* seeker details */}
       <Typography variant="body1" sx={{ fontWeight: 600 }}>
-        Frontend Developer
+        {job.job_title}
       </Typography>
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         <CircleIcon sx={{ color: "success.main", fontSize: "20px" }} />
         <Typography variant="subtitle2" sx={{ fontWeight: 400 }}>
-          Active
+          {job.posting_status}
         </Typography>
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         <BusinessIcon sx={{ color: "primary.main", fontSize: "20px" }} />
         <Typography variant="subtitle2" sx={{ fontWeight: 400 }}>
-          Meta
+          {job.type}
         </Typography>
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -45,13 +45,13 @@ const AdminJobCard = () => {
           sx={{ color: "primary.main", fontSize: "20px" }}
         />
         <Typography variant="subtitle2" sx={{ fontWeight: 400 }}>
-          Posted on 24 JUL 2025
+          Posted on {format(new Date(job.created_at), "PPP")}
         </Typography>
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         <GroupsOutlinedIcon sx={{ color: "primary.main", fontSize: "20px" }} />
         <Typography variant="subtitle2" sx={{ fontWeight: 400 }}>
-          20 Applicants
+          {job.role}
         </Typography>
       </Box>
       <Divider sx={{ borderColor: "primary.main" }} flexItem />
@@ -63,50 +63,15 @@ const AdminJobCard = () => {
           justifyContent: "space-between",
         }}
       >
-        <Button
+        <Box
           sx={{
             display: "flex",
-            alignItems: "center",
-            gap: 1,
-            textTransform: "none",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            width: "100%",
           }}
         >
-          <DeleteOutlineOutlinedIcon sx={{ color: "error.main" }} />
-          <Typography
-            variant="subtitle2"
-            sx={{ fontWeight: 300, color: "text.primary" }}
-          >
-            Delete
-          </Typography>
-        </Button>
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Button
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 1,
-              textTransform: "none",
-            }}
-          >
-            <DriveFileRenameOutlineOutlinedIcon
-              sx={{ color: "primary.main" }}
-            />
-            <Typography
-              variant="subtitle2"
-              sx={{ fontWeight: 300, color: "text.primary" }}
-            >
-              Edit
-            </Typography>
-          </Button>
-          <Button
-            onClick={() => navigate("/admin/jobs/detail/1")}
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 1,
-              textTransform: "none",
-            }}
-          >
+          <Button onClick={() => navigate(`/admin/jobs/detail/${job.id}`)}>
             <RemoveRedEyeOutlinedIcon sx={{ color: "primary.main" }} />
             <Typography
               variant="subtitle2"

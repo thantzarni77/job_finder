@@ -43,8 +43,9 @@ const genders = ["Male", "Female", "Both"];
 export default function PostAJob() {
   const navigate = useNavigate();
   const employerProfile = useProfileStore((state) => state.employerProfile);
-
-  const employerID = employerProfile.id?.toString();
+  console.log(employerProfile);
+  const employerID = employerProfile.user_id?.toString();
+  console.log(employerID);
 
   const [jobTypes, setJobTypes] = useState<JobTypeAndRole[] | null>();
   const [roles, setRoles] = useState<JobTypeAndRole[] | null>();
