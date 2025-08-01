@@ -23,10 +23,10 @@ import AdminMainLayout from "./layouts/admin/AdminMainLayout";
 import Overview from "./pages/admin/Overview";
 import JobManagement from "./pages/admin/JobManagement";
 import JobDetailManage from "./pages/admin/JobDetailManage";
-import EditUser from "./pages/admin/EditUser";
-import EditJob from "./pages/admin/EditJob";
+//import EditUser from "./pages/admin/EditUser";
+//import EditJob from "./pages/admin/EditJob";
 import EmployerDetail from "./pages/admin/EmployerDetail";
-import EditEmployer from "./pages/admin/EditEmployer";
+//import EditEmployer from "./pages/admin/EditEmployer";
 import SeekerManagement from "./pages/admin/SeekerManagement";
 import SeekerDetailManage from "./pages/admin/SeekerDetailManage";
 import TalentProfile from "./pages/user/TalentProfile";
@@ -43,6 +43,8 @@ import IsLoginnedAndAdminMiddleware from "./protected_routes/IsLoginnedAdminMidd
 import AdminList from "./pages/admin/AdminList";
 import AddAdmin from "./pages/admin/AddAdmin";
 import CategoryList from "./pages/admin/CategoryList";
+import RejectedJobs from "./pages/admin/RejectedJobs";
+import VerifiedJobs from "./pages/admin/VerifiedJobs";
 
 export const router = createBrowserRouter([
   {
@@ -274,15 +276,43 @@ export const router = createBrowserRouter([
       },
       {
         path: "jobs/manage",
-        Component: JobManagement,
+        element: (
+          <IsLoginnedAndAdminMiddleware>
+            <JobManagement />
+          </IsLoginnedAndAdminMiddleware>
+        ),
       },
       {
         path: "jobs/manage/pending",
-        Component: PendingJobs,
+        element: (
+          <IsLoginnedAndAdminMiddleware>
+            <PendingJobs />
+          </IsLoginnedAndAdminMiddleware>
+        ),
+      },
+      {
+        path: "jobs/manage/rejected",
+        element: (
+          <IsLoginnedAndAdminMiddleware>
+            <RejectedJobs />
+          </IsLoginnedAndAdminMiddleware>
+        ),
+      },
+      {
+        path: "jobs/manage/verified",
+        element: (
+          <IsLoginnedAndAdminMiddleware>
+            <VerifiedJobs />
+          </IsLoginnedAndAdminMiddleware>
+        ),
       },
       {
         path: "jobs/detail/:id",
-        Component: JobDetailManage,
+        element: (
+          <IsLoginnedAndAdminMiddleware>
+            <JobDetailManage />
+          </IsLoginnedAndAdminMiddleware>
+        ),
       },
       {
         path: "seekers/manage",
@@ -292,22 +322,22 @@ export const router = createBrowserRouter([
         path: "seeker/:id/manage",
         Component: SeekerDetailManage,
       },
-      {
-        path: "user/:id/edit",
-        Component: EditUser,
-      },
-      {
-        path: "job/:id/edit",
-        Component: EditJob,
-      },
+      // {
+      //   path: "user/:id/edit",
+      //   Component: EditUser,
+      // },
+      // {
+      //   path: "job/:id/edit",
+      //   Component: EditJob,
+      // },
       {
         path: "employer/:id/manage",
         Component: EmployerDetail,
       },
-      {
-        path: "employer/:id/edit",
-        Component: EditEmployer,
-      },
+      // {
+      //   path: "employer/:id/edit",
+      //   Component: EditEmployer,
+      // },
     ],
   },
   {

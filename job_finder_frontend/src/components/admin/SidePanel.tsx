@@ -50,6 +50,7 @@ const SidePanel = () => {
   const categoryPath = "/admin/categories";
   const jobsPath = "/admin/jobs/manage";
   const jobsPendingPath = "/admin/jobs/manage/pending";
+  const jobsRejectedPath = "/admin/jobs/manage/rejected";
   const jobsDetailPath = "/admin/jobs/detail/:id";
   const usersPath = "/admin/seekers/manage";
   const adminPath = "/admin/list/admins";
@@ -61,9 +62,13 @@ const SidePanel = () => {
   const isCategoryActive = useMatch(categoryPath);
   const isJobAllActive = useMatch(jobsPath);
   const isJobPendingActive = useMatch(jobsPendingPath);
+  const isJobRejectedActive = useMatch(jobsRejectedPath);
   const isJobDetailActive = useMatch(jobsDetailPath);
   const isJobsActive =
-    isJobAllActive || isJobDetailActive || isJobPendingActive;
+    isJobAllActive ||
+    isJobDetailActive ||
+    isJobPendingActive ||
+    isJobRejectedActive;
   const isAdminListActive = useMatch(adminPath);
   const isAdminPathActive = useMatch(addAdminPath);
   const isAdminActive = isAdminListActive || isAdminPathActive;

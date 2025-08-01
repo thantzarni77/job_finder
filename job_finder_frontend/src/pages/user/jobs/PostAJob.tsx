@@ -189,7 +189,7 @@ export default function PostAJob() {
               <input
                 type="hidden"
                 value={employerID}
-                {...register("employer_id", { required: true })}
+                {...register("employer_id")}
               />
               {errors.employer_id && (
                 <Typography

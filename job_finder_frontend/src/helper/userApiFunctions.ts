@@ -1,5 +1,10 @@
 import axiosClient from "./axiosClient";
 
+export const getAllUsers = async () => {
+  const { data } = await axiosClient.get("/user/all");
+  return data;
+};
+
 export const updateUser = async ({
   userID,
   userFormData,
@@ -16,11 +21,7 @@ export const getSingleUserData = async () => {
   return data;
 };
 
-export const getIndividualDataForJob = async (
-  employer_id: number | undefined,
-) => {
-  const { data } = await axiosClient.get(
-    `/user/individual-employer/${employer_id}`,
-  );
+export const getIndividualDataForJob = async (userID: number | undefined) => {
+  const { data } = await axiosClient.get(`/user/individual-employer/${userID}`);
   return data;
 };

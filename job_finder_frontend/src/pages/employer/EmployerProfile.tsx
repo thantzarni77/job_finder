@@ -58,6 +58,7 @@ export default function EmployerProfile() {
   };
 
   const allJobsQuery = useQuery({
+    enabled: allJobs.length == 0,
     queryKey: ["pureJobPosts"],
     queryFn: getAllJobs,
   });

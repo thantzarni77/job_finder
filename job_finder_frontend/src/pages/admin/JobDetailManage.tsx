@@ -3,24 +3,60 @@ import {
   Button,
   Divider,
   Typography,
-  Tooltip,
   Stack,
   Paper,
   IconButton,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import BusinessIcon from "@mui/icons-material/Business";
 import WorkIcon from "@mui/icons-material/Work";
 import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
 import SettingsRemoteIcon from "@mui/icons-material/SettingsRemote";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getSingleJob } from "../../helper/postJob";
+import FullScreenLoader from "../../components/FullScreenLoader";
+import type { JobWithJobDetail } from "../../store/JobStore";
+import { format } from "date-fns";
+import { changeStatus } from "../../helper/jobApiFunctions";
 
 export default function JobDetailManage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { id } = useParams();
+
+  const jobDetailQuery = useQuery({
+    queryKey: ["jobDetail", id],
+    queryFn: () => {
+      return getSingleJob(id);
+    },
+  });
+
+  const jobDetails: JobWithJobDetail = jobDetailQuery.data?.data;
+
+  const changeStatusMutation = useMutation({
+    mutationFn: changeStatus,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["jobDetail"] });
+      queryClient.invalidateQueries({ queryKey: ["pureJobPosts"] });
+      queryClient.invalidateQueries({ queryKey: ["jobPosts"] });
+      navigate(-1);
+    },
+    onError: (err) => {
+      console.log(err);
+    },
+  });
+
+  if (jobDetailQuery.isFetching) {
+    return (
+      <FullScreenLoader
+        open={jobDetailQuery.isFetching}
+        message="Getting Job Details"
+      />
+    );
+  }
 
   return (
     <Box
@@ -68,7 +104,7 @@ export default function JobDetailManage() {
 
           <Box sx={{ flexGrow: 1 }} />
 
-          <Tooltip title="Edit">
+          {/* <Tooltip title="Edit">
             <Button
               startIcon={<EditIcon />}
               variant="outlined"
@@ -89,7 +125,7 @@ export default function JobDetailManage() {
             >
               Edit
             </Button>
-          </Tooltip>
+          </Tooltip> */}
         </Box>
 
         <Stack spacing={2} sx={{ flexGrow: 1, overflowY: "auto" }}>
@@ -109,7 +145,7 @@ export default function JobDetailManage() {
               variant="subtitle1"
               sx={{ fontWeight: 700, color: "#0f172a", flexBasis: "100%" }}
             >
-              Frontend Developer
+              {jobDetails.job_title}
             </Typography>
 
             <Stack
@@ -140,7 +176,9 @@ export default function JobDetailManage() {
                 >
                   Status :
                 </Typography>
-                <Typography component="span">Pending</Typography>
+                <Typography component="span">
+                  {jobDetails.posting_status}
+                </Typography>
               </Box>
 
               <Box
@@ -159,7 +197,9 @@ export default function JobDetailManage() {
                 >
                   Posted :
                 </Typography>
-                <Typography component="span">13 JUL 2025</Typography>
+                <Typography component="span">
+                  {format(new Date(jobDetails.created_at), "dd MMM yyyy")}
+                </Typography>
               </Box>
 
               <Box
@@ -178,7 +218,9 @@ export default function JobDetailManage() {
                 >
                   Applicants :
                 </Typography>
-                <Typography component="span">20</Typography>
+                <Typography component="span">
+                  {jobDetails.job_detail.apply_count}
+                </Typography>
               </Box>
             </Stack>
           </Paper>
@@ -210,7 +252,9 @@ export default function JobDetailManage() {
               }}
             >
               <BusinessIcon sx={{ fontSize: 18, color: "#5f68d7" }} />
-              <Typography>Company : Meta</Typography>
+              <Typography>
+                Company : {jobDetails.employer.company_name}
+              </Typography>
             </Box>
 
             <Box
@@ -224,7 +268,7 @@ export default function JobDetailManage() {
               }}
             >
               <WorkIcon sx={{ fontSize: 18, color: "#5f68d7" }} />
-              <Typography>Position : Senior</Typography>
+              <Typography>Position : {jobDetails.role}</Typography>
             </Box>
 
             <Box
@@ -238,10 +282,10 @@ export default function JobDetailManage() {
               }}
             >
               <SettingsRemoteIcon sx={{ fontSize: 18, color: "#5f68d7" }} />
-              <Typography>Working type : Remote</Typography>
+              <Typography>Working type : {jobDetails.type}</Typography>
             </Box>
 
-            <Box
+            {/* <Box
               sx={{
                 display: "flex",
                 alignItems: "center",
@@ -252,7 +296,7 @@ export default function JobDetailManage() {
             >
               <AccessTimeIcon sx={{ fontSize: 18, color: "#5f68d7" }} />
               <Typography>Working hour : 9:00am to 5:00pm</Typography>
-            </Box>
+            </Box> */}
           </Paper>
 
           {/* Applicants */}
@@ -322,14 +366,11 @@ export default function JobDetailManage() {
                 wordBreak: "break-word",
               }}
             >
-              Lorem ipsum dolor sit amet consectetur. Mauris sed in quis nulla.
-              Suspendisse risus nibh pharetra tempor scelerisque amet orci
-              aliquet. Phasellus lectus eleifend sed pharetra dictum dolor. In
-              ac ut scelerisque purus amet sed morbi nam montes. Arcu.
+              {jobDetails.job_detail.benefits}
             </Paper>
           </Box>
 
-          {/* Responsibilities Section */}
+          {/* descripitons Section */}
           <Box>
             <Typography
               variant="subtitle2"
@@ -337,7 +378,7 @@ export default function JobDetailManage() {
               color="#0f172a"
               sx={{ mb: 1 }}
             >
-              Responsibilities
+              Descriptions
             </Typography>
             <Paper
               elevation={0}
@@ -351,17 +392,7 @@ export default function JobDetailManage() {
                 wordBreak: "break-word",
               }}
             >
-              Lorem ipsum dolor sit amet consectetur. Nec quis nec sagittis
-              ultrices egestas nunc urna cursus at. Lectus varius a libero
-              pulvinar et cursus mi pharetra. Dictum urna tortor amet lectus
-              dolor. Tellus at aenean dignissim in commodo dolor leo. Pulvinar
-              eget et eu accumsan odio sed. Cum volutpat sit ac rhoncus porta.
-              Sagittis morbi malesuada feugiat arcu cras aliquam lacus. Id
-              bibendum bibendum diam pretium auctor vitae odio. Ac et cum eget
-              risus. Magnis odio facilisi morbi mattis sed faucibus. Feugiat
-              nunc ultrices vulputate lectus urna diam nec. Volutpat ipsum
-              aliquet ut sit augue id in. In lacus neque sit eget arcu quis ut
-              ornare augue. Aliquet non malesuada lobortis euismod duis aliquam.
+              {jobDetails.job_detail.description}
             </Paper>
           </Box>
 
@@ -387,64 +418,98 @@ export default function JobDetailManage() {
                 wordBreak: "break-word",
               }}
             >
-              Lorem ipsum dolor sit amet consectetur. Nec quis nec sagittis
-              ultrices egestas nunc urna cursus at. Lectus varius a libero
-              pulvinar et cursus mi pharetra. Dictum urna tortor amet lectus
-              dolor. Tellus at aenean dignissim in commodo dolor leo. Pulvinar
-              eget et eu accumsan odio sed. Cum volutpat sit ac rhoncus porta.
-              Sagittis morbi malesuada feugiat arcu cras aliquam lacus. Id
-              bibendum bibendum diam pretium auctor vitae odio. Ac et cum eget
-              risus. Magnis odio facilisi morbi mattis sed faucibus. Feugiat
-              nunc ultrices vulputate lectus urna diam nec. Volutpat ipsum
-              aliquet ut sit augue id in. In lacus neque sit eget arcu quis ut
-              ornare augue. Aliquet non malesuada lobortis euismod duis aliquam.
+              {jobDetails.job_detail.requirements}
+            </Paper>
+          </Box>
+
+          {/* Note Section */}
+          <Box>
+            <Typography
+              variant="subtitle2"
+              fontWeight={600}
+              color="#0f172a"
+              sx={{ mb: 1 }}
+            >
+              Note
+            </Typography>
+            <Paper
+              elevation={0}
+              sx={{
+                p: 2,
+                bgcolor: "white",
+                borderRadius: 2,
+                color: "#334155",
+                fontSize: "0.875rem",
+                lineHeight: 1.4,
+                wordBreak: "break-word",
+              }}
+            >
+              {jobDetails.job_detail.note}
             </Paper>
           </Box>
 
           {/* Action Buttons */}
-          <Box
-            sx={{
-              display: "flex",
-              gap: 4,
-              mt: 3,
-              flexWrap: "wrap",
-              maxWidth: "600px",
-              width: "100%",
-            }}
-          >
-            <Button
-              variant="outlined"
-              size="large"
+          {jobDetails.posting_status != "approved" && (
+            <Box
               sx={{
-                borderColor: "#5f68d7",
-                color: "#ef4444",
-                fontWeight: 600,
-                borderRadius: 2,
-                px: 4,
-                textTransform: "none",
-                minWidth: 140,
-                "&:hover": {
-                  borderColor: "#7f85da",
-                  backgroundColor: "rgba(239,68,68,0.1)",
-                },
+                display: "flex",
+                gap: 4,
+                mt: 3,
+                flexWrap: "wrap",
+                maxWidth: "600px",
+                width: "100%",
               }}
             >
-              Reject
-            </Button>
-            <Button
-              variant="contained"
-              size="large"
-              sx={{
-                fontWeight: 600,
-                borderRadius: 2,
-                px: 6,
-                textTransform: "none",
-                minWidth: 140,
-              }}
-            >
-              Approve
-            </Button>
-          </Box>
+              {jobDetails.posting_status != "rejected" && (
+                <Button
+                  loading={changeStatusMutation.isPending}
+                  variant="outlined"
+                  size="large"
+                  onClick={() => {
+                    changeStatusMutation.mutate({
+                      postID: Number(id),
+                      status: "rejected",
+                    });
+                  }}
+                  sx={{
+                    borderColor: "#5f68d7",
+                    color: "#ef4444",
+                    fontWeight: 600,
+                    borderRadius: 2,
+                    px: 4,
+                    textTransform: "none",
+                    minWidth: 140,
+                    "&:hover": {
+                      borderColor: "#7f85da",
+                      backgroundColor: "rgba(239,68,68,0.1)",
+                    },
+                  }}
+                >
+                  Reject
+                </Button>
+              )}
+              <Button
+                loading={changeStatusMutation.isPending}
+                onClick={() => {
+                  changeStatusMutation.mutate({
+                    postID: Number(id),
+                    status: "approved",
+                  });
+                }}
+                variant="contained"
+                size="large"
+                sx={{
+                  fontWeight: 600,
+                  borderRadius: 2,
+                  px: 6,
+                  textTransform: "none",
+                  minWidth: 140,
+                }}
+              >
+                Approve
+              </Button>
+            </Box>
+          )}
         </Stack>
       </Box>
     </Box>
