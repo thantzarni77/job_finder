@@ -39,6 +39,8 @@ export default function EmployerProfile() {
     (state) => state.setEmployerProfile,
   );
 
+  console.log(employerData);
+
   const allJobs = useJobStore((state) => state.jobs);
   const setJobs = useJobStore((state) => state.setJobs);
 
@@ -68,16 +70,17 @@ export default function EmployerProfile() {
     }
   }, [allJobsQuery.data, allJobsQuery.isSuccess, setJobs, allJobs]);
 
-  const employerProfileQuery = useQuery({
+  const { data: employerProfileQuery, isPending } = useQuery({
     queryKey: ["employerProfile", user_id],
-    queryFn: () => {
-      return getEmployerProfile(user_id);
-    },
+    queryFn: () => getEmployerProfile(user_id),
   });
+  if (!isPending) {
+    console.log(employerProfileQuery);
+  }
 
   useEffect(() => {
-    if (employerProfileQuery.data && employerProfileQuery.isSuccess) {
-      setEmployerProfile(employerProfileQuery.data.data.data[0]);
+    if (employerProfileQuery && !isPending) {
+      setEmployerProfile(employerProfileQuery.data[0]);
     }
   }, [
     employerProfileQuery.data,

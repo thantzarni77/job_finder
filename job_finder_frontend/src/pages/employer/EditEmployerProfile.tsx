@@ -63,8 +63,9 @@ export default function EditEmployerProfile() {
   const setEmployerProfile = useProfileStore(
     (state) => state.setEmployerProfile,
   );
+  console.log(employerData);
 
-  const employerProfileQuery = useQuery({
+  const { data: employerProfileQuery, isPending } = useQuery({
     enabled: user?.user_type == "employer" && !employerData.id,
     queryKey: ["employerProfile", user?.user_id],
     queryFn: () => {
@@ -73,14 +74,11 @@ export default function EditEmployerProfile() {
   });
 
   useEffect(() => {
-    if (employerProfileQuery.data && employerProfileQuery.isSuccess) {
-      setEmployerProfile(employerProfileQuery.data.data.data[0]);
+    if (employerProfileQuery && !isPending) {
+      console.log(employerProfileQuery);
+      setEmployerProfile(employerProfileQuery.data[0]);
     }
-  }, [
-    employerProfileQuery.data,
-    employerProfileQuery.isSuccess,
-    setEmployerProfile,
-  ]);
+  }, [employerProfileQuery, isPending, setEmployerProfile]);
 
   const userDataQuery = useQuery({
     queryKey: ["userSingleData", user?.user_id],
@@ -213,7 +211,7 @@ export default function EditEmployerProfile() {
     }
   }, [employerData, setValue, userData]);
 
-  if (employerProfileQuery.isSuccess) {
+  if (!isPending) {
     return (
       <>
         <Box

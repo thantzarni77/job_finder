@@ -93,6 +93,7 @@ export const useProfileStore = create<
     updated_at: "",
   },
   setEmployerProfile: (employerProfileFromServer) => {
+    console.log(employerProfileFromServer);
     set({ employerProfile: employerProfileFromServer });
   },
 }));

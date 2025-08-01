@@ -14,9 +14,11 @@ import {
 } from "../../helper/profileApiFunctions";
 import { getSingleUserData } from "../../helper/userApiFunctions";
 import { useUserDataStore } from "../../store/UserDataStore";
+import FullScreenLoader from "../../components/FullScreenLoader";
 
 export default function UserMainLayout() {
   const user = useUserStore((state) => state.user);
+
   const setUserData = useUserDataStore((state) => state.setUserData);
 
   const setSeekerProfile = useProfileStore((state) => state.setSeekerProfile);
@@ -25,7 +27,7 @@ export default function UserMainLayout() {
     (state) => state.setEmployerProfile,
   );
 
-  const employerProfileQuery = useQuery({
+  const { data: employerData, isPending: isEmployerDataPending } = useQuery({
     enabled: user?.user_type == "employer",
     queryKey: ["employerProfile", user?.user_id],
     queryFn: () => {
@@ -46,13 +48,14 @@ export default function UserMainLayout() {
     queryFn: getSingleUserData,
   });
 
-  const employerData = employerProfileQuery.data;
   const seekerData = seekerProfileQuery.data?.data.data[0];
   const userData = userDataQuery.data?.data;
 
   useEffect(() => {
-    if (employerData) setEmployerProfile(employerData);
-  }, [employerData, setEmployerProfile]);
+    if (!isEmployerDataPending && employerData) {
+      setEmployerProfile(employerData?.data[0]);
+    }
+  }, [employerData, isEmployerDataPending]);
 
   useEffect(() => {
     if (seekerData) setSeekerProfile(seekerData);
@@ -68,10 +71,10 @@ export default function UserMainLayout() {
       <Header
         isLoading={
           seekerProfileQuery.isFetching ||
-          employerProfileQuery.isFetching ||
+          isEmployerDataPending ||
           userDataQuery.isFetching
         }
-        employerProfile={employerData}
+        employerProfile={employerData?.data[0]}
         seekerProfile={seekerData}
         userData={userData}
       />
@@ -96,7 +99,7 @@ export default function UserMainLayout() {
             </Typography>
           </Alert>
         )}
-      <AppDrawer />
+      {/* <AppDrawer /> */}
       <Box sx={{ minHeight: 500 }}>
         <Outlet />
       </Box>

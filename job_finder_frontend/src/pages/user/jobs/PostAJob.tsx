@@ -44,6 +44,7 @@ export default function PostAJob() {
   const navigate = useNavigate();
   const employerProfile = useProfileStore((state) => state.employerProfile);
   console.log(employerProfile);
+
   const employerID = employerProfile.user_id?.toString();
   console.log(employerID);
 
