@@ -9,7 +9,7 @@ import {
   Alert,
 } from "@mui/material";
 import {
-  Google as GoogleIcon,
+  //Google as GoogleIcon,
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,
 } from "@mui/icons-material";
@@ -279,7 +279,7 @@ export default function Login() {
           </Button>
         </Box>
 
-        <Typography
+        {/* <Typography
           variant="subtitle2"
           sx={{ opacity: 0.5, textAlign: "center", my: 2 }}
         >
@@ -306,7 +306,7 @@ export default function Login() {
             <GoogleIcon sx={{ mx: 1, fontSize: "35px" }} />
             <Typography>Continue with google account</Typography>
           </Button>
-        </Box>
+        </Box> */}
         <Typography sx={{ textAlign: "center", my: 2 }}>
           Don't have an account?
           <MuiLink sx={{ mx: 1 }} component={RouterLink} to={"/register"}>

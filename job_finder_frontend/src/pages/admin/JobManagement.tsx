@@ -28,9 +28,10 @@ const JobManagement = () => {
   const itemsPerPage = 6;
 
   const allJobsQuery = useQuery({
-    enabled: allJobs.length === 0,
+    // enabled: allJobs.length === 0,
     queryKey: ["pureJobPosts"],
     queryFn: getAllJobs,
+    placeholderData: (previousData) => previousData || { data: allJobs },
   });
 
   useEffect(() => {
@@ -132,6 +133,7 @@ const JobManagement = () => {
             </Typography>
           </Box>
           <Box
+            onClick={() => navigate("/admin/jobs/manage/verified")}
             sx={{
               backgroundColor: "background.paper",
               width: "200px",

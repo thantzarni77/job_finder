@@ -135,11 +135,19 @@ export const router = createBrowserRouter([
       },
       {
         path: "/companies",
-        Component: Companies,
+        element: (
+          <SetUserDataMiddleware>
+            <Companies />
+          </SetUserDataMiddleware>
+        ),
       },
       {
         path: "/companies/:id",
-        Component: CompanyDetail,
+        element: (
+          <SetUserDataMiddleware>
+            <CompanyDetail />
+          </SetUserDataMiddleware>
+        ),
       },
       {
         path: "/profile/:id",
@@ -317,11 +325,19 @@ export const router = createBrowserRouter([
       },
       {
         path: "seekers/manage",
-        Component: SeekerManagement,
+        element: (
+          <IsLoginnedAndAdminMiddleware>
+            <SeekerManagement />
+          </IsLoginnedAndAdminMiddleware>
+        ),
       },
       {
         path: "seeker/:id/manage",
-        Component: SeekerDetailManage,
+        element: (
+          <IsLoginnedAndAdminMiddleware>
+            <SeekerDetailManage />
+          </IsLoginnedAndAdminMiddleware>
+        ),
       },
       // {
       //   path: "user/:id/edit",
@@ -341,12 +357,12 @@ export const router = createBrowserRouter([
       },
       {
         path: "employer/:id/manage",
-        Component: EmployerDetail,
+        element: (
+          <IsLoginnedAndAdminMiddleware>
+            <EmployerDetail />
+          </IsLoginnedAndAdminMiddleware>
+        ),
       },
-      // {
-      //   path: "employer/:id/edit",
-      //   Component: EditEmployer,
-      // },
     ],
   },
   {

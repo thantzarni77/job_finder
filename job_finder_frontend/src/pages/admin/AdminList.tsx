@@ -6,16 +6,20 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  InputAdornment,
+  Stack,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
   Typography,
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import CreateIcon from "@mui/icons-material/Create";
+import SearchIcon from "@mui/icons-material/Search";
 import RemoveModeratorOutlinedIcon from "@mui/icons-material/RemoveModeratorOutlined";
 import { useNavigate } from "react-router";
 import { useAdminStore } from "../../store/AdminStore";
@@ -30,6 +34,7 @@ const AdminList = () => {
   const queryClient = useQueryClient();
 
   const [selectedAdminId, setSelectedAdminId] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleClickOpen = (adminId: number) => {
     setSelectedAdminId(adminId);
@@ -63,6 +68,14 @@ const AdminList = () => {
     },
   });
 
+  const filteredAdmins = allAdmins
+    ? allAdmins.filter(
+        (admin) =>
+          admin.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          admin.email.toLowerCase().includes(searchQuery.toLowerCase()),
+      )
+    : [];
+
   if (allAdminsQuery.isFetching) {
     return (
       <FullScreenLoader
@@ -81,28 +94,65 @@ const AdminList = () => {
       <Typography variant="h4" sx={{ fontWeight: 700 }}>
         Admin Management
       </Typography>
-      <Button
-        onClick={() => navigate("/admin/add")}
+      <Box
         sx={{
-          backgroundColor: "#ffffff",
-          textTransform: "none",
-          borderRadius: "10px",
-          px: 2,
-          gap: 1,
-          my: 2,
-          ":hover": {
-            bgcolor: "background.hover",
-          },
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
         }}
       >
-        <CreateIcon />
-        <Typography
-          variant="subtitle2"
-          sx={{ color: "#000000", fontWeight: 400 }}
+        <Button
+          onClick={() => navigate("/admin/add")}
+          sx={{
+            backgroundColor: "#ffffff",
+            textTransform: "none",
+            borderRadius: "10px",
+            px: 2,
+            gap: 1,
+            my: 2,
+            ":hover": {
+              bgcolor: "background.hover",
+            },
+          }}
         >
-          Add Admin
-        </Typography>
-      </Button>
+          <CreateIcon />
+          <Typography
+            variant="subtitle2"
+            sx={{ color: "#000000", fontWeight: 400 }}
+          >
+            Add Admin
+          </Typography>
+        </Button>
+        {/* search job */}
+        <Box sx={{ my: 3 }}>
+          <Stack direction="row" alignItems="center" spacing={4}>
+            {/* 3. Connect the TextField to state */}
+            <TextField
+              placeholder={"Search by name, email..."}
+              size="small"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <SearchIcon sx={{ color: "primary.main" }} />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{
+                width: "300px",
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                  backgroundColor: "background.paper",
+                },
+                "& fieldset": {
+                  borderColor: "primary.main",
+                },
+              }}
+            />
+          </Stack>
+        </Box>
+      </Box>
       <TableContainer
         component={Paper}
         sx={{ boxShadow: "none", borderRadius: 3, pb: 2, px: 2 }}
@@ -116,9 +166,10 @@ const AdminList = () => {
               <TableCell align="right">Created at</TableCell>
             </TableRow>
           </TableHead>
+
           <TableBody>
-            {allAdmins ? (
-              allAdmins.map((admin) => (
+            {filteredAdmins && filteredAdmins.length > 0 ? (
+              filteredAdmins.map((admin) => (
                 <TableRow
                   key={admin.id}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -129,7 +180,11 @@ const AdminList = () => {
                   <TableCell align="right">{admin.email}</TableCell>
                   <TableCell
                     align="right"
-                    sx={{ display: "flex", alignItems: "center" }}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      alignItems: "center",
+                    }}
                   >
                     <Dialog
                       key={admin.id}
@@ -207,12 +262,11 @@ const AdminList = () => {
                 </TableRow>
               ))
             ) : (
-              <TableRow
-                key={"#"}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  No admin exists currently
+              <TableRow>
+                <TableCell colSpan={4} align="center">
+                  {searchQuery
+                    ? "No results found."
+                    : "No admin exists currently."}
                 </TableCell>
               </TableRow>
             )}

@@ -57,6 +57,7 @@ const SidePanel = () => {
   const addAdminPath = "/admin/add";
   const userDetailPath = "/admin/seeker/:id/manage";
   const employerManagement = "/admin/employers/manage";
+  const employerDetailManagement = "/admin/employer/:id/manage";
   const isOverviewActive = useMatch(overviewPath);
   const isCategoryActive = useMatch(categoryPath);
   const isJobAllActive = useMatch(jobsPath);
@@ -74,7 +75,9 @@ const SidePanel = () => {
   const isUsersListActive = useMatch(usersPath);
   const isUserDetailActive = useMatch(userDetailPath);
   const isUserManagementActive = isUsersListActive || isUserDetailActive;
-  const isEmployerActive = useMatch(employerManagement);
+  const isEmployerManagementActive = useMatch(employerManagement);
+  const isEmployerDetailActive = useMatch(employerDetailManagement);
+  const isEmployerActive = isEmployerManagementActive || isEmployerDetailActive;
 
   const baseButtonSx = {
     width: "fit-content",

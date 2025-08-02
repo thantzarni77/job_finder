@@ -1,25 +1,84 @@
-import {
-  Box,
-  Button,
-  Typography,
-  Stack,
-  Pagination,
-  IconButton,
-} from "@mui/material";
-import Kpay from "../../../assets/kpay.png";
+import { Box, Typography, Stack, Pagination, IconButton } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import GroupsIcon from "@mui/icons-material/Groups";
 import PhoneInTalkIcon from "@mui/icons-material/PhoneInTalk";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
-import LanguageOutlinedIcon from "@mui/icons-material/LanguageOutlined";
 import JobCard from "../../../components/user/jobs/JobCard";
-import Testimony from "../../../components/user/Testimony";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
+import { useQuery } from "@tanstack/react-query";
+import { getEmployerProfile } from "../../../helper/profileApiFunctions";
+import type { EmployerProfile } from "../../../store/ProfileStore";
+import FullScreenLoader from "../../../components/FullScreenLoader";
+import { useEffect, useState, type ChangeEvent } from "react";
+import { useJobStore } from "../../../store/JobStore";
+import { getAllJobs } from "../../../helper/postJob";
 
 export default function CompanyDetail() {
   const navigate = useNavigate();
+
+  const { id } = useParams();
+  const userID = Number(id);
+  const employerProfileQuery = useQuery({
+    queryKey: ["employerProfile", userID],
+    queryFn: () => {
+      return getEmployerProfile(userID);
+    },
+  });
+
+  const employerData: EmployerProfile = employerProfileQuery.data?.data.data[0];
+
+  const allJobs = useJobStore((state) => state.jobs);
+  const setJobs = useJobStore((state) => state.setJobs);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 3;
+
+  const pageCount = Math.ceil(allJobs.length / ITEMS_PER_PAGE);
+
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+
+  const currentJobs =
+    allJobs &&
+    employerData &&
+    allJobs
+      .filter((job) => job.employer_id == employerData.id)
+      .slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  const handlePageChange = (_event: ChangeEvent<unknown>, value: number) => {
+    setCurrentPage(value);
+  };
+
+  const allJobsQuery = useQuery({
+    enabled: allJobs.length == 0,
+    queryKey: ["pureJobPosts"],
+    queryFn: getAllJobs,
+  });
+
+  useEffect(() => {
+    if (allJobsQuery.data && allJobsQuery.isSuccess) {
+      setJobs(allJobsQuery.data.data);
+    }
+  }, [allJobsQuery.data, allJobsQuery.isSuccess, setJobs, allJobs]);
+
+  if (allJobsQuery.isFetching) {
+    return (
+      <FullScreenLoader
+        open={allJobsQuery.isFetching}
+        message="Getting jobs data.."
+      />
+    );
+  }
+
+  if (employerProfileQuery.isFetching) {
+    return (
+      <FullScreenLoader
+        open={employerProfileQuery.isFetching}
+        message="Getting employer data.."
+      />
+    );
+  }
+
   return (
     <>
       <Box sx={{ pt: 3, pb: 5, mb: 2, width: "90%", mx: "auto" }}>
@@ -45,33 +104,35 @@ export default function CompanyDetail() {
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <img src={Kpay} alt="" style={{ width: "70px", height: "auto" }} />
+            <img
+              src={`${import.meta.env.VITE_API_BASE_URL}/${employerData.company_image}`}
+              alt={"Employer Profile"}
+              style={{
+                width: "70px",
+                height: "auto",
+                backgroundSize: "cover",
+                borderRadius: 3,
+              }}
+            />
             <Box>
               <Typography sx={{ fontWeight: 600 }}>KBZ Bank</Typography>
               <Typography variant="body2" sx={{ color: "primary.light" }}>
-                Banking
+                {employerData.company_type}
               </Typography>
             </Box>
           </Box>
-          <Button
+          {/* <Button
             variant="outlined"
             size="small"
             sx={{ backgroundColor: "background.paper", textTransform: "none" }}
           >
             + Follow
-          </Button>
+          </Button> */}
         </Box>
         <Box sx={{ mt: 4 }}>
           <Typography sx={{ fontWeight: 600 }}>Description</Typography>
           <Typography variant="body2" sx={{ mt: 1, color: "text.secondary" }}>
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Blanditiis
-            tempora sapiente quos, dignissimos deleniti veritatis! Aperiam quae
-            reprehenderit odio provident, deleniti, veniam recusandae itaque
-            maiores accusamus quasi, facere delectus labore. Lorem ipsum dolor,
-            sit amet consectetur adipisicing elit. Aspernatur corporis cumque
-            veniam! Quidem ipsam veniam, quaerat necessitatibus assumenda
-            recusandae tempora modi nulla aliquam hic vitae, porro nemo animi.
-            Minima, est!
+            {employerData.company_description}
           </Typography>
         </Box>
         <Box sx={{ mt: 4 }}>
@@ -79,7 +140,7 @@ export default function CompanyDetail() {
           <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
             <LocationOnIcon color="primary" />
             <Typography variant="body2" sx={{ color: "text.secondary" }}>
-              123 Main Street, City, Country
+              {employerData.company_address}
             </Typography>
           </Box>
         </Box>
@@ -88,20 +149,11 @@ export default function CompanyDetail() {
           <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
             <AccountBalanceIcon color="primary" />
             <Typography variant="body2" sx={{ color: "text.secondary" }}>
-              Public Limited
+              {employerData.company_type}
             </Typography>
           </Box>
         </Box>
 
-        <Box sx={{ mt: 4 }}>
-          <Typography sx={{ fontWeight: 600 }}> Number of Employees</Typography>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
-            <GroupsIcon color="primary" />
-            <Typography variant="body2" sx={{ color: "text.secondary" }}>
-              1000+
-            </Typography>
-          </Box>
-        </Box>
         <Box sx={{ mt: 4 }}>
           <Typography sx={{ fontWeight: 600 }}>Contact Us</Typography>
           <Box
@@ -115,126 +167,72 @@ export default function CompanyDetail() {
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <EmailOutlinedIcon color="primary" />
               <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                abc@gmail.com
+                {employerData.company_email}
               </Typography>
             </Box>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <PhoneInTalkIcon color="primary" />
               <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                +09-123456789
+                {employerData.company_phone}
               </Typography>
             </Box>
           </Box>
         </Box>
-        <Box sx={{ mt: 4 }}>
-          <Typography sx={{ fontWeight: 600 }}>Company Website</Typography>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1 }}>
-            <LanguageOutlinedIcon color="primary" />
-            <Typography variant="body2" sx={{ color: "text.secondary" }}>
-              https://www.companywebsite.com
-            </Typography>
-          </Box>
+
+        {/* employer posted jobs */}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            width: "100%",
+            gap: 2,
+            my: 5,
+          }}
+        >
+          <Typography variant="h5" sx={{ fontWeight: 600, mt: 1, mb: 3 }}>
+            Open Vacancies
+          </Typography>
           <Box
             sx={{
               display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
+              flexDirection: { xs: "column", md: "column", lg: "row" },
+              flexWrap: "wrap",
+              justifyContent: "center",
+              alignItems: "start",
               width: "100%",
-              gap: 2,
-              my: 5,
+              gap: 6,
             }}
           >
-            <Typography
-              sx={{
-                color: "text.secondary",
-                fontWeight: 600,
-                mt: 5,
-                mb: 3,
-                textAlign: "center",
-              }}
-            >
-              Open Vacancies
-            </Typography>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: {
-                  xs: "column",
-                  sm: "row",
-                  md: "row",
-                  lg: "row",
-                },
-                justifyContent: "center",
-                alignItems: "center",
-                gap: { xs: 4, sm: 4, md: 5 },
-                flexWrap: "wrap",
-                width: "100%",
-              }}
-            >
-              {/* <JobCard />
-              <JobCard />
-              <JobCard /> */}
-            </Box>
-
-            <Stack sx={{ mt: 4, alignItems: "center" }}>
-              <Pagination
-                count={10}
-                variant="outlined"
-                shape="rounded"
-                color="primary"
-              />
-            </Stack>
+            {currentJobs.length == 0 && (
+              <Typography variant="h6">No Job Posted Currently</Typography>
+            )}
+            {currentJobs.map((single) => {
+              return <JobCard job={single} />;
+            })}
           </Box>
-
           <Box
             sx={{
               display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              width: "100%",
-              gap: 2,
+              justifyContent: "center",
               mt: 5,
-              mb: 15,
+              mb: 20,
             }}
           >
-            <Typography
-              sx={{
-                color: "text.secondary",
-                fontWeight: 600,
-                mt: 5,
-                mb: 3,
-                textAlign: "center",
-              }}
-            >
-              Testimonial
-            </Typography>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: {
-                  xs: "column",
-                  sm: "row",
-                  md: "row",
-                  lg: "row",
-                },
-                justifyContent: "center",
-                alignItems: "center",
-                gap: 5,
-                flexWrap: "wrap",
-                width: "100%",
-              }}
-            >
-              <Testimony />
-              <Testimony />
-              <Testimony />
-            </Box>
-
-            <Stack sx={{ mt: 4, alignItems: "center" }}>
+            <Stack>
               <Pagination
-                count={10}
-                variant="outlined"
+                count={pageCount}
+                page={currentPage}
+                onChange={handlePageChange}
                 shape="rounded"
+                variant="outlined"
                 color="primary"
+                sx={{
+                  "& .MuiPaginationItem-root": {
+                    color: "#5f6caf",
+                    borderColor: "#5f6caf",
+                  },
+                }}
               />
             </Stack>
           </Box>

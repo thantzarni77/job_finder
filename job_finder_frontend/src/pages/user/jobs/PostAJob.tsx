@@ -80,6 +80,7 @@ export default function PostAJob() {
     mutationFn: postAJob,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["jobPosts"] });
+      queryClient.invalidateQueries({ queryKey: ["pureJobPosts"] });
       navigate("/jobs");
     },
     onError: (res) => console.log(res),

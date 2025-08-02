@@ -449,45 +449,47 @@ export default function JobDetailManage() {
           </Box>
 
           {/* Action Buttons */}
-          {jobDetails.posting_status != "approved" && (
-            <Box
-              sx={{
-                display: "flex",
-                gap: 4,
-                mt: 3,
-                flexWrap: "wrap",
-                maxWidth: "600px",
-                width: "100%",
-              }}
-            >
-              {jobDetails.posting_status != "rejected" && (
-                <Button
-                  loading={changeStatusMutation.isPending}
-                  variant="outlined"
-                  size="large"
-                  onClick={() => {
-                    changeStatusMutation.mutate({
-                      postID: Number(id),
-                      status: "rejected",
-                    });
-                  }}
-                  sx={{
-                    borderColor: "#5f68d7",
-                    color: "#ef4444",
-                    fontWeight: 600,
-                    borderRadius: 2,
-                    px: 4,
-                    textTransform: "none",
-                    minWidth: 140,
-                    "&:hover": {
-                      borderColor: "#7f85da",
-                      backgroundColor: "rgba(239,68,68,0.1)",
-                    },
-                  }}
-                >
-                  Reject
-                </Button>
-              )}
+
+          <Box
+            sx={{
+              display: "flex",
+              gap: 4,
+              mt: 3,
+              flexWrap: "wrap",
+              maxWidth: "600px",
+              width: "100%",
+            }}
+          >
+            {(jobDetails.posting_status == "approved" ||
+              jobDetails.posting_status != "rejected") && (
+              <Button
+                loading={changeStatusMutation.isPending}
+                variant="outlined"
+                size="large"
+                onClick={() => {
+                  changeStatusMutation.mutate({
+                    postID: Number(id),
+                    status: "rejected",
+                  });
+                }}
+                sx={{
+                  borderColor: "#5f68d7",
+                  color: "#ef4444",
+                  fontWeight: 600,
+                  borderRadius: 2,
+                  px: 4,
+                  textTransform: "none",
+                  minWidth: 140,
+                  "&:hover": {
+                    borderColor: "#7f85da",
+                    backgroundColor: "rgba(239,68,68,0.1)",
+                  },
+                }}
+              >
+                Reject
+              </Button>
+            )}
+            {jobDetails.posting_status != "approved" && (
               <Button
                 loading={changeStatusMutation.isPending}
                 onClick={() => {
@@ -508,8 +510,8 @@ export default function JobDetailManage() {
               >
                 Approve
               </Button>
-            </Box>
-          )}
+            )}
+          </Box>
         </Stack>
       </Box>
     </Box>

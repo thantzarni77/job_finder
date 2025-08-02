@@ -43,7 +43,7 @@ export default function EmployerProfile() {
   const setJobs = useJobStore((state) => state.setJobs);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const ITEMS_PER_PAGE = 5;
+  const ITEMS_PER_PAGE = 3;
 
   const pageCount = Math.ceil(allJobs.length / ITEMS_PER_PAGE);
 
@@ -58,9 +58,9 @@ export default function EmployerProfile() {
   };
 
   const allJobsQuery = useQuery({
-    enabled: allJobs.length == 0,
     queryKey: ["pureJobPosts"],
     queryFn: getAllJobs,
+    placeholderData: (previousData) => previousData || { data: allJobs },
   });
 
   useEffect(() => {
@@ -284,7 +284,7 @@ export default function EmployerProfile() {
               flexDirection: { xs: "column", md: "column", lg: "row" },
               flexWrap: "wrap",
               justifyContent: "center",
-              alignItems: "center",
+              alignItems: "start",
               width: "100%",
               gap: 6,
             }}
@@ -305,20 +305,22 @@ export default function EmployerProfile() {
             }}
           >
             <Stack>
-              <Pagination
-                count={pageCount}
-                page={currentPage}
-                onChange={handlePageChange}
-                shape="rounded"
-                variant="outlined"
-                color="primary"
-                sx={{
-                  "& .MuiPaginationItem-root": {
-                    color: "#5f6caf",
-                    borderColor: "#5f6caf",
-                  },
-                }}
-              />
+              {pageCount > 1 && (
+                <Pagination
+                  count={pageCount}
+                  page={currentPage}
+                  onChange={handlePageChange}
+                  shape="rounded"
+                  variant="outlined"
+                  color="primary"
+                  sx={{
+                    "& .MuiPaginationItem-root": {
+                      color: "#5f6caf",
+                      borderColor: "#5f6caf",
+                    },
+                  }}
+                />
+              )}
             </Stack>
           </Box>
         </Box>

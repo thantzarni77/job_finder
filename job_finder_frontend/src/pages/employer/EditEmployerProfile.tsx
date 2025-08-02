@@ -127,6 +127,7 @@ export default function EditEmployerProfile() {
       queryClient.invalidateQueries({
         queryKey: ["employerProfile", user_id],
       });
+      queryClient.invalidateQueries({ queryKey: ["companies"] });
       navigate(-1);
     },
     onError: (err) => {

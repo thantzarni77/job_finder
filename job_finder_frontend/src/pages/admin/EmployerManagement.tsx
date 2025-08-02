@@ -1,24 +1,25 @@
 import {
   Box,
-  Button,
   InputAdornment,
   Pagination,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
-import FilterListIcon from "@mui/icons-material/FilterList";
 import SearchIcon from "@mui/icons-material/Search";
-import { useState } from "react";
+import { useState, type ChangeEvent } from "react";
 import AdminEmployerCard from "../../components/admin/AdminEmployerCard";
 import { useQuery } from "@tanstack/react-query";
 import { getAdminEmployers } from "../../helper/employerApiFunctions";
 import FullScreenLoader from "../../components/FullScreenLoader";
-import type { ChangeEvent } from "react";
 import type { EmployerWithUserID } from "../../store/EmployerStore";
+import { format } from "date-fns";
 
 export default function EmployerManagement() {
   const [page, setPage] = useState(1);
+
+  const [searchTerm, setSearchTerm] = useState("");
+
   const { data: employers, isPending: isEmployersPending } = useQuery({
     queryKey: ["adminEmployers", page],
     queryFn: () => getAdminEmployers(page),
@@ -27,16 +28,29 @@ export default function EmployerManagement() {
   if (isEmployersPending) {
     return <FullScreenLoader open={true} message={"Loading"} />;
   }
+
   // to handle paginated pages
   const handlePageChange = (_event: ChangeEvent<unknown>, value: number) => {
     setPage(value);
+
+    setSearchTerm("");
   };
+
+  const filteredEmployers = employers.data.filter(
+    (employer: EmployerWithUserID) => {
+      const term = searchTerm.toLowerCase();
+
+      return (
+        employer.company_name?.toLowerCase().includes(term) ||
+        employer.user_id.name.toLowerCase().includes(term) ||
+        employer.user_id.email.toLowerCase().includes(term)
+      );
+    },
+  );
 
   return (
     <Box
       sx={{
-        // width: "70%",
-        // mx: "20%",
         p: 2,
         display: "flex",
         flexDirection: "column",
@@ -46,7 +60,9 @@ export default function EmployerManagement() {
       <Typography variant="h4" sx={{ fontWeight: 700 }}>
         Employers Management
       </Typography>
-
+      <Typography variant="subtitle1" sx={{ fontWeight: 400, mb: 2 }}>
+        {format(new Date(), "dd MMM yyyy")}
+      </Typography>
       {/* users */}
       <Box>
         <Box
@@ -54,9 +70,9 @@ export default function EmployerManagement() {
             display: "flex",
             alignItems: "center",
             width: "75%",
-            // justifyContent: "space-between",
             flexWrap: "wrap",
             gap: 5,
+            mt: 3,
           }}
         >
           <Box
@@ -75,7 +91,7 @@ export default function EmployerManagement() {
               Total Employers
             </Typography>
             <Typography variant="h6" sx={{ fontWeight: 600 }}>
-              {employers.data.length}
+              {employers.meta.total}
             </Typography>
           </Box>
         </Box>
@@ -84,18 +100,17 @@ export default function EmployerManagement() {
       <Box sx={{ my: 3 }}>
         {/* --- Search and Filter Section --- */}
         <Stack direction="row" alignItems="center" spacing={4}>
-          {/* Search Box */}
           <TextField
-            placeholder={"Search users"}
+            placeholder={"Search employers..."}
             size="small"
-            slotProps={{
-              input: {
-                endAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon sx={{ color: "primary.main" }} />
-                  </InputAdornment>
-                ),
-              },
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <SearchIcon sx={{ color: "primary.main" }} />
+                </InputAdornment>
+              ),
             }}
             sx={{
               maxWidth: "250px",
@@ -108,23 +123,9 @@ export default function EmployerManagement() {
               },
             }}
           />
-          {/* Filter Button */}
-          <Button
-            variant="outlined"
-            endIcon={<FilterListIcon />}
-            sx={{
-              textTransform: "none",
-              borderColor: "primary.main",
-              color: "primary.main",
-              borderRadius: "8px",
-              bgcolor: "background.paper",
-            }}
-          >
-            Filter
-          </Button>
         </Stack>
 
-        {/* --- Placeholder for the actual content --- */}
+        {/* --- Content Section --- */}
         <Box sx={{ mt: 4 }}>
           <Box
             sx={{
@@ -135,11 +136,17 @@ export default function EmployerManagement() {
               flexWrap: "wrap",
             }}
           >
-            {employers.data.map((employer: EmployerWithUserID) => {
+            {filteredEmployers.map((employer: EmployerWithUserID) => {
               return (
                 <AdminEmployerCard key={employer.id} employer={employer} />
               );
             })}
+            {/* the filter returns no results */}
+            {filteredEmployers.length === 0 && searchTerm && (
+              <Typography sx={{ mt: 2 }}>
+                No results found for "{searchTerm}" on this page.
+              </Typography>
+            )}
           </Box>
         </Box>
       </Box>

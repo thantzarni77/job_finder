@@ -1,17 +1,78 @@
 import {
   Box,
-  Button,
   InputAdornment,
   Pagination,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
-import FilterListIcon from "@mui/icons-material/FilterList";
 import SearchIcon from "@mui/icons-material/Search";
 import AdminSeekerCard from "../../components/admin/AdminSeekerCard";
+import {
+  useSearchTalentsByName,
+  useSeekerFilterStore,
+  useSeekerParentStore,
+} from "../../store/SeekerStore";
+import { useEffect, useState, type ChangeEvent } from "react";
+import { useQuery } from "@tanstack/react-query";
+import {
+  getSeekerList,
+  type Seeker,
+  type SeekerApiResponse,
+} from "../../helper/talentPage";
+import FullScreenLoader from "../../components/FullScreenLoader";
+import { format } from "date-fns";
 
 const SeekerManagement = () => {
+  const { selectedTalents } = useSeekerFilterStore();
+
+  // state for pagination
+  const [page, setPage] = useState(1);
+
+  // const stateSeekers = useSeekerParentStore((state) => state.stateSeekers);
+  const setStateSeekers = useSeekerParentStore(
+    (state) => state.setStateSeekers,
+  );
+
+  // to find with name
+  const talentName = useSearchTalentsByName((state) => state.talentName);
+
+  const {
+    data: seekers,
+    isPending: seekerPending,
+    isFetching,
+  } = useQuery<SeekerApiResponse>({
+    queryKey: ["seekers", selectedTalents, page, talentName],
+    queryFn: () => getSeekerList(selectedTalents, page, talentName),
+  });
+
+  // to store in parent state
+  useEffect(() => {
+    if (!seekerPending && seekers) {
+      setStateSeekers(seekers);
+    }
+  }, [seekers, seekerPending, page, selectedTalents, setStateSeekers]);
+
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // to handle paginated pages
+  const handlePageChange = (_event: ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+    setSearchTerm("");
+  };
+
+  const filteredSeekers = seekers?.data.filter((seeker: Seeker) => {
+    const term = searchTerm.toLowerCase();
+
+    return (
+      seeker.user_id.name?.toLowerCase().includes(term) ||
+      seeker.user_id.email.toLowerCase().includes(term)
+    );
+  });
+
+  if (isFetching) {
+    return <FullScreenLoader open={true} message="Getting seeker datas" />;
+  }
   return (
     <Box
       sx={{
@@ -27,7 +88,7 @@ const SeekerManagement = () => {
         Seeker Management
       </Typography>
       <Typography variant="subtitle1" sx={{ fontWeight: 400, mb: 2 }}>
-        15 Jul 2025
+        {format(new Date(), "dd MMM yyyy")}
       </Typography>
       {/* users */}
       <Box>
@@ -57,7 +118,7 @@ const SeekerManagement = () => {
               Total Seekers
             </Typography>
             <Typography variant="h6" sx={{ fontWeight: 600 }}>
-              5,300
+              {seekers?.data.length}
             </Typography>
           </Box>
           {/* <Box
@@ -127,6 +188,8 @@ const SeekerManagement = () => {
           <TextField
             placeholder={"Search users"}
             size="small"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             slotProps={{
               input: {
                 endAdornment: (
@@ -147,20 +210,6 @@ const SeekerManagement = () => {
               },
             }}
           />
-          {/* Filter Button */}
-          <Button
-            variant="outlined"
-            endIcon={<FilterListIcon />}
-            sx={{
-              textTransform: "none",
-              borderColor: "primary.main",
-              color: "primary.main",
-              borderRadius: "8px",
-              bgcolor: "background.paper",
-            }}
-          >
-            Filter
-          </Button>
         </Stack>
 
         {/* --- Placeholder for the actual content --- */}
@@ -174,21 +223,23 @@ const SeekerManagement = () => {
               flexWrap: "wrap",
             }}
           >
-            <AdminSeekerCard />
-            <AdminSeekerCard />
-            <AdminSeekerCard />
-            <AdminSeekerCard />
+            {!seekerPending &&
+              filteredSeekers &&
+              filteredSeekers.map((seeker: Seeker) => {
+                return <AdminSeekerCard key={seeker.id} seeker={seeker} />;
+              })}
           </Box>
         </Box>
       </Box>
       <Stack>
         <Pagination
-          count={5}
+          count={seekers?.meta.last_page}
+          page={seekers?.meta.current_page ?? 1}
+          onChange={handlePageChange}
           shape="rounded"
           variant="outlined"
           color="primary"
           sx={{
-            ml: "12%",
             "& .MuiPaginationItem-root": {
               color: "#5f6caf",
               borderColor: "#5f6caf",

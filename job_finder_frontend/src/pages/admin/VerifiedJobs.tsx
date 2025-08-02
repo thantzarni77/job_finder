@@ -16,9 +16,9 @@ const VerifiedJobs = () => {
   const setJobs = useJobStore((state) => state.setJobs);
 
   const allJobsQuery = useQuery({
-    enabled: allJobs.length == 0,
     queryKey: ["pureJobPosts"],
     queryFn: getAllJobs,
+    placeholderData: (previousData) => previousData || { data: allJobs },
   });
 
   useEffect(() => {

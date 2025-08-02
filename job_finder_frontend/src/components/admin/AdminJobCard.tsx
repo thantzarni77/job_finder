@@ -1,11 +1,8 @@
 import { Box, Typography } from "@mui/material";
 import WatchLaterOutlinedIcon from "@mui/icons-material/WatchLaterOutlined";
-// import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRenameOutlineOutlined";
-// import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
-// import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import BusinessIcon from "@mui/icons-material/Business";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
-
+import CircleIcon from "@mui/icons-material/Circle";
 import type { Job } from "../../store/JobStore";
 import { format } from "date-fns";
 import { useNavigate } from "react-router";
@@ -60,12 +57,22 @@ const AdminJobCard = ({ job }: { job: Job }) => {
       <Typography variant="body1" sx={{ fontWeight: 600 }}>
         {job.job_title}
       </Typography>
-      {/* <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-        <CircleIcon sx={{ color: "success.main", fontSize: "20px" }} />
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        {job.posting_status == "rejected" && (
+          <CircleIcon sx={{ color: "error.main" }} />
+        )}
+        {job.posting_status == "approved" && (
+          <CircleIcon sx={{ color: "success.main" }} />
+        )}
+        {job.posting_status == "pending" && (
+          <CircleIcon sx={{ color: "yellow" }} />
+        )}
         <Typography variant="subtitle2" sx={{ fontWeight: 400 }}>
-          Active
+          {job.posting_status == "rejected" && "Rejected"}
+          {job.posting_status == "approved" && "Approved"}
+          {job.posting_status == "pending" && "Pending"}
         </Typography>
-      </Box> */}
+      </Box>
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         <BusinessIcon sx={{ color: "primary.main", fontSize: "20px" }} />
         {job.employer.company_name && (
