@@ -45,6 +45,7 @@ import AddAdmin from "./pages/admin/AddAdmin";
 import CategoryList from "./pages/admin/CategoryList";
 import RejectedJobs from "./pages/admin/RejectedJobs";
 import VerifiedJobs from "./pages/admin/VerifiedJobs";
+import EmployerManagement from "./pages/admin/EmployerManagement";
 
 export const router = createBrowserRouter([
   {
@@ -330,6 +331,14 @@ export const router = createBrowserRouter([
       //   path: "job/:id/edit",
       //   Component: EditJob,
       // },
+      {
+        path: "employers/manage",
+        element: (
+          <IsLoginnedAndAdminMiddleware>
+            <EmployerManagement />
+          </IsLoginnedAndAdminMiddleware>
+        ),
+      },
       {
         path: "employer/:id/manage",
         Component: EmployerDetail,

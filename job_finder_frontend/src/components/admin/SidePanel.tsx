@@ -56,8 +56,7 @@ const SidePanel = () => {
   const adminPath = "/admin/list/admins";
   const addAdminPath = "/admin/add";
   const userDetailPath = "/admin/seeker/:id/manage";
-  const employerPath = "/admin/employer/:id/manage";
-
+  const employerManagement = "/admin/employers/manage";
   const isOverviewActive = useMatch(overviewPath);
   const isCategoryActive = useMatch(categoryPath);
   const isJobAllActive = useMatch(jobsPath);
@@ -75,7 +74,7 @@ const SidePanel = () => {
   const isUsersListActive = useMatch(usersPath);
   const isUserDetailActive = useMatch(userDetailPath);
   const isUserManagementActive = isUsersListActive || isUserDetailActive;
-  const isEmployerActive = useMatch(employerPath);
+  const isEmployerActive = useMatch(employerManagement);
 
   const baseButtonSx = {
     width: "fit-content",
@@ -278,7 +277,7 @@ const SidePanel = () => {
 
       <ListItem disableGutters sx={{ listItemContainerSx }}>
         <ListItemButton
-          onClick={() => navigate(employerPath)}
+          onClick={() => navigate(employerManagement)}
           sx={{
             ...baseButtonSx,
             backgroundColor: isEmployerActive ? "#ffffff" : "transparent",
