@@ -109,6 +109,7 @@ export default function EditEmployerProfile() {
       queryClient.invalidateQueries({
         queryKey: ["userSingleData", user_id],
       });
+      queryClient.invalidateQueries({ queryKey: ["individualJob"] });
       if (!employerData.company_name) {
         navigate(-1);
       }

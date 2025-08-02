@@ -52,7 +52,8 @@ const JobManagement = () => {
 
       return (
         job.job_title.toLowerCase().includes(query) ||
-        job.employer.company_name?.toLowerCase().includes(query)
+        job.employer.company_name?.toLowerCase().includes(query) ||
+        job.job_code?.toLowerCase().includes(query)
       );
     });
   }, [allJobs, searchQuery]);

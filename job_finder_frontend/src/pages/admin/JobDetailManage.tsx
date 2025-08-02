@@ -145,7 +145,7 @@ export default function JobDetailManage() {
               variant="subtitle1"
               sx={{ fontWeight: 700, color: "#0f172a", flexBasis: "100%" }}
             >
-              {jobDetails.job_title}
+              {jobDetails.job_title} ({jobDetails.job_code})
             </Typography>
 
             <Stack
