@@ -1,22 +1,23 @@
 <?php
 
-use App\Http\Controllers\Admin\AdminAuthController;
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\EmployerController;
-use App\Http\Controllers\Api\NewPasswordController;
-use App\Http\Controllers\Api\SeekerController;
-use App\Http\Controllers\Api\SocialLoginController;
-use App\Http\Controllers\ApplyJobController;
-use App\Http\Controllers\DeadlineController;
-use App\Http\Controllers\EmployerVerficationController;
-use App\Http\Controllers\JobCategoryController;
-use App\Http\Controllers\JobDetailController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\TalentController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PostJobController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SaveJobController;
-use App\Http\Controllers\TalentController;
-use App\Http\Controllers\UserController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\ApplyJobController;
+use App\Http\Controllers\DeadlineController;
+use App\Http\Controllers\JobDetailController;
+use App\Http\Controllers\Api\SeekerController;
+use App\Http\Controllers\JobCategoryController;
+use App\Http\Controllers\Api\EmployerController;
+use App\Http\Controllers\Admin\AdminAuthController;
+use App\Http\Controllers\Api\NewPasswordController;
+use App\Http\Controllers\Api\SocialLoginController;
+use App\Http\Controllers\EmployerVerficationController;
 
 // Route::post('/superadmin/login', [AdminAuthController::class, 'login']);
 
@@ -178,6 +179,10 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
         //check if job is saved
         Route::post("/check", [SaveJobController::class, 'checkIsSaved']);
     });
+
+    //get all contacts
+    Route::get("/contact/all", [ContactController::class, 'getContacts']);
+    Route::post("/contact/send", [ContactController::class, 'sendContact']);
 
     //job detail route
     Route::apiResource('job-details', JobDetailController::class);
