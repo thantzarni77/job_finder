@@ -64,3 +64,8 @@ export const sendMail = async (payload: {
   const { data } = await axiosClient.post("/apply-job/mail", payload);
   return data;
 };
+
+export const deleteJob = async (postJobID: number | undefined) => {
+  const { data } = await axiosClient.delete(`/post-jobs/${postJobID}`);
+  return data;
+};

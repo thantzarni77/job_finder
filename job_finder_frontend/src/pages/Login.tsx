@@ -14,6 +14,7 @@ import {
   VisibilityOff as VisibilityOffIcon,
 } from "@mui/icons-material";
 import { useState } from "react";
+import Logo from "../assets/logo.png";
 import { Link as MuiLink } from "@mui/material";
 import { Link as RouterLink, useNavigate } from "react-router";
 import BG_IMG from "../assets/login_signup_bg.jpg";
@@ -91,9 +92,14 @@ export default function Login() {
         display: "flex",
       }}
     >
-      <Typography variant="h4" sx={{ fontWeight: 700, mt: 4, mb: 2 }}>
-        LOGO
-      </Typography>
+      <Box
+        sx={{
+          mt: 5,
+          mb: 3,
+        }}
+      >
+        <img src={Logo} alt="logo" style={{ width: 100, height: "auto" }} />
+      </Box>
       <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
         Login to Job Finder
       </Typography>

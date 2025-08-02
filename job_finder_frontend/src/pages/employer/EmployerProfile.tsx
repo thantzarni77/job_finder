@@ -45,8 +45,6 @@ export default function EmployerProfile() {
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 3;
 
-  const pageCount = Math.ceil(allJobs.length / ITEMS_PER_PAGE);
-
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
 
   const currentJobs = allJobs
@@ -56,6 +54,8 @@ export default function EmployerProfile() {
   const handlePageChange = (_event: ChangeEvent<unknown>, value: number) => {
     setCurrentPage(value);
   };
+
+  const pageCount = Math.ceil(currentJobs?.length / ITEMS_PER_PAGE);
 
   const allJobsQuery = useQuery({
     queryKey: ["pureJobPosts"],
@@ -284,7 +284,7 @@ export default function EmployerProfile() {
               flexDirection: { xs: "column", md: "column", lg: "row" },
               flexWrap: "wrap",
               justifyContent: "center",
-              alignItems: "start",
+              alignItems: { xs: "center", lg: "start" },
               width: "100%",
               gap: 6,
             }}

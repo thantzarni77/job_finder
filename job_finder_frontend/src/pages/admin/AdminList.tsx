@@ -162,8 +162,8 @@ const AdminList = () => {
             <TableRow>
               <TableCell>Name</TableCell>
               <TableCell align="right">Email</TableCell>
-              <TableCell align="right">Actions</TableCell>
-              <TableCell align="right">Created at</TableCell>
+              <TableCell align="right">Action</TableCell>
+              <TableCell align="right">Date</TableCell>
             </TableRow>
           </TableHead>
 
@@ -179,7 +179,7 @@ const AdminList = () => {
                   </TableCell>
                   <TableCell align="right">{admin.email}</TableCell>
                   <TableCell
-                    align="right"
+                    align="left"
                     sx={{
                       display: "flex",
                       justifyContent: "flex-end",

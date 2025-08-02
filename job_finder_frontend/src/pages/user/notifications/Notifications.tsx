@@ -17,7 +17,14 @@ const notifications = [
 const Notifications = () => {
   return (
     <Container
-      sx={{ mx: "auto", p: 2, mt: 5, mb: 15, width: { xs: "90%", md: "70%" } }}
+      sx={{
+        mx: "auto",
+        p: 2,
+        mt: 5,
+        mb: 15,
+        width: { xs: "90%", md: "70%" },
+        minHeight: "100vh",
+      }}
     >
       <Typography variant="h4" sx={{ fontWeight: 700, textAlign: "center" }}>
         Notifications

@@ -11,7 +11,7 @@ import ApplyJob from "./components/user/jobs/ApplyJob";
 import JobApplyConfirm from "./components/user/jobs/JobApplyConfirm";
 import CompanyDetail from "./pages/user/company/CompanyDetail";
 import Profile from "./pages/user/Profile";
-import Notifications from "./pages/user/notifications/Notifications";
+//import Notifications from "./pages/user/notifications/Notifications";
 import Settings from "./pages/user/settings/Settings";
 import SecuritySetting from "./pages/user/security/SecuritySetting";
 import ChangeEmail from "./pages/user/settings/ChangeEmail";
@@ -46,11 +46,15 @@ import CategoryList from "./pages/admin/CategoryList";
 import RejectedJobs from "./pages/admin/RejectedJobs";
 import VerifiedJobs from "./pages/admin/VerifiedJobs";
 import EmployerManagement from "./pages/admin/EmployerManagement";
+import Contact from "./pages/admin/Contact";
+import ContactToAdmin from "./components/user/ContactToAdmin";
+import CustomError from "./pages/CustomError";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     Component: UserMainLayout,
+    errorElement: <CustomError />,
     children: [
       {
         path: "/",
@@ -58,6 +62,14 @@ export const router = createBrowserRouter([
         element: (
           <SetUserDataMiddleware>
             <Home />
+          </SetUserDataMiddleware>
+        ),
+      },
+      {
+        path: "/verification/failed/:id",
+        element: (
+          <SetUserDataMiddleware>
+            <ContactToAdmin />
           </SetUserDataMiddleware>
         ),
       },
@@ -189,10 +201,10 @@ export const router = createBrowserRouter([
           </IsLoginnedMiddleware>
         ),
       },
-      {
-        path: "/notifications/user/:id",
-        Component: Notifications,
-      },
+      // {
+      //   path: "/notifications/user/:id",
+      //   Component: Notifications,
+      // },
       {
         path: "/settings/user/:id",
         element: (
@@ -280,6 +292,14 @@ export const router = createBrowserRouter([
         element: (
           <IsLoginnedAndAdminMiddleware>
             <CategoryList />
+          </IsLoginnedAndAdminMiddleware>
+        ),
+      },
+      {
+        path: "contacts",
+        element: (
+          <IsLoginnedAndAdminMiddleware>
+            <Contact />
           </IsLoginnedAndAdminMiddleware>
         ),
       },

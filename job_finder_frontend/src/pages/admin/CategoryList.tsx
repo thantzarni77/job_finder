@@ -80,6 +80,7 @@ const CategoryList = () => {
     mutationFn: (payload: CategoryFormData) => addCategory(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["jobCategories"] });
+      queryClient.invalidateQueries({ queryKey: ["singleCategory"] });
       handleCloseFormDialog();
     },
     onError: (error) => console.error("Failed to add category:", error),
@@ -90,6 +91,7 @@ const CategoryList = () => {
       editCategory(id, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["jobCategories"] });
+      queryClient.invalidateQueries({ queryKey: ["singleCategory"] });
       handleCloseFormDialog();
     },
     onError: (error) => console.error("Failed to edit category:", error),
@@ -99,6 +101,7 @@ const CategoryList = () => {
     mutationFn: deleteCategory,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["jobCategories"] });
+      queryClient.invalidateQueries({ queryKey: ["singleCategory"] });
       handleCloseDeleteDialog();
     },
     onError: (error) => console.error("Failed to delete category:", error),

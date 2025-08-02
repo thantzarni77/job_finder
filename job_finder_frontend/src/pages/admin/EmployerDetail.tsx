@@ -89,6 +89,7 @@ export default function EmployerDetail() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminEmployer", userId] });
       queryClient.invalidateQueries({ queryKey: ["adminEmployers"] });
+      queryClient.invalidateQueries({ queryKey: ["contacts"] });
     },
   });
 
@@ -197,16 +198,18 @@ export default function EmployerDetail() {
       </Paper>
 
       {/* Action Buttons */}
-      {employerData.verification == "pending" && (
+      {employerData.verification != "approved" && (
         <Box display="flex" gap={2} mt={2} flexWrap="wrap">
-          <Button
-            variant="outlined"
-            loading={verifyMutate.isPending}
-            color="error"
-            onClick={handleReject}
-          >
-            Reject
-          </Button>
+          {employerData.verification != "rejected" && (
+            <Button
+              variant="outlined"
+              loading={verifyMutate.isPending}
+              color="error"
+              onClick={handleReject}
+            >
+              Reject
+            </Button>
+          )}
           <Button
             variant="outlined"
             loading={verifyMutate.isPending}
