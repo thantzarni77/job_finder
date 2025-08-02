@@ -145,7 +145,8 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
     Route::prefix('apply-job')->group(function () {
 
         // seeker view his applied jobs
-        Route::get('/seeker', [ApplyJobController::class, 'seekerAppliedJobs']);
+        Route::get('/seeker', [ApplyJobController::class, 'seekerAppliedJobs'])->withoutMiddleware("UserTypeMiddleware:seeker");
+
         // employer view his uploaded jobs
         Route::get('/employer', [ApplyJobController::class, 'employerPostedJobs']);
         // employer view shorlist his posted jobs
@@ -182,7 +183,7 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
     Route::apiResource('job-details', JobDetailController::class);
 
     //job category route
-    Route::apiResource('job-categories', JobCategoryController::class);
+    Route::apiResource('job-categories', JobCategoryController::class)->withoutMiddleware("AuthMiddleware");
 
     Route::get('/deadline-alerts', [DeadlineController::class, 'alertNearDeadline']);
 });

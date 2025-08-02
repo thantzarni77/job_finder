@@ -52,7 +52,7 @@ class EmployerController extends Controller
     public function getEmployerData(string $id)
     {
         try {
-            $data = Employer::where("user_id", $id)->get();
+            $data = Employer::with('user')->where("user_id", $id)->get();
 
             if ($data->isEmpty()) {
                 return response()->json([

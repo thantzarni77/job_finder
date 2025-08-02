@@ -89,10 +89,10 @@ class ApplyJobRepository implements ApplyJobRepositoryInterface
     public function sendMail($request)
     {
         // dd($request->seeker_id);
-        if(ApplyJob::where('seeker_id', $request->seeker_id)->where('post_job_id', $request->post_job_id)->where('shortlist', false)->exists()){
+        if (ApplyJob::where('seeker_id', $request->seeker_id)->where('post_job_id', $request->post_job_id)->where('shortlist', false)->exists()) {
             return response()->json(['status' => 'error', 'message' => 'You have not shortlisted this job.Please shortlist this job.'], 400);
         }
-        
+
         $seeker = Seeker::where('id', $request->seeker_id)->with('user')->first();
         $employer = Employer::where('user_id', JWTAuth::user()->id)->with('user')->first();
         $job      = PostJob::where('id', $request->post_job_id)->first();
