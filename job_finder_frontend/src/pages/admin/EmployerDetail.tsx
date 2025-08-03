@@ -9,10 +9,10 @@ import {
   Pagination,
   Stack,
 } from "@mui/material";
+import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import BusinessIcon from "@mui/icons-material/Business";
 import EmailIcon from "@mui/icons-material/Email";
 import PhoneIcon from "@mui/icons-material/Phone";
-
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 import PersonIcon from "@mui/icons-material/Person";
@@ -183,6 +183,18 @@ export default function EmployerDetail() {
               </Typography>
             </Box>
           </Grid>
+          <Grid item xs={12}>
+            <Box display="flex" alignItems="center" gap={1}>
+              <LocationOnOutlinedIcon fontSize="small" />
+              <Typography variant="body2">
+                {employerData.company_address && employerData.company_address}
+                {!employerData.company_address && employerData.user.address}
+                {!employerData.company_address &&
+                  !employerData.user.address &&
+                  "No Data"}
+              </Typography>
+            </Box>
+          </Grid>
         </Grid>
       </Paper>
 
@@ -198,28 +210,45 @@ export default function EmployerDetail() {
       </Paper>
 
       {/* Action Buttons */}
-      {employerData.verification != "approved" && (
-        <Box display="flex" gap={2} mt={2} flexWrap="wrap">
-          {employerData.verification != "rejected" && (
-            <Button
-              variant="outlined"
-              loading={verifyMutate.isPending}
-              color="error"
-              onClick={handleReject}
-            >
-              Reject
-            </Button>
-          )}
+
+      <Box display="flex" gap={2} mt={2} flexWrap="wrap">
+        {employerData.verification != "rejected" && (
+          <Button
+            variant="outlined"
+            loading={verifyMutate.isPending}
+            color="error"
+            onClick={handleReject}
+            sx={{
+              textTransform: "none",
+              borderRadius: 2,
+              boxShadow: "none",
+              ":hover": {
+                boxShadow: "none",
+              },
+            }}
+          >
+            Reject
+          </Button>
+        )}
+        {employerData.verification != "verified" && (
           <Button
             variant="outlined"
             loading={verifyMutate.isPending}
             color="primary"
             onClick={handleApprove}
+            sx={{
+              textTransform: "none",
+              borderRadius: 2,
+              boxShadow: "none",
+              ":hover": {
+                boxShadow: "none",
+              },
+            }}
           >
             Approve
           </Button>
-        </Box>
-      )}
+        )}
+      </Box>
 
       {/* ---- UPLOADED JOBS SECTION ---- */}
       <Box sx={{ mt: 3, mb: 5 }}>
