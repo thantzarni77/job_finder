@@ -319,27 +319,47 @@ export default function Profile() {
 
           <Box sx={{ mt: 4 }}>
             <Typography variant="h6">Social Media</Typography>
-            {seekerProfile.social_media_link.map((single, index) => {
-              return (
-                <Box
-                  key={index}
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                    mt: 1,
-                  }}
-                >
-                  {single.includes("facebook") && <Facebook color="primary" />}
-                  {single.includes("instagram") && (
-                    <Instagram color="primary" />
-                  )}
-                  <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                    {single}
-                  </Typography>
-                </Box>
-              );
-            })}
+            {seekerProfile.social_media_link ? (
+              seekerProfile.social_media_link.map((single, index) => {
+                return (
+                  <Box
+                    key={index}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      mt: 1,
+                    }}
+                  >
+                    {single.includes("facebook") && (
+                      <Facebook color="primary" />
+                    )}
+                    {single.includes("instagram") && (
+                      <Instagram color="primary" />
+                    )}
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "text.secondary" }}
+                    >
+                      {single}
+                    </Typography>
+                  </Box>
+                );
+              })
+            ) : (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                  mt: 1,
+                }}
+              >
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                  No data
+                </Typography>
+              </Box>
+            )}
           </Box>
 
           <Box sx={{ mt: 4 }}>

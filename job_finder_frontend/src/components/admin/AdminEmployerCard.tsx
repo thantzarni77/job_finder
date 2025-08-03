@@ -3,11 +3,9 @@ import CircleIcon from "@mui/icons-material/Circle";
 import WatchLaterOutlinedIcon from "@mui/icons-material/WatchLaterOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
-
-import { Link as MuiLink } from "@mui/material";
-import { Link as RouterLink, useNavigate } from "react-router";
 import { format } from "date-fns";
 import type { EmployerWithUserID } from "../../store/EmployerStore";
+import { useNavigate } from "react-router";
 
 export function getStatusColor(status: string) {
   switch (status) {
@@ -65,23 +63,12 @@ export default function AdminEmployerCard({
           />
         )}
         {/* seeker details */}
-        <MuiLink
-          component={RouterLink}
-          to={`/admin/employer/${employer.id}/manage`}
-          sx={{
-            textDecoration: "none",
-            ":hover": {
-              cursor: "pointer",
-              color: "text.primary",
-            },
-          }}
-        >
-          <Typography variant="body1" sx={{ fontWeight: 600 }}>
-            {employer.company_name
-              ? `${employer.company_name}(Company)`
-              : `${employer.user_id.name}(Individual)`}
-          </Typography>
-        </MuiLink>
+
+        <Typography variant="body1" sx={{ fontWeight: 600 }}>
+          {employer.company_name
+            ? `${employer.company_name}(Company)`
+            : `${employer.user_id.name}(Individual)`}
+        </Typography>
       </Box>
 
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
