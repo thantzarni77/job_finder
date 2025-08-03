@@ -139,7 +139,9 @@ export default function Home() {
 
         <Box className="flex flex-wrap items-start gap-3 md:justify-center">
           {currentJobs.map((single) => {
-            return <JobCard key={single.id} job={single} />;
+            if (single.posting_status == "approved") {
+              return <JobCard key={single.id} job={single} />;
+            }
           })}
         </Box>
 
@@ -178,7 +180,9 @@ export default function Home() {
         >
           {employers.data.map((employer: Employer) => {
             if (employer.company_name) {
-              return <CompanyCard key={employer.id} company={employer} />;
+              if (employer.verification == "verified") {
+                return <CompanyCard key={employer.id} company={employer} />;
+              }
             }
           })}
         </Box>
