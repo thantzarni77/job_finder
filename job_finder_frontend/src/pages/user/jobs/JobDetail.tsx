@@ -734,7 +734,9 @@ const JobDetail = () => {
             {allJobs.map((single) => {
               if (single.category_id == jobDetails?.category_id) {
                 if (single.id != Number(id)) {
-                  return <JobCard key={single.id} job={single} />;
+                  if (single.posting_status == "approved") {
+                    return <JobCard key={single.id} job={single} />;
+                  }
                 }
               }
             })}
