@@ -416,7 +416,7 @@ export default function Profile() {
                         <Button
                           variant="outlined"
                           fullWidth
-                          href={`../${single.link}`}
+                          href={`${single.link}`}
                         >
                           View Project
                         </Button>
