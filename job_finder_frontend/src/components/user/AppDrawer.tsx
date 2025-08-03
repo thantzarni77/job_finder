@@ -7,6 +7,7 @@ import {
   ListItemButton,
 } from "@mui/material";
 import { useAppStore } from "../../store/Appstore";
+import Logo from "../../assets/logo.png";
 import { Link } from "react-router";
 import { useUserStore } from "../../store/UserStore";
 import { useProfileStore } from "../../store/ProfileStore";
@@ -41,12 +42,15 @@ export default function AppDrawer() {
       onClick={() => setShowDrawer(false)}
     >
       <Box sx={{ width: 250, py: 3 }}>
-        <Typography
-          variant="h4"
-          sx={{ textAlign: "center", fontWeight: "700" }}
+        <Box
+          sx={{
+            mt: 5,
+            mb: 3,
+            mx: 3,
+          }}
         >
-          LOGO
-        </Typography>
+          <img src={Logo} alt="logo" style={{ width: 100, height: "auto" }} />
+        </Box>
         <List>
           <ListItem>
             <ListItemButton>
@@ -113,13 +117,13 @@ export default function AppDrawer() {
             </ListItemButton>
           </ListItem>
 
-          <ListItem sx={{ display: { xs: "inline-flex", sm: "none" } }}>
+          {/* <ListItem sx={{ display: { xs: "inline-flex", sm: "none" } }}>
             <ListItemButton>
               <Link to="/notifications/user/1">
                 <Typography>Notifications</Typography>
               </Link>
             </ListItemButton>
-          </ListItem>
+          </ListItem> */}
 
           <ListItem sx={{ display: { xs: "inline-flex", sm: "none" } }}>
             <ListItemButton>

@@ -1,12 +1,13 @@
-import { Box, Button, Divider, Typography } from "@mui/material";
+import { Avatar, Box, Button, Divider, Typography } from "@mui/material";
 import CircleIcon from "@mui/icons-material/Circle";
 import WatchLaterOutlinedIcon from "@mui/icons-material/WatchLaterOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 
 import { Link as MuiLink } from "@mui/material";
-import { Link as RouterLink } from "react-router";
+import { Link as RouterLink, useNavigate } from "react-router";
 import { format } from "date-fns";
+import type { EmployerWithUserID } from "../../store/EmployerStore";
 
 export function getStatusColor(status: string) {
   switch (status) {
@@ -21,7 +22,12 @@ export function getStatusColor(status: string) {
   }
 }
 
-export default function AdminEmployerCard({ employer }) {
+export default function AdminEmployerCard({
+  employer,
+}: {
+  employer: EmployerWithUserID;
+}) {
+  const navigate = useNavigate();
   return (
     <Box
       sx={{
@@ -36,16 +42,28 @@ export default function AdminEmployerCard({ employer }) {
         gap: 1,
       }}
     >
-      <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 3 }}>
-        <img
-          src={
-            employer.company_image
-              ? `${import.meta.env.VITE_API_BASE_URL}/${employer.company_image}`
-              : `${import.meta.env.VITE_API_BASE_URL}/${employer.user_id.profile_picture}`
-          }
-          style={{ width: 50, height: 50, borderRadius: 10 }}
-          alt=""
-        />
+      <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+        {employer.company_image && (
+          <img
+            src={`${import.meta.env.VITE_API_BASE_URL}/${employer.company_image}`}
+            style={{ width: 50, height: 50, borderRadius: 10 }}
+            alt=""
+          />
+        )}
+
+        {!employer.company_image && !employer.user_id.profile_picture && (
+          <Avatar
+            variant="square"
+            sx={{ width: 50, height: 50, borderRadius: 2 }}
+          />
+        )}
+        {!employer.company_image && employer.user_id.profile_picture && (
+          <img
+            src={`${import.meta.env.VITE_API_BASE_URL}/${employer.user_id.profile_picture}`}
+            style={{ width: 50, height: 50, borderRadius: 10 }}
+            alt=""
+          />
+        )}
         {/* seeker details */}
         <MuiLink
           component={RouterLink}
@@ -88,7 +106,9 @@ export default function AdminEmployerCard({ employer }) {
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         <EmailOutlinedIcon sx={{ color: "primary.main", fontSize: "20px" }} />
         <Typography variant="subtitle2" sx={{ fontWeight: 400 }}>
-          {employer.company_email ?? employer.user_id.email}
+          {employer.company_email
+            ? employer.company_email
+            : employer.user_id.email}
         </Typography>
       </Box>
       <Divider sx={{ borderColor: "primary.main" }} flexItem />
@@ -115,7 +135,9 @@ export default function AdminEmployerCard({ employer }) {
               gap: 1,
               textTransform: "none",
             }}
-            href={`/admin/employer/${employer.id}/manage`}
+            onClick={() =>
+              navigate(`/admin/employer/${employer.user_id.id}/manage`)
+            }
           >
             <RemoveRedEyeOutlinedIcon sx={{ color: "primary.main" }} />
             <Typography

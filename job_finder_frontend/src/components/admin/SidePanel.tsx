@@ -1,6 +1,5 @@
 import {
   Box,
-  Typography,
   ListItem,
   ListItemButton,
   ListItemText,
@@ -11,21 +10,26 @@ import {
   DialogContentText,
   DialogActions,
   Button,
+  Badge,
 } from "@mui/material";
+import Logo from "../../assets/logo.png";
 import TableChartIcon from "@mui/icons-material/TableChart";
 import ClassOutlinedIcon from "@mui/icons-material/ClassOutlined";
 import WorkIcon from "@mui/icons-material/Work";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import ContactMailIcon from "@mui/icons-material/ContactMail";
 import PersonIcon from "@mui/icons-material/Person";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import { useMatch, useNavigate } from "react-router";
 import { useAdminMenuStore } from "../../store/AdminAppStore";
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useUserStore } from "../../store/UserStore";
 import { logoutUser } from "../../helper/authApiFunctions";
 import { useUserDataStore } from "../../store/UserDataStore";
+import { getAllContacts } from "../../helper/contactApiFunctions";
+import type { SingleContact } from "../../store/ContactStore";
 
 const SidePanel = () => {
   const queryClient = useQueryClient();
@@ -50,28 +54,36 @@ const SidePanel = () => {
   const categoryPath = "/admin/categories";
   const jobsPath = "/admin/jobs/manage";
   const jobsPendingPath = "/admin/jobs/manage/pending";
+  const jobsRejectedPath = "/admin/jobs/manage/rejected";
   const jobsDetailPath = "/admin/jobs/detail/:id";
   const usersPath = "/admin/seekers/manage";
   const adminPath = "/admin/list/admins";
   const addAdminPath = "/admin/add";
   const userDetailPath = "/admin/seeker/:id/manage";
-  // const employerPath = "/admin/employer/:id/manage";
   const employerManagement = "/admin/employers/manage";
-
+  const employerDetailManagement = "/admin/employer/:id/manage";
+  const contact = "/admin/contacts";
   const isOverviewActive = useMatch(overviewPath);
   const isCategoryActive = useMatch(categoryPath);
   const isJobAllActive = useMatch(jobsPath);
   const isJobPendingActive = useMatch(jobsPendingPath);
+  const isJobRejectedActive = useMatch(jobsRejectedPath);
   const isJobDetailActive = useMatch(jobsDetailPath);
   const isJobsActive =
-    isJobAllActive || isJobDetailActive || isJobPendingActive;
+    isJobAllActive ||
+    isJobDetailActive ||
+    isJobPendingActive ||
+    isJobRejectedActive;
   const isAdminListActive = useMatch(adminPath);
   const isAdminPathActive = useMatch(addAdminPath);
   const isAdminActive = isAdminListActive || isAdminPathActive;
   const isUsersListActive = useMatch(usersPath);
   const isUserDetailActive = useMatch(userDetailPath);
   const isUserManagementActive = isUsersListActive || isUserDetailActive;
-  const isEmployerActive = useMatch(employerManagement);
+  const isEmployerManagementActive = useMatch(employerManagement);
+  const isEmployerDetailActive = useMatch(employerDetailManagement);
+  const isEmployerActive = isEmployerManagementActive || isEmployerDetailActive;
+  const isContactActive = useMatch(contact);
 
   const baseButtonSx = {
     width: "fit-content",
@@ -101,6 +113,13 @@ const SidePanel = () => {
       }
     },
   });
+
+  const contactQuery = useQuery({
+    queryKey: ["contacts"],
+    queryFn: getAllContacts,
+  });
+
+  const allContacts: SingleContact[] = contactQuery.data?.data;
 
   return (
     <Box>
@@ -153,18 +172,9 @@ const SidePanel = () => {
           </Button>
         </DialogActions>
       </Dialog>
-      <Typography
-        variant="h6"
-        sx={{
-          fontWeight: "bold",
-          flexGrow: 1,
-          textAlign: "center",
-          my: 3,
-          color: "#ffffff",
-        }}
-      >
-        LOGO
-      </Typography>
+      <Box sx={{ my: 3, mx: 3 }}>
+        <img src={Logo} alt="Logo" style={{ width: 80, height: "auto" }} />
+      </Box>
 
       <ListItem disableGutters sx={{ listItemContainerSx }}>
         <ListItemButton
@@ -243,6 +253,34 @@ const SidePanel = () => {
             <ClassOutlinedIcon />
           </ListItemIcon>
           {showMenu && <ListItemText primary="Categories" />}
+        </ListItemButton>
+      </ListItem>
+
+      <ListItem disableGutters sx={{ listItemContainerSx }}>
+        <ListItemButton
+          onClick={() => navigate(contact)}
+          sx={{
+            ...baseButtonSx,
+            backgroundColor: isContactActive ? "#ffffff" : "transparent",
+            color: isContactActive ? "primary.main" : "#ffffff",
+            "&:hover": {
+              backgroundColor: isContactActive
+                ? "#ffffff"
+                : "rgba(255, 255, 255, 0.08)",
+            },
+          }}
+        >
+          <ListItemIcon
+            sx={{
+              ...baseButtonSx,
+              color: isContactActive ? "primary.main" : "#ffffff",
+            }}
+          >
+            <Badge badgeContent={allContacts?.length} color="info">
+              <ContactMailIcon />
+            </Badge>
+          </ListItemIcon>
+          {showMenu && <ListItemText primary="Job management" />}
         </ListItemButton>
       </ListItem>
 

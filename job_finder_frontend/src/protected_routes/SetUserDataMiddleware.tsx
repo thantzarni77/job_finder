@@ -2,8 +2,10 @@ import React from "react";
 import { useUserStore } from "../store/UserStore";
 import axiosClient from "../helper/axiosClient";
 import { useProfileStore } from "../store/ProfileStore";
+import { useNavigate } from "react-router";
 
 const SetUserDataMiddleware = ({ children }: { children: React.ReactNode }) => {
+  const navigate = useNavigate();
   const user = useUserStore((state) => state.user);
   const setUserData = useUserStore((state) => state.setUserData);
   const setToken = useUserStore((state) => state.setToken);
@@ -16,7 +18,11 @@ const SetUserDataMiddleware = ({ children }: { children: React.ReactNode }) => {
   const accessToken = localStorage.getItem("token");
 
   if (user) {
-    return children;
+    if (user.user_type == "seeker" || user?.user_type == "employer") {
+      return children;
+    } else {
+      navigate("/admin/overview");
+    }
   } else if (!user && accessToken) {
     axiosClient
       .get("/profile")
@@ -45,6 +51,9 @@ const SetUserDataMiddleware = ({ children }: { children: React.ReactNode }) => {
             .then(() => {
               return children;
             });
+        }
+        if (user.user_type == "superadmin" || user.user_type == "admin") {
+          return navigate("/admin/overview");
         }
       })
       .catch((err) => {

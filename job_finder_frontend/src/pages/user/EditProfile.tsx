@@ -227,6 +227,7 @@ export default function EditProfile() {
     onSuccess: (response) => {
       if (response.status == 200) {
         queryClient.invalidateQueries({ queryKey: ["seekerProfile", user_id] });
+        queryClient.invalidateQueries({ queryKey: ["seekers"] });
       }
       navigate(-1);
     },

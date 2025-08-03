@@ -45,9 +45,7 @@ export default function EmployerProfile() {
   const setJobs = useJobStore((state) => state.setJobs);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const ITEMS_PER_PAGE = 5;
-
-  const pageCount = Math.ceil(allJobs.length / ITEMS_PER_PAGE);
+  const ITEMS_PER_PAGE = 3;
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
 
@@ -59,9 +57,12 @@ export default function EmployerProfile() {
     setCurrentPage(value);
   };
 
+  const pageCount = Math.ceil(currentJobs?.length / ITEMS_PER_PAGE);
+
   const allJobsQuery = useQuery({
     queryKey: ["pureJobPosts"],
     queryFn: getAllJobs,
+    placeholderData: (previousData) => previousData || { data: allJobs },
   });
 
   useEffect(() => {
@@ -286,7 +287,7 @@ export default function EmployerProfile() {
               flexDirection: { xs: "column", md: "column", lg: "row" },
               flexWrap: "wrap",
               justifyContent: "center",
-              alignItems: "center",
+              alignItems: { xs: "center", lg: "start" },
               width: "100%",
               gap: 6,
             }}
@@ -307,20 +308,22 @@ export default function EmployerProfile() {
             }}
           >
             <Stack>
-              <Pagination
-                count={pageCount}
-                page={currentPage}
-                onChange={handlePageChange}
-                shape="rounded"
-                variant="outlined"
-                color="primary"
-                sx={{
-                  "& .MuiPaginationItem-root": {
-                    color: "#5f6caf",
-                    borderColor: "#5f6caf",
-                  },
-                }}
-              />
+              {pageCount > 1 && (
+                <Pagination
+                  count={pageCount}
+                  page={currentPage}
+                  onChange={handlePageChange}
+                  shape="rounded"
+                  variant="outlined"
+                  color="primary"
+                  sx={{
+                    "& .MuiPaginationItem-root": {
+                      color: "#5f6caf",
+                      borderColor: "#5f6caf",
+                    },
+                  }}
+                />
+              )}
             </Stack>
           </Box>
         </Box>

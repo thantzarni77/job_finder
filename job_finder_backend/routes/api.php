@@ -1,42 +1,26 @@
 <?php
 
-use App\Http\Controllers\Admin\AdminAuthController;
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\EmployerController;
-use App\Http\Controllers\Api\NewPasswordController;
-use App\Http\Controllers\Api\SeekerController;
-use App\Http\Controllers\Api\SocialLoginController;
-use App\Http\Controllers\ApplyJobController;
-use App\Http\Controllers\DeadlineController;
-use App\Http\Controllers\EmployerVerficationController;
-use App\Http\Controllers\JobCategoryController;
-use App\Http\Controllers\JobDetailController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\TalentController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PostJobController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SaveJobController;
-use App\Http\Controllers\TalentController;
-use App\Http\Controllers\UserController;
-use App\Models\Employer;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\ApplyJobController;
+use App\Http\Controllers\DeadlineController;
+use App\Http\Controllers\JobDetailController;
+use App\Http\Controllers\Api\SeekerController;
+use App\Http\Controllers\JobCategoryController;
+use App\Http\Controllers\Api\EmployerController;
+use App\Http\Controllers\Admin\AdminAuthController;
+use App\Http\Controllers\Api\NewPasswordController;
+use App\Http\Controllers\Api\SocialLoginController;
+use App\Http\Controllers\EmployerVerficationController;
 
 // Route::post('/superadmin/login', [AdminAuthController::class, 'login']);
 
-Route::group(["middleware" => "AuthMiddleware"], function () {
-
-    // Route::get('/admin/getprofile', [AdminAuthController::class, 'profile']);
-    // Route::post('/admin/logout', [AdminAuthController::class, 'logout']);
-    Route::post('/admin/employerVerification/{id}', [EmployerVerficationController::class, 'updateStatus']);
-    Route::post('/admin/post-verification/{id}', [PostJobController::class, 'postVerification']);
-    // //job post
-    // Route::prefix('post-jobs')->group(function () {
-    //     Route::get('/', [PostJobController::class, 'index'])->withoutMiddleware('AuthMiddleware');
-    //     Route::post('/', [PostJobController::class, 'store']);
-    //     Route::get('/{id}', [PostJobController::class, 'show']);
-    //     Route::post('/{id}', [PostJobController::class, 'update']);
-    //     Route::delete('/{id}', [PostJobController::class, 'destroy']);
-    // });
-
-});
 
 Route::post('/registerstepone', [AuthController::class, 'registerStepOne']);
 Route::post('/registersteptwo/{id}', [AuthController::class, 'registerStepTwo']);
@@ -76,11 +60,15 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
     Route::middleware("AdminSuperMiddleware")->group(function () {
         //job category route
         Route::apiResource('job-categories', JobCategoryController::class);
+
+        Route::post('/admin/employerVerification/{id}', [EmployerVerficationController::class, 'updateStatus']);
+        Route::post('/admin/post-verification/{id}', [PostJobController::class, 'postVerification']);
     });
 
     Route::post('/change-password/{id}', [NewPasswordController::class, 'changePassword']);
 
     Route::prefix("user")->group(function () {
+        Route::get("/all", [UserController::class, 'getAllUsers']);
         Route::get('/get', [UserController::class, 'getSingleUserData']);
         Route::post('/update/{id}', [UserController::class, 'updateUser']);
 
@@ -158,7 +146,8 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
     Route::prefix('apply-job')->group(function () {
 
         // seeker view his applied jobs
-        Route::get('/seeker', [ApplyJobController::class, 'seekerAppliedJobs']);
+        Route::get('/seeker', [ApplyJobController::class, 'seekerAppliedJobs'])->withoutMiddleware("UserTypeMiddleware:seeker");
+
         // employer view his uploaded jobs
         Route::get('/employer', [ApplyJobController::class, 'employerPostedJobs']);
         // employer view shorlist his posted jobs
@@ -191,11 +180,15 @@ Route::group(["middleware" => "AuthMiddleware"], function () {
         Route::post("/check", [SaveJobController::class, 'checkIsSaved']);
     });
 
+    //get all contacts
+    Route::get("/contact/all", [ContactController::class, 'getContacts']);
+    Route::post("/contact/send", [ContactController::class, 'sendContact']);
+
     //job detail route
     Route::apiResource('job-details', JobDetailController::class);
 
     //job category route
-    Route::apiResource('job-categories', JobCategoryController::class);
+    Route::apiResource('job-categories', JobCategoryController::class)->withoutMiddleware("AuthMiddleware");
 
     Route::get('/deadline-alerts', [DeadlineController::class, 'alertNearDeadline']);
 

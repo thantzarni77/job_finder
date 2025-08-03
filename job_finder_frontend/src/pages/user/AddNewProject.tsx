@@ -73,13 +73,11 @@ export default function AddNewProject() {
     mutationFn: (data: FormData) => {
       return seekerAddProject(data);
     },
-    onSuccess: (responseData) => {
-      if (responseData.statusText == "Created") {
-        queryClient.invalidateQueries({
-          queryKey: ["seekerProject", seekerProfile.id],
-        });
-        return navigate(-1);
-      }
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["seekerProject", seekerProfile.user_id.id],
+      });
+      return navigate(-1);
     },
     onError: (err) => {
       if (isAxiosError(err)) {

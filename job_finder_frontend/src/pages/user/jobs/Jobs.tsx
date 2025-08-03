@@ -1,21 +1,15 @@
 import {
   Box,
   Button,
-  MenuItem,
   Pagination,
-  Select,
   Skeleton,
   Stack,
   Typography,
-  type SelectChangeEvent,
 } from "@mui/material";
-import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import FilterListIcon from "@mui/icons-material/FilterList";
-
 import JobFilter from "../../../components/user/jobs/JobFilter";
 import JobCard from "../../../components/user/jobs/JobCard";
-
-import { useState, type ChangeEvent, useEffect } from "react";
+import { type ChangeEvent, useEffect } from "react";
 import SearchBox from "../../../components/user/SearchBox";
 import { useJobFilterStore } from "../../../store/Appstore";
 import JobFilterDrawer from "../../../components/user/JobFilterDrawer";
@@ -37,9 +31,6 @@ import {
 } from "../../../store/JobStore";
 
 const Jobs = () => {
-  const [sortBy, setSortBy] = useState<string>("recent");
-  const [open, setOpen] = useState<boolean>(false);
-
   const allJobs = useJobStore((state) => state.jobs);
   const setJobs = useJobStore((state) => state.setJobs);
 
@@ -91,10 +82,6 @@ const Jobs = () => {
     queryFn: getRoles,
   });
 
-  const handleChange = (event: SelectChangeEvent<string>) => {
-    setSortBy(event.target.value);
-  };
-
   // to handle paginated pages
   const handlePageChange = (_event: ChangeEvent<unknown>, value: number) => {
     setPage(value);
@@ -105,22 +92,6 @@ const Jobs = () => {
       setJobs(jobs.data);
     }
   }, [jobs, isJobsPending, setJobs, allJobs, selectedJobRole, selectedJobType]);
-
-  // custom component for dropdown icon
-  const CustomIcon = () => (
-    <ArrowDropUpIcon
-      onClick={() => setOpen(!open)}
-      sx={{
-        color: "primary.color",
-        transition: "transform 0.2s ease-in-out",
-        transform: open ? "rotate(0deg)" : "rotate(180deg)",
-        fontSize: "3rem",
-        ":hover": {
-          cursor: "pointer",
-        },
-      }}
-    />
-  );
 
   if (isJobsPending) {
     return <FullScreenLoader open={true} message={"Loading"} />;
@@ -220,7 +191,7 @@ const Jobs = () => {
               width: { xs: "82%", sm: "90%", md: "90%" },
               display: "flex",
               alignItems: { xs: "center", md: "start" },
-              justifyContent: "space-between",
+              justifyContent: { xs: "center", md: "space-between " },
               mb: 2,
             }}
           >
@@ -231,97 +202,6 @@ const Jobs = () => {
               + jobs are found
             </Typography>
             {/* filter box */}
-            <Select
-              open={open}
-              onOpen={() => setOpen(true)}
-              onClose={() => setOpen(false)}
-              onChange={handleChange}
-              IconComponent={CustomIcon}
-              value={sortBy}
-              sx={{
-                width: 155,
-                height: 40,
-                fontWeight: 400,
-                fontSize: "14px",
-                borderRadius: "5px",
-                bgcolor: "background.paper",
-                color: "primary.main",
-
-                // Crucially, hide the default input border
-                "& .MuiOutlinedInput-notchedOutline": {
-                  border: "none",
-                },
-                "&:hover .MuiOutlinedInput-notchedOutline": {
-                  border: "none",
-                },
-                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                  border: "none",
-                },
-              }}
-              // Props to style the dropdown menu itself
-              MenuProps={{
-                slotProps: {
-                  paper: {
-                    sx: {
-                      width: 155,
-                      bgcolor: "background.paper",
-                      borderRadius: "5px",
-                      boxShadow: "none",
-                      color: "primary.main",
-                    },
-                  },
-                },
-              }}
-            >
-              <MenuItem
-                value="recent"
-                sx={{
-                  padding: "10px 16px",
-                  borderRadius: "5px",
-                  fontWeight: 400,
-                  margin: "4px",
-                  borderLeft: "4px solid transparent",
-                  bgColor: "background.paper",
-                  color: "primary.main",
-                  fontSize: "14px",
-                  // Style for the currently selected item in the list
-                  "&.Mui-selected": {
-                    borderLeft: "4px solid",
-                    borderColor: " primary.main",
-                    fontWeight: 600,
-                    "&:hover": {
-                      backgroundColor: "rgba(106, 103, 193, 0.1)",
-                    },
-                  },
-                }}
-              >
-                Recent
-              </MenuItem>
-              <MenuItem
-                value="popular"
-                sx={{
-                  padding: "10px 16px",
-                  borderRadius: "8px",
-                  margin: "4px",
-                  borderLeft: "4px solid transparent",
-                  bgColor: "background.paper",
-                  color: "primary.main",
-                  fontWeight: 400,
-                  fontSize: "14px",
-                  // Style for the currently selected item in the list
-                  "&.Mui-selected": {
-                    borderLeft: "4px solid",
-                    borderColor: " primary.main",
-                    fontWeight: 600,
-                    "&:hover": {
-                      backgroundColor: "rgba(106, 103, 193, 0.1)",
-                    },
-                  },
-                }}
-              >
-                Popular
-              </MenuItem>
-            </Select>
           </Box>
           {/* jobs */}
           <Box

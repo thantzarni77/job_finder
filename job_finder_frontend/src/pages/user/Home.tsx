@@ -7,75 +7,76 @@ import {
   Pagination,
   Container,
 } from "@mui/material";
-import Kpay from "../../assets/kpay.png";
-import WaveMoney from "../../assets/wavemoney.png";
-import Meta from "../../assets/meta.png";
-import AyaBank from "../../assets/ayabank.jpeg";
-import Xiaomi from "../../assets/Xiaomi.png";
+
 import { useNavigate } from "react-router";
-import {
-  useJobCategoryFilter,
-  useJobRoleFilter,
-  useJobSalaryFilter,
-  useJobStore,
-  useJobTypeFilter,
-  type Job,
-} from "../../store/JobStore";
-import JobCard from "../../components/user/jobs/JobCard";
 import { useQuery } from "@tanstack/react-query";
-import { getAllJobPosts } from "../../helper/postJob";
-import { useState, type ChangeEvent } from "react";
+import { getAllJobs } from "../../helper/postJob";
+import { useEffect, useState, type ChangeEvent } from "react";
+import { useJobStore } from "../../store/JobStore";
+import JobCard from "../../components/user/jobs/JobCard";
+import { getAdminEmployers } from "../../helper/employerApiFunctions";
+import FullScreenLoader from "../../components/FullScreenLoader";
+import CompanyCard from "../../components/employer/CompanyCard";
+import type { Employer } from "../../store/CompanyStore";
 
 export default function Home() {
   const navigate = useNavigate();
   const allJobs = useJobStore((state) => state.jobs);
   const setJobs = useJobStore((state) => state.setJobs);
 
-  // const { selectedJobRole } = useJobRoleFilter();
-  // const { selectedJobType } = useJobTypeFilter();
-  // const { selectedJobCategory } = useJobCategoryFilter();
-  // const { selectedSalary } = useJobSalaryFilter();
-  // const [page, setPage] = useState(1);
+  const jobsToDisplay = allJobs.slice(0, 10);
 
-  // const { data: jobs, isPending: isJobsPending } = useQuery({
-  //   queryKey: [
-  //     "jobPosts",
-  //     selectedJobRole,
-  //     selectedJobType,
-  //     selectedJobCategory,
-  //     selectedSalary,
-  //     page,
-  //   ],
-  //   queryFn: () =>
-  //     getAllJobPosts(
-  //       selectedJobRole,
-  //       selectedJobType,
-  //       selectedJobCategory,
-  //       selectedSalary,
-  //       page,
-  //     ),
-  // });
+  const [currentPage, setCurrentPage] = useState(1);
+  const JOBS_PER_PAGE = 3;
+
+  const pageCount = Math.ceil(jobsToDisplay.length / JOBS_PER_PAGE);
+
+  const indexOfLastJob = currentPage * JOBS_PER_PAGE;
+  const indexOfFirstJob = indexOfLastJob - JOBS_PER_PAGE;
+  const currentJobs = jobsToDisplay.slice(indexOfFirstJob, indexOfLastJob);
+
+  const handlePageChange = (_event: ChangeEvent<unknown>, value: number) => {
+    setCurrentPage(value);
+  };
+
+  const [page, setPage] = useState(1);
+  const { data: employers, isPending: isEmployersPending } = useQuery({
+    queryKey: ["adminEmployers", page],
+    queryFn: () => getAdminEmployers(page),
+  });
+
+  const allJobsQuery = useQuery({
+    queryKey: ["pureJobPosts"],
+    queryFn: getAllJobs,
+    placeholderData: (previousData) => previousData || { data: allJobs },
+  });
+
+  useEffect(() => {
+    if (allJobsQuery.data && allJobsQuery.isSuccess) {
+      setJobs(allJobsQuery.data.data);
+    }
+  }, [allJobsQuery.data, allJobsQuery.isSuccess, setJobs]);
 
   // to handle paginated pages
-  // const handlePageChange = (_event: ChangeEvent<unknown>, value: number) => {
-  //   setPage(value);
-  // };
+  const handlePageChangeEmployer = (
+    _event: ChangeEvent<unknown>,
+    value: number,
+  ) => {
+    setPage(value);
+  };
 
-  // useEffect(() => {
-  //   if (allJobsQuery.data && allJobsQuery.isSuccess) {
-  //     setJobs(allJobsQuery.data);
-  //   }
-  // }, [
-  //   allJobsQuery.data,
-  //   allJobsQuery.isSuccess,
-  //   setJobs,
-  //   allJobs,
-  //   selectedJobRole,
-  //   selectedJobType,
-  // ]);
-  // if (isJobsPending) {
-  //   return;
-  // }
+  if (allJobsQuery.isFetching) {
+    return (
+      <FullScreenLoader
+        open={allJobsQuery.isFetching}
+        message="Getting Jobs."
+      />
+    );
+  }
+
+  if (isEmployersPending) {
+    return <FullScreenLoader open={true} message={"Loading"} />;
+  }
 
   return (
     <Box>
@@ -133,60 +134,53 @@ export default function Home() {
           variant="h6"
           sx={{ mb: 2, textAlign: "center", fontWeight: 600 }}
         >
-          Recommeded Jobs For You
+          Recommended Jobs For You
         </Typography>
 
-        {/* <Box className="flex flex-wrap items-center gap-3 md:justify-center">
-          {allJobs.map((single) => {
-            if (single.id < 10) {
-              return <JobCard key={single.id} job={single} />;
-            }
+        <Box className="flex flex-wrap items-start gap-3 md:justify-center">
+          {currentJobs.map((single) => {
+            return <JobCard key={single.id} job={single} />;
           })}
-        </Box> */}
+        </Box>
+
         <Box sx={{ display: "flex", justifyContent: "center", mt: 5, mb: 10 }}>
-          {/* <Stack>
-            <Pagination
-              count={jobs.last_page}
-              page={jobs.current_page ?? 1}
-              onChange={handlePageChange}
-              shape="rounded"
-              variant="outlined"
-              color="primary"
-              sx={{
-                "& .MuiPaginationItem-root": {
-                  color: "#5f6caf",
-                  borderColor: "#5f6caf",
-                },
-              }}
-            />
-          </Stack> */}
+          <Stack>
+            {pageCount > 1 && (
+              <Pagination
+                count={pageCount}
+                page={currentPage}
+                onChange={handlePageChange}
+                shape="rounded"
+                variant="outlined"
+                color="primary"
+                sx={{
+                  "& .MuiPaginationItem-root": {
+                    color: "#5f6caf",
+                    borderColor: "#5f6caf",
+                  },
+                }}
+              />
+            )}
+          </Stack>
         </Box>
 
         <Typography sx={{ textAlign: "center", mb: 3, fontWeight: 600 }}>
           Top Employers
         </Typography>
-        <Box className="lg-grid-cols-5 grid grid-cols-2 place-items-center gap-3 md:grid-cols-5">
-          <img src={Kpay} alt="" style={{ width: "100px", height: "auto" }} />
-          <img
-            src={WaveMoney}
-            alt=""
-            style={{ width: "100px", height: "auto", borderRadius: "15px" }}
-          />
-          <img
-            src={Meta}
-            alt=""
-            style={{ width: "100px", height: "auto", borderRadius: "15px" }}
-          />
-          <img
-            src={AyaBank}
-            alt=""
-            style={{ width: "100px", height: "auto", borderRadius: "15px" }}
-          />
-          <img
-            src={Xiaomi}
-            alt=""
-            style={{ width: "100px", height: "auto", borderRadius: "15px" }}
-          />
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexWrap: "wrap",
+            gap: 4,
+          }}
+        >
+          {employers.data.map((employer: Employer) => {
+            if (employer.company_name) {
+              return <CompanyCard key={employer.id} company={employer} />;
+            }
+          })}
         </Box>
 
         <Box
@@ -199,7 +193,9 @@ export default function Home() {
         >
           <Stack>
             <Pagination
-              count={5}
+              count={employers.meta.last_page}
+              page={employers.meta.current_page}
+              onChange={handlePageChangeEmployer}
               shape="rounded"
               variant="outlined"
               color="primary"

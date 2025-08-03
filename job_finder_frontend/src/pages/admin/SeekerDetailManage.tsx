@@ -1,15 +1,5 @@
-import {
-  Box,
-  Button,
-  IconButton,
-  Pagination,
-  Stack,
-  Tab,
-  Tabs,
-  Typography,
-} from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRenameOutlineOutlined";
 import HourglassBottomOutlinedIcon from "@mui/icons-material/HourglassBottomOutlined";
 import WatchLaterOutlinedIcon from "@mui/icons-material/WatchLaterOutlined";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
@@ -17,24 +7,41 @@ import SubtitlesOutlinedIcon from "@mui/icons-material/SubtitlesOutlined";
 import WorkOutlineOutlinedIcon from "@mui/icons-material/WorkOutlineOutlined";
 import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
-import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
-import CircleIcon from "@mui/icons-material/Circle";
-import SendOutlinedIcon from "@mui/icons-material/SendOutlined";
-import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
-import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
-import { useNavigate } from "react-router";
-import { Link as MuiLink } from "@mui/material";
-import { Link as RouterLink } from "react-router";
-import { useState } from "react";
+import { useNavigate, useParams } from "react-router";
+import { useQuery } from "@tanstack/react-query";
+import { getSeekerProfile } from "../../helper/profileApiFunctions";
+import type { SeekerProfile } from "../../store/ProfileStore";
+import FullScreenLoader from "../../components/FullScreenLoader";
+import { format } from "date-fns";
 
 const SeekerDetailManage = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const user_id = Number(id);
 
-  const [activeTab, setActiveTab] = useState(0);
+  // const [activeTab, setActiveTab] = useState(0);
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setActiveTab(newValue);
-  };
+  // const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
+  //   setActiveTab(newValue);
+  // };
+
+  const seekerProfileQuery = useQuery({
+    queryKey: ["seekerProfile", user_id],
+    queryFn: () => {
+      return getSeekerProfile(user_id);
+    },
+  });
+
+  const seekerProfile: SeekerProfile = seekerProfileQuery.data?.data.data[0];
+
+  if (seekerProfileQuery.isFetching) {
+    return (
+      <FullScreenLoader
+        open={seekerProfileQuery.isFetching}
+        message="Getting Seeker data"
+      />
+    );
+  }
   return (
     <Box sx={{ width: "94%", mx: 6 }}>
       {/* back arrow and top part */}
@@ -63,23 +70,6 @@ const SeekerDetailManage = () => {
             Seeker detail view
           </Typography>
         </Box>
-        <Button
-          sx={{
-            backgroundColor: "#ffffff",
-            textTransform: "none",
-            borderRadius: "10px",
-            px: 2,
-            gap: 1,
-          }}
-        >
-          <DriveFileRenameOutlineOutlinedIcon />
-          <Typography
-            variant="subtitle2"
-            sx={{ color: "#000000", fontWeight: 400 }}
-          >
-            Edit
-          </Typography>
-        </Button>
       </Box>
       {/* user name and status */}
       <Box
@@ -96,7 +86,9 @@ const SeekerDetailManage = () => {
           mb: 2,
         }}
       >
-        <Typography sx={{ fontWeight: 600 }}>Mr.John</Typography>
+        <Typography sx={{ fontWeight: 600 }}>
+          {seekerProfile.user_id.name}
+        </Typography>
         <Box sx={{ display: "flex", alignItems: "center", gap: 2, my: 1 }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <HourglassBottomOutlinedIcon
@@ -111,7 +103,7 @@ const SeekerDetailManage = () => {
               sx={{ color: "primary.main", fontSize: "20px" }}
             />
             <Typography variant="subtitle2" sx={{ fontWeight: 400 }}>
-              Joined : 13 JUL 2025
+              Joined : {format(seekerProfile.created_at, "dd MMM yyyy")}
             </Typography>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -145,7 +137,7 @@ const SeekerDetailManage = () => {
               sx={{ color: "primary.main", fontSize: "20px" }}
             />
             <Typography variant="subtitle2" sx={{ fontWeight: 400 }}>
-              Title: Graphic Designer
+              Title: {seekerProfile.talent}
             </Typography>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -153,7 +145,7 @@ const SeekerDetailManage = () => {
               sx={{ color: "primary.main", fontSize: "20px" }}
             />
             <Typography variant="subtitle2" sx={{ fontWeight: 400 }}>
-              Position : Senior
+              Position : {seekerProfile.role}
             </Typography>
           </Box>
         </Box>
@@ -163,8 +155,7 @@ const SeekerDetailManage = () => {
               sx={{ color: "primary.main", fontSize: "20px" }}
             />
             <Typography variant="subtitle2" sx={{ fontWeight: 400 }}>
-              Email: mrjhon12@gmail.com{" "}
-              <span style={{ color: "#75C149" }}>(verified)</span>
+              Email: {seekerProfile.user_id.email}
             </Typography>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -172,14 +163,16 @@ const SeekerDetailManage = () => {
               sx={{ color: "primary.main", fontSize: "20px" }}
             />
             <Typography variant="subtitle2" sx={{ fontWeight: 400 }}>
-              Phone number : +95 9 12345678{" "}
-              <span style={{ color: "#75C149" }}>(verified)</span>
+              Phone number :{" "}
+              {seekerProfile.user_id.phone
+                ? seekerProfile.user_id.phone
+                : "No data"}
             </Typography>
           </Box>
         </Box>
       </Box>
       {/*status two */}
-      <Box
+      {/* <Box
         sx={{
           width: "70%",
           display: "flex",
@@ -195,55 +188,15 @@ const SeekerDetailManage = () => {
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 2, my: 1 }}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <ReceiptLongOutlinedIcon
-              sx={{ color: "primary.main", fontSize: "20px" }}
-            />
-            <Typography variant="subtitle2" sx={{ fontWeight: 400 }}>
-              Profile : updated on 1 JUL 2025
-            </Typography>
-          </Box>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <CircleIcon sx={{ color: "error.main", fontSize: "20px" }} />
-            <Typography variant="subtitle2" sx={{ fontWeight: 400 }}>
-              Ban status : None
-            </Typography>
-          </Box>
-        </Box>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2, my: 1 }}>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <SendOutlinedIcon
               sx={{ color: "primary.main", fontSize: "20px", rotate: "-45deg" }}
             />
             <Typography variant="subtitle2" sx={{ fontWeight: 400 }}>
               Submitted jobs : 12
             </Typography>
-            <RemoveRedEyeOutlinedIcon
-              sx={{ color: "primary.main", fontSize: "20px" }}
-            />
-            <MuiLink component={RouterLink} to={"#"}>
-              <Typography variant="subtitle2" sx={{ fontWeight: 400 }}>
-                View
-              </Typography>
-            </MuiLink>
-          </Box>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <BookmarkBorderOutlinedIcon
-              sx={{ color: "primary.main", fontSize: "20px" }}
-            />
-            <Typography variant="subtitle2" sx={{ fontWeight: 400 }}>
-              Saved jobs
-            </Typography>
-            <RemoveRedEyeOutlinedIcon
-              sx={{ color: "primary.main", fontSize: "20px" }}
-            />
-            <MuiLink component={RouterLink} to={"#"}>
-              <Typography variant="subtitle2" sx={{ fontWeight: 400 }}>
-                View
-              </Typography>
-            </MuiLink>
           </Box>
         </Box>
-      </Box>
+      </Box> */}
 
       {/* action buttons */}
       <Box
@@ -255,7 +208,7 @@ const SeekerDetailManage = () => {
           my: 5,
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
+        {/* <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
           <Button
             sx={{
               bgcolor: "#ffffff",
@@ -280,8 +233,8 @@ const SeekerDetailManage = () => {
           >
             <Typography sx={{ color: "error.main" }}> Delete</Typography>
           </Button>
-        </Box>
-        <Button
+        </Box> */}
+        {/* <Button
           sx={{
             bgcolor: "#ffffff",
             borderRadius: "10px",
@@ -292,7 +245,7 @@ const SeekerDetailManage = () => {
           }}
         >
           <Typography>Send reset password link</Typography>
-        </Button>
+        </Button> */}
       </Box>
 
       {/* --- Jobs & Users Tab Navigation --- */}
@@ -304,67 +257,21 @@ const SeekerDetailManage = () => {
           width: "100%",
         }}
       >
-        <Tabs
-          sx={{ mb: 2 }}
-          value={activeTab}
-          onChange={handleTabChange}
-          aria-label="submitted jobs and saved jobs"
-        >
-          <Tab
-            label="Submitted Jobs"
-            sx={{
-              textTransform: "none",
-              fontSize: "1rem",
-              fontWeight: 600,
-              color: "#000000",
-              "&.Mui-selected": {
-                color: "#000000",
-              },
-            }}
-          />
-          <Tab
-            label="Saved Jobs"
-            sx={{
-              textTransform: "none",
-              fontSize: "1rem",
-              fontWeight: 600,
-              color: "#000000",
-              "&.Mui-selected": {
-                color: "#000000",
-              },
-            }}
-          />
-        </Tabs>
-
         {/* --- Placeholder for the actual content --- */}
         <Box sx={{ mt: 2 }}>
-          {activeTab === 0 && (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 3,
-                flexWrap: "wrap",
-              }}
-            >
-              {/* <JobCard />
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 3,
+              flexWrap: "wrap",
+            }}
+          >
+            {/* <JobCard />
               <JobCard /> */}
-            </Box>
-          )}
-          {activeTab === 1 && (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 3,
-                flexWrap: "wrap",
-              }}
-            >
-              {/* <JobCard /> */}
-            </Box>
-          )}
+          </Box>
         </Box>
-        <Stack sx={{ my: 4, ml: "15%" }}>
+        {/* <Stack sx={{ my: 4, ml: "15%" }}>
           <Pagination
             count={5}
             shape="rounded"
@@ -378,7 +285,7 @@ const SeekerDetailManage = () => {
               },
             }}
           />
-        </Stack>
+        </Stack> */}
       </Box>
     </Box>
   );

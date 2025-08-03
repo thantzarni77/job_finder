@@ -131,7 +131,7 @@ const JobDetail = () => {
   };
 
   const handleClose = (
-    event: React.SyntheticEvent | Event,
+    _event: React.SyntheticEvent | Event,
     reason?: SnackbarCloseReason,
   ) => {
     if (reason === "clickaway") {
@@ -436,6 +436,26 @@ const JobDetail = () => {
             </Typography>
           </Box>
 
+          {/* vacancies */}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 1,
+              mt: 3,
+            }}
+          >
+            <Typography variant="body1" sx={{ fontWeight: 600 }}>
+              Vacancy
+            </Typography>
+            <Typography
+              variant="subtitle2"
+              sx={{ fontWeight: 400, color: "text.secondary" }}
+            >
+              {jobDetails?.job_detail.vacancy}
+            </Typography>
+          </Box>
+
           <Box
             sx={{
               display: "flex",
@@ -639,6 +659,7 @@ const JobDetail = () => {
             jobDetails?.employer.user_id == user?.user_id && (
               <>
                 <JobCloseCard
+                  postJobID={jobDetails.id}
                   applicantCount={jobDetails?.job_detail.apply_count}
                   deadline={jobDetails?.job_detail.deadline}
                 />

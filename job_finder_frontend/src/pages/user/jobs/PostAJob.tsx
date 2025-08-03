@@ -82,6 +82,7 @@ export default function PostAJob() {
     mutationFn: postAJob,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["jobPosts"] });
+      queryClient.invalidateQueries({ queryKey: ["pureJobPosts"] });
       navigate("/jobs");
     },
     onError: (res) => console.log(res),
@@ -191,7 +192,7 @@ export default function PostAJob() {
               <input
                 type="hidden"
                 value={employerID}
-                {...register("employer_id", { required: true })}
+                {...register("employer_id")}
               />
               {errors.employer_id && (
                 <Typography

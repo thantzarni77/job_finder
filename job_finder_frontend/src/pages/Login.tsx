@@ -9,11 +9,12 @@ import {
   Alert,
 } from "@mui/material";
 import {
-  Google as GoogleIcon,
+  //Google as GoogleIcon,
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,
 } from "@mui/icons-material";
 import { useState } from "react";
+import Logo from "../assets/logo.png";
 import { Link as MuiLink } from "@mui/material";
 import { Link as RouterLink, useNavigate } from "react-router";
 import BG_IMG from "../assets/login_signup_bg.jpg";
@@ -91,9 +92,14 @@ export default function Login() {
         display: "flex",
       }}
     >
-      <Typography variant="h4" sx={{ fontWeight: 700, mt: 4, mb: 2 }}>
-        LOGO
-      </Typography>
+      <Box
+        sx={{
+          mt: 5,
+          mb: 3,
+        }}
+      >
+        <img src={Logo} alt="logo" style={{ width: 100, height: "auto" }} />
+      </Box>
       <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
         Login to Job Finder
       </Typography>
@@ -279,7 +285,7 @@ export default function Login() {
           </Button>
         </Box>
 
-        <Typography
+        {/* <Typography
           variant="subtitle2"
           sx={{ opacity: 0.5, textAlign: "center", my: 2 }}
         >
@@ -306,7 +312,7 @@ export default function Login() {
             <GoogleIcon sx={{ mx: 1, fontSize: "35px" }} />
             <Typography>Continue with google account</Typography>
           </Button>
-        </Box>
+        </Box> */}
         <Typography sx={{ textAlign: "center", my: 2 }}>
           Don't have an account?
           <MuiLink sx={{ mx: 1 }} component={RouterLink} to={"/register"}>

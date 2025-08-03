@@ -46,10 +46,26 @@ export const addToShortlist = async (postJobID: number | undefined) => {
   return data;
 };
 
+export const changeStatus = async (payload: {
+  postID: number;
+  status: string;
+}) => {
+  const { data } = await axiosClient.post(
+    `/admin/post-verification/${payload.postID}`,
+    payload,
+  );
+  return data;
+};
+
 export const sendMail = async (payload: {
   post_job_id: number | undefined;
   seeker_id: string | undefined;
 }) => {
   const { data } = await axiosClient.post("/apply-job/mail", payload);
+  return data;
+};
+
+export const deleteJob = async (postJobID: number | undefined) => {
+  const { data } = await axiosClient.delete(`/post-jobs/${postJobID}`);
   return data;
 };

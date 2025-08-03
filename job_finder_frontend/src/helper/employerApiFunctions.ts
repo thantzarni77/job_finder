@@ -15,6 +15,8 @@ export async function getAdminEmployers(page: number) {
 }
 
 export async function verifyByAdmin(id: number, status: string) {
-  const { data } = await axiosClient.post(`/employer/verify/${id}`, { status });
+  const { data } = await axiosClient.post(`/admin/employerVerification/${id}`, {
+    status,
+  });
   return data;
 }

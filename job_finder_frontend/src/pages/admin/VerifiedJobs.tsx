@@ -9,7 +9,7 @@ import { getAllJobs } from "../../helper/postJob";
 import { useEffect } from "react";
 import FullScreenLoader from "../../components/FullScreenLoader";
 
-const PendingJobs = () => {
+const VerifiedJobs = () => {
   const navigate = useNavigate();
 
   const allJobs = useJobStore((state) => state.jobs);
@@ -60,7 +60,7 @@ const PendingJobs = () => {
             />
           </IconButton>
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
-            Pending Jobs
+            Verified Jobs
           </Typography>
         </Box>
       </Box>
@@ -77,12 +77,12 @@ const PendingJobs = () => {
             }}
           >
             {allJobs
-              .filter((job) => job.posting_status == "pending")
+              .filter((job) => job.posting_status == "approved")
               .map((single) => {
                 return <AdminJobCard key={single.id} job={single} />;
               })}
-            {allJobs.filter((job) => job.posting_status == "pending").length ==
-              0 && <Typography>No Pending Job</Typography>}
+            {allJobs.filter((job) => job.posting_status == "approved").length ==
+              0 && <Typography>No Verified Job</Typography>}
           </Box>
         </Box>
       </Box>
@@ -90,4 +90,4 @@ const PendingJobs = () => {
   );
 };
 
-export default PendingJobs;
+export default VerifiedJobs;

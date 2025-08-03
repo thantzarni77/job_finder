@@ -56,7 +56,9 @@ const CompanyCard = ({ company }: { company: Employer }) => {
                     ":hover": { cursor: "pointer", color: "primary.main" },
                   }}
                 >
-                  <NavLink to={"/companies/1"}>{company.company_name}</NavLink>
+                  <NavLink to={`/companies/${company.user_id.id}`}>
+                    {company.company_name}
+                  </NavLink>
                 </Typography>
               </Box>
             </Box>

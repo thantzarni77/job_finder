@@ -9,6 +9,7 @@ import {
   useTheme,
 } from "@mui/material";
 import BG_IMG from "../assets/login_signup_bg.jpg";
+import Logo from "../assets/logo.png";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import { useState } from "react";
 import UserDetailsForm from "./registerComponent/UserDetailsForm";
@@ -477,11 +478,13 @@ export default function Register() {
         px: { xs: 2, sm: 3 },
       }}
     >
-      <Typography
-        sx={{ fontWeight: 700, fontSize: { xs: "25px", md: "28px" } }}
+      <Box
+        sx={{
+          mb: 3,
+        }}
       >
-        LOGO
-      </Typography>
+        <img src={Logo} alt="logo" style={{ width: 100, height: "auto" }} />
+      </Box>
       <Typography
         variant="h6"
         sx={{ mb: 2, fontWeight: 600, textAlign: "center" }}

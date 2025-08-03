@@ -13,7 +13,7 @@ import {
 import {
   // ChatBubbleOutline as MessageIcon,
   SettingsOutlined as SettingIcon,
-  NotificationsActiveOutlined as NotiIcon,
+  //NotificationsActiveOutlined as NotiIcon,
   Menu as MenuIcon,
   // LightMode as LightModeIcon,
   // DarkMode as DarkModeIcon,
@@ -23,7 +23,7 @@ import { NavLink, useLocation, matchPath } from "react-router";
 import { useAppStore } from "../../store/Appstore";
 import { useState, useRef, useEffect, useMemo, type RefObject } from "react";
 import { useNavigate } from "react-router";
-
+import Logo from "../../assets/logo.png";
 import { useUserStore } from "../../store/UserStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { logoutUser } from "../../helper/authApiFunctions";
@@ -167,18 +167,20 @@ export default function Header({
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
-            <Typography
+            <Box
               onClick={() => navigate("/")}
-              component="h1"
               sx={{
-                fontSize: { xs: "24px", sm: "30px", md: "36px" },
-                fontWeight: "700",
-                cursor: "pointer",
-                flexShrink: 0,
+                ":hover": {
+                  cursor: "pointer",
+                },
               }}
             >
-              LOGO
-            </Typography>
+              <img
+                src={Logo}
+                alt="logo"
+                style={{ width: 70, height: "auto" }}
+              />
+            </Box>
 
             {/* Desktop Navigation */}
             <Box
@@ -263,13 +265,13 @@ export default function Header({
                 >
                   {mode === "light" ? <LightModeIcon /> : <DarkModeIcon />}
                 </IconButton> */}
-                <IconButton
+                {/* <IconButton
                   color="inherit"
                   ref={notificationsRef}
                   onClick={() => navigate("/notifications/user/1")}
                 >
                   <NotiIcon sx={{ fontSize: 27 }} />
-                </IconButton>
+                </IconButton> */}
 
                 <IconButton
                   color="inherit"

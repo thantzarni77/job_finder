@@ -3,57 +3,59 @@ import {
   Button,
   Divider,
   Typography,
-  Tooltip,
   Stack,
   Paper,
   IconButton,
 } from "@mui/material";
-
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import BusinessIcon from "@mui/icons-material/Business";
 import WorkIcon from "@mui/icons-material/Work";
 import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
 import SettingsRemoteIcon from "@mui/icons-material/SettingsRemote";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { useNavigate, useParams } from "react-router";
-import { adminGetAJob, verifyJobPost } from "../../helper/postJob";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getSingleJob } from "../../helper/postJob";
 import FullScreenLoader from "../../components/FullScreenLoader";
+import type { JobWithJobDetail } from "../../store/JobStore";
 import { format } from "date-fns";
+import { changeStatus } from "../../helper/jobApiFunctions";
 
 export default function JobDetailManage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-
   const { id } = useParams();
-  const jobId = Number(id);
 
-  const { data: job, isPending } = useQuery({
-    queryKey: ["adminJob", jobId],
-    queryFn: () => adminGetAJob(jobId),
-  });
-
-  const jobMutate = useMutation({
-    mutationFn: ({ id, status }: { id: number; status: string }) =>
-      verifyJobPost(id, status),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["adminJob", jobId] });
+  const jobDetailQuery = useQuery({
+    queryKey: ["jobDetail", id],
+    queryFn: () => {
+      return getSingleJob(id);
     },
   });
-  const handleApprove = () => {
-    jobMutate.mutate({ id: jobId, status: "approved" });
-  };
 
-  const handleReject = () => {
-    jobMutate.mutate({ id: jobId, status: "rejected" });
-  };
+  const jobDetails: JobWithJobDetail = jobDetailQuery.data?.data;
 
-  if (isPending) {
-    return <FullScreenLoader open={true} message="Loading" />;
-  } else {
-    console.log(job);
+  const changeStatusMutation = useMutation({
+    mutationFn: changeStatus,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["jobDetail"] });
+      queryClient.invalidateQueries({ queryKey: ["pureJobPosts"] });
+      queryClient.invalidateQueries({ queryKey: ["jobPosts"] });
+      navigate(-1);
+    },
+    onError: (err) => {
+      console.log(err);
+    },
+  });
+
+  if (jobDetailQuery.isFetching) {
+    return (
+      <FullScreenLoader
+        open={jobDetailQuery.isFetching}
+        message="Getting Job Details"
+      />
+    );
   }
 
   return (
@@ -101,6 +103,29 @@ export default function JobDetailManage() {
           </Typography>
 
           <Box sx={{ flexGrow: 1 }} />
+
+          {/* <Tooltip title="Edit">
+            <Button
+              startIcon={<EditIcon />}
+              variant="outlined"
+              sx={{
+                textTransform: "none",
+                borderRadius: 1.5,
+                borderColor: "#d1d5db",
+                fontWeight: 600,
+                px: 2,
+                fontSize: "0.875rem",
+                color: "#334155",
+                minWidth: "90px",
+                "&:hover": {
+                  borderColor: "#5f68d7",
+                  backgroundColor: "rgba(95, 104, 215, 0.1)",
+                },
+              }}
+            >
+              Edit
+            </Button>
+          </Tooltip> */}
         </Box>
 
         <Stack spacing={2} sx={{ flexGrow: 1, overflowY: "auto" }}>
@@ -120,7 +145,7 @@ export default function JobDetailManage() {
               variant="subtitle1"
               sx={{ fontWeight: 700, color: "#0f172a", flexBasis: "100%" }}
             >
-              {job.job_title}
+              {jobDetails.job_title} ({jobDetails.job_code})
             </Typography>
 
             <Stack
@@ -151,7 +176,9 @@ export default function JobDetailManage() {
                 >
                   Status :
                 </Typography>
-                <Typography component="span">{job.posting_status}</Typography>
+                <Typography component="span">
+                  {jobDetails.posting_status}
+                </Typography>
               </Box>
 
               <Box
@@ -171,7 +198,7 @@ export default function JobDetailManage() {
                   Posted :
                 </Typography>
                 <Typography component="span">
-                  {format(new Date(job.created_at), "PPP")}
+                  {format(new Date(jobDetails.created_at), "dd MMM yyyy")}
                 </Typography>
               </Box>
 
@@ -192,7 +219,7 @@ export default function JobDetailManage() {
                   Applicants :
                 </Typography>
                 <Typography component="span">
-                  {job.job_detail.apply_count}
+                  {jobDetails.job_detail.apply_count}
                 </Typography>
               </Box>
             </Stack>
@@ -225,7 +252,9 @@ export default function JobDetailManage() {
               }}
             >
               <BusinessIcon sx={{ fontSize: 18, color: "#5f68d7" }} />
-              <Typography>Job Code : {job.job_code}</Typography>
+              <Typography>
+                Company : {jobDetails.employer.company_name}
+              </Typography>
             </Box>
 
             <Box
@@ -239,7 +268,7 @@ export default function JobDetailManage() {
               }}
             >
               <WorkIcon sx={{ fontSize: 18, color: "#5f68d7" }} />
-              <Typography>Position : {job.role}</Typography>
+              <Typography>Position : {jobDetails.role}</Typography>
             </Box>
 
             <Box
@@ -253,10 +282,10 @@ export default function JobDetailManage() {
               }}
             >
               <SettingsRemoteIcon sx={{ fontSize: 18, color: "#5f68d7" }} />
-              <Typography>Working type : {job.type}</Typography>
+              <Typography>Working type : {jobDetails.type}</Typography>
             </Box>
 
-            <Box
+            {/* <Box
               sx={{
                 display: "flex",
                 alignItems: "center",
@@ -267,8 +296,8 @@ export default function JobDetailManage() {
               }}
             >
               <AccessTimeIcon sx={{ fontSize: 18, color: "#5f68d7" }} />
-              <Typography>Dead Line : {job.job_detail.deadline}</Typography>
-            </Box>
+              <Typography>Working hour : 9:00am to 5:00pm</Typography>
+            </Box> */}
           </Paper>
 
           {/* Applicants */}
@@ -338,11 +367,11 @@ export default function JobDetailManage() {
                 wordBreak: "break-word",
               }}
             >
-              {job.job_detail.benefits}
+              {jobDetails.job_detail.benefits}
             </Paper>
           </Box>
 
-          {/* Responsibilities Section */}
+          {/* descripitons Section */}
           <Box>
             <Typography
               variant="subtitle2"
@@ -350,7 +379,7 @@ export default function JobDetailManage() {
               color="#0f172a"
               sx={{ mb: 1 }}
             >
-              Responsibilities
+              Descriptions
             </Typography>
             <Paper
               elevation={0}
@@ -364,7 +393,7 @@ export default function JobDetailManage() {
                 wordBreak: "break-word",
               }}
             >
-              {job.job_detail.description}
+              {jobDetails.job_detail.description}
             </Paper>
           </Box>
 
@@ -390,11 +419,38 @@ export default function JobDetailManage() {
                 wordBreak: "break-word",
               }}
             >
-              {job.job_detail.requirements}
+              {jobDetails.job_detail.requirements}
+            </Paper>
+          </Box>
+
+          {/* Note Section */}
+          <Box>
+            <Typography
+              variant="subtitle2"
+              fontWeight={600}
+              color="#0f172a"
+              sx={{ mb: 1 }}
+            >
+              Note
+            </Typography>
+            <Paper
+              elevation={0}
+              sx={{
+                p: 2,
+                bgcolor: "white",
+                borderRadius: 2,
+                color: "#334155",
+                fontSize: "0.875rem",
+                lineHeight: 1.4,
+                wordBreak: "break-word",
+              }}
+            >
+              {jobDetails.job_detail.note}
             </Paper>
           </Box>
 
           {/* Action Buttons */}
+
           <Box
             sx={{
               display: "flex",
@@ -405,40 +461,57 @@ export default function JobDetailManage() {
               width: "100%",
             }}
           >
-            <Button
-              variant="outlined"
-              size="large"
-              sx={{
-                borderColor: "#5f68d7",
-                color: "#ef4444",
-                fontWeight: 600,
-                borderRadius: 2,
-                px: 4,
-                textTransform: "none",
-                minWidth: 140,
-                "&:hover": {
-                  borderColor: "#7f85da",
-                  backgroundColor: "rgba(239,68,68,0.1)",
-                },
-              }}
-              onClick={handleReject}
-            >
-              Reject
-            </Button>
-            <Button
-              variant="contained"
-              size="large"
-              sx={{
-                fontWeight: 600,
-                borderRadius: 2,
-                px: 6,
-                textTransform: "none",
-                minWidth: 140,
-              }}
-              onClick={handleApprove}
-            >
-              Approve
-            </Button>
+            {(jobDetails.posting_status == "approved" ||
+              jobDetails.posting_status != "rejected") && (
+              <Button
+                loading={changeStatusMutation.isPending}
+                variant="outlined"
+                size="large"
+                onClick={() => {
+                  changeStatusMutation.mutate({
+                    postID: Number(id),
+                    status: "rejected",
+                  });
+                }}
+                sx={{
+                  borderColor: "#5f68d7",
+                  color: "#ef4444",
+                  fontWeight: 600,
+                  borderRadius: 2,
+                  px: 4,
+                  textTransform: "none",
+                  minWidth: 140,
+                  "&:hover": {
+                    borderColor: "#7f85da",
+                    backgroundColor: "rgba(239,68,68,0.1)",
+                  },
+                }}
+              >
+                Reject
+              </Button>
+            )}
+            {jobDetails.posting_status != "approved" && (
+              <Button
+                loading={changeStatusMutation.isPending}
+                onClick={() => {
+                  changeStatusMutation.mutate({
+                    postID: Number(id),
+                    status: "approved",
+                  });
+                }}
+                variant="contained"
+                size="large"
+                sx={{
+                  fontWeight: 600,
+                  borderRadius: 2,
+                  px: 6,
+                  textTransform: "none",
+                  minWidth: 140,
+                }}
+              >
+                Approve
+              </Button>
+            )}
           </Box>
         </Stack>
       </Box>

@@ -1,10 +1,12 @@
 <?php
+
 namespace App\Providers;
 
 use App\Interfaces\ApplyJobRepositoryInterface;
 use App\Interfaces\AuthRepositoryInterface;
 use App\Interfaces\CategoryRepositoryInterface;
 use App\Interfaces\ContactFormInterface;
+use App\Interfaces\ContactRepositoryInterface;
 use App\Interfaces\EmployerVerificationInterface;
 use App\Interfaces\JobDetailRepositoryInterface;
 use App\Interfaces\PostJobRepositoryInterface;
@@ -16,6 +18,7 @@ use App\Repositories\ApplyJobRepository;
 use App\Repositories\AuthRepository;
 use App\Repositories\CategoryRepository;
 use App\Repositories\ContactFormRepository;
+use App\Repositories\ContactRepository;
 use App\Repositories\EmployerVerficationRepository;
 use App\Repositories\JobDetailRepository;
 use App\Repositories\PostJobRepository;
@@ -43,6 +46,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(TalentRepositoryInterface::class, TalentRepository::class);
         $this->app->bind(ContactFormInterface::class, ContactFormRepository::class);
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
+        $this->app->bind(ContactRepositoryInterface::class, ContactRepository::class);
     }
 
     /**

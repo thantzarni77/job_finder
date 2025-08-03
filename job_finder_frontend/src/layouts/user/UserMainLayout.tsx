@@ -92,7 +92,7 @@ export default function UserMainLayout() {
           <Alert variant="filled" severity="error" id="verification">
             <Typography variant="body1">
               Your account didn't pass our verification. Click{" "}
-              <Link to={""}>
+              <Link to={`/verification/failed/${user.user_id}`}>
                 <span style={{ textDecoration: "underline" }}>here </span>
               </Link>
               to contact to administrator
