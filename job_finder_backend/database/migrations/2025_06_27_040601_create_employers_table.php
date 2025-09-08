@@ -14,12 +14,13 @@ return new class extends Migration
         Schema::create('employers', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id');
-            $table->string('company_name');
-            $table->string('company_address');
-            $table->string('company_phone');
-            $table->string('company_email');
-            $table->string('company_image');
-            $table->string('company_type');
+            $table->string('company_name')->nullable();
+            $table->string('company_address')->nullable();
+            $table->string('company_phone')->nullable();
+            $table->string('company_email')->nullable();
+            $table->string('company_image')->nullable();
+            $table->string('company_type')->nullable();
+            $table->string('company_description')->nullable();
             $table->enum('verification',['pending', 'verified', 'rejected'])->default('pending');
             $table->timestamps();
         });

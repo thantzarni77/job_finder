@@ -1,17 +1,35 @@
 import {
+  Alert,
   Box,
   Button,
+  FormHelperText,
   IconButton,
+  List,
+  ListItem,
+  ListItemText,
   styled,
   TextField,
   Typography,
 } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import JobCard from "./JobCard";
 import CustomFIleUpload from "../../custom_svg/CustomFIleUpload";
 import { useEffect, useRef, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
+import { useJobStore } from "../../../store/JobStore";
+import { Controller, useForm } from "react-hook-form";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { applyJob } from "../../../helper/jobApiFunctions";
+import { useProfileStore } from "../../../store/ProfileStore";
+import { getAllJobs } from "../../../helper/postJob";
+import { isAxiosError } from "axios";
+
+type ApplyFormData = {
+  salary: string;
+  message: string;
+  document: File[];
+};
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -26,56 +44,82 @@ const VisuallyHiddenInput = styled("input")({
 });
 
 const ApplyJob = () => {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
-
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const { id } = useParams();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const allJobs = useJobStore((state) => state.jobs);
+  const setJobs = useJobStore((state) => state.setJobs);
+
+  const [serverErrors, setServerErrors] = useState<string | null>(null);
+
+  const allJobsQuery = useQuery({
+    queryKey: ["pureJobPosts"],
+    queryFn: getAllJobs,
+  });
+
+  const currentJob = allJobs.filter((single) => single.id == Number(id));
+
+  const seekerData = useProfileStore((state) => state.seekerProfile);
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<ApplyFormData>({
+    mode: "onBlur",
+    defaultValues: {
+      document: [],
+    },
+  });
+
+  const applyJobMutation = useMutation({
+    mutationFn: applyJob,
+    onSuccess: (data) => {
+      if (data.status == "success") {
+        queryClient.invalidateQueries({
+          queryKey: ["seekerAppliedJobs", seekerData.id],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["jobDetail", id],
+        });
+        navigate(`/job/${id}/apply/confirm`);
+      }
+    },
+    onError: (err) => {
+      if (isAxiosError(err)) {
+        setServerErrors(err.response?.data.message);
+      }
+    },
+  });
+
+  const applyJobHandler = (data: ApplyFormData) => {
+    const applyJobFormData = new FormData();
+
+    applyJobFormData.append("post_job_id", String(currentJob[0].id));
+    applyJobFormData.append("employer_id", String(currentJob[0].employer_id));
+    applyJobFormData.append("seeker_id", String(seekerData.id));
+    applyJobFormData.append("expected_salary", data.salary);
+    applyJobFormData.append("message", data.message);
+
+    if (data.document && data.document.length > 0) {
+      data.document.forEach((file) => {
+        applyJobFormData.append("document[]", file);
+      });
+    }
+
+    applyJobMutation.mutate(applyJobFormData);
+  };
 
   useEffect(() => {
-    //prevent memory leak
-    return () => {
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-      }
-    };
-  }, [previewUrl]);
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      const files = Array.from(event.target.files);
-      setSelectedFiles(files);
-
-      //create preview url for first file
-      const firstFile = files[0];
-      const newPreviewUrl = URL.createObjectURL(firstFile);
-
-      // clean up the old URL
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-      }
-      setPreviewUrl(newPreviewUrl);
+    if (allJobsQuery.data && allJobsQuery.isSuccess) {
+      setJobs(allJobsQuery.data.data);
     }
-  };
-
-  const handleClear = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.stopPropagation();
-    setSelectedFiles([]);
-    setPreviewUrl(null);
-    //  reset the file input value  so the user can re-select the same file
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
-
-  const handleContainerClick = () => {
-    if (!previewUrl) {
-      fileInputRef.current?.click();
-    }
-  };
+  }, [allJobsQuery.data, allJobsQuery.isSuccess, setJobs]);
 
   return (
-    <Box sx={{ width: "90%", mx: "auto" }}>
+    <Box sx={{ width: "90%", mx: "auto", mb: 15 }}>
       {/* Form Title & back button */}
       <Box
         sx={{
@@ -86,17 +130,18 @@ const ApplyJob = () => {
           mb: 4,
         }}
       >
-        <ArrowBackIosIcon
-          onClick={() => navigate("/job/JC-1111")}
-          sx={{
-            color: "primary.main",
-            fontSize: 32,
-            ":hover": {
-              color: "secondary.main",
-              cursor: "pointer",
-            },
-          }}
-        />
+        <IconButton onClick={() => navigate(`/job/${id}`)}>
+          <ArrowBackIosIcon
+            sx={{
+              color: "primary.main",
+              fontSize: 32,
+              ":hover": {
+                color: "text.primary",
+                cursor: "pointer",
+              },
+            }}
+          />
+        </IconButton>
         <Typography variant="h5" sx={{ fontWeight: 600, mx: "auto" }}>
           Application Form
         </Typography>
@@ -106,171 +151,33 @@ const ApplyJob = () => {
         sx={{
           width: "100%",
           display: "flex",
-          alignItems: "flex-start",
-          gap: 10,
+          flexDirection: { xs: "column", md: "column", lg: "row" },
+          alignItems: { xs: "center", md: "center", lg: "flex-start" },
+          gap: { xs: 0, md: 0, lg: 5 },
         }}
       >
-        <Box sx={{ display: { xs: "none", md: "block" } }}>
-          <JobCard />
-        </Box>
+        <JobCard job={currentJob[0]} />
 
         {/* application form */}
-        <Box sx={{ mx: { xs: "auto", md: 0 } }}>
+        <Box
+          component="form"
+          onSubmit={handleSubmit(applyJobHandler)}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            width: { xs: "90%", md: "60%", lg: "35%" },
+            gap: 3,
+            mx: { xs: "auto", md: 0 },
+          }}
+        >
+          {/* ... Expected Salary... */}
           <Box
             sx={{
               display: "flex",
               flexDirection: "column",
               gap: "8px",
-              width: "400px",
-              mb: 4,
-              mt: 3,
-            }}
-          >
-            <Typography
-              component="label"
-              htmlFor="name"
-              sx={{
-                fontWeight: 300,
-              }}
-            >
-              Your Name
-              <span style={{ color: "#ef4444" }}>*</span>
-            </Typography>
-            <TextField
-              id="name"
-              variant="outlined"
-              fullWidth
-              placeholder="Please enter your name"
-              sx={{
-                // root of the OutlinedInput
-                "& .MuiOutlinedInput-root": {
-                  backgroundColor: "#ffffff",
-                  borderRadius: "13px",
-
-                  //  border
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "primary.main",
-                  },
-
-                  // Style the border when focused
-                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "primary.light", // Use theme's primary color on focus
-                  },
-                },
-                //  placeholder text
-                "& .MuiInputBase-input::placeholder": {
-                  color: "primary.main",
-                  fontSize: "13px",
-                  fontWeight: 400,
-                },
-              }}
-            />
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "8px",
-              width: "400px",
-              my: 3,
-            }}
-          >
-            <Typography
-              component="label"
-              htmlFor="email-address"
-              sx={{
-                fontWeight: 300,
-              }}
-            >
-              Email address
-              <span style={{ color: "#ef4444" }}>*</span>
-            </Typography>
-            <TextField
-              id="email-address"
-              variant="outlined"
-              fullWidth
-              placeholder="Please enter your email address"
-              sx={{
-                // root of the OutlinedInput
-                "& .MuiOutlinedInput-root": {
-                  backgroundColor: "#ffffff",
-                  borderRadius: "13px",
-
-                  //  border
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "primary.main",
-                  },
-
-                  // Style the border when focused
-                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "primary.light", // Use theme's primary color on focus
-                  },
-                },
-                //  placeholder text
-                "& .MuiInputBase-input::placeholder": {
-                  color: "primary.main",
-                  fontSize: "13px",
-                  fontWeight: 400,
-                },
-              }}
-            />
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "8px",
-              width: "400px",
-              my: 3,
-            }}
-          >
-            <Typography
-              component="label"
-              htmlFor="phone"
-              sx={{
-                fontWeight: 300,
-              }}
-            >
-              Phone number
-              <span style={{ color: "#ef4444" }}>*</span> {/* Red asterisk */}
-            </Typography>
-            <TextField
-              id="phone"
-              variant="outlined"
-              fullWidth
-              placeholder="Please enter your phone number"
-              sx={{
-                // root of the OutlinedInput
-                "& .MuiOutlinedInput-root": {
-                  backgroundColor: "#ffffff",
-                  borderRadius: "13px",
-
-                  //  border
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "primary.main",
-                  },
-
-                  // Style the border when focused
-                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "primary.light", // Use theme's primary color on focus
-                  },
-                },
-                //  placeholder text
-                "& .MuiInputBase-input::placeholder": {
-                  color: "primary.main",
-                  fontSize: "13px",
-                  fontWeight: 400,
-                },
-              }}
-            />
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "8px",
-              width: "400px",
-              my: 3,
+              width: "full",
             }}
           >
             <Typography
@@ -280,33 +187,28 @@ const ApplyJob = () => {
                 fontWeight: 300,
               }}
             >
-              Salary{" "}
-              <Typography variant="caption" sx={{ color: "primary.light" }}>
-                (optional)
-              </Typography>
+              Expected Salary
             </Typography>
             <TextField
+              {...register("salary", {
+                required: "Expected Salary is required",
+              })}
               id="salary"
               variant="outlined"
               fullWidth
+              error={!!errors.salary}
               placeholder="Please enter your expected salary"
               sx={{
-                // root of the OutlinedInput
                 "& .MuiOutlinedInput-root": {
-                  backgroundColor: "#ffffff",
+                  backgroundColor: "background.paper",
                   borderRadius: "13px",
-
-                  //  border
                   "& .MuiOutlinedInput-notchedOutline": {
                     borderColor: "primary.main",
                   },
-
-                  // Style the border when focused
                   "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "primary.light", // Use theme's primary color on focus
+                    borderColor: "primary.light",
                   },
                 },
-                //  placeholder text
                 "& .MuiInputBase-input::placeholder": {
                   color: "primary.main",
                   fontSize: "13px",
@@ -314,127 +216,209 @@ const ApplyJob = () => {
                 },
               }}
             />
+            {errors.salary && (
+              <FormHelperText error>{errors.salary.message}</FormHelperText>
+            )}
           </Box>
           <Box
             sx={{
               display: "flex",
               flexDirection: "column",
               gap: "8px",
-              width: "400px",
-              my: 3,
+              width: "full",
             }}
           >
             <Typography
               component="label"
-              htmlFor="cv"
+              htmlFor="message"
               sx={{
                 fontWeight: 300,
               }}
             >
-              Upload your CV
-              <span style={{ color: "#ef4444" }}>*</span>
+              Message to employer
             </Typography>
-
-            {/* Image Preview Section */}
-            <Box
-              onClick={handleContainerClick}
+            <TextField
+              {...register("message", {
+                required: "Message to employer is required",
+                maxLength: {
+                  value: 300,
+                  message: "Message can't be more than 300 words",
+                },
+              })}
+              multiline
+              minRows={4}
+              id="message"
+              variant="outlined"
+              fullWidth
+              error={!!errors.message}
+              placeholder="Please enter your message to employer"
               sx={{
-                width: "100%",
-                height: "220px",
-                border: "1px solid",
-                borderColor: "primary.main",
-                borderRadius: "13px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                backgroundColor: "#fff",
-                cursor: previewUrl ? "default" : "pointer", // Change cursor based on state
-                transition: "background-color 0.2s ease",
-                position: "relative",
-                overflow: "hidden",
-                "&:hover": {
-                  backgroundColor: previewUrl ? "#fff" : "#fafafa",
+                "& .MuiOutlinedInput-root": {
+                  backgroundColor: "background.paper",
+                  borderRadius: "13px",
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "primary.main",
+                  },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "primary.light",
+                  },
+                },
+                "& .MuiInputBase-input::placeholder": {
+                  color: "primary.main",
+                  fontSize: "13px",
+                  fontWeight: 400,
                 },
               }}
-            >
-              <VisuallyHiddenInput
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleFileChange}
-              />
+            />
+            {errors.message && (
+              <FormHelperText error>{errors.message.message}</FormHelperText>
+            )}
+          </Box>
 
-              {previewUrl ? (
-                // --- Preview State ---
-                <>
-                  <img
-                    src={previewUrl}
-                    alt="Image preview"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-                  <IconButton
-                    onClick={handleClear}
-                    size="small"
+          {/* documents upload  */}
+          <Controller
+            name="document"
+            control={control}
+            rules={{
+              validate: (files) =>
+                files.length > 0 || "At least one document is required.",
+            }}
+            render={({ field: { onChange, value: selectedFiles } }) => {
+              const handleRemoveFile = (indexToRemove: number) => {
+                const updatedFiles = selectedFiles.filter(
+                  (_, index) => index !== indexToRemove,
+                );
+                onChange(updatedFiles);
+              };
+
+              return (
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                    width: "100%",
+                  }}
+                >
+                  <Typography component="label" sx={{ fontWeight: 300 }}>
+                    Upload your documents (CV , Certificates, etc..)
+                  </Typography>
+
+                  {/* Upload Area */}
+                  <Box
+                    onClick={() => fileInputRef.current?.click()}
                     sx={{
-                      position: "absolute",
-                      top: 8,
-                      right: 8,
-                      backgroundColor: "rgba(255, 255, 255, 0.7)",
+                      width: "100%",
+                      height: "50px",
+                      border: "1px dashed",
+                      borderColor: "primary.main",
+                      borderRadius: "13px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      backgroundColor: "background.paper",
+                      cursor: "pointer",
+                      transition: "background-color 0.2s ease",
                       "&:hover": {
-                        backgroundColor: "rgba(255, 255, 255, 0.9)",
+                        backgroundColor: "action.hover",
                       },
                     }}
                   >
-                    <CloseIcon fontSize="small" />
-                  </IconButton>
-                  {selectedFiles.length > 1 && (
+                    <VisuallyHiddenInput
+                      ref={fileInputRef}
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={(e) => {
+                        if (e.target.files) {
+                          const newFiles = Array.from(e.target.files);
+                          onChange([...selectedFiles, ...newFiles]);
+                        }
+                      }}
+                    />
                     <Box
                       sx={{
-                        position: "absolute",
-                        bottom: 8,
-                        right: 8,
-                        backgroundColor: "rgba(0, 0, 0, 0.6)",
-                        color: "white",
-                        padding: "2px 8px",
-                        borderRadius: "12px",
-                        fontSize: "0.75rem",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 2,
+                        color: "text.secondary",
                       }}
                     >
-                      + {selectedFiles.length - 1} more
+                      <CustomFIleUpload />
+                      <Typography>Click to add files</Typography>
                     </Box>
-                  )}
-                </>
-              ) : (
-                // --- Initial State ---
-                <Box sx={{ textAlign: "center", color: "text.secondary" }}>
-                  <CustomFIleUpload />
-                </Box>
-              )}
-            </Box>
+                  </Box>
 
-            <Button
-              onClick={() => navigate("/job/JC-1111/apply/confirm")}
-              variant="contained"
-              sx={{
-                my: 2,
+                  {/* List of Uploaded Files */}
+                  {selectedFiles.length > 0 && (
+                    <List dense>
+                      {selectedFiles.map((file, index) => (
+                        <ListItem
+                          key={index}
+                          secondaryAction={
+                            <IconButton
+                              edge="end"
+                              aria-label="delete"
+                              onClick={() => handleRemoveFile(index)}
+                            >
+                              <CloseIcon />
+                            </IconButton>
+                          }
+                          sx={{
+                            backgroundColor: "background.paper",
+                            borderRadius: "8px",
+                            mb: 1,
+                          }}
+                        >
+                          <ListItemText
+                            primary={file.name}
+                            secondary={`${(file.size / 1024).toFixed(2)} KB`}
+                          />
+                        </ListItem>
+                      ))}
+                    </List>
+                  )}
+
+                  {errors.document && (
+                    <FormHelperText error sx={{ mt: 1 }}>
+                      {errors.document.message}
+                    </FormHelperText>
+                  )}
+                  {serverErrors && (
+                    <Alert
+                      sx={{ borderRadius: 3 }}
+                      variant="outlined"
+                      severity="error"
+                      onClose={() => {
+                        setServerErrors(null);
+                      }}
+                    >
+                      {serverErrors}
+                    </Alert>
+                  )}
+                </Box>
+              );
+            }}
+          />
+
+          <Button
+            type="submit"
+            loading={applyJobMutation.isPending}
+            variant="contained"
+            sx={{
+              my: 2,
+              boxShadow: "none",
+              textTransform: "none",
+              fontWeight: 400,
+              borderRadius: "8px",
+              p: 1,
+              "&:hover": {
                 boxShadow: "none",
-                textTransform: "none",
-                fontWeight: 400,
-                borderRadius: "8px",
-                px: 1,
-                "&:hover": {
-                  boxShadow: "none",
-                },
-              }}
-            >
-              Apply Now
-            </Button>
-          </Box>
+              },
+            }}
+          >
+            Apply Now
+          </Button>
         </Box>
       </Box>
     </Box>

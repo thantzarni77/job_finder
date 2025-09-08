@@ -7,21 +7,83 @@ import {
   Pagination,
   Container,
 } from "@mui/material";
-import JobCard from "../../components/user/jobs/JobCard";
 import Kpay from "../../assets/kpay.png";
 import WaveMoney from "../../assets/wavemoney.png";
 import Meta from "../../assets/meta.png";
 import AyaBank from "../../assets/ayabank.jpeg";
 import Xiaomi from "../../assets/Xiaomi.png";
+import { useNavigate } from "react-router";
+import {
+  useJobCategoryFilter,
+  useJobRoleFilter,
+  useJobSalaryFilter,
+  useJobStore,
+  useJobTypeFilter,
+  type Job,
+} from "../../store/JobStore";
+import JobCard from "../../components/user/jobs/JobCard";
+import { useQuery } from "@tanstack/react-query";
+import { getAllJobPosts } from "../../helper/postJob";
+import { useState, type ChangeEvent } from "react";
 
 export default function Home() {
+  const navigate = useNavigate();
+  const allJobs = useJobStore((state) => state.jobs);
+  const setJobs = useJobStore((state) => state.setJobs);
+
+  // const { selectedJobRole } = useJobRoleFilter();
+  // const { selectedJobType } = useJobTypeFilter();
+  // const { selectedJobCategory } = useJobCategoryFilter();
+  // const { selectedSalary } = useJobSalaryFilter();
+  // const [page, setPage] = useState(1);
+
+  // const { data: jobs, isPending: isJobsPending } = useQuery({
+  //   queryKey: [
+  //     "jobPosts",
+  //     selectedJobRole,
+  //     selectedJobType,
+  //     selectedJobCategory,
+  //     selectedSalary,
+  //     page,
+  //   ],
+  //   queryFn: () =>
+  //     getAllJobPosts(
+  //       selectedJobRole,
+  //       selectedJobType,
+  //       selectedJobCategory,
+  //       selectedSalary,
+  //       page,
+  //     ),
+  // });
+
+  // to handle paginated pages
+  // const handlePageChange = (_event: ChangeEvent<unknown>, value: number) => {
+  //   setPage(value);
+  // };
+
+  // useEffect(() => {
+  //   if (allJobsQuery.data && allJobsQuery.isSuccess) {
+  //     setJobs(allJobsQuery.data);
+  //   }
+  // }, [
+  //   allJobsQuery.data,
+  //   allJobsQuery.isSuccess,
+  //   setJobs,
+  //   allJobs,
+  //   selectedJobRole,
+  //   selectedJobType,
+  // ]);
+  // if (isJobsPending) {
+  //   return;
+  // }
+
   return (
     <Box>
       <HomeCarousel />
       <Container>
         <Typography
-          variant="h4"
           sx={{
+            fontSize: { xs: "18px", md: "30px" },
             fontWeight: 600,
             textAlign: "center",
             my: 3,
@@ -29,12 +91,15 @@ export default function Home() {
         >
           Find Your Dream Job Or Top Talent - All In One Place
         </Typography>
+
         <Box sx={{ display: "flex", justifyContent: "center", gap: 4, mb: 5 }}>
           <Button
+            onClick={() => navigate("/jobs")}
             variant="contained"
             sx={{
               boxShadow: "none",
-              width: { xs: "200px", md: "320px" },
+              width: { xs: "170px", sm: "200px", md: "250px" },
+              height: { xs: "30px", sm: "40px", md: "45px" },
               borderRadius: "8px",
               p: 1,
               textTransform: "none",
@@ -46,10 +111,12 @@ export default function Home() {
             Search Jobs
           </Button>
           <Button
+            onClick={() => navigate("/talents")}
             variant="outlined"
             sx={{
               boxShadow: "none",
-              width: { xs: "200px", md: "320px" },
+              width: { xs: "170px", sm: "200px", md: "250px" },
+              height: { xs: "30px", sm: "40px", md: "45px" },
               borderRadius: "8px",
               p: 1,
               textTransform: "none",
@@ -69,15 +136,19 @@ export default function Home() {
           Recommeded Jobs For You
         </Typography>
 
-        <Box className="grid grid-cols-1 place-items-center gap-3 md:grid-cols-2 lg:grid-cols-3">
-          <JobCard />
-          <JobCard />
-          <JobCard />
-        </Box>
+        {/* <Box className="flex flex-wrap items-center gap-3 md:justify-center">
+          {allJobs.map((single) => {
+            if (single.id < 10) {
+              return <JobCard key={single.id} job={single} />;
+            }
+          })}
+        </Box> */}
         <Box sx={{ display: "flex", justifyContent: "center", mt: 5, mb: 10 }}>
-          <Stack>
+          {/* <Stack>
             <Pagination
-              count={10}
+              count={jobs.last_page}
+              page={jobs.current_page ?? 1}
+              onChange={handlePageChange}
               shape="rounded"
               variant="outlined"
               color="primary"
@@ -88,7 +159,7 @@ export default function Home() {
                 },
               }}
             />
-          </Stack>
+          </Stack> */}
         </Box>
 
         <Typography sx={{ textAlign: "center", mb: 3, fontWeight: 600 }}>
@@ -128,7 +199,7 @@ export default function Home() {
         >
           <Stack>
             <Pagination
-              count={10}
+              count={5}
               shape="rounded"
               variant="outlined"
               color="primary"

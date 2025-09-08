@@ -1,12 +1,13 @@
-import { Avatar, Box, Checkbox, Paper, Typography } from "@mui/material";
-import TurnedInIcon from "@mui/icons-material/TurnedIn";
-import TurnedInNotIcon from "@mui/icons-material/TurnedInNot";
+import { Box, Paper, Typography } from "@mui/material";
+
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import QueryBuilderIcon from "@mui/icons-material/QueryBuilder";
 import { NavLink } from "react-router";
-import CustomSuitCase from "../custom_svg/CustomSuitCase";
+import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
+import { type Employer } from "../../helper/companyPageApi";
+import { format } from "date-fns";
 
-const CompanyCard = () => {
+const CompanyCard = ({ company }: { company: Employer }) => {
   return (
     <Box
       sx={{
@@ -18,7 +19,7 @@ const CompanyCard = () => {
         sx={{
           display: "flex",
           flexDirection: "column",
-          width: { xs: "330px", md: "380px" },
+          width: { xs: "325px", md: "375px" },
           borderRadius: "20px",
           boxShadow: "none",
           px: 3,
@@ -35,17 +36,11 @@ const CompanyCard = () => {
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Avatar
-                sx={{
-                  bgcolor: "primary.main",
-                  borderRadius: "12px",
-                  fontSize: "12px",
-                  fontWeight: "bold",
-                }}
-                variant="square"
-              >
-                K
-              </Avatar>
+              <img
+                src={`${import.meta.env.VITE_API_BASE_URL}/${company.company_image}`}
+                alt=""
+                style={{ width: 60, height: 60, borderRadius: 10 }}
+              />
               <Box
                 sx={{
                   display: "flex",
@@ -57,27 +52,14 @@ const CompanyCard = () => {
                   variant="body1"
                   sx={{
                     fontWeight: "700",
-                    color: "secondary.main",
+                    color: "text.secondary",
                     ":hover": { cursor: "pointer", color: "primary.main" },
                   }}
                 >
-                  <NavLink to={"/companies/1"}>KBZ Bank</NavLink>
+                  <NavLink to={"/companies/1"}>{company.company_name}</NavLink>
                 </Typography>
               </Box>
             </Box>
-            <Checkbox
-              disableRipple
-              sx={{
-                "& .MuiSvgIcon-root": { fontSize: 26, mr: -2 },
-                color: "primary.main",
-                "&.Mui-checked": {
-                  color: "primary.main",
-                },
-              }}
-              icon={<TurnedInNotIcon />}
-              checkedIcon={<TurnedInIcon />}
-              name={"fullTime"}
-            />
           </Box>
           {/* location date */}
           <Box sx={{ my: 1 }}>
@@ -98,7 +80,7 @@ const CompanyCard = () => {
                 variant="caption"
                 sx={{ color: "primary.light", width: "250px" }}
               >
-                N0.123, Yadanar St, Marchart Road, Yangon
+                {company.company_address}
               </Typography>
             </Box>
             <Box
@@ -112,7 +94,7 @@ const CompanyCard = () => {
             >
               <QueryBuilderIcon sx={{ color: "primary.light", fontSize: 22 }} />
               <Typography variant="caption" sx={{ color: "primary.light" }}>
-                posted on 1 day ago
+                joined on {format(new Date(company.created_at), "PPP")}
               </Typography>
             </Box>
             <Box
@@ -124,9 +106,9 @@ const CompanyCard = () => {
                 ml: "1px",
               }}
             >
-              <CustomSuitCase />
+              <LocalPhoneOutlinedIcon sx={{ color: "primary.light" }} />
               <Typography variant="caption" sx={{ color: "primary.light" }}>
-                30 opened vacancies
+                {company.company_phone}
               </Typography>
             </Box>
           </Box>

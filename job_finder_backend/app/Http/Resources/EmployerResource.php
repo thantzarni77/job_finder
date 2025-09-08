@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Contact;
+use App\Models\PostJob;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -17,15 +19,17 @@ class EmployerResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "company_name" => $this->company_name ,
-            "company_address" => $this->company_address ,
-            "company_phone" => $this->company_phone ,
-            "company_email" => $this->company_email ,
-            "company_image" => $this->company_image ,
-            "company_description" => $this->company_description ,
-            "company_type" => $this->company_type ,
-            "verification" => $this->verification ,
-            "user_id" => User::where('id', $this->user_id)->select('id','name')->first()
+            "company_name" => $this->company_name,
+            "company_address" => $this->company_address,
+            "company_phone" => $this->company_phone,
+            "company_email" => $this->company_email,
+            "company_image" => $this->company_image,
+            "company_type" => $this->company_type,
+            "verification" => $this->verification,
+            'created_at' => $this->created_at,
+            "user_id" => User::where('id', $this->user_id)->select('id', 'name', 'email', 'phone', 'address', 'profile_picture')->first(),
+            // "individual" => Contact::select("id","user_id","title","message")->first()
+            'jobs' => PostJob::where('employer_id', $this->user_id)->get(),
         ];
     }
 }

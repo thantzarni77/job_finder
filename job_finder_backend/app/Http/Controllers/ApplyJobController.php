@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Interfaces\ApplyJobRepositoryInterface;
@@ -13,35 +12,67 @@ class ApplyJobController extends Controller
     {
         $this->applyJobRepositoryInterface = $applyJobRepositoryInterface;
     }
+    //get data 
+    public function applyJobData($id){
+        return $this->applyJobRepositoryInterface->applyJobData($id);
+    }
     //create apply job
-    public function applyJob(Request $request){
-            return $this->applyJobRepositoryInterface->applyJob($request);
+    public function applyJob(Request $request)
+    {
+        logger($request->file('document'));
+        $applyData = $request->validate([
+            'post_job_id'     => "required",
+            'employer_id'     => "required",
+            'seeker_id'       => "required",
+            'document'        => 'required',
+            'document.*'      => 'image|mimes:jpeg,png,jpg,gif,svg|max:5000',
+            'message'         => 'max:100',
+            'expected_salary' => 'required',
+        ]);
+        //handle multiple file
+        if ($request->hasFile('document')) {
+            $documents = [];
+            foreach ($request->file('document') as $file) {
+                $name        = uniqid() . '_' . $file->getClientOriginalName();
+                $image_path  = $file->move(public_path('document'), $name);
+                $documents[] = $name;
+            }
+            $applyData['document'] = $documents;
         }
-    //get apply data
-    public function applyJobData(){
-        return $this->applyJobRepositoryInterface->applyJobData();
+        return $this->applyJobRepositoryInterface->applyJob($applyData);
     }
     //make shortlist
-    public function addShortList($id){
+    public function addShortList($id)
+    {
         return $this->applyJobRepositoryInterface->addShortlist($id);
     }
     //view employer posted job
-    public function employerPostedJobs(){
+    public function employerPostedJobs()
+    {
         return $this->applyJobRepositoryInterface->employerPostedJobs();
     }
 
     //seeker view his applied jobs
-    public function seekerAppliedJobs(){
+    public function seekerAppliedJobs()
+    {
         return $this->applyJobRepositoryInterface->seekerAppliedJobs();
     }
 
     //employer view his shortlisted jobs
-    public function employerShortlistJobs(){
+    public function employerShortlistJobs()
+    {
         return $this->applyJobRepositoryInterface->employerShortlistJobs();
     }
 
     //mail send
-    public function sendMail(Request $request){
+    public function sendMail(Request $request)
+    {
         return $this->applyJobRepositoryInterface->sendMail($request);
+    }
+
+    //remove post
+    public function destroy($id)
+    {
+        return $this->applyJobRepositoryInterface->destroy($id);
     }
 }

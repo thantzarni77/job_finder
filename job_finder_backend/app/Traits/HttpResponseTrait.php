@@ -30,24 +30,37 @@ trait HttpResponseTrait
                 'user_id' => $data->id,
                 'user_name' => $data->name,
                 'user_email' => $data->email,                
+                'user_phone' => $data->phone,                
+                'user_address' => $data->address,                
                 'user_type' => $data->user_type,
             ]
         ],$statuscode);
     }
 
-    public function successResponseSeeker($message,$data,$statuscode = 200){
+
+    public function successResponseSeeker($message,$data,$token,$statuscode = 200){
         return response()->json([
             "message"=> $message,
-            "data"=> new SeekerResource($data)
+            "data"=> new SeekerResource($data),
+            "token" => $token,
         ],$statuscode);
     }
 
-    public function successResponseEmployer($message,$data,$statuscode = 200){
+    public function successResponseEmployer($message,$data,$token,$statuscode = 200){
         return response()->json([
             "message"=> $message,
-            "data"=> new EmployerResource($data)
+            "data"=> new EmployerResource($data),
+            "token" => $token,
         ],$statuscode);
     }
+
+    public function successResponseNewEmployer($message,$data,$statuscode = 200){
+        return response()->json([
+            "message"=> $message,
+            "data"=> new EmployerResource($data),
+        ],$statuscode);
+    }
+    
 
     public function erorsResponse($message,$data,$statuscode = 500){
         return response()->json([

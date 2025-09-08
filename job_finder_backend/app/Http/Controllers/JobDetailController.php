@@ -14,72 +14,20 @@ class JobDetailController extends Controller
         $this->repo = $repo;
     }
 
-    public function index()
+    //type api start
+    public function types()
     {
-        return response()->json($this->repo->all());
+        return response()->json($this->repo->jobType());
     }
 
-    public function show($id)
+    //role api start
+    public function roles()
     {
-        return response()->json($this->repo->find($id));
+        return $this->repo->jobRole();
     }
 
-    public function store(Request $request)
+    public function genders()
     {
-        $data = $request->validate([
-            'post_job_id' => 'required|exists:post_jobs,id',
-            'job_requirements' => 'required|string',
-            'job_description' => 'required|string',
-            'dead_line' => 'required|date',
-            'vacancy' => 'required|integer',
-            'note' => 'nullable|string',
-            'benefits' => 'nullable|string',
-            'gender' => 'nullable|in:male,female,both',
-            'save_count' => 'nullable|integer',
-            'apply_count' => 'nullable|integer',
-            'job_benefits' => 'nullable|string',
-        ]);
-
-        $jobDetail = $this->repo->create($data);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'JobDetails created successfully',
-            'data' => $jobDetail
-        ]);
-    }
-
-    public function update(Request $request, $id)
-    {
-        $data = $request->validate([
-            'post_job_id' => 'sometimes|exists:post_jobs,id',
-            'job_requirements' => 'sometimes|string',
-            'job_description' => 'sometimes|string',
-            'dead_line' => 'sometimes|date',
-            'vacancy' => 'sometimes|integer',
-            'note' => 'nullable|string',
-            'benefits' => 'nullable|string',
-            'gender' => 'nullable|in:male,female,both',
-            'save_count' => 'nullable|integer',
-            'apply_count' => 'nullable|integer',
-            'job_benefits' => 'nullable|string',
-        ]);
-
-        $jobDetailUpdate = $this->repo->update($id, $data);
-        return response()->json([
-            'success' => true,
-            'message' => 'JobDetails updated successfully',
-            'data' => $jobDetailUpdate
-        ]);
-    }
-
-    public function destroy($id)
-    {
-        $deletedJobDetail = $this->repo->delete($id);
-       return response()->json([
-            'success' => true,
-            'message' => 'JobDetails deleted successfully',
-            // 'data' => $deletedJobDetail
-        ]);
+        return $this->repo->gender();
     }
 }

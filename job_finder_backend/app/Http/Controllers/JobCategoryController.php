@@ -28,7 +28,7 @@ class JobCategoryController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'category_name' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
         ]);
 
         $category = $this->repository->create($validated);
@@ -56,12 +56,12 @@ class JobCategoryController extends Controller
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
-            'category_name' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
         ]);
 
         $category = $this->repository->update($id, $validated);
 
-        return response()->json([  
+        return response()->json([
             'success' => true,
             'message' => 'Category updated successfully',
             'data' => $category

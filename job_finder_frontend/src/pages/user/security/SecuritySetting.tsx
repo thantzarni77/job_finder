@@ -1,19 +1,20 @@
-import { Box, Container, Typography } from "@mui/material";
-import ArrowBackIosNewOutlinedIcon from "@mui/icons-material/ArrowBackIosNewOutlined";
+import { Box, IconButton, Typography } from "@mui/material";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import Email from "./Email";
 import Password from "./Password";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 const SecuritySetting = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   return (
-    <Container
+    <Box
       sx={{
         mx: "auto",
         p: 2,
         mt: 5,
         mb: 15,
-        width: "100%",
+        width: "90%",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -27,14 +28,15 @@ const SecuritySetting = () => {
           justifyContent: "space-between",
         }}
       >
-        <ArrowBackIosNewOutlinedIcon
-          onClick={() => navigate("/settings/user/1/")}
-          sx={{
-            fontSize: "30px",
-            color: "primary.main",
-            ":hover": { cursor: "pointer" },
-          }}
-        />
+        <IconButton onClick={() => navigate(`/settings/user/${id}`)}>
+          <ArrowBackIosIcon
+            sx={{
+              fontSize: "32px",
+              color: "primary.main",
+              ":hover": { cursor: "pointer" },
+            }}
+          />
+        </IconButton>
         <Typography variant="h5" sx={{ fontWeight: 600, mx: "auto" }}>
           Security
         </Typography>
@@ -42,13 +44,13 @@ const SecuritySetting = () => {
       <Box
         sx={{
           my: 4,
-          width: { xs: "90%", md: "70%" },
+          width: { xs: "100%", md: "70%" },
         }}
       >
         <Email />
         <Password />
       </Box>
-    </Container>
+    </Box>
   );
 };
 

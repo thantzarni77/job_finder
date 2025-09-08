@@ -1,0 +1,87 @@
+import axiosClient from "./axiosClient";
+
+export const getAllJobs = async () => {
+  const { data } = await axiosClient.get("/post-jobs/all");
+  return data;
+};
+
+export const getAllJobPosts = async (
+  selectedJobRole: string[],
+  selectedJobType: string[],
+  selectedJobCategory: string[],
+  selectedSalary: { min: number | null; max: number | null } | null,
+  page: number,
+  jobTitle: string,
+) => {
+  if (
+    [selectedJobRole, selectedJobType, selectedJobCategory].some(
+      (val) => val && val.length,
+    ) &&
+    selectedSalary?.min !== null &&
+    selectedSalary?.max !== null
+  ) {
+    page = 1;
+  }
+
+  const { data } = await axiosClient.get("/post-jobs", {
+    params: {
+      type: selectedJobType,
+      role: selectedJobRole,
+      category: selectedJobCategory,
+      salary: selectedSalary,
+      page: page,
+      Job: jobTitle,
+    },
+  });
+
+  return data.data;
+};
+
+export const getSingleJob = async (jobID: string | undefined) => {
+  const { data } = await axiosClient.get(`/post-jobs/${jobID}`);
+  return data;
+};
+
+export const postAJob = async (data: FormData) => {
+  const res = await axiosClient.post("/post-jobs", data);
+  return res.data;
+};
+
+// getting categories name from backend
+export const getCategories = async () => {
+  const { data } = await axiosClient.get("/job-categories");
+  return data.data;
+};
+
+// getting job types to filter
+export const getJobTypes = async () => {
+  const { data } = await axiosClient.get("/types");
+  return data.original.data;
+};
+
+// getting roles to filter
+export const getRoles = async () => {
+  const { data } = await axiosClient.get("/roles");
+  return data.data;
+};
+
+export const adminGetJobs = async (page: number) => {
+  const { data } = await axiosClient.get("/post-jobs", {
+    params: {
+      page,
+    },
+  });
+  return data.data;
+};
+
+export const adminGetAJob = async (id: number) => {
+  const { data } = await axiosClient.get(`/post-jobs/${id}`);
+  return data.data;
+};
+
+export const verifyJobPost = async (id: number, status: string) => {
+  const { data } = await axiosClient.post(`/admin/post-verification/${id}`, {
+    status,
+  });
+  return data;
+};

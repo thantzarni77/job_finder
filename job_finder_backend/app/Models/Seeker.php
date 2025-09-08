@@ -2,11 +2,24 @@
 
 namespace App\Models;
 
+use App\Helpers\Filters;
+use App\Models\ApplyJob;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Seeker extends Model
 {
-    protected $fillable = [  
+    use HasFactory;
+
+    // <!-- protected $casts = [
+    //     'skills'            => 'array',
+    //     'education'         => 'array',
+    //     'work_experience'   => 'array',
+    //     'social_media_link' => 'array',
+    // ]; -->
+
+    protected $fillable = [
         'user_id',
         'skills',
         'education',
@@ -15,38 +28,27 @@ class Seeker extends Model
         'talent',
         'social_media_link',
         'image',
-        'bio'
+        'bio',
     ];
 
-    public static function getRole() {
-        return [
-            'junior' => 'junior',
-            'mid-level' => 'mid-level',
-            'senior' => 'senior'
-        ];
+    public function user()
+    {
+        return $this->hasOne(User::class, 'id', 'user_id');
     }
 
-    public static function getTalent() {
-        return [
-            'Developer' => 'Developer',
-            'Designer' => 'Designer',
-            'Marketer' => 'Marketer',
-            'Writer' => 'Writer',
-            'Manager' => 'Manager',
-            'Coordinator' => 'Coordinator',
-            'Architect' => 'Architect',
-            'Analyst' => 'Analyst',
-            'Other' => 'Other'
-        ];
-    }
-
-    public function user(){
-        return $this->hasOne(User::class);
+    public function applyJob()
+    {
+        return $this->hasMany(ApplyJob::class);
     }
 
     public function clean($value)
     {
         $decoded = json_decode($value, true);
         return $decoded !== null ? $decoded : trim($value, '"');
+    }
+
+    public function scopeFilter(Builder $builder, Filters $filter)
+    {
+        return $filter->filter($builder);
     }
 }
